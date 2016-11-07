@@ -2,7 +2,7 @@
 
 $mysql_server='localhost';
 $mysql_user='root';
-$mysql_pass='';
+$mysql_pass='root';
 $mysql_db='lovelive';
 
 $unit_db='db/unit.db_';

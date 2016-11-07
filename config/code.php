@@ -4,8 +4,8 @@ $code='WytVirvyiab';
 
 $release_info = [[
   'id' => 5,
-  'key' => '***REMOVED***'
+  'key' => ''
 ],[
   'id' => 6,
-  'key' => '***REMOVED***'
+  'key' => ''
 ]];
