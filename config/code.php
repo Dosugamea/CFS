@@ -1,6 +1,6 @@
 <?php
 
-$code='***REMOVED***';
+$code='WytVirvyiab';
 
 $release_info = [[
   'id' => 5,
