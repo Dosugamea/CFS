@@ -1,0 +1,1 @@
+ALTER TABLE `unit_list` ADD `display_rank` TINYINT NOT NULL DEFAULT '2' AFTER `favorite_flag`; 

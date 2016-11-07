@@ -1,0 +1,13 @@
+/*
+!.gitignore
+!README.md
+!config
+!config.sample
+!modules
+!includes
+!admin
+!resources
+!webview
+!upgrade_scripts
+!*.php
+!*.sql
