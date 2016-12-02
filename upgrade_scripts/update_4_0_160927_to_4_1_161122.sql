@@ -1,0 +1,1 @@
+CREATE TABLE `tmp_battle_user_room` ( `user_id` INT NOT NULL , `room_id` INT NOT NULL , PRIMARY KEY (`user_id`)) ENGINE = MEMORY; 

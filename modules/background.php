@@ -5,7 +5,7 @@ function background_backgroundInfo() {
     $user['background'] = 1;
   }
   $ret['background_info'] = [];
-  for($i = 1; $i <= 18; $i++) {
+  for($i = 1; $i <= 21; $i++) {
     $ret['background_info'][]=[
       'background_id'=>$i,
       'is_set'=>$i==$user['background'],

@@ -77,7 +77,10 @@ function reward_open($post) {
   }
   foreach($r as &$v) if (is_numeric($v)) $v = (int)$v;
   $r['item_id'] = $r['incentive_item_id'];
-  $r['item_category_id'] = $r['incentive_item_id'];
+  $r['item_category_id'] = 0;
+  $r['reward_box_flag']  = false;
+  $r['item_id'] = $r['incentive_item_id'];
+  
   if(!$r['is_card']) {
     unset($r['is_card']);
     switch($r['incentive_item_id']) {
@@ -123,7 +126,8 @@ function reward_openAll($post) {
       $r['item_id'] = $r['incentive_item_id'];
       $params['item' . $r['item_id']] += $r['amount'];
       $r['add_type'] = $correct_add_type[$r['item_id'] - 1];
-      $r['item_category_id'] = $r['incentive_item_id'];
+      $r['item_category_id'] = 0;
+	  $r['reward_box_flag']  = false;
       unset($r['incentive_item_id'], $r['is_card']);
       $ret['reward_item_list'][] = $r;
     } else {

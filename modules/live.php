@@ -301,7 +301,7 @@ function live_play($post) {
   }
   $post['do_not_use_multiply'] = false;
   foreach($live_id_list as $k2 => $v2) {
-    $live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset', 'member_category');
+    $live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
     if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
       $post['do_not_use_multiply'] = true; //4.0计分修正
     }
@@ -469,7 +469,7 @@ function live_reward($post) {
     } else {
       $map_info = getLiveSettings($post['live_difficulty_id'], 'difficulty, c_rank_combo, b_rank_combo, a_rank_combo, s_rank_combo, notes_setting_asset');
       $map_info['capital_type'] = 1;
-      $values = [null, 5, 10, 15, 25, 25];
+      $values = [null, 5, 10, 15, 25, 25, 25];
       $map_info['capital_value'] = $values[$map_info['difficulty']];
     }
     //读取谱面和显示边框
@@ -595,7 +595,7 @@ function live_reward($post) {
     foreach($live_id_list as $k => $v) {
       $live_settings[$k] = getLiveSettings($v, 'c_rank_combo, b_rank_combo, a_rank_combo, notes_setting_asset, s_rank_combo, difficulty');
       $live_settings[$k]['capital_type'] = 1;
-      $capital = [null, 5, 10, 15, 25];
+      $capital = [null, 5, 10, 15, 25, 25, 25];
       $live_settings[$k]['capital_value'] = $capital[$live_settings[$k]['difficulty']];
     }
     //读取所有曲目的谱面并合到一起
@@ -934,9 +934,9 @@ function live_reward($post) {
   global $user;
   $user['level'] = $newlevel;
   $user['exp'] = $newexp;
-  $param['social_point'] = $newsocial;
-  $param['coin'] = $newcoin;
-  $param['loveca'] = $newloveca;
+  $params['social_point'] = $newsocial;
+  $params['coin'] = $newcoin;
+  $params['loveca'] = $newloveca;
   $ret['after_user_info']=runAction('user','userInfo');
   $ret['after_user_info']=$ret['after_user_info']['user'];
   return $ret;

@@ -18,7 +18,7 @@ if(strUA.indexOf("iphone") >= 0) {
 $uid=$_SESSION['server']['HTTP_USER_ID'];
 $live = getLiveDb();
 
-$difficulty=[null, 'Easy', 'Normal', 'Hard', 'Expert'];
+$difficulty=[null, 'Easy', 'Normal', 'Hard', 'Expert', null, 'Master'];
 
 if(isset($_GET['count']) && is_numeric($_GET['count']) && isset($_GET['difficulty']) && is_numeric($_GET['difficulty']) && isset($_GET['medley']) && is_numeric($_GET['medley'])) {
   $mysql->prepare('DELETE FROM extend_medley_bind WHERE user_id=? and count=? and difficulty=? and medley=?')->execute([$uid, $_GET['count'], $_GET['difficulty'], $_GET['medley']]);

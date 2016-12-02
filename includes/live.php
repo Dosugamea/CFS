@@ -39,6 +39,7 @@ function getLiveSettingsFromCustomLive($id, $rows) {
     }
     $ret = [];
     $cnt = 0;
+    $settings['member_category'] = 2;
     foreach (explode(',', $rows) as $v) {
       $v = trim($v);
       $ret[$v] = $settings[$v];

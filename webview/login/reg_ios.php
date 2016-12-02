@@ -16,28 +16,19 @@ if(strUA.indexOf("iphone") >= 0) {
 </script>
 
 <?php
-require 'config/reg.php';
+require '../../config/reg.php';
+require '../../includes/db.php';
 if(!$allow_reg) {
   echo '<h1>注册已关闭！</h1>';
   die();
 }
 
-if($enable_ssl && $_SERVER['HTTPS'] != 'on') {
-  header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
-  die();
-}
-
 $unit = getUnitDb();
 
-$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
-$token = substr($authorize, 0, strpos($authorize, '&'));
-$username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-if (!$username) {
-  echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
-  die();
-}
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+$username['username'] = isset($_GET['username']) ? $_GET['username'] : '';
 
-require 'config/maintenance.php';
+require '../../config/maintenance.php';
 
 $id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
 $id[] = 0;
@@ -51,6 +42,12 @@ function genpassv2($_pass, $id) {
 }
 
 if(isset($_POST['submit'])) {
+  $token = isset($_POST['token']) ? $_POST['token'] : '';
+  $username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
+  if (!$username || $username['username'] != $_POST['username']) {
+    echo '<h1>非法注册请求（authkey&username验证失败）。请重新进入客户端内注册页，然后重新跳转到本页。</h1>';
+    die();
+  }
   if (!is_numeric($_POST['id'])) {
     echo '<h3><font color="red">错误：ID必须是数字</font></h3>';
   } elseif($_POST['id']>999999999) {
@@ -112,7 +109,7 @@ if(isset($_POST['submit'])) {
       $mysql->exec("INSERT INTO user_deck (user_id,json,center_unit) VALUES ({$_POST['id']}, '$json', $center)");
       
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
-      echo '<h3>注册成功！关闭本窗口即可进入游戏。<br /><br />若关闭窗口后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
+      echo '<h3>注册成功！请重启游戏。<br /><br />若重启游戏后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
       die();
     }
   }
@@ -185,9 +182,10 @@ function verify3() {
 }
 </script>
 
-<h3>用户注册</h3>
-<h3><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行注册！</a></h3>
-<form method="post" action="/webview.php/login/reg" autocomplete="off">
+<h3>PLS用户注册</h3>
+<form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
+authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
+username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
 请输入一个你想使用的ID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
 昵称：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
 密码：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
@@ -195,6 +193,4 @@ function verify3() {
 
 <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?>
 <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="注册" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="/webview.php/login/welcome">返回</a>
 </form>
-<table><tr><td height="200px"></td></tr></table>

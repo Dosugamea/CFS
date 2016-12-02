@@ -18,7 +18,7 @@ if(strUA.indexOf("iphone") >= 0) {
 $uid=$_SESSION['server']['HTTP_USER_ID'];
 $live=getLiveDb();
 
-$difficulty=[null, 'Easy', 'Normal', 'Hard', 'Expert'];
+$difficulty=[null, 'Easy', 'Normal', 'Hard', 'Expert', null, 'Master'];
 
 $liveid=$mysql->query('SELECT notes_setting_asset FROM notes_setting')->fetchAll(PDO::FETCH_COLUMN);
 
@@ -28,7 +28,7 @@ $info=$live->query('
   SELECT name, difficulty, notes_setting_asset, attribute_icon_id FROM festival.event_festival_live_m
   LEFT JOIN live_setting_m ON live_setting_m.live_setting_id=festival.event_festival_live_m.live_setting_id
   LEFT JOIN live_track_m ON live_track_m.live_track_id=live_setting_m.live_track_id
-  WHERE notes_setting_asset in ("'.implode('","', $liveid).'")
+  WHERE notes_setting_asset in ("'.implode('","', $liveid).'") and live_setting_m.live_setting_id < 10000
 ')->fetchAll();
 
 $avail_info = array_map(function ($e) {
@@ -38,7 +38,7 @@ $avail_info = array_map(function ($e) {
 $other_info = $live->query('
   SELECT name, difficulty, notes_setting_asset, attribute_icon_id, 1 as extend FROM live_setting_m
   LEFT JOIN live_track_m ON live_track_m.live_track_id=live_setting_m.live_track_id
-  WHERE notes_setting_asset in ("'.implode('","', array_diff($liveid, $avail_info)).'") and difficulty<5
+  WHERE notes_setting_asset in ("'.implode('","', array_diff($liveid, $avail_info)).'") and difficulty!=5
 ')->fetchAll();
 
 $info = array_merge($info, $other_info);

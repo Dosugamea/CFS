@@ -16,20 +16,10 @@ if(strUA.indexOf("iphone") >= 0) {
 </script>
 
 <?php
-require 'config/reg.php';
+require '../../config/reg.php';
 
-if($enable_ssl && $_SERVER['HTTPS']!='on') {
-  header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
-  die();
-}
-
-$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
-$token = substr($authorize, 0, strpos($authorize, '&'));
-$username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-if (!$username) {
-  echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
-  die();
-}
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+$username['username'] = isset($_GET['username']) ? $_GET['username'] : '';
 
 function genpassv2($_pass, $id) {
   $_pass .= $id;
@@ -40,6 +30,13 @@ function genpassv2($_pass, $id) {
 }
 
 if(isset($_POST['submit'])) {
+  require '../../includes/db.php';
+  $token = isset($_POST['token']) ? $_POST['token'] : '';
+  $username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
+  if (!$username || $username['username'] != $_POST['username']) {
+    echo '<h1>非法登录请求（authkey&username验证失败）。请重新进入客户端内登录页，然后重新跳转到本页。</h1>';
+    die();
+  }
   $pass_v2 = genpassv2($_POST['password'], $_POST['id']);
   $success = $mysql->query('SELECT user_id FROM users WHERE login_password=? AND user_id=?', [$pass_v2, $_POST['id']])->fetch();
   if($success === false) {
@@ -58,7 +55,7 @@ if(isset($_POST['submit'])) {
     )->execute([$username['username'], $username['password'], $pass_v2, $_POST['id']]);
     if ($result) {
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
-      echo '<h3>登录成功！关闭本窗口即可进入游戏。</h3>';
+      echo '<h3>登录成功！请重启游戏。</h3>';
       die();
     } else {
       echo '<h3><font color="red">出现未知错误，请通知开发者！</font></h3>';
@@ -67,13 +64,12 @@ if(isset($_POST['submit'])) {
 }
 ?>
 
-<h3>用户登录</h3>
-<h3><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！</a></h3>
-<form method="post" action="/webview.php/login/login" autocomplete="off">
+<h3>PLS用户登录</h3>
+<form method="post" action="/webview/login/login_ios.php" autocomplete="off">
+authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
+username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
 用户ID：<input type="text" name="id" id="id" style="height:27px" /><br />
 密码：<input type="password" id="pass1" name="password" style="height:27px" /><br />
 <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。</span></h3>'; ?>
 <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="登录" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="/webview.php/login/welcome">返回</a>
 </form>
-<table><tr><td height="200px"></td></tr></table>

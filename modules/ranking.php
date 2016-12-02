@@ -2,6 +2,7 @@
 //ranking.php 排名相关module
 require_once('includes/live.php');
 require_once('includes/unit.php');
+require_once('includes/extend_avatar.php');
 //ranking/live 曲目排名
 function ranking_live($post) {
   global $mysql, $params;
@@ -32,21 +33,11 @@ function ranking_live($post) {
   if (empty($ret['items'])) {
     return $ret;
   }
-  $avatar = [];
-  foreach ($mysql->query('SELECT * from user_params where user_id in ('.implode(',',$user_list).') and param in("enable_card_switch", "extend_avatar", "extend_avatar_is_rankup")') as $v) {
-    if (!isset($avatar[$v['user_id']])) {
-      $avatar[$v['user_id']] = [];
-    }
-    $avatar[$v['user_id']][$v['param']] = (int)$v['value'];
-  }
+  loadExtendAvatar($user_list);
   $unit_detail = GetUnitDetail($center_units);
   foreach($ret['items'] as $k => &$v) {
     $v['center_unit_info'] = $unit_detail[$k];
-    $avatar_info = $avatar[$v['user_data']['user_id']];
-    if (isset($avatar_info['extend_avatar']) && (!$params['card_switch'] || ($params['card_switch'] && !$avatar_info['enable_card_switch']))) {
-      $v['center_unit_info']['unit_id'] = $avatar_info['extend_avatar'];
-      $v['center_unit_info']['is_rank_max'] = $avatar_info['extend_avatar_is_rankup'];
-    }
+    setExtendAvatar($v['user_data']['user_id'], $v['center_unit_info']);
   }
   return $ret;
 }
@@ -100,21 +91,11 @@ function ranking_player($post) {
   if (empty($ret['items'])) {
     return $ret;
   }
-  $avatar = [];
-  foreach ($mysql->query('SELECT * from user_params where user_id in ('.implode(',',$user_list).') and param in("enable_card_switch", "extend_avatar", "extend_avatar_is_rankup")') as $v) {
-    if (!isset($avatar[$v['user_id']])) {
-      $avatar[$v['user_id']] = [];
-    }
-    $avatar[$v['user_id']][$v['param']] = (int)$v['value'];
-  }
+  loadExtendAvatar($user_list);
   $unit_detail = GetUnitDetail($center_units);
   foreach($ret['items'] as $k => &$v) {
     $v['center_unit_info'] = $unit_detail[$k];
-    $avatar_info = $avatar[$v['user_data']['user_id']];
-    if (isset($avatar_info['extend_avatar']) && (!$params['card_switch'] || ($params['card_switch'] && !$avatar_info['enable_card_switch']))) {
-      $v['center_unit_info']['unit_id'] = $avatar_info['extend_avatar'];
-      $v['center_unit_info']['is_rank_max'] = $avatar_info['extend_avatar_is_rankup'];
-    }
+    setExtendAvatar($v['user_data']['user_id'], $v['center_unit_info']);
   }
   return $ret;
 }

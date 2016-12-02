@@ -1,5 +1,6 @@
 <?php
 //battle.php SCORE MATCH相关功能
+require_once('includes/extend_avatar.php');
 //battle/battleInfo 登录时请求的SCORE MATCH信息（若返回空，SM活动页面为空白）
 function battle_battleInfo() {
   return json_decode('[{
@@ -28,6 +29,10 @@ function battle_battleInfo() {
                 "capital_value": 25
             }, {
                 "difficulty": 5,
+                "capital_type": 1,
+                "capital_value": 25
+            }, {
+                "difficulty": 6,
                 "capital_type": 1,
                 "capital_value": 25
             }]
@@ -72,6 +77,7 @@ function GetRoomData($id, $ready_only=true) {
     $userdata['level'] = (int)$user_info['level'];
     $eventdata['total_event_point'] = 0;
     $eventdata['event_rank'] = 0;
+    $user_list[] = $userdata['user_id'];
     $center_units[] = $user_info['center_unit'];
     $chat = [];
     if ($ret['result']['event_chat_id_'.$i] > 0) {
@@ -82,15 +88,11 @@ function GetRoomData($id, $ready_only=true) {
   array_multisort($sort, $common_ret['matching_user'], $center_units);
   require_once 'includes/unit.php';
   $unit_detail = GetUnitDetail($center_units);
+  loadExtendAvatar($user_list);
   foreach($common_ret['matching_user'] as $k => &$v) {
     $v['center_unit_info'] = $unit_detail[$k];
-    if (!$params['card_switch']) {
-      $use_avatar = $mysql->query('SELECT * FROM extend_avatar WHERE user_id='.$v['user_info']['user_id'])->fetch();
-      if ($use_avatar) {
-        $v['center_unit_info']['unit_id'] = (int)$use_avatar['unit_id'];
-        $v['center_unit_info']['is_rank_max'] = (bool)$use_avatar['rankup'];
-      }
-    }
+    $v['event_battle_rating_status'] =['rating' => 0, 'rating_rank' => 0, 'evaluation' => 0];
+    setExtendAvatar($v['user_info']['user_id'], $v['center_unit_info']);
   }
   $common_ret['battle_player_num'] = count($common_ret['matching_user']);
   $common_ret['capacity'] = $common_ret['battle_player_num'];
@@ -151,6 +153,7 @@ function battle_matching($post) {
       break;
     }
   }
+  $mysql->query('replace into tmp_battle_user_room values(?, ?)', [$uid, $next_id_to_join]);
   $data = GetRoomData($next_id_to_join, false);
   $ret = $data['ret'];
   if (!isset($info)) {
@@ -172,14 +175,20 @@ function battle_battleDeckList() {
   return runAction('live','deckList',['ScoreMatch'=>true]);
 }
 
+function getMyRoom() {
+  global $uid, $mysql;
+  return $mysql->query('select room_id from tmp_battle_user_room where user_id=?', [$uid])->fetchColumn();
+}
+
 function battle_startWait($post) {
   global $mysql, $uid;
-  $room = GetRoomData($post['event_tmp_battle_room_id']);
+  $room_id = getMyRoom();
+  $room = GetRoomData($room_id);
   $ret = $room['ret'];
   if ($post['chat_id'] != 0) {
     $column_name = 'event_chat_id_'.$room['me'];
     $column_name2 = 'player'.$room['me'];
-    $mysql->exec("UPDATE tmp_battle_room SET $column_name={$post['chat_id']} WHERE battle_event_room_id={$post['event_tmp_battle_room_id']} AND $column_name2=$uid");
+    $mysql->exec("UPDATE tmp_battle_room SET $column_name={$post['chat_id']} WHERE battle_event_room_id={$room_id} AND $column_name2=$uid");
     $ret['matching_user'][$room['me']-1]['chat']['event_chat_id'] = (string)$post['chat_id'];
   }
   $ret['polling_interval'] = 2;
@@ -193,7 +202,7 @@ function battle_startWait($post) {
     if($past_time > 55 || ($ret['battle_player_num'] == 4 && $past_time > 15)){
       $ret['start_flag'] = true;
       if ($room['result']['start_flag'] == 0)
-        $mysql->prepare('UPDATE tmp_battle_room set start_flag=1, event_chat_id_1="", event_chat_id_2="", event_chat_id_3="", event_chat_id_4="" WHERE battle_event_room_id=?')->execute([$post['event_tmp_battle_room_id']]);
+        $mysql->prepare('UPDATE tmp_battle_room set start_flag=1, event_chat_id_1="", event_chat_id_2="", event_chat_id_3="", event_chat_id_4="" WHERE battle_event_room_id=?')->execute([$room_id]);
     } else {
       $ret['capacity'] = 4;
     }
@@ -203,15 +212,17 @@ function battle_startWait($post) {
 
 function battle_liveStart($post) {
   global $mysql;
+  $room_id = getMyRoom();
   $stmt = $mysql->prepare('SELECT live_difficulty_id,random_switch FROM tmp_battle_room WHERE battle_event_room_id=?');
-  $stmt->execute([$post['event_tmp_battle_room_id']]);
+  $stmt->execute([$room_id]);
   $id = $stmt->fetch();
   return runAction('live','play',['live_difficulty_id'=>$id[0],'unit_deck_id'=>$post['unit_deck_id'],'random_switch'=>$id[1], 'ScoreMatch' => true]);
 }
 
 function battle_liveEnd($post) {
   global $uid, $mysql;
-  $room = GetRoomData($post['event_tmp_battle_room_id']);
+  $room_id = getMyRoom();
+  $room = GetRoomData($room_id);
   $post['live_difficulty_id'] = $room['ret']['live_difficulty_id'];
   $post['ScoreMatch'] = true;
   $reward = runAction('live','reward',$post);
@@ -222,20 +233,21 @@ function battle_liveEnd($post) {
   $result['is_full_combo'] = (($reward['combo_rank'] == 1) ? true : false);
   $reward = json_encode($reward);
   $result = json_encode($result);
-  $mysql->prepare('INSERT INTO `tmp_battle_result`(`user_id`, `battle_event_room_id`, `result`, `reward`) VALUES (?,?,?,?)')->execute([$uid, $post['event_tmp_battle_room_id'], $result, $reward]);
+  $mysql->prepare('INSERT INTO `tmp_battle_result`(`user_id`, `battle_event_room_id`, `result`, `reward`) VALUES (?,?,?,?)')->execute([$uid, $room_id, $result, $reward]);
   $column_name = 'ended_flag_'.$room['me'];
-  $mysql->exec("UPDATE `tmp_battle_room` SET $column_name=1,timestamp=".time()." WHERE battle_event_room_id=".$post['event_tmp_battle_room_id']);
+  $mysql->exec("UPDATE `tmp_battle_room` SET $column_name=1,timestamp=".time()." WHERE battle_event_room_id=".$room_id);
   return [];
 }
 
 function battle_endWait($post) {
   global $mysql, $uid;
-  $room = GetRoomData($post['event_tmp_battle_room_id']);
+  $room_id = getMyRoom();
+  $room = GetRoomData($room_id);
   $ret = $room['ret'];
   if ($post['chat_id'] != 0) {
     $column_name = 'event_chat_id_'.$room['me'];
     $column_name2 = 'player'.$room['me'];
-    $mysql->exec("UPDATE tmp_battle_room SET $column_name={$post['chat_id']} WHERE battle_event_room_id={$post['event_tmp_battle_room_id']} AND $column_name2=$uid");
+    $mysql->exec("UPDATE tmp_battle_room SET $column_name={$post['chat_id']} WHERE battle_event_room_id={$room_id} AND $column_name2=$uid");
     $ret['matching_user'][$room['me']-1]['chat']['event_chat_id'] = (string)$post['chat_id'];
   }
   $ret['polling_interval'] = 2;
@@ -256,10 +268,11 @@ function battle_endWait($post) {
 
 function battle_endRoom($post) {
   global $mysql, $uid;
-  $room = GetRoomData($post['event_tmp_battle_room_id']);
+  $room_id = getMyRoom();
+  $room = GetRoomData($room_id);
   $ret = $room['ret'];
   $stmt = $mysql->prepare('SELECT user_id, result, reward FROM tmp_battle_result WHERE battle_event_room_id=?');
-  $stmt->execute([$post['event_tmp_battle_room_id']]);
+  $stmt->execute([$room_id]);
   while ($result = $stmt->fetch()) {
     if ($result['user_id'] == $uid) {
       $reward = json_decode($result['reward'], true);
@@ -307,9 +320,10 @@ function battle_endRoom($post) {
 
 function battle_gameover($post) {
   global $mysql;
-  $room = GetRoomData($post['event_tmp_battle_room_id']);
+  $room_id = getMyRoom();
+  $room = GetRoomData($room_id);
   $column_name = 'ended_flag_'.$room['me'];
-  $mysql->exec("UPDATE `tmp_battle_room` SET $column_name=1,timestamp=".time()." WHERE battle_event_room_id=".$post['event_tmp_battle_room_id']);
+  $mysql->exec("UPDATE `tmp_battle_room` SET $column_name=1,timestamp=".time()." WHERE battle_event_room_id=".$room_id);
   $ret = json_decode('{
     "event_info": {
     "event_id": 35,

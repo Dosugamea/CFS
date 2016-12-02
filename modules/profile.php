@@ -1,6 +1,7 @@
 <?php
 //profile.php 显示用户信息
-require_once 'includes/unit.php';
+require_once('includes/unit.php');
+require_once('includes/extend_avatar.php');
 //profile/liveCnt 返回用户clear各难度谱面的数目
 function profile_liveCnt($post) {
   global $mysql;
@@ -14,17 +15,18 @@ function profile_liveCnt($post) {
     ['difficulty'=>2,'clear_cnt'=>0],
     ['difficulty'=>3,'clear_cnt'=>0],
     ['difficulty'=>4,'clear_cnt'=>0],
+    ['difficulty'=>5,'clear_cnt'=>0],
     ['difficulty'=>6,'clear_cnt'=>0]
   ];
   $allcount = $live->query('
     SELECT count(notes_setting_asset) as clear_cnt,difficulty FROM
-    (SELECT live_setting_id FROM normal_live_m UNION SELECT live_setting_id FROM special_live_m) all_live_m
-    LEFT JOIN live_setting_m ON live_setting_m.live_setting_id=all_live_m.live_setting_id
+    (SELECT notes_setting_asset, min(difficulty) difficulty FROM live_setting_m group by notes_setting_asset) a
     WHERE notes_setting_asset in ("'.implode('","',$clear_id).'") GROUP BY difficulty
   ');
   while($cnt = $allcount->fetch()) {
     $result[$cnt['difficulty']-1]['clear_cnt'] = (int)$cnt['clear_cnt'];
   }
+  $result[4]['clear_cnt'] = $result[5]['clear_cnt'];
   return $result;
 }
 
@@ -58,17 +60,10 @@ function profile_profileInfo($post) {
   $time = $mysql->query('SELECT elapsed_time_from_login FROM users WHERE user_id='.$post['user_id'])->fetchColumn();
   $ret['user_info'] = $ret2;
   $ret['user_info']['elapsed_time_from_login'] = (($time === false) ? 'Unknown' : $time);
-  //TODO：有头像的不先读卡片信息
   $center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn());
   $ret['center_unit_info'] = $center;
-  $avatar_info = [];
-  foreach ($mysql->query('SELECT param, value from user_params where user_id='.$post['user_id'].' and param in("enable_card_switch", "extend_avatar", "extend_avatar_is_rankup")') as $v) {
-    $avatar_info[$v['param']] = (int)$v['value'];
-  }
-  if (isset($avatar_info['extend_avatar']) && (!$params['card_switch'] || ($params['card_switch'] && !$avatar_info['enable_card_switch']))) {
-    $ret['center_unit_info']['unit_id'] = $avatar_info['extend_avatar'];
-    $ret['center_unit_info']['is_rank_max'] = $avatar_info['extend_avatar_is_rankup'];
-  }
+  loadExtendAvatar([$post['user_id']]);
+  setExtendAvatar($post['user_id'], $ret['center_unit_info']);
   $ret['is_alliance'] = false;
   $ret['friend_status'] = 0;
   if (!$ret['user_info']['award']) $ret['user_info']['award'] = 1;

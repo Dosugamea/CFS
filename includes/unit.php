@@ -81,7 +81,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_am
             $ret['cool'] = $card['cool_max'] - $level['cool_diff'];
             $ret['skill'] = 0;
         } else {
-            unset($ret['rarity'], $ret['center_skill']);
+            unset($ret['center_skill']);
         }
         unset($ret['user_id']);
         foreach ($ret as &$v3) {

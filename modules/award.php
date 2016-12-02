@@ -5,7 +5,7 @@ function award_awardInfo() {
     $user['award'] = 1;
   }
   $ret['award_info'] = [];
-  for($i = 1; $i <= 23; $i++) {
+  for($i = 1; $i <= 29; $i++) {
     $ret['award_info'][]=[
       'award_id'=>$i,
       'is_set'=>$i==$user['award'],
