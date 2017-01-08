@@ -1,0 +1,1 @@
+ALTER TABLE `programmed_live` ADD `category` VARCHAR(255) NULL DEFAULT NULL AFTER `notes_setting_asset`; 

@@ -108,7 +108,7 @@ function unit_merge($post) {
   pl_assert(count($merge_unit_id_all) == count($merge_id), '练习错误：找不到陪练卡片。如果你是在通信错误后看到这个错误，说明练习已经成功了，否则请报告给作者。');
   $get_seal_list = [];
   foreach ($merge_unit_id_all as $merge_unit_id) {
-    $merge_unit = $unit->query('SELECT unit_level_up_pattern_id,default_unit_skill_id,rarity,attribute_id,disable_rank_up,normal_live_asset FROM unit_m WHERE unit_id=' . $merge_unit_id['unit_id'])->fetch();
+    $merge_unit = $unit->query('SELECT unit_level_up_pattern_id,default_unit_skill_id,rarity,attribute_id,disable_rank_up,normal_icon_asset FROM unit_m WHERE unit_id=' . $merge_unit_id['unit_id'])->fetch();
     $merge_exp_cost = $unit->query('SELECT merge_exp,merge_cost FROM unit_level_up_pattern_m WHERE unit_level_up_pattern_id=' . $merge_unit['unit_level_up_pattern_id'] . ' and next_exp>=' . $merge_unit_id['exp'] . ' limit 1')->fetch();
     if ($merge_unit['attribute_id'] == $base_unit['attribute_id'] || $merge_unit['attribute_id'] == 5) {
       $merge_exp_cost['merge_exp'] = $merge_exp_cost['merge_exp'] / 5 * 6;
@@ -124,7 +124,7 @@ function unit_merge($post) {
     if ($merge_unit['default_unit_skill_id'] !== null && $merge_unit['default_unit_skill_id'] == $base_unit['default_unit_skill_id']) {
       $total_skill++;
     }
-    if ($merge_unit['disable_rank_up'] == 0 && strpos($merge_unit['normal_live_asset'], 'rankup') === false) {
+    if ($merge_unit['disable_rank_up'] == 0 && strpos($merge_unit['normal_icon_asset'], 'rankup') === false) {
       $get_seal_list[] = (int)$merge_unit['rarity'];
       if ($merge_unit_id['rank'] == 2) {
       $get_seal_list[] = (int)$merge_unit['rarity'];
@@ -168,6 +168,7 @@ function unit_merge($post) {
   $ret['after'] = GetUnitDetail(array($merge_base_id))[0];
   $ret['after_user_info'] = runAction('user', 'userInfo')['user'];
   $ret['get_exchange_point_list'] = addExchangePoint($get_seal_list);
+  $ret['unit_removable_skill'] = [];
   return $ret;
 }
 //unit/rankUp 特别练习
@@ -193,7 +194,11 @@ function unit_rankUp($post) {
   $ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
   $ret['after_user_info'] = runAction('user', 'userInfo')['user'];
   $ret['get_exchange_point_list'] = array();
+  $ret['unit_removable_skill'] = [];
   return $ret;
+}
+function unit_exchangePointRankUp($post) {
+  trigger_error('exchangePointRankUp：本功能暂未实现！');
 }
 //unit/sale 转部
 function unit_sale($post) {
@@ -208,14 +213,14 @@ function unit_sale($post) {
   $sell_card_id = $mysql->query('SELECT unit_owning_user_id, exp, unit_id, rank FROM unit_list WHERE unit_list.unit_owning_user_id in(' . implode(', ', $post['unit_owning_user_id']) . ')');
   $get_seal_list = [];
   while ($sell_card = $sell_card_id->fetch()) {
-    $unit_detail = $unit->query('SELECT sale_price, rarity, disable_rank_up, normal_live_asset FROM unit_level_up_pattern_m,unit_m WHERE unit_m.unit_id=' . $sell_card['unit_id'] . ' and unit_level_up_pattern_m.unit_level_up_pattern_id=unit_m.unit_level_up_pattern_id and next_exp>=' . $sell_card['exp'] . ' limit 1')->fetch();
+    $unit_detail = $unit->query('SELECT sale_price, rarity, disable_rank_up, normal_icon_asset FROM unit_level_up_pattern_m,unit_m WHERE unit_m.unit_id=' . $sell_card['unit_id'] . ' and unit_level_up_pattern_m.unit_level_up_pattern_id=unit_m.unit_level_up_pattern_id and next_exp>=' . $sell_card['exp'] . ' limit 1')->fetch();
     $sale_price = $unit_detail['sale_price'];
     $total_money += $sale_price;
     $ret['detail'][] = array('unit_owning_user_id' => (int) $sell_card['unit_owning_user_id'], 'unit_id' => (int) $sell_card['unit_id'], 'price' => (int) $sale_price);
-    if ($unit_detail['disable_rank_up'] == 0 && strpos($unit_detail['normal_live_asset'], 'rankup') === false) {
+    if ($unit_detail['disable_rank_up'] == 0 && strpos($unit_detail['normal_icon_asset'], 'rankup') === false) {
       $get_seal_list[] = (int)$unit_detail['rarity'];
       if ($sell_card['rank'] == 2) {
-        $get_seal_list[] = (int)$merge_unit['rarity'];
+        $get_seal_list[] = (int)$unit_detail['rarity'];
       }
     }
   }
@@ -226,6 +231,7 @@ function unit_sale($post) {
     $mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id in(' . implode(', ', $post['unit_owning_user_id']) . ')');
     $ret['after_user_info'] = runAction('user', 'userInfo')['user'];
     $ret['get_exchange_point_list'] = addExchangePoint($get_seal_list);
+    $ret['unit_removable_skill'] = [];
     return $ret;
   } else {
     return array();

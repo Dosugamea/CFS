@@ -9,7 +9,6 @@ INSERT INTO user_params SELECT user_id, 'enable_card_switch', enable_card_switch
 INSERT INTO user_params SELECT user_id, 'card_switch', card_switch FROM user_perm;
 INSERT INTO user_params SELECT user_id, 'allow_test_func', allow_test_func FROM user_perm;
 INSERT INTO user_params SELECT user_id, 'random_switch', random_switch FROM user_perm;
-INSERT INTO user_params SELECT user_id, 'aqours_flag', 0 FROM user_perm;
 INSERT INTO user_params SELECT user_id, 'item1', ticket FROM user_info;
 INSERT INTO user_params SELECT user_id, 'item2', social_point FROM user_info;
 INSERT INTO user_params SELECT user_id, 'item3', game_coin FROM user_info;

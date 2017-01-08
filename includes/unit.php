@@ -18,7 +18,7 @@ function addUnit($unit_id, $cnt = 1, $detail = false) {
 }
 
 //GetUnitDetail函数：获取指定卡片的详细信息。客户端不会调用此函数。
-function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_amount = false) {
+function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preload_all = false) {
     if (!$unit_owning_user_id) {
         return array();
     }
@@ -31,7 +31,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_am
     $unit = getUnitDb();
     $ret2 = array();
     $res = $mysql->query('SELECT * FROM unit_list WHERE unit_owning_user_id in(' . implode(', ', $unit_owning_user_id) . ')');
-    if ($big_amount) {
+    if ($preload_all) {
         $card_cache = array();
         $level_cache = array();
         foreach ($unit->query('SELECT * FROM unit_m')->fetchAll() as $v) {
@@ -45,19 +45,26 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_am
         }
     }
     while ($ret = $res->fetch(PDO::FETCH_ASSOC)) {
-        if ($big_amount) {
+        if ($preload_all) {
             $card = $card_cache[$ret['unit_id']];
-            foreach ($level_cache[$card['unit_level_up_pattern_id']] as $v) {
-                if ($v['next_exp'] > $ret['exp'] || $v['next_exp'] == 0) {
-                    $level = $v;
-                    break;
-                }
+            if (!isset($level_cache[$card['unit_level_up_pattern_id']])) {
+                $level = ['unit_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
+            } else {
+              foreach ($level_cache[$card['unit_level_up_pattern_id']] as $v) {
+                  if ($v['next_exp'] > $ret['exp'] || $v['next_exp'] == 0) {
+                      $level = $v;
+                      break;
+                  }
+              }
             }
         } else {
             $card = $unit->query('SELECT * FROM unit_m WHERE unit_id=' . $ret['unit_id'])->fetch();
             $level = $unit->query('SELECT * FROM unit_level_up_pattern_m WHERE unit_level_up_pattern_id=' . $card['unit_level_up_pattern_id'] . ' and next_exp>' . $ret['exp'] . ' limit 1')->fetch();
             if (empty($level)) {
                 $level = $unit->query('SELECT * FROM unit_level_up_pattern_m WHERE unit_level_up_pattern_id=' . $card['unit_level_up_pattern_id'] . ' and next_exp=0')->fetch();
+            }
+            if (empty($level)) {
+                $level = ['unit_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
             }
         }
         $ret['favorite_flag'] = (bool) $ret['favorite_flag'];
@@ -73,6 +80,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_am
         $ret['next_exp'] = $level['next_exp'];
         $ret['center_skill'] = $card['default_leader_skill_id'];
         $ret['rarity'] = (int) $card['rarity'];
+        $ret['display_rank'] = min($ret['rank'], $ret['display_rank']);
         if ($return_attr_value) {
             $ret['hp'] = $card['hp_max'] - $level['hp_diff'];
             $ret['attribute'] = $card['attribute_id'];
@@ -99,7 +107,6 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $big_am
         $ret['is_removable_skill_capacity_max'] = false;
         $ret['unit_removable_skill_capacity'] = 0;
         $ret['unit_skill_exp'] = 0;
-        $ret['display_rank'] = $ret['rank'] == 1 ? 1 : (int)$ret['display_rank'];
         $ret2[] = $ret;
     }
     if ($noarray) {

@@ -131,7 +131,7 @@ function login_unitSelect($post) {
   }
   $mysql->exec("INSERT IGNORE INTO album (user_id,unit_id) SELECT DISTINCT $uid, unit_id FROM unit_list WHERE user_id = {$uid}");
   //修正特典卡的rank
-  $default_rankup = $unit->query('select unit_id from unit_m where unit_m.normal_live_asset like "%rankup%"')->fetchAll(PDO::FETCH_COLUMN);
+  $default_rankup = $unit->query('select unit_id from unit_m where unit_m.normal_icon_asset like "%rankup%"')->fetchAll(PDO::FETCH_COLUMN);
   $mysql->exec('UPDATE unit_list SET rank=2 WHERE user_id='.$uid.' AND unit_id in('.implode(', ', $default_rankup).')');
   $mysql->exec('UPDATE album SET rank_max_flag=1 WHERE user_id='.$uid.' AND unit_id in('.implode(', ', $default_rankup).')');
   $tmp2['unit_deck_detail'] = $unit_deck_detail;

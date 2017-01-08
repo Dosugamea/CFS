@@ -170,7 +170,7 @@ function secretBox_all() {
   }
   $secretbox_info = $mysql->query('select *, to_days(CURRENT_TIMESTAMP) - to_days(last_scout_time) reset_free_gacha from secretbox where user_id=?', [$uid])->fetch();
   if (!$secretbox_info) {
-    $mysql->query('insert into secretbox (user_id) values (?)', [$uid]);
+    $mysql->query('insert into secretbox (user_id, got_free_gacha_list) values (?, "")', [$uid]);
     $secretbox_info = $mysql->query('select *, 0 as reset_free_gacha from secretbox where user_id=?', [$uid])->fetch();
   }
   if ($secretbox_info['reset_free_gacha']) {
@@ -222,7 +222,14 @@ function secretBox_all() {
         'multi_type' => 0,
         'multi_count' => 11,
         'is_pay_cost' => true,
-        'is_pay_multi_cost' => true
+        'is_pay_multi_cost' => true,
+        'pon_count' => 0,
+        'pon_upper_limit' => 0,
+        'display_type' => 0,
+        'step' => null,
+        'term_count' => null,
+        'step_up_bonus_asset_path' => null,
+        'step_up_bonus_bonus_item_list' => null
       ];
       if ($page['page_layout'] == 0) {
         $box_base['title_asset'] = isset($page['title_asset']) ? $page['title_asset'] : 'assets/image/ui/secretbox/se_etc_11.png';
@@ -340,6 +347,14 @@ function secretBox_all() {
           $ret_box['pon_count'] = 0;
           $ret_box['pon_upper_limit'] = 0;
           $ret_box['display_type'] = 0;
+          //先让它能进去，后做支持
+          $ret_box['all_cost'] = [$ret_box['cost']];
+          $ret_box['all_cost'][0]['multi_type'] = $ret_box['multi_type'];
+          $ret_box['all_cost'][0]['multi_count'] = $ret_box['multi_count'];
+          $ret_box['all_cost'][0]['is_pay_cost'] = $ret_box['is_pay_cost'];
+          $ret_box['all_cost'][0]['is_pay_multi_cost'] = $ret_box['is_pay_multi_cost'];
+          $ret_box['all_cost'][0]['within_single_limit'] = $ret_box['within_single_limit'];
+          $ret_box['all_cost'][0]['within_multi_limit'] = $ret_box['within_multi_limit'];
           return $ret_box;
         }
       };

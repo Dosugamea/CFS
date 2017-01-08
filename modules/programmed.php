@@ -8,7 +8,7 @@ function programmed_getCustomLiveList($post = []) {
   global $mysql, $uid, $params;
   $list = array_map(function ($e) use ($post) {
     $live = json_decode($e['live_json'], true);
-    if ($live['stage_level'] > 13) {
+    if ($post['api_ver'] < 161211 || $live['stage_level'] > 13) { //4.1初版客户端，不显示星数
       $live['name'] .= ' ★'.$live['stage_level'];
     }
     return [
@@ -16,7 +16,8 @@ function programmed_getCustomLiveList($post = []) {
       'dl' => $e['dl'] ? json_decode($e['dl']) : false,
       'live' => $live,
       'notes_setting_asset' => $e['notes_setting_asset'],
-      'status' => 1
+      'status' => 1,
+      'category' => $e['category'] ? $e['category'] : 'Custom Live',
     ];
   }, $mysql->query('select * from programmed_live')->fetchAll());
   if ($params['allow_test_func'] == 0) {

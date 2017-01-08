@@ -19,7 +19,7 @@ function addExchangePoint($arr) {
     $ret = [];
     foreach([2 => 'seal1', 3 => 'seal2', 4 => 'seal4', 5 => 'seal3'] as $k => $v) {
       if ($params[$v] - $before_seal[$v] > 0) {
-        $ret[] = ['rarity' => $k, 'exchange_point' => $seal1[$v] - $before_seal[$v]];
+        $ret[] = ['rarity' => $k, 'exchange_point' => $params[$v] - $before_seal[$v]];
       }
     }
     return $ret;

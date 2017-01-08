@@ -12,7 +12,7 @@ function award_awardInfo() {
       "insert_date"=>"2013-04-15 00:00:00"
     ];
   }
-  for($i = 901; $i <= 901; $i++) {
+  for($i = 901; $i <= 902; $i++) {
     $ret['award_info'][]=[
       'award_id'=>$i,
       'is_set'=>$i==$user['award'],

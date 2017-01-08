@@ -69,12 +69,18 @@ function user_getNavi() {
   if (!$params['card_switch']) {
     $navi = 10;
   } else {
-    $navi = $mysql->query('SELECT center_unit FROM user_deck WHERE user_id=' . $uid)->fetchColumn();
+    $navi = isset($params['navi']) ? $params['navi'] : $mysql->query('SELECT center_unit FROM user_deck WHERE user_id=' . $uid)->fetchColumn();
   }
   return ['user' => [
     'user_id' => $uid,
     'unit_owning_user_id' => (int)$navi
   ]];
+}
+
+function user_changeNavi($post) {
+  global $params;
+  $params['navi'] = $post['unit_owning_user_id'];
+  return [];
 }
 
 ?>
