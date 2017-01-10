@@ -38,7 +38,7 @@ Check `upgrade_scripts` folder to see if there is any schema changes. If so, imp
 # Troubleshooting
 **Q: A Japanese message pop up saying I need to update the client version.**
 
-A: You connected to the official server. Check your HOSTS to see if you pointed `prod-jp.lovelive.ge.klabgames.net` and `prod2-jp.lovelive.ge.klabgames.net` to your server IP correctly. Turn off any proxies, network accelerators, etc. If you are using mobile network, please check your APN settings: If you are using CMWAP/UNIWAP/3GWAP/CTWAP, switch to CMNET/UNINET/3GNET/CTNET instead.
+A: You connected to the official server. Check your HOSTS to see if you pointed `prod-jp.lovelive.ge.klabgames.net` and `prod-2-jp.lovelive.ge.klabgames.net` to your server IP correctly. Turn off any proxies, network accelerators, etc. If you are using mobile network, please check your APN settings: If you are using CMWAP/UNIWAP/3GWAP/CTWAP, switch to CMNET/UNINET/3GNET/CTNET instead.
 
 **Q: "服务器爆炸了 (Server Bombed)" pops out with error info xxxxxx**
 
