@@ -1,5 +1,5 @@
 <meta charset='utf-8' />
-<style>body{font-size:2em;}table{font-size:1em;}</style>
+
 <SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
@@ -14,7 +14,10 @@ if(strUA.indexOf("iphone") >= 0) {
   document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
 <?php
 require 'config/reg.php';
 
@@ -46,7 +49,7 @@ if(isset($_POST['submit'])) {
     $pass_v1 = sha1($_POST['password']);
     $success = $mysql->query('SELECT user_id FROM users WHERE login_password=? AND user_id=?', [$pass_v1, $_POST['id']])->fetch();
     if($success === false) {
-      echo '<h3><font color="red">错误：您输入的ID或密码有误</font></h3>';
+      echo '<h3><font color="red">错误：您输入的ID或密码有误 <br> Error: You Input The Wrong UserID or Password</font></h3>';
     } else {
       $mysql->query('update users set login_password=? where login_password=? AND user_id=?', [$pass_v2, $pass_v1, $_POST['id']]);
     }
@@ -58,22 +61,58 @@ if(isset($_POST['submit'])) {
     )->execute([$username['username'], $username['password'], $pass_v2, $_POST['id']]);
     if ($result) {
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
-      echo '<h3>登录成功！关闭本窗口即可进入游戏。</h3>';
+      echo '<h3>登录成功！关闭本窗口即可进入游戏。<br> Login Success! Plz Close This Window</h3>';
       die();
     } else {
-      echo '<h3><font color="red">出现未知错误，请通知开发者！</font></h3>';
+      echo '<h3><font color="red">出现未知错误，请通知开发者！<br> Unknow Error! Plz mine the Admin</font></h3>';
     }
   }
 }
 ?>
+<DIV id="wrapper_news" style="width: 100% !important">
+<div class="title_news fs34" style="width:100%">
+  <span class="ml30">登录 Login
+  </span><a id="back" href="/webview.php/login/welcome">
+  <div class="topback">
+    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+  </div>
+  </a>
+</div>
+<div class="content_news_all" style="margin-top:0">
+  <div id="box1">
+    <div class="title_news_all fs30">
+      <span class="ml40">iOS登陆专用链接(iOS special login link)</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+        <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>iOS plz use this to Login,If you click the text eara under the this box</a>
+      </div>
+    </div>
+    <div class="title_news_all fs30">
+      <span class="ml40">普通登陆(Normal Login)</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+       <form method="post" action="/webview.php/login/login" autocomplete="off">
+          用户ID UserID：<input type="text" name="id" id="id" style="height:27px" /><br />
+          密码 Password：<input type="password" id="pass1" name="password" style="height:27px" /><br />
+        </form>
+        <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
+        <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<span style="color:red;font-size:2vw;">*警告：将通过不安全的连接发送您的密码*</span>'; ?>
+      </div>
+    </div>
+  </div>
+</div>
 
-<h3>用户登录</h3>
-<h3><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！</a></h3>
-<form method="post" action="/webview.php/login/login" autocomplete="off">
+
+<!--<form method="post" action="/webview.php/login/login" autocomplete="off">
 用户ID：<input type="text" name="id" id="id" style="height:27px" /><br />
 密码：<input type="password" id="pass1" name="password" style="height:27px" /><br />
 <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。</span></h3>'; ?>
 <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="登录" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/webview.php/login/welcome">返回</a>
 </form>
-<table><tr><td height="200px"></td></tr></table>
+<table><tr><td height="200px"></td></tr></table>-->
+
+
+</DIV>

@@ -1,8 +1,12 @@
 <!DOCTYPE html PUBLIC "" ""><HTML><HEAD><META content="IE=11.0000" 
 http-equiv="X-UA-Compatible">
  
-<META charset="utf-8"> <TITLE>お知らせ一覧</TITLE> <LINK href="/resources/bstyle.css" 
-rel="stylesheet"> <LINK href="/resources/news.css" rel="stylesheet"> 
+<META charset="utf-8"> <TITLE>お知らせ一覧</TITLE> 
+<TITLE>news 
+detail</TITLE> 
+<LINK href="/resources/bstyle.css" rel="stylesheet"> 
+<LINK href="/resources/news.css" rel="stylesheet"> 
+<link href="/resources/css/style.css" rel="stylesheet">
 <SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
@@ -37,7 +41,7 @@ window.onload = function() {
   tabItem.className += " open";
 }
 </SCRIPT>
- 
+ <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <STYLE type="text/css">
 .note img{
   margin-left: -12px;
@@ -81,11 +85,11 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
      
 <UL id="tabs">
   <LI class="fs30" id="newstab1" name="box1"><A style="color: rgb(255, 255, 255);" 
-  href="/webview.php/announce/announce?disp_faulty=0">通知</A></LI>
+  href="/webview.php/announce/announce?disp_faulty=0">通知 News</A></LI>
   <LI class="fs30" id="newstab2" name="box2"><A style="color: rgb(255, 255, 255);" 
-  href="/webview.php/announce/announce?disp_faulty=1">游戏更新</A></LI>
+  href="/webview.php/announce/announce?disp_faulty=1">游戏更新 Update</A></LI>
   <LI class="fs30" id="newstab3" name="box3"><A style="color: rgb(255, 255, 255);" 
-  href="/webview.php/announce/index">返回主页</A></LI></UL></DIV>
+  href="/webview.php/announce/index">返回主页 Back</A></LI></UL></DIV>
 <DIV class="content_news_all">
 <SCRIPT type="text/javascript">
 if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {

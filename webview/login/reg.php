@@ -1,4 +1,8 @@
 <meta charset='utf-8' />
+
+<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
 <style>body{font-size:2em;}table{font-size:1em;}</style>
 <SCRIPT type="text/javascript">
 var strUA = "";
@@ -14,6 +18,7 @@ if(strUA.indexOf("iphone") >= 0) {
   document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 
 <?php
 require 'config/reg.php';
@@ -52,14 +57,14 @@ function genpassv2($_pass, $id) {
 
 if(isset($_POST['submit'])) {
   if (!is_numeric($_POST['id'])) {
-    echo '<h3><font color="red">错误：ID必须是数字</font></h3>';
+    echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
   } elseif($_POST['id']>999999999) {
-    echo '<h3><font color="red">错误：你输入的数太大了！</font></h3>';
+    echo '<h3><font color="red">错误：你输入的数太大了！Number is too large</font></h3>';
   } else {
     $check_uid = $mysql->prepare('SELECT user_id FROM users WHERE user_id=?');
     $check_uid->execute([$_POST['id']]);
     if ($check_uid->rowCount()) {
-      echo '<h3><font color="red">错误：此ID已被注册</font></h3>';
+      echo '<h3><font color="red">错误：此ID已被注册 </font></h3>';
     } else {
       $password = genpassv2($_POST['password'], $_POST['id']);
       $mysql->prepare('
@@ -112,7 +117,7 @@ if(isset($_POST['submit'])) {
       $mysql->exec("INSERT INTO user_deck (user_id,json,center_unit) VALUES ({$_POST['id']}, '$json', $center)");
       
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
-      echo '<h3>注册成功！关闭本窗口即可进入游戏。<br /><br />若关闭窗口后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
+      echo '<h3>注册成功！关闭本窗口即可进入游戏 <br />Registration Success! Plz Close This Window <br />若关闭窗口后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
       die();
     }
   }
@@ -127,15 +132,15 @@ function verify() {
   if(!isNaN(id.value) && parseInt(id.value)>0 && parseInt(id.value)<=999999999)
     valid=true;
   else if(parseInt(id.value)>999999999)
-    info='你输入的数太大了！';
+    info='你输入的数太大了！ Number is too large';
   else
-    info='请输入一个正整数';
+    info='请输入一个正整数 Please enter a positive integer';
   if(valid) {
     var exist_id=new Array(<?=implode(', ', $id)?>);
     for(var i in exist_id) {
       if(parseInt(id.value)==exist_id[i]) {
         valid=false;
-        info='错误：指定的ID('+exist_id[i]+')已被使用';
+        info='错误：指定的ID('+exist_id[i]+')已被使用 Error: The ID('+exist_id[i]+')be Used';
       }
     }
   }
@@ -160,14 +165,14 @@ function verify2() {
   if(t1.value=='') {
     valid2=false;
     t1.style.backgroundColor='#FF0000';
-    info='请输入密码'
+    info='请输入密码 Plz enter the password'
   } else {
     t1.style.backgroundColor='#00FF00';
   }
   if(t1.value!=t2.value && t1.value!='') {
     valid2=false;
     t2.style.backgroundColor='#FF0000';
-    info='两次输入的密码不一致'
+    info='两次输入的密码不一致 Two entered passwords do not match'
   } else if(t1.value=='') {
     t2.style.backgroundColor='#FF0000';
   } else {
@@ -185,8 +190,48 @@ function verify3() {
 }
 </script>
 
-<h3>用户注册</h3>
+<DIV id="wrapper_news" style="width: 100% !important">
+<div class="title_news fs34" style="width:100%">
+  <span class="ml30">注册 Sign Up
+  </span><a id="back" href="/webview.php/login/welcome">
+  <div class="topback">
+    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+  </div>
+  </a>
+</div>
+<div class="content_news_all" style="margin-top:0">
+  <div id="box1">
+    <div class="title_news_all fs30">
+      <span class="ml40">iOS用户专用注册链接(iOS special registration link)</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+      <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行注册！<br>
+      iOS plz use this to Sign Up,If you click the text eara under the this box
+      </a>
+      </div>
+    </div>
+    <div class="title_news_all fs30">
+      <span class="ml40">普通注册(Normal SignUp)</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+        请输入一个你想使用的ID Input the UserID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
+        昵称 Nickname：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
+        密码 Password：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
+        再次输入密码 Confirm：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br />
+        <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" disabled="disabled" />
+        <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red;font-size:2vw;">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--<h3>用户注册</h3>
 <h3><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行注册！</a></h3>
+
 <form method="post" action="/webview.php/login/reg" autocomplete="off">
 请输入一个你想使用的ID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
 昵称：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
@@ -197,4 +242,4 @@ function verify3() {
 <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="注册" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/webview.php/login/welcome">返回</a>
 </form>
-<table><tr><td height="200px"></td></tr></table>
+<table><tr><td height="200px"></td></tr></table>-->

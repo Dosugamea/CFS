@@ -6,6 +6,7 @@
 <title>お知らせ一覧</title>
 <link href="/resources/bstyle.css" rel="stylesheet">
 <link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
 <script type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
@@ -19,15 +20,16 @@ if (strUA.indexOf("iphone") >= 0) {
     document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <style type="text/css">
 .note img { margin-left: -12px; }
 </style>
 <meta name="GENERATOR" content="MSHTML 11.00.10011.0">
 </head>
 <body>
-<DIV id="wrapper_news">
+<DIV id="wrapper_news" style="width: 100% !important">
 <div class="title_news fs34" style="width:100%">
-  <span class="ml30">游戏设置
+  <span class="ml30">游戏设置 Setting
   </span><a id="back" href="/webview.php/announce/index">
   <div class="topback">
     <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
@@ -78,12 +80,13 @@ if (strUA.indexOf("iphone") >= 0) {
     </div>
     </a><a class="big-link" data-animation="fade" data-reveal-id="readlist01">
     <div class="title_news_all fs30">
-      <span class="ml40">用户</span>
+      <span class="ml40">用户 User</span>
     </div>
     <div class="content_all">
       <div class="note">
         <p>
-          <a href="/webview.php/login/changePassword">修改密码</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="/webview.php/login/logout">退出登录</a><br>
+          <a href="/webview.php/login/changePassword">修改密码 ChangePassword</a><br>
+          <a href="/webview.php/login/logout">退出登录 Logout</a><br>
           <br>
         </p>
       </div>

@@ -41,7 +41,7 @@
 	background: url("/resources/tab2_on.png") 0% 0% / 100% auto !important;
 }
 #wrapper_news {
-	width: 960px; position: relative;
+	width: 100%; position: relative;
 }
 .content_news_all {
 	background: url("/resources/bg02.png") repeat-y 0% 0% / 100% auto; padding: 20px 0px; margin-top: 5px;

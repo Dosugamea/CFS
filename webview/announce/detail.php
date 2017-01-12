@@ -8,9 +8,11 @@ $time=explode(' ', $announcement['time'])[0];
 http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
-<META name="apple-mobile-web-app-capable" content="yes"> <TITLE>news 
-detail</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><TITLE>news 
+detail</TITLE> 
+<LINK href="/resources/bstyle.css" rel="stylesheet"> 
 <LINK href="/resources/news.css" rel="stylesheet"> 
+<link href="/resources/css/style.css" rel="stylesheet">
 <STYLE>
     html, body {
     background-color: transparent;
@@ -25,22 +27,23 @@ p{
  setTimeout(function(){window.scrollTo(0, 1);}, 100);
  }
 
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
+//var strUA = "";
+//strUA = navigator.userAgent.toLowerCase();
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.45, maximum-scale=0.45" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9" />');
-} else {
-  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.38, maximum-scale=0.38" />');
-}
+//if(strUA.indexOf("iphone") >= 0) {
+//  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.45, maximum-scale=0.45" />');
+//} else if (strUA.indexOf("ipad") >= 0) {
+//  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9" />');
+//} else {
+//  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.38, maximum-scale=0.38" />');
+//}
 </SCRIPT>
  
 <META name="GENERATOR" content="MSHTML 11.00.10011.0"></HEAD> 
 <BODY>
 <DIV id="wrapper">
-<DIV class="title_news fs34"><SPAN class="ml30"><?=$announcement['title']?></SPAN>     <A id="back" 
+<DIV class="title_news fs34"><SPAN class="ml30"><?=$announcement['title']?></SPAN>     
+<A id="back" 
 href="/webview.php/announce/announce?disp_faulty=<?=$_GET['disp_faulty']?>">
 <DIV class="topback"><IMG src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png"> 
         </DIV></A> </DIV>

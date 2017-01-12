@@ -2,9 +2,13 @@
 <HTML><HEAD><META content="IE=11.0000" 
 http-equiv="X-UA-Compatible">
  
-<META charset="utf-8"> <TITLE>お知らせ一覧</TITLE> <LINK href="/resources/bstyle.css" 
-rel="stylesheet"> <LINK href="/resources/news.css" rel="stylesheet"> 
-<SCRIPT type="text/javascript">
+<META charset="utf-8"> 
+<TITLE>お知らせ一覧</TITLE> 
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<LINK href="/resources/bstyle.css" rel="stylesheet"> 
+<LINK href="/resources/news.css" rel="stylesheet"> 
+<link href="/resources/css/style.css" rel="stylesheet">
+<!--<SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
@@ -17,7 +21,7 @@ if(strUA.indexOf("iphone") >= 0) {
 } else {
   document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
-</SCRIPT>
+</SCRIPT>-->
 <style>
 li.button{
   vertical-align:top;
@@ -43,7 +47,7 @@ ul#tabs a:visited{
 <?php require "config/database.php";
 require "config/maintenance.php";
 require "version.php";
-?><p>Programmed Live! Server <?=$pls_version ?><br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</p>
+?><p>Programmed Live! Server <!--<?=$pls_version ?>--><br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</p>
 <?php
 if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`='.$_SESSION['server']['HTTP_USER_ID'])->fetchColumn() != 32) {
   echo '<b style="color:red">我们升级了服务器的密码存储机制，建议您前往“游戏设置”退出重新登录或修改密码，这将大幅降低服务器被攻击导致密码泄露的风险。</b>';
@@ -52,16 +56,16 @@ if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`=
 <DIV id="wrapper_news">
 <div class="title_news_all_tab">
 <UL id="tabs">
-  <a href="/webview.php/announce/announce"><LI class="fs30 button"><p>查看公告</p></LI></a>
-  <a href="/webview.php/settings/index"><LI class="fs30 button"><p>游戏设置</p></LI></a>
+  <a href="/webview.php/announce/announce"><LI class="fs30 button"><p>News</p></LI></a>
+  <a href="/webview.php/settings/index"><LI class="fs30 button"><p>Setting</p></LI></a>
   <a href="/webview.php/mods/index"><LI class="fs30 button"><p>Mods</p></LI></a>
 </UL>
 </div>
 <div style="clear:both;height:50px;"></div>
 <div class="title_news_all_tab">
 <UL id="tabs">
-  <LI class="fs30 open" id="newstab1" name="box1">最新公告</LI>
-  <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/announce">查看全部</A></LI>
+  <LI class="fs30 open" id="newstab1" name="box1">最新公告 News</LI>
+  <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/announce">查看全部 ALL</A></LI>
 </UL>
 </DIV>
 <?php

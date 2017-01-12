@@ -1,4 +1,7 @@
 <meta charset='utf-8' />
+<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
 <style>body{font-size:2em;}table{font-size:1em;}</style>
 <SCRIPT type="text/javascript">
 var strUA = "";
@@ -14,6 +17,7 @@ if(strUA.indexOf("iphone") >= 0) {
   document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <?php
 require 'config/reg.php';
 
@@ -42,9 +46,6 @@ if(isset($_POST['submit'])) {
 }
 
 ?>
-
-<p><a href="/webview.php/settings/index">返回</a></p>
-<h3>修改密码</h3>
 <script>
 function verify2() {
   valid2=true;
@@ -75,9 +76,47 @@ function verify2() {
   }
 }
 </script>
+
+<DIV id="wrapper_news" style="width: 100% !important">
+<div class="title_news fs34" style="width:100%">
+  <span class="ml30">修改密码 Change Password
+  </span><a id="back" href="/webview.php/settings/index">
+  <div class="topback">
+    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+  </div>
+  </a>
+</div>
+<div class="content_news_all" style="margin-top:0">
+  <div id="box1">
+    <div class="title_news_all fs30">
+      <span class="ml40"></span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+        <form method="post" action="changePassword" autocomplete="off">
+        <p>
+          新密码 NewPassword：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
+          再次输入密码 Confirm：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br /></p>
+          <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" disabled="disabled" />
+          <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<span style="color:red;font-size:2vw;">*警告：将通过不安全的连接发送您的密码*</span>'; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!--<p><a href="/webview.php/settings/index">返回</a></p>
+<h3>修改密码</h3>
+
 <form method="post" action="changePassword" autocomplete="off">
 <p>新密码：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
 再次输入密码：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br /></p>
 <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。</span></h3>' ?>
 <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="修改" disabled="disabled" />
-<table><tr><td height="200px"></td></tr></table>
+<table><tr><td height="200px"></td></tr></table>--->

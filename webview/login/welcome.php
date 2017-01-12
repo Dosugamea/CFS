@@ -3,8 +3,8 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<style>body{font-size:2em;}table{font-size:1em;}</style>
-<SCRIPT type="text/javascript">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<!--<SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
@@ -17,15 +17,31 @@ if(strUA.indexOf("iphone") >= 0) {
 } else {
   document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
-</script>
+</script>--><!-- Fix WebView Bug-->
+<link href="/resources/css/style.css" rel="stylesheet">
+<style type="text/css">
+	body{background-image: url(/resources/top.jpg);background-size: cover;background-repeat: no-repeat; background-color: transparent;}
+	a:link,a:visited{text-decoration:none;color: #ffffff;}
+</style>
 </head>
 
 <body>
-<h1>Welcome to Programmed Live!</h1>
-<h2>使用协议：<br />
+<div class="Welcome-N1"></div>
+<div class="Welcome-N2">
+<h1 class="Welcome-Header shadow">Welcome to Programmed Live!</h1>
+<p>使用协议：<br />
 1、严禁在公开场合（贴吧、微博等）发布与PL有关的任何消息、截图、视频等
-（特别的，在公开场合公开了群号的QQ群属于公开场合。）<br />
-2、若私下传播，则必须确保【所有看到消息的人也遵守前面一条】。</h2>
-<h1><a href="/webview.php/login/login">登录（继承数据）</a>&nbsp;&nbsp;&nbsp;&nbsp;<?=($allow_reg?'<a href="/webview.php/login/reg">注册新用户</a>':'已关闭注册')?></h1>
+（特别的，在公开场合公开了群号的QQ群属于公开场合）<br />
+2、若私下传播，则必须确保【所有看到消息的人也遵守前面一条】</p>
+<p>Usage agreement:<br>
+1, is strictly prohibited in public (like Twitter) publishing any messages associated with the PL, screenshots and videos<br>
+2,Private communications, you must make sure that "all who saw the message also to comply with the previous"</p>
+<table class="Welcome-Icon" cellspacing="20">
+	<tr>
+		<td><a href="/webview.php/login/login">登录 (Login)</a></td>
+		<td><?=($allow_reg?'<a href="/webview.php/login/reg">注册 (Sign up)</a>':'已关闭注册/Stop Sign up')?></td>
+	</tr>
+</table>
+</div>
 </body>
 </html>
