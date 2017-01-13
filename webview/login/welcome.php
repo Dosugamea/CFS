@@ -20,12 +20,26 @@ if(strUA.indexOf("iphone") >= 0) {
 </script><!-- Fix WebView Bug-->
 <link href="/resources/css/style.css" rel="stylesheet">
 <style type="text/css">
-	body{background-image: url(/resources/top.jpg);background-size: cover;background-repeat: no-repeat; background-color: transparent;}
+.Welcome-BG{
+	background-image: url(/resources/top.jpg);
+	background-size: cover;
+	background-repeat: no-repeat; 
+	background-color: transparent;
+	width: 100%;
+	height: 100%;
+	z-index: -2;
+	left: 0px;
+	top: 0px;
+	position: fixed;
+	border-radius: 60px;
+}
 	a:link,a:visited{text-decoration:none;color: #ffffff;}
 </style>
+
 </head>
 
-<body>
+<body style="width: 98% !important;">
+<div class="Welcome-BG"></div>
 <div class="Welcome-N1"></div>
 <div class="Welcome-N2">
 <h1 class="Welcome-Header shadow">Welcome to Programmed Live!</h1>
