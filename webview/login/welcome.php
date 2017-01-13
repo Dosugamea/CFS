@@ -31,7 +31,7 @@ if(strUA.indexOf("iphone") >= 0) {
 	left: 0px;
 	top: 0px;
 	position: fixed;
-	border-radius: 60px;
+
 }
 	a:link,a:visited{text-decoration:none;color: #ffffff;}
 </style>
