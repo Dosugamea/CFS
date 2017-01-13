@@ -4,24 +4,23 @@ http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
 <TITLE>お知らせ一覧</TITLE> 
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <LINK href="/resources/bstyle.css" rel="stylesheet"> 
 <LINK href="/resources/news.css" rel="stylesheet"> 
 <link href="/resources/css/style.css" rel="stylesheet">
-<!--<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
 if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
 } else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
 } else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
+  document.write('<meta name="viewport" content="width=100% minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
 } else {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
-</SCRIPT>-->
+</SCRIPT>
 <style>
 li.button{
   vertical-align:top;
@@ -66,6 +65,7 @@ if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`=
 <UL id="tabs">
   <LI class="fs30 open" id="newstab1" name="box1">最新公告 News</LI>
   <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/announce">查看全部 ALL</A></LI>
+  <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/info">关于 About</A></LI>
 </UL>
 </DIV>
 <?php

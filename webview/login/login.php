@@ -5,16 +5,16 @@ var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
 if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
 } else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
 } else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
 } else {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
 <link href="/resources/bstyle.css" rel="stylesheet">
 <link href="/resources/news.css" rel="stylesheet">
 <link href="/resources/css/style.css" rel="stylesheet">
@@ -115,4 +115,6 @@ if(isset($_POST['submit'])) {
 <table><tr><td height="200px"></td></tr></table>-->
 
 
+</DIV>
+<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
 </DIV>

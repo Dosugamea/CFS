@@ -8,7 +8,8 @@ $time=explode(' ', $announcement['time'])[0];
 http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><TITLE>news 
+<!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
+<TITLE>news 
 detail</TITLE> 
 <LINK href="/resources/bstyle.css" rel="stylesheet"> 
 <LINK href="/resources/news.css" rel="stylesheet"> 
@@ -27,16 +28,16 @@ p{
  setTimeout(function(){window.scrollTo(0, 1);}, 100);
  }
 
-//var strUA = "";
-//strUA = navigator.userAgent.toLowerCase();
+var strUA = "";
+strUA = navigator.userAgent.toLowerCase();
 
-//if(strUA.indexOf("iphone") >= 0) {
-//  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.45, maximum-scale=0.45" />');
-//} else if (strUA.indexOf("ipad") >= 0) {
-//  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9" />');
-//} else {
-//  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.38, maximum-scale=0.38" />');
-//}
+if(strUA.indexOf("iphone") >= 0) {
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45" />');
+} else if (strUA.indexOf("ipad") >= 0) {
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9" />');
+} else {
+	  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38" />');
+}
 </SCRIPT>
  
 <META name="GENERATOR" content="MSHTML 11.00.10011.0"></HEAD> 
