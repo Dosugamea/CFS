@@ -24,11 +24,11 @@ var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
 if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.45, maximum-scale=0.45" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45" />');
 } else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9" />');
 } else {
-  document.write('<meta name="viewport" content="width=880px, minimum-scale=0.38, maximum-scale=0.38" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38" />');
 }
 </SCRIPT>
  

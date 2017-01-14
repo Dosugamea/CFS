@@ -59,7 +59,8 @@ if (strUA.indexOf("iphone") >= 0) {
     <div class="content_all">
       <div class="note">
         <p>
-          <script>document.write(-1==strUA.indexOf("iphone")&&-1==strUA.indexOf("ipad")?'<iframe src="/webview.php/settings/iframe_settings_1" width="100%" onload="this.style.height=this.contentDocument.documentElement.clientHeight+\'px\';"></iframe>':'新设置页暂时不兼容iOS，请使用旧版设置页：<a href="/webview.php/settings/card">卡片开关/头像设置</a>');</script>
+          <script>
+          document.write(-1==strUA.indexOf("iphone")&&-1==strUA.indexOf("ipad")?'<iframe src="/webview.php/settings/iframe_settings_1" width="100%" onload="this.style.height=this.contentDocument.documentElement.clientHeight+\'px\';"></iframe>':'新设置页暂时不兼容iOS，请使用旧版设置页：<a href="/webview.php/settings/card">卡片开关/头像设置</a>');</script>
           <br>
           <br>
         </p>

@@ -1,17 +1,17 @@
 <meta charset='utf-8' />
-<style>body{font-size:2em;}table{font-size:1em;}</style>
+<!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
 <SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
 if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
 } else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
 } else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
 } else {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
+  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
 }
 </script>
 <?php
@@ -122,35 +122,90 @@ foreach($res as $v) {
 
   
 ?>
-<p><a href="/webview.php/settings/index">返回</a></p>
-<h2>组曲设置</h2>
-<p>您当前每个入口所关联的组曲如下（点击组曲编号取消关联）：<br />（注：此处的难度和曲目数只用于区分不同的入口，进入后的实际曲数以对应组曲中的设置为准）。</p>
-<table border="1">
-<tr><td></td><th>EASY</th><th>NORMAL</th><th>HARD</th><th>EXPERT</th></tr>
-<?php foreach($current_medley as $k=>$v) {
-  echo "<tr><th>$k 首</th>";
-  foreach($v as $k2=>$v2) {
-    echo '<td>';
-    if(empty($v2)) echo '使用默认';
-    else {
-      foreach($v2 as $k3=>$v3) {
-        if($k3) echo '<br />';
-        echo '<a href="medley?erase='.$v3[1].'">'.$v3[0].'</a>';
-      }
-    }
-    echo '</td>';
-  }
-} ?>
-</table>
+<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
+<style type="text/css">
+	.medleychart{width: 100%;text-align: center;font-size: 3vw;}
+</style>
 
-<hr>
+
+<DIV id="wrapper_news" style="width: 100% !important">
+<div class="title_news fs34" style="width:100%">
+  <span class="ml30">组曲设置
+  </span><a id="back" href="/webview.php/settings/index">
+  <div class="topback">
+    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+  </div>
+  </a>
+</div>
+<div class="content_news_all" style="margin-top:0">
+<div id="box1">
+
+	<div class="title_news_all fs30">
+      <span class="ml40">使用方法</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+     	<p>您当前每个入口所关联的组曲如下（点击组曲编号取消关联）：<br />（注：此处的难度和曲目数只用于区分不同的入口，进入后的实际曲数以对应组曲中的设置为准）。</p>
+      </div>
+    </div>
+
+<!--<p><a href="/webview.php/settings/index">返回</a></p>
+<h2>组曲设置</h2>
+<p>您当前每个入口所关联的组曲如下（点击组曲编号取消关联）：<br />（注：此处的难度和曲目数只用于区分不同的入口，进入后的实际曲数以对应组曲中的设置为准）。</p>-->
+
+
+
+<div class="title_news_all fs30">
+      <span class="ml40">现在的组曲</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+		<table border="1" class="medleychart">
+		<tr><td></td><th>EASY</th><th>NORMAL</th><th>HARD</th><th>EXPERT</th></tr>
+		<?php foreach($current_medley as $k=>$v) {
+		  echo "<tr><th>$k 首</th>";
+		  foreach($v as $k2=>$v2) {
+		    echo '<td>';
+		    if(empty($v2)) echo '使用默认';
+		    else {
+		      foreach($v2 as $k3=>$v3) {
+		        if($k3) echo '<br />';
+		        echo '<a href="medley?erase='.$v3[1].'">'.$v3[0].'</a>';
+		      }
+		    }
+		    echo '</td>';
+		  }
+		} ?>
+		</table>
+     </div>
+    </div>
+    <div class="title_news_all fs30">
+      <span class="ml40">组曲列表</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+     	<p>您可在下方自定义自己的组曲。<br />组曲有两种：<br />定长组曲：设置2~9首曲目，游戏时使用这些曲目。<br />随机组曲：设置至少2首曲目及使用曲数（2~9），游戏时随机抽取。</p>
+     	<p>若客户端进入MF崩溃，请尝试移除<i>斜体</i>的曲目。</p>
+      </div>
+    </div>
+
+
+<!--<hr>
 <h2>组曲列表</h2>
 
 <p>您可在下方自定义自己的组曲。<br />组曲有两种：<br />定长组曲：设置2~9首曲目，游戏时使用这些曲目。<br />随机组曲：设置至少2首曲目及使用曲数（2~9），游戏时随机抽取。</p>
 
-<p>若客户端进入MF崩溃，请尝试移除<i>斜体</i>的曲目。</p>
+<p>若客户端进入MF崩溃，请尝试移除<i>斜体</i>的曲目。</p>-->
 
-<table border="1">
+    <div class="title_news_all fs30">
+      <span class="ml40">组曲列表</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+
+<table border="1" class="medleychart">
 <tr><th>ID</th><th>类别</th><th>组曲操作</th><th>曲目</th><th>难度</th><th>曲目操作</th></tr><tr>
 <?php
 foreach($medley as $k=>$v) {
@@ -195,3 +250,12 @@ foreach($medley as $k=>$v) {
 } ?>
 <td colspan="6"><a href="medley?add=0">增加定长组曲</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="medley?add=1">增加随机组曲</a></td></tr>
 </table>
+
+      </div>
+    </div>
+
+</div>
+</div>
+</div>
+<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
+</DIV>
