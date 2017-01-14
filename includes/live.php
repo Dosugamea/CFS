@@ -107,108 +107,102 @@ function detectSameTiming(&$notes) {
 }
 
 function generateRandomLive($note) {
-  usort($note, function ($x, $y) {
-    if ($x['timing_sec'] == $y['timing_sec']) {
-      $x_is_hold = $x['effect'] == 3 ? 1 : 0;
-      $y_is_hold = $y['effect'] == 3 ? 1 : 0;
-      return $y_is_hold - $x_is_hold;
-    }
-    return ceil($x['timing_sec'] - $y['timing_sec']);
-  });
-  detectSameTiming($note);
-  $same_timing_map = [];
-  $hold_list = [];
-  array_reduce($note, function ($last, &$next) use (&$same_timing_map, &$hold_list) {
-    $hold_list_for_modify = array_merge(array_filter($hold_list, function ($e) use ($next) {
-      if ($e['timing_sec'] + $e['effect_value'] < $next['timing_sec'] - 0.01) {
-        return false;
-      }
-      return true;
-    }));
-    $hold_list = array_merge(array_filter($hold_list, function ($e) use ($next) {
-      if ($e['timing_sec'] + $e['effect_value'] < $next['timing_sec'] - 0.2) {
-        return false;
-      }
-      return true;
-    }));
-    $lastPosition = $last['position'];
-    $lastPositionModified = false;
-    if (count($hold_list_for_modify) == 1) {
-      $lastPosition = $hold_list_for_modify[0]['position'];
-      $lastPositionModified = true;
-    } else if (count($hold_list_for_modify) > 1) {
-      $lastPosition = 0;
-      $lastPositionModified = true;
-    }
-    $hold_map = [];
-    foreach ($hold_list as $v) {
-      $hold_map[$v['position']] = true;
-    }
-    do {
-      if (!$lastPositionModified && $next['timing_sec'] - $last['timing_sec'] >= 0.3) {
-        $lastPosition = (isset($next['is_same_timing']) || $next['effect'] == 3) ? 5 : 0;
-      }
-      switch ($lastPosition) {
-        case 1: case 2: case 3: case 4:
-        $next['position'] = mt_rand(6, 9); break;
-        case 6: case 7: case 8: case 9:
-        $next['position'] = mt_rand(1, 4); break;
-        case 5:
-        $next['position'] = mt_rand(1, 8);
-        if ($next['position'] > 4) {
-          ++$next['position'];
-        }
-        break;
-        default: $next['position'] = mt_rand(1, 9);
-      }
-    } while (isset($same_timing_map[$next['position']]) || isset($hold_map[$next['position']]));
-    if ($next['timing_sec'] != $last['timing_sec']) {
-      $same_timing_map = [];
-    }
-    if (isset($next['is_same_timing'])) {
-      $same_timing_map[$next['position']] = true;
-    }
-    if ($next['effect'] == 3) {
-      array_push($hold_list, $next);
-    }
-    return $next;
-  }, ['timing_sec' => 0, 'effect' => 1, 'position' => 0]);
-  foreach ($note as &$v) {
-    unset($v['is_same_timing']);
-  }
-  return $note;
-}
+	$decoded = $note;
+	$len = count($decoded);
+	$occupied = array(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1);
+	$lastisadouble = 0;
+	$sides = [0, 1,1,1,1,3,2,2,2,2];
 
-//generateRandomLiveOld 生成旧随机谱面，外部访问无法调用
-function generateRandomLiveOld($note) {
-  $timing=[];
-  foreach($note as $v)
-    $timing[]=$v['timing_sec'];
-  array_multisort($timing,SORT_ASC,$note);
-  $holding=false;
-  $holdend=0;
-  $lasttime=0;
-  foreach($note as $k=>&$v) {
-    if($v['timing_sec']>$holdend+0.1)
-      $holding=false;
-    if(!$holding && $v['effect']==3) {
-      //长条，什么都不做
-      $holdend=$v['timing_sec']+$v['effect_value'];
-      $holding=true;
-    }
-    elseif($holding) {
-      //长按中，什么都不做
-      if($v['effect']==3) {
-        $holdend=max($holdend,$v['timing_sec']+$v['effect_value']);
-      }
-    }
-    elseif($v['timing_sec']==$lasttime || (isset($note[$k+1]['timing_sec']) && $v['timing_sec']==$note[$k+1]['timing_sec'])) {
-      //双押，什么都不做
-    }
-    else $v['position']=0; //单点
-    $lasttime=$v['timing_sec'];
-  }
-  return $note;
+	$min_ival = 0.2;
+
+	for($i=0; $i<$len; $i++) {
+
+		$timing = $decoded[$i]["timing_sec"];
+
+		$double = (($i+1 < $len) && (abs($decoded[$i]["timing_sec"] - $decoded[$i+1]["timing_sec"])) < 0.04);
+
+		//error_log($i);
+		//error_log(json_encode($occupied));
+
+		if ($double) {
+			//error_log("is double");
+
+			do {
+				$pos = rand(1, 4);
+			} while($timing - $occupied[$pos] < $min_ival);
+
+			$decoded[$i]["position"] = $pos;
+			$occupied[$pos] = $decoded[$i]["timing_sec"];
+			if ($decoded[$i]["effect"] == 3) {
+				$occupied[$pos] += $decoded[$i]["effect_value"];
+			}
+
+
+			do {
+				$pos = rand(6, 9);
+			} while($timing - $occupied[$pos] < $min_ival);
+
+			$decoded[$i+1]["position"] = $pos;
+			$occupied[$pos] = $decoded[$i+1]["timing_sec"];
+			
+			if ($decoded[$i+1]["effect"] == 3) {
+				$occupied[$pos] += $decoded[$i+1]["effect_value"];
+			}
+			$lastisadouble = 1;
+			$i++;
+
+		} else {
+			//error_log("is single");
+			$latest = 0;
+			$latestpos = 0;
+			for($u=1;$u<=9;$u++) {
+				if ($occupied[$u] > $latest) {
+					$latest = $occupied[$u];
+					$latestpos = $u;
+				}
+			}
+			if ($latest >= $timing - 0.2) {
+				do {
+					if ($latestpos < 5) {
+						$pos = rand(6, 9);
+					} else {
+						$pos = rand(1, 4);
+					} 
+				} while(
+					($timing - $occupied[$pos] < $min_ival)
+				);
+			} else if ($latest < $timing - $min_ival || $lastisadouble || $latestpos == 5) { // any
+				do {
+					$pos = rand(1, 9);
+				} while(
+					($pos == 5 && $decoded[$i]["effect"] == 3)
+					|| ($timing - $occupied[$pos] < $min_ival)
+				);
+			} else {
+				do {
+					if ($latestpos < 5) {
+						$pos = rand(6, 9);
+					} else {
+						$pos = rand(1, 4);
+					} 
+				} while(
+					($timing - $occupied[$pos] < $min_ival)
+				);
+			}
+
+			$occupied[$pos] = $decoded[$i]["timing_sec"];
+
+			if ($decoded[$i]["effect"] == 3) {
+				$occupied[$pos] += $decoded[$i]["effect_value"];
+			}
+
+			$decoded[$i]["position"] = $pos;
+			$lastisadouble = 0;
+		}
+
+	} 
+	$live_notes = $decoded;
+	return $decoded;
 }
 //calcScore 计算分数
 function calcScore($base, $map) {
