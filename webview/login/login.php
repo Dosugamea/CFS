@@ -96,8 +96,8 @@ if(isset($_POST['submit'])) {
        <form method="post" action="/webview.php/login/login" autocomplete="off">
           用户ID UserID：<input type="text" name="id" id="id" style="height:27px" /><br />
           密码 Password：<input type="password" id="pass1" name="password" style="height:27px" /><br />
-        </form>
-        <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
+        
+        <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br></form>
         <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<span style="color:red;font-size:2vw;">*警告：将通过不安全的连接发送您的密码*</span>'; ?>
       </div>
     </div>
