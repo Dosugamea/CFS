@@ -53,6 +53,7 @@ if (strUA.indexOf("iphone") >= 0) {
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
 <style type="text/css">
 .note img { margin-left: -12px; }
+a{color:#FF1493 !important;}
 </style>
 <meta name="GENERATOR" content="MSHTML 11.00.10011.0">
 </head>

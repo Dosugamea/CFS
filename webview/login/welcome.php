@@ -34,13 +34,14 @@ if(strUA.indexOf("iphone") >= 0) {
 
 }
 	a:link,a:visited{text-decoration:none;color: #ffffff;}
+	.Welcome-Header{font-size: 4vw;}
 </style>
 
 </head>
 
 <body style="width: 98% !important;">
-<div class="Welcome-BG"></div>
-<div class="Welcome-N1"></div>
+<!--<div class="Welcome-BG"></div>
+<div class="Welcome-N1"></div>-->
 <div class="Welcome-N2">
 <h1 class="Welcome-Header shadow">Welcome to Programmed Live!</h1>
 <p>使用协议：<br />
@@ -52,8 +53,16 @@ if(strUA.indexOf("iphone") >= 0) {
 2,Private communications, you must make sure that "all who saw the message also to comply with the previous"</p>
 <table class="Welcome-Icon" cellspacing="20">
 	<tr>
-		<td><a href="/webview.php/login/login">登录 (Login)</a></td>
-		<td><?=($allow_reg?'<a href="/webview.php/login/reg">注册 (Sign up)</a>':'已关闭注册/Stop Sign up')?></td>
+		<td>
+			<a href="/webview.php/login/login">
+				<div class="main-icon" style="font-size:3vw;">
+					登录 (Login)
+				</div>
+			</a>
+		</td>
+		<td>
+			<?=($allow_reg?'<a href="/webview.php/login/reg"><div class="main-icon" style="font-size:3vw;">注册 (Sign up)</div></a>':'已关闭注册/Stop Sign up')?>
+		</td>
 	</tr>
 </table>
 </div>
