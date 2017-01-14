@@ -2,7 +2,7 @@
 
 Online since 2014/9/15, the two-year-old infamous SIF private server PLS (aka LLSP), now becomes open source!
 
-Try out our public server at `svc.dash.moe`
+Try out our public server at `plserver.xyz`
 
 **REQUIRE LLSIF Japanese 4.1 or 4.1.1 client（4.0 Client might crash in some situation）, with XMS disabled** (No we will never provide or tell how to make one).
 
