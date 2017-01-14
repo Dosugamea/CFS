@@ -4,7 +4,7 @@ http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
 <META name="apple-mobile-web-app-capable" content="yes"> <TITLE>news 
-detail</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
+detail 2</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
 <LINK href="/resources/news.css" rel="stylesheet"> 
 <STYLE>
     html, body {
@@ -35,10 +35,11 @@ if(strUA.indexOf("iphone") >= 0) {
 <META name="GENERATOR" content="MSHTML 11.00.10011.0"></HEAD> 
 <BODY>
 <DIV id="wrapper">
-<DIV class="title_news fs34"><SPAN class="ml30">抽卡详情</SPAN></DIV>
+<DIV class="title_news fs34"><SPAN class="ml30">暂无内容</SPAN></DIV>
 <DIV class="content_news">
 <DIV class="note">
-<p>程序猿需要亲亲抱抱么么哒才能起来继续淦</p> </DIV></DIV>
+<p>程序猿需要亲亲抱抱么么哒才能起来继续淦</p>
+</DIV></DIV>
 <DIV class="footer_news fs34"><IMG width="100%" src="/resources/bg03.png"> 
 </DIV></DIV>
  </BODY></HTML>
