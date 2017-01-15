@@ -7,5 +7,26 @@ function notice_noticeMarquee() {
             "marquee_list": []
         }');
 }
-
+//notice/noticeFriendVariety 新着信息 返回空
+function notice_noticeFriendVariety() {
+	  return json_decode('{
+            "item_count": 0,
+            "notice_list": []
+        }');
+}
+//notice/noticeFriendGreeting 新着信息 返回空
+function notice_noticeFriendGreeting() {
+	  return json_decode('{
+            "item_count": 0,
+            "notice_list": []
+        }');
+}
+//notice/noticeUserGreetingHistory 好友PY历史 返回空
+function notice_noticeUserGreetingHistory() {
+	  return json_decode('{
+            "item_count": 0,
+			"has_next": false,
+            "notice_list": []
+        }');
+}
 ?>
