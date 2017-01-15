@@ -5,4 +5,11 @@ function handover_start() {
 	$ret['expire_date'] = "不支持發行繼承碼！";
 	return $ret;
 }
+
+//更新防止崩溃 返回空
+function handover_renew() {
+	$ret['code'] = "0000000000000000";
+	$ret['expire_date'] = "不支持發行繼承碼！";
+	return $ret;
+}
 ?>
