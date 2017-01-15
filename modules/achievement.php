@@ -9,4 +9,14 @@ function achievement_unaccomplishList() {
 		}',true);
 	return $ret;
 }
+
+function achivement_initialAccomplishedList() {
+	$ret = [];
+	$ret[] = json_decode('{
+			"achievement_category_id": 1,
+			"count": 0,
+			"achievement_list": []
+		}',true);
+	return $ret;
+}
 ?>
