@@ -4,7 +4,7 @@ http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
 <META name="apple-mobile-web-app-capable" content="yes"> <TITLE>news 
-detail 2</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
+detail</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
 <LINK href="/resources/news.css" rel="stylesheet"> 
 <STYLE>
     html, body {
@@ -38,7 +38,7 @@ if(strUA.indexOf("iphone") >= 0) {
 <DIV class="title_news fs34"><SPAN class="ml30">抽卡详情</SPAN></DIV>
 <DIV class="content_news">
 <DIV class="note">
-<P>这是点击“劝诱详细”按钮时默认显示的页面。<BR>编辑 webview/secretBox/index.php修改本页面的内容，或者在设置中按照说明指定新的页面。<BR></P>   </DIV></DIV>
+<p>程序猿需要亲亲抱抱么么哒才能起来继续淦</p></DIV></DIV>
 <DIV class="footer_news fs34"><IMG width="100%" src="/resources/bg03.png"> 
 </DIV></DIV>
  </BODY></HTML>

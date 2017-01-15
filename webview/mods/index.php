@@ -45,9 +45,9 @@ if (strUA.indexOf("iphone") >= 0) {
 } else if (strUA.indexOf("ipad") >= 0) {
     document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
 } else if (strUA.indexOf("android 2.3") >= 0) {
-    document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
+    document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=no" />');
 } else {
-    document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
+    document.write('<meta name="viewport" content="100%, initial-scale=0.45, minimum-scale=0.38, maximum-scale=0.45, user-scalable=no" />');
 }
 </script>
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
@@ -68,7 +68,8 @@ a{color:#FF1493 !important;}
   </a>
 </div>
 <div class="content_news_all" style="margin-top:0">
-  <script type="text/javascript">if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) { document.write('<div class="note" style="margin-top:100px;">'); } else { document.write('<div class="note">'); }</script>
+ <!-- <script type="text/javascript">if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) { document.write('<div class="note" style="margin-top:100px;">'); } else { document.write('<div class="note">'); }</script>-->
+ <div class="note">
   <div id="box1">
     <p>以下的所有Mod均可以在游戏过程中随时切换。<br />使用 その他-ヘルプ 来快速到达本页面。<br /><br />
     HI-SPEED:<font color="red"><b>请升级至3.2客户端，然后在“各种设定”中设置！</b></font>
