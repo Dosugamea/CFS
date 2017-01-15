@@ -8,8 +8,10 @@ function payment_productList() {
             "product_list": []
         }');
 }
-//购入履历修复空表 函数与授取履历相同
+//payment/month 购买历史
 function payment_month() {
-	return json_decode();
-	}
+	$ret['item_count'] = 0;
+	$ret['payment_month_list'] = [];
+	return $ret;
+}
 ?>
