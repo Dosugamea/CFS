@@ -190,7 +190,40 @@ function verify3() {
 }
 </script>
 
-<DIV id="wrapper_news" style="width: 100% !important">
+<SCRIPT type="text/javascript">
+var strUA = "";
+strUA = navigator.userAgent.toLowerCase();
+
+if(strUA.indexOf("iphone") >= 0) {
+  document.write('<h3>我们检测到您的设备是iOS设备 暂不支持iOS设备游戏内注册 将在<span id="num"></span>秒后自动调用外部浏览器进行注册</h3><br><a href="/webview.php/login/welcome">返回欢迎页</a>');
+} else if (strUA.indexOf("ipad") >= 0) {
+  document.write('<h3>我们检测到您的设备是iOS设备 暂不支持iOS设备游戏内注册 将在<span id="num"></span>秒后自动调用外部浏览器进行注册</h3><br><a href="/webview.php/login/welcome">返回欢迎页</a>');
+} else {
+  document.write('<DIV id="wrapper_news" style="width: 100% !important"><div class="title_news fs34" style="width:100%"><span class="ml30">注册 Sign Up</span><a id="back" href="/webview.php/login/welcome"><div class="topback"><img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png"></div></a></div><div class="content_news_all" style="margin-top:0"><div id="box1"><div class="title_news_all fs30"><span class="ml40">iOS用户专用注册链接(iOS special registration link)</span></div><div class="content_all"><div class="note"><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行注册！<br>      iOS plz use this to Sign Up,If you click the text eara under the this box</a></div></div><div class="title_news_all fs30"><span class="ml40">普通注册(Normal SignUp)</span></div><div class="content_all"><div class="note">       <form method="post" action="/webview.php/login/reg" autocomplete="off">        请输入一个你想使用的ID Input the UserID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />        昵称 Nickname：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />        密码 Password：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />        再次输入密码 Confirm：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br /><input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" disabled="disabled" /></form><?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red;font-size:2vw;">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?></div></div></div></div><DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"></DIV>');
+}
+
+var num=10;
+  function redirect(){
+    num--;
+    document.getElementById("num").innerHTML=num;
+    if(num<0){
+      document.getElementById("num").innerHTML=0;
+      location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
+      }
+    }
+  setInterval("redirect()", 1000);
+</script>
+
+
+
+
+
+
+
+
+
+
+<!--<DIV id="wrapper_news" style="width: 100% !important">
 <div class="title_news fs34" style="width:100%">
   <span class="ml30">注册 Sign Up
   </span><a id="back" href="/webview.php/login/welcome">
@@ -229,7 +262,7 @@ function verify3() {
   </div>
 </div>
 <DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>
+</DIV>-->
 
 
 
