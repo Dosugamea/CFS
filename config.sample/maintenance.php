@@ -28,4 +28,5 @@ $max_live_difficulty_id=9999;
 $max_unit_id=9999;
 //游戏内DL地址
 $getUrl_address = 'http://60.205.189.255/update/extracted/';
+//是否关闭设备验证（使浏览器能访问）
 

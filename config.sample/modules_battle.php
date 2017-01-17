@@ -16,4 +16,5 @@ $score_match_live_lifficulty_ids=[
   3=>[['Live_0806.json', 0], ['Live_0349.json', 0], ['Live_0752.json', 0], ['Live_0810.json', 0], ['Live_0709.json', 0], ['Live_0510.json', 0], ['Live_0690.json', 0], ['Live_0439.json', 0], ['Live_0601.json', 0], ['Live_s0402.json', 0]],
   4=>[['Live_0806.json', 1], ['Live_0349.json', 1], ['Live_0752.json', 1], ['Live_0810.json', 1], ['Live_0709.json', 1], ['Live_0510.json', 1], ['Live_0690.json', 1], ['Live_0439.json', 1], ['Live_0463.json', 0], ['Live_0567.json', 0], ['Live_0601.json', 1], ['Live_s0402.json', 1]],
   5=>[['Live_0567.json', 0], ['Live_0569.json', 0], ['Live_0458.json', 0], ['Live_0459.json', 0], ['Live_0593.json', 0], ['Live_0446.json', 0], ['Live_0566.json', 0], ['Live_0594.json', 0], ['Live_0463.json', 0]],
+  6=>[['Live_s0529.json', 0],['Live_s0558.json', 0],['Live_s0563.json', 0],['Live_s0568.json', 0],['Live_s0577.json', 0],['Live_s0582.json', 0],['Live_s0583.json', 0],['Live_s0588.json', 0],['Live_s0589.json', 0],['Live_s0608.json', 0],['Live_s0609.json', 0],['Live_s0619.json', 0],['Live_s0628.json', 0],['Live_s0629.json', 0],['Live_s0614.json', 0]]
 ];
