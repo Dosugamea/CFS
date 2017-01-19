@@ -31,8 +31,30 @@ if(strUA.indexOf("iphone") >= 0) {
 </div>
 <div class="content_news_all" style="margin-top:0">
   <div id="box1">
-
-  </div>
+    	<div class="title_news_all fs30">
+          <span class="ml40">PLServer</span>
+        </div>
+        <div class="content_all">
+          <div class="note">
+            <p>
+             本服务端以及所属的代码以及修改版的客户端用途为研究学习交流使用为个人开发,严禁在公开场合传播宣传并且禁止用于商业用途,一经发现我们将会采取相应措施.
+            </p>
+          </div>
+        </div>
+        <div class="title_news_all fs30">
+          <span class="ml40">支持信息</span>
+        </div>
+        <div class="content_all">
+          <div class="note">
+            <p>
+            维护:<br>
+            开发:<br>
+            运营:<br>
+            <a href="native://browser?url=mailto:admin@llsupport.cn" style="color:red;" >邮件反馈</a><br>
+            </p>
+          </div>
+        </div>
+	</div>
 </div>
 <DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
 </DIV>
