@@ -419,6 +419,7 @@ function live_play($post) {
 		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $params['random_switch']);
 	}
 	$post['do_not_use_multiply'] = false;
+	$map_count = 0;
 	foreach($live_id_list as $k2 => $v2) {
 		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
@@ -475,11 +476,14 @@ function live_play($post) {
 				"friend_status": 0
 			}', true);
 		}
-		$map['live_info'][] = $live_info;
+		
+		$map['live_list'][] = array("live_info" => Null);
+		$map['live_list'][$map_count]['live_info'] = $live_info;
+		$map_count += 1;
 	}
 	//无卡模式计算分数线
 	if($params['card_switch'] == 0 && $post['unit_deck_id'] < 3) {
-		$total = calcScore(60500, $map['live_info']);
+		$total = calcScore(60500, $map['live_list']);
 		$map['rank_info'] = json_decode('[{"rank":5,"rank_min":0},{"rank":4,"rank_min":'.($total*0.7).'},{"rank":3,"rank_min":'.($total*0.8).'},{"rank":2,"rank_min":'.($total*0.9).'},{"rank":1,"rank_min":'.($total*0.975).'}]');
 	} else { //有卡模式读取分数线，所有曲目分数线直接相加
 		foreach($live_id_list as $v2) {
@@ -507,11 +511,12 @@ function live_play($post) {
 	$deck = live_deckList($post);
 	foreach($deck as $v) {
 		if ($v['unit_deck_id'] == $post['unit_deck_id']) {
-			$map['deck_info'] = $v;
+			foreach($map['live_list'] as &$j){
+				$j['deck_info'] = $v;
+			}
 			break;
 		}
 	}
-	
 	if($params['card_switch'] && $post['party_user_id'] > 0) {
 		$mysql->exec("
 			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1)
