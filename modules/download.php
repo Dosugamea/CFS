@@ -28,7 +28,7 @@ function download_additional($post) {
 	$time = time();
 	$headers = array(
 			'Accept: */*',
-			'Accept-Encoding: gzip,deflate',
+			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
@@ -55,7 +55,7 @@ function download_additional($post) {
 		"request_data" => json_encode($post)
 	);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/additional",$headers,$post_server);
-	$ret = json_decode(gzdecode($r),true)['response_data'];
+	$ret = json_decode($r,true)['response_data'];
 	return $ret;
 }
 
@@ -86,7 +86,7 @@ function download_batch($post) {
 	$time = time();
 	$headers = array(
 			'Accept: */*',
-			'Accept-Encoding: gzip,deflate',
+			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
@@ -113,7 +113,7 @@ function download_batch($post) {
 		"request_data" => json_encode($post)
 	);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/batch",$headers,$post_server);
-	$ret = json_decode(gzdecode($r),true)['response_data'];
+	$ret = json_decode($r,true)['response_data'];
 	return $ret;
 }
 function download_getUrl($post) {
