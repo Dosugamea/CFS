@@ -16,7 +16,7 @@ function login(){
 	include 'config/maintenance.php';
 	$headers = array(
 			'Accept: */*',
-			'Accept-Encoding: gzip,deflate',
+			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
@@ -31,7 +31,7 @@ function login(){
 			'Expect:'
 		);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/login/authkey",$headers,"");
-	$r = json_decode(gzdecode($r));
+	$r = json_decode($r);
 	$token = $r->response_data->authorize_token;
 	
 	$time = time();
@@ -50,7 +50,7 @@ function login(){
 	$headers[] = "X-Message-Code: $XMC";
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/login/login",$headers,$body);
 	//$r = json_decode(gzdecode($r));
-	return json_decode(gzdecode($r),true)['response_data'];
+	return json_decode($r,true)['response_data'];
 }
 
 ?>
