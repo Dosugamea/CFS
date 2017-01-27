@@ -19,6 +19,8 @@ function login_authkey() {
   $ret['authorize_token'] = sha1(rand(10000000, 99999999));
   global $mysql;
   $mysql->query('insert into tmp_authorize(token) values (?)', [$ret['authorize_token']]);
+  header('version_up: 0');
+  header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());
   return $ret;
 }
 

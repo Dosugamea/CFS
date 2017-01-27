@@ -126,13 +126,6 @@ if ($maintenance && isset($uid) && array_search($uid, $bypass_maintenance) === f
   die();
 }
 
-/* 处理用户请求 */
-$ret['status_code'] = 200;
-function retError($statusCode) {
-  global $ret;
-  $ret['status_code'] = 600;
-  return ['error_code' => $statusCode];
-}
 
 function runAction($module, $action, $post=[]) {
   global $params;
@@ -165,7 +158,7 @@ if (!isset($action[2])) {
 $ret['response_data'] = runAction($action[1], $action[2], $post);
 $ret['release_info'] = isset($release_info) ? $release_info : '[]';
 
-$ret = json_encode($ret);
+
 
 
 /* 写回对users和params的修改 */
@@ -187,8 +180,18 @@ if (!$rolled_back && isset($__user_bak)) {
     }
   }
 }
-$mysql->query('commit');
 
+/* 处理用户请求 */
+$ret['status_code'] = 200;
+$ret = json_encode($ret);
+function retError($statusCode) {
+  global $ret;
+  $ret['status_code'] = 600;
+  return ['error_code' => $statusCode];
+}
+
+$mysql->query('commit');
+header('Server-Version: '.$server_ver);
 header('X-Message-Code: '.hash_hmac('sha1', $ret, $code));
 header('Content-Type: application/json');
 echo $ret;
