@@ -59,8 +59,8 @@ function login_login($post) {
     //  $mysql->exec("INSERT INTO `user_perm` VALUES($id, 1, 1, 1, 0, 0)");
     //}
   }
-  $ret['user_id'] = $id;
   $ret['authorize_token'] = sha1(rand(10000000, 99999999));
+  $ret['user_id'] = $id;
   if ($id !== -1) {
     $mysql->exec("UPDATE users SET nonce=2, authorize_token='{$ret['authorize_token']}', elapsed_time_from_login=CURRENT_TIMESTAMP WHERE username='{$login_result[1]}'");
   } else {
