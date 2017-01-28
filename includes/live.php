@@ -260,8 +260,10 @@ function calcScore($base, $map) {
   $total = 0;
   $combo = 0;
   $rate = 1;
-  if (isset($map[0]['live_info']['timing_sec'])) {
-    $map = [['notes_list'=>$map]];
+  if (isset($map[0]['timing_sec'])) {
+    $map_ = [['live_info'=>Null]];
+	$map_[0]['live_info']['notes_list'] = $map;
+	$map = $map_;
   }
   foreach($map as $v2) {
     $total += array_reduce($v2['live_info']['notes_list'], function ($sum, $next) use (&$combo, $base, &$rate) {
