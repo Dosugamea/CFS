@@ -47,10 +47,10 @@ if(strUA.indexOf("iphone") >= 0) {
         <div class="content_all">
           <div class="note">
             <p>
-            维护:<br>
-            开发:<br>
-            运营:<br>
-            <a href="native://browser?url=mailto:admin@llsupport.cn" style="color:red;" >邮件反馈</a><br>
+            维护:PL维护团队<br>
+            开发:PL开发团队<br>
+            运营:PL运营团队<br>
+            <a href="native://browser?url=mailto:" style="color:red;" >邮件反馈</a><br>
             </p>
           </div>
         </div>
