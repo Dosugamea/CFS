@@ -1,9 +1,9 @@
 <?php
-//ranking.php 排名相关module
+//ranking.php 鎺掑悕鐩稿叧module
 require_once('includes/live.php');
 require_once('includes/unit.php');
 require_once('includes/extend_avatar.php');
-//ranking/live 曲目排名
+//ranking/live 鏇茬洰鎺掑悕
 function ranking_live($post) {
   global $mysql, $params;
   $notes_setting = getLiveSettings($post['live_difficulty_id'], 'notes_setting_asset');
@@ -42,12 +42,12 @@ function ranking_live($post) {
   return $ret;
 }
 
-//ranking/player 玩家排名
+//ranking/player 鐜╁鎺掑悕
 function ranking_player($post) {
   global $mysql, $params;
   $ret['rank'] = null;
   $ret['items'] = [];
-  $count = $post['limit'];
+  $count = 20;
   $ret['total_cnt'] = $mysql->query('SELECT count(DISTINCT user_id) FROM live_ranking WHERE card_switch=0')->fetchColumn();
   if (isset($post['id'])) {
     $begin = $mysql->query('
