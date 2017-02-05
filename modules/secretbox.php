@@ -451,18 +451,18 @@ function secretBox_multi($post) {
 	if (!isset($post['pon'])) {
 		pl_assert($ret['secret_box_info']['is_pay_multi_cost'], 'secretbox: 您的剩余道具不足！');
 		switch ($ret['secret_box_info']['cost']['type']) {
-			case 3001: $item = 'loveca'; $amount = $ret['secret_box_info']['cost']['amount'] * 10; $count = 11; break;
-			case 3002: $item = 'social_point'; $count = $ret['secret_box_info']['multi_count']; $amount = $ret['secret_box_info']['cost']['amount'] * $count; break;
+			case 1: $item = 'loveca'; $amount = $ret['secret_box_info']['cost']['amount'] * 10; $count = 11; break;
+			case 3: $item = 'social_point'; $count = $ret['secret_box_info']['multi_count']; $amount = $ret['secret_box_info']['cost']['amount'] * $count; break;
 			default: trigger_error('secretbox: 此卡池不能连续抽卡！');
 		}
 	} else {
 		pl_assert($ret['secret_box_info']['is_pay_cost'], 'secretbox: 您的剩余道具不足！');
 		$count = 1;
 		switch ($ret['secret_box_info']['cost']['type']) {
-			case 3001: $item = 'loveca'; $amount = $ret['secret_box_info']['cost']['amount']; break;
-			case 3002: $item = 'social_point'; $amount = $ret['secret_box_info']['cost']['amount']; break;
+			case 1: $item = 'loveca'; $amount = $ret['secret_box_info']['cost']['amount']; break;
+			case 3: $item = 'social_point'; $amount = $ret['secret_box_info']['cost']['amount']; break;
 			case 4: $item = false; break;
-			case 1000: {
+			case 2: {
 				if (isset($ret['secret_box_info']['cost']['item_id'])) {
 					$item = 'item'.$ret['secret_box_info']['cost']['item_id'];
 					$amount = $ret['secret_box_info']['cost']['amount'];
