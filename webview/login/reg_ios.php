@@ -1,19 +1,5 @@
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>
-<SCRIPT type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
-
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=1024px, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=960px, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
-</script>
 
 <?php
 require '../../config/reg.php';
@@ -181,16 +167,41 @@ function verify3() {
   }
 }
 </script>
+<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/news.css" rel="stylesheet">
+<link href="/resources/css/style.css" rel="stylesheet">
 
-<h3>PLS用户注册</h3>
-<form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
-authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
-username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
-请输入一个你想使用的ID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
-昵称：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
-密码：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
-再次输入密码：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br />
+<DIV id="wrapper_news" style="width: 100% !important">
+<div class="title_news fs34" style="width:100%">
+  <span class="ml30">注册 Signup
+  </span><a id="back" href="javascript:void(0);" onclick="window.opener=null; window.open('','_self');window.close();">
+  <div class="topback">
+    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+  </div>
+  </a>
+</div>
+<div class="content_news_all" style="margin-top:0">
+  <div id="box1">
+    <div class="title_news_all fs30">
+      <span class="ml40">注册 (Signup)</span>
+    </div>
+    <div class="content_all">
+      <div class="note">
+       <form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
+          authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
+          username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
+          请输入一个你想使用的ID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
+          昵称：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
+          密码：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
+          再次输入密码：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br />
 
-<?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?>
-<input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="注册" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</form>
+          <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?>
+          <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="注册" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+</DIV>
+<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
+</DIV>

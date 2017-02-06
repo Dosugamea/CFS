@@ -88,7 +88,7 @@ var num=3;
 		document.getElementById("num").innerHTML=num;
 		if(num<0){
 			document.getElementById("num").innerHTML=0;
-			location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
+			location.href="native://browser?url=https%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
 			}
 		}
 	setInterval("redirect()", 1000);
