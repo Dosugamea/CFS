@@ -58,10 +58,10 @@ $announcement=$mysql->query('select * from webview where tab='.($_GET['disp_faul
 $has_new=$mysql->query('select distinct tab from webview where to_days(time)>to_days(CURRENT_TIMESTAMP)-5')->fetchAll();
 ?>
 
-<DIV id="wrapper_news">
+<DIV id="wrapper_news" style="width: 100% !important;">
 <SCRIPT type="text/javascript">
 if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
-  document.write('<div class="title_news_all_tab" style="position: fixed; top:0px; width:960px; z-index:20; background-color:white; height: 82px;">');
+  document.write('<div class="title_news_all_tab" style="position: fixed; top:0px; width:100%; z-index:20; background-color:white; height: 82px;">');
 } else {
   document.write('<div class="title_news_all_tab">');
 }
@@ -84,7 +84,7 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 </SCRIPT>
      
 <UL id="tabs">
-  <LI class="fs30" id="newstab1" name="box1"><A style="color: rgb(255, 255, 255);" 
+  <LI class="fs30" id="newstab1" name="box1"><A style="color: rgb(255, 255, 255);width: 33% !important;" 
   href="/webview.php/announce/announce?disp_faulty=0">通知 News</A></LI>
   <LI class="fs30" id="newstab2" name="box2"><A style="color: rgb(255, 255, 255);" 
   href="/webview.php/announce/announce?disp_faulty=1">游戏更新 Update</A></LI>
