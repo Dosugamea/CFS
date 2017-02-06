@@ -50,11 +50,10 @@ if(isset($_POST['submit'])) {
   }
 }
 ?>
-<link href="/resources/bstyle.css" rel="stylesheet">
+<link href="/resources/css/web.css" rel="stylesheet">
+<!--<link href="/resources/bstyle.css" rel="stylesheet">
 <link href="/resources/news.css" rel="stylesheet">
 <link href="/resources/css/style.css" rel="stylesheet">
-
-
 
 
 <DIV id="wrapper_news" style="width: 100% !important">
@@ -87,4 +86,39 @@ if(isset($_POST['submit'])) {
 </div>
 </DIV>
 <DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>
+</DIV>-->
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<body class="body">
+<div class="header">
+    <a class="header-text">登入（login）</a>
+</div>
+
+<div class="table">
+  
+    <form method="post" action="/webview/login/login_ios.php" autocomplete="off">
+    <div class="table-input">
+      <input type="text" name="token" value="authkey：<?=$token?>" placeholder="authkey:" disabled="true"/>
+    </div>
+    <div class="table-input">
+     <input type="text" name="username"  value=" username：<?=$username['username']?>" placeholder=" username：" disabled="true"/>
+    </div>
+    <div class="table-input">
+      <input type="text" name="id" id="id"  placeholder="用户ID：例如 52521354"/>
+    </div>
+    <div class="table-input">
+      <input type="password" id="pass1" name="password"  placeholder="密码：例如 123456"/>
+    </div>
+
+    <div class="confirm">
+      <input type="submit" name="submit" id="submit" value="登录" />
+    </div>
+     
+    </form>
+
+
+</div>
+
+
+
+</body>
+
