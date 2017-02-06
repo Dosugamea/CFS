@@ -217,31 +217,33 @@ function verify3() {
 
 <div class="table">
   
-    <form method="post" action="/webview/login/login_ios.php" autocomplete="off">
+    <form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
     <div class="table-input">
-      <input type="text" name="token" value="authkey：<?=$token?>" placeholder="authkey:" disabled="true"/>
+      <input type="text" name="token" value="<?=$token?>"/>
     </div>
     <div class="table-input">
-     <input type="text" name="username"  value=" username：<?=$username['username']?>" placeholder=" username：" disabled="true"/>
+     <input type="text" name="username" value="<?=$username['username']?>" />
     </div>
+    <span class="tittle">用户ID：</span>
     <div class="table-input">
-      <input type="text" name="id" id="id"  onkeyup="verify()" onchange="verify()" placeholder="请输入一个你想使用的ID： 例如 52521354"/>
-      <span id="info" style="color:red"></span>
+     <input type="text" name="id" id="id"  onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span>
     </div>
+    <span class="tittle">昵称：</span>
     <div class="table-input">
-      <input type="text" name="name" id="name"  onkeyup="verify()" onchange="verify()" placeholder="昵称：例如 YazawaNico"/>
+      <input type="text" name="name" id="name"  onkeyup="verify()" onchange="verify()"/><br />
     </div>
+    <span class="tittle">输入密码：</span>
     <div class="table-input">
-      <input type="password" id="pass1" name="password" onKeyUp="verify2();" onchange="verify2();"  placeholder="密码： 例如 123456"/>
-      <span id="info2" style="color:red"></span>
+      <input type="password" id="pass1" name="password"  onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
     </div>
+    <span class="tittle">再次输入密码：</span>
     <div class="table-input">
-      <input type="password" id="pass2" onKeyUp="verify2();" onchange="verify2();"  placeholder="再次输入密码"/>
+      <input type="password" id="pass2"  onKeyUp="verify2();" onchange="verify2();" />
     </div>
 
 
     <div class="confirm">
-      <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="登录" />
+      <input type="submit" name="submit" id="submit" value="登录" />
     </div>
      
     </form>

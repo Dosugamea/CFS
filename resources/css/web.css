@@ -40,7 +40,7 @@ input{
 	width: 100%;
 }
 .confirm input{
-	background-color: #00a1d6;
+	background-color:#000000;
     color: #fff;
     display: block;
     height: auto !important;
@@ -54,3 +54,4 @@ input{
     margin-bottom: 10px;
     font: inherit;
 }
+.tittle{font-size: 20px;}
