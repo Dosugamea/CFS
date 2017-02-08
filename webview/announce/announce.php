@@ -26,7 +26,7 @@ $has_new=$mysql->query('select distinct tab from webview where to_days(time)>to_
 
   <ul id="tab">
       <li class="on">
-    <a href="/webview.php/announce/announce">
+    <a href="">
       <img src="/resources/things/tab1_on.png" alt="お知らせ">
     </a>
   </li>

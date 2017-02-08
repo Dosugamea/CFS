@@ -46,12 +46,12 @@ require "version.php";
 </DIV>-->
  <ul id="tab">
       <li class="on">
-    <a href="/webview.php/announce/announce">
+    <a href="#">
       <img src="/resources/things/tab1_on.png" alt="お知らせ">
     </a>
   </li>
     <li class="off">
-    <a href="/webview.php/announce/index?disp_faulty=2">
+    <a href="/webview.php/announce/announce">
        <img src="/resources/things/tab2_off.png" alt="アップデート">
     </a>
   </li>
