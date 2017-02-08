@@ -182,7 +182,9 @@ if (!$rolled_back && isset($__user_bak)) {
 }
 
 /* 处理用户请求 */
-$ret['status_code'] = 200;
+if(!isset($ret['status_code'])){
+	$ret['status_code'] = 200;
+}
 $ret = json_encode($ret);
 function retError($statusCode) {
   global $ret;
