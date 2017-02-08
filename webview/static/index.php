@@ -18,11 +18,11 @@ elseif($_GET['id']==13) {
 } 
 //サポート
 elseif($_GET['id']==5) {
-  header('Location: /webview.php/settings/index');
+  header('Location: /webview.php/announce/info');
 }
 //利用规约
 elseif($_GET['id']==1) {
-  header('Location: /webview.php/settings/medley');
+  header('Location: /webview.php/announce/info');
 }
 else{
   header('Location: /webview.php');

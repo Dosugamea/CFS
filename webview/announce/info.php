@@ -19,6 +19,11 @@ if(strUA.indexOf("iphone") >= 0) {
 }
 </script>
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
+<?php  require "config/database.php";
+require "config/maintenance.php";
+require "version.php";
+require "info.php"
+?>
 
 <DIV id="wrapper_news" style="width: 100% !important">
 <div class="title_news fs34" style="width:100%">
@@ -31,13 +36,25 @@ if(strUA.indexOf("iphone") >= 0) {
 </div>
 <div class="content_news_all" style="margin-top:0">
   <div id="box1">
-    	<div class="title_news_all fs30">
-          <span class="ml40">PLServer</span>
+        <div class="title_news_all fs30">
+          <span class="ml40">版本信息：</span>
+        </div>
+        <div class="content_all">
+          <div class="note">
+            <p>Programmed Live! Server {<?=$pls_version_date?>}<br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</p>
+            <?php
+            if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`='.$_SESSION['server']['HTTP_USER_ID'])->fetchColumn() != 32) {
+              echo '<b style="color:red">我们升级了服务器的密码存储机制，建议您前往“游戏设置”退出重新登录或修改密码，这将大幅降低服务器被攻击导致密码泄露的风险。</b>';
+            } ?>
+          </div>
+        </div>
+    	 <div class="title_news_all fs30">
+          <span class="ml40">使用协议:</span>
         </div>
         <div class="content_all">
           <div class="note">
             <p>
-             本服务端以及所属的代码以及修改版的客户端用途为研究学习交流使用为个人开发,严禁在公开场合传播宣传并且禁止用于商业用途,一经发现我们将会采取相应措施.
+            <?=$pls_agreement?>
             </p>
           </div>
         </div>
@@ -47,10 +64,10 @@ if(strUA.indexOf("iphone") >= 0) {
         <div class="content_all">
           <div class="note">
             <p>
-            维护:PL维护团队<br>
-            开发:PL开发团队<br>
-            运营:PL运营团队<br>
-            <a href="native://browser?url=mailto:" style="color:red;" >邮件反馈</a><br>
+            维护:<?=$pls_maintenance?><br>
+            开发:<?=$pls_dev?><br>
+            运营:<?=$pls_operation?><br><br>
+            <a href="native://browser?url=mailto:<?=$pls_support_mail?>" style="color:red;" >邮件反馈</a><br>
             </p>
           </div>
         </div>

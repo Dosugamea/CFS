@@ -1,85 +1,140 @@
 <!DOCTYPE html>
-<HTML><HEAD><META content="IE=11.0000" 
-http-equiv="X-UA-Compatible">
+<HTML><HEAD>
+<META content="IE=11.0000" http-equiv="X-UA-Compatible">
  
 <META charset="utf-8"> 
 <TITLE>お知らせ一覧</TITLE> 
-<LINK href="/resources/bstyle.css" rel="stylesheet"> 
-<LINK href="/resources/news.css" rel="stylesheet"> 
-<link href="/resources/css/style.css" rel="stylesheet">
-<SCRIPT type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=100% minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
-</SCRIPT>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
+
+<link rel="stylesheet" href="/resources/things/list.css">
+<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+
+<script src="/resources/things/perfect-scrollbar.min.js"></script>
+<script src="/resources/things/button.js"></script>
+<script src="/resources/things/list.js"></script>
 <style>
-li.button{
-  vertical-align:top;
-  height:120px !important;
-  background:url(/resources/m_button_01.png) !important;
-  background-position:center !important;
-  background-repeat: no-repeat !important;
-  background-size: auto !important;
+.Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;text-align: center;}
+.Welcome-Icon tr td{width: 33%; }
+.Welcome-Icon tr td a{color: #ffffff !important;}
+.main-icon{
+  width: 100%;
+  border: 4px solid #878787;
+  border-radius: 15px;background-color:#FF6699;
 }
-li.button p{
-  padding-top:5px;
-}
-ul#tabs a{
-  color:white;
-}
-ul#tabs a:visited{
-  color:white;
-}
-
+a{text-decoration:none;}
+a:active{text-decoration:none;}
+a:visited{text-decoration:none;}
+a:focus{text-decoration:none;}
+a:hover{text-decoration:none;}
 </style>
 </head>
 <BODY>
 <?php require "config/database.php";
 require "config/maintenance.php";
 require "version.php";
-?><p>Programmed Live! Server {<?=$pls_version_date?>}<br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</p>
-<?php
-if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`='.$_SESSION['server']['HTTP_USER_ID'])->fetchColumn() != 32) {
-  echo '<b style="color:red">我们升级了服务器的密码存储机制，建议您前往“游戏设置”退出重新登录或修改密码，这将大幅降低服务器被攻击导致密码泄露的风险。</b>';
-} ?>
-<p>&nbsp;</p>
-<DIV id="wrapper_news">
-<div class="title_news_all_tab">
-<UL id="tabs">
-  <a href="/webview.php/announce/announce"><LI class="fs30 button"><p>News</p></LI></a>
-  <a href="/webview.php/settings/index"><LI class="fs30 button"><p>Setting</p></LI></a>
-  <a href="/webview.php/mods/index"><LI class="fs30 button"><p>Mods</p></LI></a>
-</UL>
-</div>
-<div style="clear:both;height:50px;"></div>
+?>
+
+<!--<DIV id="wrapper_news">
 <div class="title_news_all_tab">
 <UL id="tabs">
   <LI class="fs30 open" id="newstab1" name="box1">最新公告 News</LI>
   <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/announce">查看全部 ALL</A></LI>
   <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/info">关于 About</A></LI>
 </UL>
-</DIV>
+</DIV>-->
+ <ul id="tab">
+      <li class="on">
+    <a href="/webview.php/announce/announce">
+      <img src="/resources/things/tab1_on.png" alt="お知らせ">
+    </a>
+  </li>
+    <li class="off">
+    <a href="/webview.php/announce/index?disp_faulty=2">
+       <img src="/resources/things/tab2_off.png" alt="アップデート">
+    </a>
+  </li>
+        <li class="off">
+    <a href="/webview.php/announce/info">
+      <img src="/resources/things/tab3_off.png" alt="不具合">
+    </a>
+  </li>
+    </ul>
 <?php
 if(!isset($_GET['disp_faulty']) || !is_numeric($_GET['disp_faulty'])) {
   $_GET['disp_faulty']=0;
 }
 $announcement=$mysql->query('select * from webview where tab!=0 order by time desc limit 3')->fetchAll();
 ?>
-<DIV class="content_news_all">
-<DIV id="box1">
+<div id="main">
+  <div id="container">
+  <ul id="list">
+      
+
+<!--<div class="title_news_all_tab bl1">
+<UL id="tabs">
+  <a href="/webview.php/announce/announce"><LI class="fs30 button"><p>News</p></LI></a>
+  <a href="/webview.php/settings/index"><LI class="fs30 button"><p>Setting</p></LI></a>
+  <a href="/webview.php/mods/index"><LI class="fs30 button"><p>Mods</p></LI></a>
+</UL>
+</div>-->
+<table class="Welcome-Icon" cellspacing="20">
+  <tr>
+    <td>
+      <a href="/webview.php/announce/announce">
+        <div class="main-icon" style="font-size:4vw;">
+          News
+        </div>
+      </a>
+    </td>
+    <td>
+      <a href="/webview.php/settings/index">
+        <div class="main-icon" style="font-size:4vw;">
+          Setting
+        </div>
+      </a>
+    </td>
+    <td>
+      <a href="/webview.php/mods/index">
+        <div class="main-icon" style="font-size:4vw;">
+          Mods
+        </div>
+      </a>
+    </td>
+  </tr>
+</table>
 <?php foreach($announcement as $v) {
   $time=explode(' ', $v['time'])[0];
 ?>
-<A class="big-link"<?=($v['detail_id']?' href="/webview.php/announce/detail?0=&announce_id='.$v['detail_id'].'&disp_faulty='.$_GET['disp_faulty'].'"':'')?> data-animation="fade" data-reveal-id="readlist01">
+  <li class="entry" >
+        <div class="entry-container">
+          <h2 class="text"><?=$v['title']?></h2>
+          <div class="summary"> <?=$v['content']?></div>
+          <div class="start-date"><?=$time?></div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+<?php } ?>
+</ul>
+
+    <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
+      次の10件を表示
+    </div>
+  </div>
+</div>
+<script>
+  const URL_BASE = '/webview.php';
+  const DISP_FAULTY = 0;
+  const USER_ID = 279412;
+  const AUTHORIZE_DATA = 'consumerKey=lovelive_test&token=6NmJHLIcvs5SLhTMDLyeaz5G827U44PSYJH0BItNlINP9miZUINSFwVYy9RLRoeJyly9Po4UpDy1shXgE6YdCA0&version=1.1&timeStamp=1484453451&nonce=WV0';
+
+  updateButtons();
+  Button.initialize(document.getElementById('load-next'), loadNext);
+  Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
+</script>
+
+<!--<A class="big-link"<?=($v['detail_id']?' href="/webview.php/announce/detail?0=&announce_id='.$v['detail_id'].'&disp_faulty='.$_GET['disp_faulty'].'"':'')?> data-animation="fade" data-reveal-id="readlist01">
   <DIV class="title_news_all fs30">
     <SPAN class="ml40"><?=$v['title']?></SPAN>
   </DIV>
@@ -94,11 +149,11 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
     </DIV>
   </DIV>
 </A>
-<?php } ?>
+
 
 </DIV></div>
 <DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
 </DIV>
-<!--<SCRIPT src="http://d3llrff26gioiw.cloudfront.net/resources/js/tab.js" type="text/javascript"></SCRIPT>-->
-</div></div>
+<SCRIPT src="http://d3llrff26gioiw.cloudfront.net/resources/js/tab.js" type="text/javascript"></SCRIPT>
+</div></div>-->
 </BODY></HTML>
