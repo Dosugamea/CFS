@@ -1,77 +1,82 @@
 <meta charset='utf-8' />
 
-<link href="/resources/bstyle.css" rel="stylesheet">
-<link href="/resources/news.css" rel="stylesheet">
-<link href="/resources/css/style.css" rel="stylesheet">
-<!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
-<SCRIPT type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
-</script>
+<link rel="stylesheet" href="/resources/things/list.css">
+<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+
+<script src="/resources/things/perfect-scrollbar.min.js"></script>
+<script src="/resources/things/button.js"></script>
+<script src="/resources/things/list.js"></script>
+<!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
+
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
 <?php  require "config/database.php";
 require "config/maintenance.php";
 require "version.php";
 require "info.php"
 ?>
-
-<DIV id="wrapper_news" style="width: 100% !important">
-<div class="title_news fs34" style="width:100%">
-  <span class="ml30">关于 About
-  </span><a id="back" href="/webview.php/announce/index">
-  <div class="topback">
-    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
-  </div>
-  </a>
-</div>
-<div class="content_news_all" style="margin-top:0">
-  <div id="box1">
-        <div class="title_news_all fs30">
-          <span class="ml40">版本信息：</span>
+<ul id="tab">
+      <li class="on">
+    <a href="/webview.php/announce/index">
+      <img src="/resources/things/tab1_off.png" alt="お知らせ">
+    </a>
+  </li>
+    <li class="off">
+    <a href="/webview.php/announce/announce">
+       <img src="/resources/things/tab2_off.png" alt="アップデート">
+    </a>
+  </li>
+        <li class="off">
+    <a href="">
+      <img src="/resources/things/tab3_on.png" alt="不具合">
+    </a>
+  </li>
+</ul>
+<div id="main">
+  <div id="container">
+    <ul id="list">
+      <li class="entry" >
+        <div class="entry-container">
+          <h2 class="text">版本信息</h2>
+          <div class="summary">Programmed Live! Server {<?=$pls_version_date?>}<br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
+          <div class="clearfix"></div>
         </div>
-        <div class="content_all">
-          <div class="note">
-            <p>Programmed Live! Server {<?=$pls_version_date?>}<br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</p>
-            <?php
-            if ($mysql->query('SELECT length(`login_password`) FROM `users` WHERE `user_id`='.$_SESSION['server']['HTTP_USER_ID'])->fetchColumn() != 32) {
-              echo '<b style="color:red">我们升级了服务器的密码存储机制，建议您前往“游戏设置”退出重新登录或修改密码，这将大幅降低服务器被攻击导致密码泄露的风险。</b>';
-            } ?>
-          </div>
+      </li>
+      <li class="entry" >
+        <div class="entry-container">
+          <h2 class="text">使用协议</h2>
+          <div class="summary"><?=$pls_agreement?></div>
+          <div class="clearfix"></div>
         </div>
-    	 <div class="title_news_all fs30">
-          <span class="ml40">使用协议:</span>
-        </div>
-        <div class="content_all">
-          <div class="note">
-            <p>
-            <?=$pls_agreement?>
-            </p>
-          </div>
-        </div>
-        <div class="title_news_all fs30">
-          <span class="ml40">支持信息</span>
-        </div>
-        <div class="content_all">
-          <div class="note">
-            <p>
+      </li>
+      <li class="entry" >
+        <div class="entry-container">
+          <h2 class="text">支持信息</h2>
+          <div class="summary">
             维护:<?=$pls_maintenance?><br>
             开发:<?=$pls_dev?><br>
             运营:<?=$pls_operation?><br><br>
-            <a href="native://browser?url=mailto:<?=$pls_support_mail?>" style="color:red;" >邮件反馈</a><br>
-            </p>
+            <a href="native://browser?url=mailto:<?=$pls_support_mail?>" style="color:red;" >邮件反馈</a>
           </div>
+          <div class="clearfix"></div>
         </div>
-	</div>
+      </li>
+    </ul>
+  <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
+      次の10件を表示
+    </div>
+  </div>
 </div>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>
+
+<script>
+  const URL_BASE = '/webview.php';
+  const DISP_FAULTY = 0;
+  const USER_ID = 279412;
+  const AUTHORIZE_DATA = 'consumerKey=lovelive_test&token=6NmJHLIcvs5SLhTMDLyeaz5G827U44PSYJH0BItNlINP9miZUINSFwVYy9RLRoeJyly9Po4UpDy1shXgE6YdCA0&version=1.1&timeStamp=1484453451&nonce=WV0';
+
+  updateButtons();
+  Button.initialize(document.getElementById('load-next'), loadNext);
+  Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
+</script>
