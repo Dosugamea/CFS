@@ -50,47 +50,16 @@ if(isset($_POST['submit'])) {
   }
 }
 ?>
-
-
-
-
-<!--<link href="/resources/bstyle.css" rel="stylesheet">
-<link href="/resources/news.css" rel="stylesheet">
-<link href="/resources/css/style.css" rel="stylesheet">
-
-
-<DIV id="wrapper_news" style="width: 100% !important">
-<div class="title_news fs34" style="width:100%">
-  <span class="ml30">登录 Login
-  </span><a id="back" href="javascript:void(0);" onclick="window.opener=null; window.open('','_self');window.close();">
-  <div class="topback">
-    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
-  </div>
-  </a>
-</div>
-<div class="content_news_all" style="margin-top:0">
-  <div id="box1">
-    <div class="title_news_all fs30">
-      <span class="ml40">登陆(login)</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-      	<form method="post" action="/webview/login/login_ios.php" autocomplete="off">
-			authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
-			username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
-			用户ID：<input type="text" name="id" id="id" style="height:27px" /><br />
-			密码：<input type="password" id="pass1" name="password" style="height:27px" /><br />
-			<?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。</span></h3>'; ?>
-			<input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="登录" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		</form>
-      </div>
-    </div>
-  </div>
-</div>
-</DIV>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>-->
-
+<style type="text/css">
+	.protect{z-index: 555;width: 100%;height: 130px;background-color:transparent;position: absolute;left: 0px;}
+	.table-input{z-index: 1;}
+</style>
+<script type="text/javascript">
+		console.log('%c 为了您和您的账户安全','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+		console.log('%c 请不要在这里执行任何命令','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+		console.log('%c 否则你的JJ可能不保','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+		console.log("%c", "padding:30px 300px;line-height:120px;background:url('http://app.lovelivesupport.com/pl/jitui.gif');");
+	</script>
 <link href="/resources/css/web.css" rel="stylesheet">
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <body class="body">
@@ -101,11 +70,12 @@ if(isset($_POST['submit'])) {
 <div class="table">
   
     <form method="post" action="/webview/login/login_ios.php" autocomplete="off">
+    <div class="protect"></div>
     <div class="table-input">
-      <input type="text" name="token" value="authkey：<?=$token?>"/>
+      <input type="text" name="token" value="<?=$token?>"/>
     </div>
     <div class="table-input">
-     <input type="text" name="username"  value=" username：<?=$username['username']?>"/>
+     <input type="text" name="username"  value="<?=$username['username']?>"/>
     </div>
     <span class="tittle">用户ID：</span>
     <div class="table-input">

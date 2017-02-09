@@ -54,4 +54,3 @@ function loadNext() {
   xhr.setRequestHeader('Authorize', AUTHORIZE_DATA);
   xhr.send();
 }
-

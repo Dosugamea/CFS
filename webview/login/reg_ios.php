@@ -167,6 +167,16 @@ function verify3() {
   }
 }
 </script>
+<script type="text/javascript">
+    console.log('%c 为了您和您的账户安全','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+    console.log('%c 请不要在这里执行任何命令','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+    console.log('%c 否则你的JJ可能不保','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
+    console.log("%c", "padding:30px 300px;line-height:120px;background:url('http://app.lovelivesupport.com/pl/jitui.gif');");
+  </script>
+<style type="text/css">
+  .protect{z-index: 555;width: 100%;height: 130px;background-color:transparent;position: absolute;left: 0px;}
+  .table-input{z-index: 1;}
+</style>
 <link href="/resources/css/web.css" rel="stylesheet">
 <!--<link href="/resources/bstyle.css" rel="stylesheet">
 <link href="/resources/news.css" rel="stylesheet">
@@ -218,6 +228,7 @@ function verify3() {
 <div class="table">
   
     <form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
+    <div class="protect"></div>
     <div class="table-input">
       <input type="text" name="token" value="<?=$token?>"/>
     </div>

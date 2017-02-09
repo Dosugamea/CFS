@@ -47,14 +47,14 @@ require "info.php"
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">使用协议</h2>
-          <div class="summary"><?=$pls_agreement?></div>
+          <div class="summary" style="width:760px !important;"><?=$pls_agreement?></div>
           <div class="clearfix"></div>
         </div>
       </li>
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">支持信息</h2>
-          <div class="summary">
+          <div class="summary" >
             维护:<?=$pls_maintenance?><br>
             开发:<?=$pls_dev?><br>
             运营:<?=$pls_operation?><br><br>
