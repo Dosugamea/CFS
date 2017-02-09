@@ -47,17 +47,17 @@ require "version.php";
  <ul id="tab">
       <li class="on">
     <a href="#">
-      <img src="/resources/things/tab1_on.png" alt="お知らせ">
+      <img src="/resources/things/tab/tab1_on.png" alt="お知らせ">
     </a>
   </li>
     <li class="off">
     <a href="/webview.php/announce/announce">
-       <img src="/resources/things/tab2_off.png" alt="アップデート">
+       <img src="/resources/things/tab/tab2_off.png" alt="アップデート">
     </a>
   </li>
         <li class="off">
     <a href="/webview.php/announce/info">
-      <img src="/resources/things/tab3_off.png" alt="不具合">
+      <img src="/resources/things/tab/tab3_off.png" alt="不具合">
     </a>
   </li>
     </ul>

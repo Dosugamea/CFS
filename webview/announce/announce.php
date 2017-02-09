@@ -25,19 +25,19 @@ $has_new=$mysql->query('select distinct tab from webview where to_days(time)>to_
 ?>
 
   <ul id="tab">
-      <li class="on">
+      <li class="foo">
     <a href="/webview.php/announce/index">
-      <img src="/resources/things/tab1_off.png" alt="お知らせ">
+      <img src="/resources/things/tab/tab1_off.png" alt="お知らせ">
     </a>
   </li>
-    <li class="off">
+    <li class="on">
     <a href="">
-      <img src="/resources/things/tab2_on.png" alt="お知らせ">
+      <img src="/resources/things/tab/tab2_on.png" alt="お知らせ">
     </a>
   </li>
         <li class="off">
     <a href="/webview.php/announce/info">
-      <img src="/resources/things/tab3_off.png" alt="不具合">
+      <img src="/resources/things/tab/tab3_off.png" alt="不具合">
     </a>
   </li>
     </ul>
@@ -85,7 +85,7 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text"><?=$v['title']?></h2>
-          <div class="summary"> <?=$v['content']?><?=($v['detail_id']?'<BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?></div>
+          <div class="summary"> <?=$v['content']?><!--<?=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>--></div>
           <div class="start-date"><?=$time?></div>
           <div class="clearfix"></div>
         </div>

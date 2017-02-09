@@ -18,19 +18,19 @@ require "version.php";
 require "info.php"
 ?>
 <ul id="tab">
-      <li class="on">
+      <li class="off">
     <a href="/webview.php/announce/index">
-      <img src="/resources/things/tab1_off.png" alt="お知らせ">
+      <img src="/resources/things/tab/tab1_off.png" alt="お知らせ">
     </a>
   </li>
     <li class="off">
     <a href="/webview.php/announce/announce">
-       <img src="/resources/things/tab2_off.png" alt="アップデート">
+       <img src="/resources/things/tab/tab2_off.png" alt="アップデート">
     </a>
   </li>
-        <li class="off">
+        <li class="on">
     <a href="">
-      <img src="/resources/things/tab3_on.png" alt="不具合">
+      <img src="/resources/things/tab/tab3_on.png" alt="不具合">
     </a>
   </li>
 </ul>
