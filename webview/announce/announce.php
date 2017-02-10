@@ -85,9 +85,10 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text"><?=$v['title']?></h2>
-          <div class="summary"> <?=$v['content']?><!--<?=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>--></div>
+          <div class="summary"> <?=$v['content']?></div>
           <div class="start-date"><?=$time?></div>
           <div class="clearfix"></div>
+
         </div>
       </li>
 <?php } ?>
@@ -110,3 +111,6 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 </script>
 </body>
 </html>
+
+<!--<?=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>-->
+<!--<?=($v['banner_on']?'<h2 class="banner"><img class="banner" src="<?=$banner_url?>"></h2>':'')?>-->

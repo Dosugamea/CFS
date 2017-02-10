@@ -1,22 +1,42 @@
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>
-<SCRIPT type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
+<link rel="stylesheet" href="/resources/things/detail.css?">
+<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+<link rel="stylesheet" href="/resources/things/list2.css">
+
+<script src="/resources/things/perfect-scrollbar.min.js"></script>
+<script src="/resources/things/button.js"></script>
+<script>
+  var num = 1589740651036;
+
+  function printNumber(numDigits) {
+    numDigits = numDigits || 10;
+    
+    var str = String(num);
+
+    for (var i = 0; i < numDigits - str.length; i++) {
+      document.write('<img src="http://cf-static-prod.lovelive.ge.klabgames.net/resources/img/thanksgiving/counter00.png" class="etc">');
+    }
+    for (var i = 0; i < str.length; i++) {
+      var d = str.charAt(i);
+      document.write('<img src="http://cf-static-prod.lovelive.ge.klabgames.net/resources/img/thanksgiving/counter0' + d + '.png" class="etc">');
+    }
+  }
+
+  function printIcon(target) {
+    if (num >= target) {
+      document.write('<img src="http://cf-static-prod.lovelive.ge.klabgames.net/resources/img/thanksgiving/e_icon_02.png" class="etc">');
+    } else {
+      document.write('<img src="http://cf-static-prod.lovelive.ge.klabgames.net/resources/img/thanksgiving/e_icon_01.png" class="etc">');
+    }
+  }
 </script>
-<link href="/resources/bstyle.css" rel="stylesheet">
-<link href="/resources/news.css" rel="stylesheet">
-<link href="/resources/css/style.css" rel="stylesheet">
+<style type="text/css">
+a{color: #000000;}
+</style>
 
 <?php
 $uid=$_SESSION['server']['HTTP_USER_ID'];
@@ -46,57 +66,70 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
   else echo '<p>输入错误！</p>';
 }
 ?>
+<div id="outer">
+  <div id="inner">
+    <div id="header">
+      <h2>卡片设置</h2>
+      <div id="back"></div>
+    </div>
 
-<DIV id="wrapper_news" style="width: 100% !important">
-<div class="title_news fs34" style="width:100%">
-  <span class="ml30">卡片设置
-  </span><a id="back" href="/webview.php/settings/index">
-  <div class="topback">
-    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
+<div id="body">
+<div id="container">
+<ul id="list">
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">自定义组曲</h2>
+          <div class="summary">
+            您的UID：<?=$uid?>，已<?=($params['card_switch']?'启':'禁')?>用卡片功能。<br />
+            <?php if($params['enable_card_switch']) : ?>
+            <a href="/webview.php/settings/card?switch_card=<?=($params['card_switch']?'0':'1')?>"><?=($params['card_switch']?'禁':'启')?>用卡片功能</a>
+            <br /><span style="color:red;font-weight:bold">
+            <?php else : ?>
+            您无权启用卡片功能。
+            <?php endif; ?>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">设置头像</h2>
+          <div class="summary">
+            <span style="font-weight:bold">设置头像</span><br />您可以设置无卡模式下的排行榜中自己显示的头像。<br /><br />
+            <form method="get" action="/webview.php/settings/card">
+            请输入卡片的相册ID：<input type="text" name="avatar" autocomplete="off" />（最大ID：<?=$max_album_id?>）<br />
+            <input type="checkbox" name="rankup" value="rankup" />觉醒
+            <input type="submit" name="submit" value="提交" />
+            </form>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">相关信息</h2>
+          <div class="summary">
+          注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！<br />（若您只是想查看另一模式的排行榜可以不用重启游戏）
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+</ul>
+
+</div>
+ </div>
   </div>
-  </a>
 </div>
-<div class="content_news_all" style="margin-top:0">
-  <div id="box1">
 
-<div class="title_news_all fs30">
-      <span class="ml40">卡片开关</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-      <p>您的UID：<?=$uid?>，已<?=($params['card_switch']?'启':'禁')?>用卡片功能。<br />
-<?php if($params['enable_card_switch']) : ?>
-<a href="/webview.php/settings/card?switch_card=<?=($params['card_switch']?'0':'1')?>"><?=($params['card_switch']?'禁':'启')?>用卡片功能</a>
-<br /><span style="color:red;font-weight:bold">
-<?php else : ?>
-您无权启用卡片功能。
-<?php endif; ?></p>
-      </div>
-    </div>
 
-    <div class="title_news_all fs30">
-      <span class="ml40">相关信息</span>
+      
     </div>
-    <div class="content_all">
-      <div class="note">
-      <p>注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！</span><br />（若您只是想查看另一模式的排行榜可以不用重启游戏）</p>
-      </div>
-    </div>
-    <div class="title_news_all fs30">
-      <span class="ml40">相关信息</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-      <p><span style="font-weight:bold">设置头像</span><br />您可以设置无卡模式下的排行榜中自己显示的头像。<br /><br />
-
-<form method="get" action="/webview.php/settings/card">
-请输入卡片的相册ID：<input type="text" name="avatar" autocomplete="off" />（最大ID：<?=$max_album_id?>）<br /><input type="checkbox" name="rankup" value="rankup" />觉醒<br /><br /><input type="submit" name="submit" value="提交" />
-</form>
-</p>
-      </div>
-    </div>
+  </div>
 </div>
-</div>
-</DIV>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>
+
+<script>
+  Button.initialize(document.getElementById('back'), function() {
+    window.location.href='/webview.php/settings/index';
+  });
+  Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
+</script>

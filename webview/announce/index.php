@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <HTML><HEAD>
 <META content="IE=11.0000" http-equiv="X-UA-Compatible">
- 
 <META charset="utf-8"> 
-<TITLE>お知らせ一覧</TITLE> 
+<TITLE></TITLE> 
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
 <link rel="stylesheet" href="/resources/things/list.css">
 <link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
-
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
 <script src="/resources/things/list.js"></script>
+
 <style>
 .Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;text-align: center;}
 .Welcome-Icon tr td{width: 33%; }
@@ -29,9 +28,12 @@ a:visited{text-decoration:none;}
 a:focus{text-decoration:none;}
 a:hover{text-decoration:none;}
 </style>
+
 </head>
 <BODY>
-<?php require "config/database.php";
+
+<?php 
+require "config/database.php";
 require "config/maintenance.php";
 require "version.php";
 ?>
@@ -84,21 +86,21 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
     <td>
       <a href="/webview.php/announce/announce">
         <div class="main-icon" style="font-size:4vw;">
-          News
+          資 訊
         </div>
       </a>
     </td>
     <td>
       <a href="/webview.php/settings/index">
         <div class="main-icon" style="font-size:4vw;">
-          Setting
+          設 置
         </div>
       </a>
     </td>
     <td>
       <a href="/webview.php/mods/index">
         <div class="main-icon" style="font-size:4vw;">
-          Mods
+          自定義
         </div>
       </a>
     </td>
