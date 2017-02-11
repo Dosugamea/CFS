@@ -62,7 +62,7 @@ require "info.php"
           </div>
           <div class="clearfix"></div>
         </div>
-      </li>
+      </li><br><br><br>
     </ul>
   <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示

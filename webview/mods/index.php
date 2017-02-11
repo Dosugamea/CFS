@@ -124,7 +124,7 @@ a{color: #000000;}
             <b>注意：以下的功能会大幅降低游戏难度，因而打开后您的成绩【不会】被记录！</b><br />
           <form method="get" action="/webview.php/mods/index" autocomplete="off">
           在游戏开始（以及组曲换曲）时获得<input type="text" value="<?=$params['extend_mods_hantei_count']?>" name="param" style="border:1px solid;height:27px;" /><input type="hidden" value="extend_mods_hantei_count" name="switch_param" />个超大判（设为0为关闭）<br />
-          <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" />
+          <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" /><br><br>
           </form>
           </div>
           <div class="clearfix"></div>
