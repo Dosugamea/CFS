@@ -50,6 +50,14 @@ a{color: #000000;}
 
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
+
+<!--KeyBoard-->
+<link rel="stylesheet" type="text/css" href="/resources/key/ios7keyboard.css">
+<script type="text/javascript" src="/resources/key/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="/resources/key/ios7keyboard.js"></script>
+<style type="text/css">
+  #keyboard_5xbogf8c{top: 780px !important;left: 30px !important;margin-bottom: 60px;}
+</style>
 <script>
   var num = 1589740651036;
 
@@ -123,13 +131,17 @@ a{color: #000000;}
           <div class="summary">
             <b>注意：以下的功能会大幅降低游戏难度，因而打开后您的成绩【不会】被记录！</b><br />
           <form method="get" action="/webview.php/mods/index" autocomplete="off">
-          在游戏开始（以及组曲换曲）时获得<input type="text" value="<?=$params['extend_mods_hantei_count']?>" name="param" style="border:1px solid;height:27px;" /><input type="hidden" value="extend_mods_hantei_count" name="switch_param" />个超大判（设为0为关闭）<br />
-          <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" /><br><br>
+          在游戏开始（以及组曲换曲）时获得<input type="text" value="<?=$params['extend_mods_hantei_count']?>" name="param" style="border:1px solid;height:27px;"  id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" readonly="true"/>
+          <input type="hidden" value="extend_mods_hantei_count" name="switch_param" />个超大判（设为0为关闭）<br />
+          <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" />
           </form>
+          <key></key>
           </div>
           <div class="clearfix"></div>
         </div>
-      </li><br><br><br>
+      </li>
+
+      <br><br><br>
 </ul>
 
 </div>
@@ -146,6 +158,20 @@ a{color: #000000;}
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>
+<script type="text/javascript">
+                $(document).ready(function(){ 
+                  $(".numkeyboard").ioskeyboard({
+                    keyboardRadix:80,
+                    keyboardRadixMin:30,
+                    keyboardRadixChange:false,
+                    keyfixed:false,
+                    clickeve:false,
+                    colorchange:false,
+                    colorchangeStep:1,
+                    colorchangeMin:154
+                                    });
+                                  })  
+              </script>
 </body>
 
 

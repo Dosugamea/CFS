@@ -118,7 +118,7 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
         </div>
       </li>
 <?php } ?>
-<br><br><br></ul>
+</ul>
 
     <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示
@@ -135,4 +135,27 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
 </script>
+
+<!--<A class="big-link"<?=($v['detail_id']?' href="/webview.php/announce/detail?0=&announce_id='.$v['detail_id'].'&disp_faulty='.$_GET['disp_faulty'].'"':'')?> data-animation="fade" data-reveal-id="readlist01">
+  <DIV class="title_news_all fs30">
+    <SPAN class="ml40"><?=$v['title']?></SPAN>
+  </DIV>
+  <DIV class="content_all">
+    <DIV class="note">
+      <P>
+        <?=$v['content']?>
+        <?=($v['detail_id']?'<BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>
+        <BR><BR>
+      </P>
+    <?=$time?> 
+    </DIV>
+  </DIV>
+</A>
+
+
+</DIV></div>
+<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
+</DIV>
+<SCRIPT src="http://d3llrff26gioiw.cloudfront.net/resources/js/tab.js" type="text/javascript"></SCRIPT>
+</div></div>-->
 </BODY></HTML>

@@ -45,6 +45,13 @@ require "info.php"
         </div>
       </li>
       <li class="entry" >
+        <div class="entry-container" id="href">
+          <h2 class="text">使用帮助</h2>
+          <div class="summary">点击此处进入使用帮助</div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry" >
         <div class="entry-container">
           <h2 class="text">使用协议</h2>
           <div class="summary" style="width:760px !important;"><?=$pls_agreement?></div>
@@ -62,7 +69,7 @@ require "info.php"
           </div>
           <div class="clearfix"></div>
         </div>
-      </li><br><br><br>
+      </li>
     </ul>
   <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示
@@ -79,4 +86,9 @@ require "info.php"
   updateButtons();
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
+</script>
+<script>
+  Button.initialize(document.getElementById('href'), function() {
+    window.location.href='/webview.php/help/index';
+  });
 </script>

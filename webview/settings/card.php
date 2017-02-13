@@ -9,6 +9,14 @@
 
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
+
+<!--KeyBoard-->
+<link rel="stylesheet" type="text/css" href="/resources/key/ios7keyboard.css">
+<script type="text/javascript" src="/resources/key/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="/resources/key/ios7keyboard.js"></script>
+<style type="text/css">
+  #keyboard_5xbogf8c{top: 430px !important;left: 30px !important;}
+</style>
 <script>
   var num = 1589740651036;
 
@@ -97,10 +105,11 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
           <div class="summary">
             <span style="font-weight:bold">设置头像</span><br />您可以设置无卡模式下的排行榜中自己显示的头像。<br /><br />
             <form method="get" action="/webview.php/settings/card">
-            请输入卡片的相册ID：<input type="text" name="avatar" autocomplete="off" />（最大ID：<?=$max_album_id?>）<br />
+            请输入卡片的相册ID：<input type="text" name="avatar" autocomplete="off" id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" readonly="true" />（最大ID：<?=$max_album_id?>）<br />
             <input type="checkbox" name="rankup" value="rankup" />觉醒
             <input type="submit" name="submit" value="提交" />
             </form>
+            <key></key>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -133,3 +142,17 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>
+<script type="text/javascript">
+                $(document).ready(function(){ 
+                  $(".numkeyboard").ioskeyboard({
+                    keyboardRadix:80,
+                    keyboardRadixMin:30,
+                    keyboardRadixChange:false,
+                    keyfixed:false,
+                    clickeve:false,
+                    colorchange:false,
+                    colorchangeStep:1,
+                    colorchangeMin:154
+                                    });
+                                  })  
+              </script>

@@ -38,6 +38,9 @@
     }
   }
 </script>
+
+
+
 <style type="text/css">
 a{color: #000000;}
 </style>
@@ -74,7 +77,7 @@ a{color: #000000;}
           } else if (strUA.indexOf("ipad") >= 0) {
               document.write('新设置页暂时不兼容iOS，请使用旧版设置页：<a href="/webview.php/settings/card">卡片开关/头像设置</a>');
           } else {
-              document.write('<iframe src="/webview.php/settings/iframe_settings_1" style="width: 100%;height: 250px;border: none;" scrolling="no"></iframe>');
+              document.write('<iframe src="http://plserver.lovelivesupport.com/webview.php/settings/iframe_settings_1" style="width: 100%;height: 250px;border: none;" scrolling="no"></iframe>');
           }
           </script>
           
@@ -84,7 +87,7 @@ a{color: #000000;}
       </li>
       <li class="entry"">
         <div class="entry-container">
-          <h2 class="text">卡片开关</h2>
+          <h2 class="text">头像设置</h2>
           <div class="summary">
           <script type="text/javascript">
           var strUA = "";
@@ -94,7 +97,7 @@ a{color: #000000;}
           } else if (strUA.indexOf("ipad") >= 0) {
               document.write('新设置页暂时不兼容iOS，请使用旧版设置页：<a href="/webview.php/settings/card">卡片开关/头像设置</a>');
           } else {
-              document.write('<iframe src="/webview.php/settings/iframe_settings_2" style="width: 100%;height: 250px;border: none;" scrolling="no"></iframe>');
+              document.write('<iframe src="http://plserver.lovelivesupport.com/webview.php/settings/iframe_settings_2" style="width: 100%;height: 250px;border: none;" scrolling="no"></iframe>');
           }
           </script>
           </div>
@@ -110,7 +113,7 @@ a{color: #000000;}
           </div>
           <div class="clearfix"></div>
         </div>
-      </li><br><br><br>
+      </li>
 </ul>
 
 </div>
