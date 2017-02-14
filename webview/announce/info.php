@@ -10,7 +10,10 @@
 <script src="/resources/things/button.js"></script>
 <script src="/resources/things/list.js"></script>
 <style type="text/css">
-  #mail{font-size:40px;color: #ffffff;background-color: #fd689a;width: 230px;height: 50px;text-align: center;position:initial;border: 3px solid #ffffff; border-radius: 15px;padding-top: 18px;box-shadow: 0px 0px 10px #666666;margin: 20px;}
+  table{width: 500px;}
+  table td tr{width: 50%;}
+  #mail{width: 140px;height: 50px;background-image: url(/resources/things/tab/mail.png);background-position: center;background-size: cover;margin: 5px;}
+  #noah{width: 250px;height: 50px;background-image: url(/resources/things/tab/noah.png);background-position: center;background-size: 88%;margin: 5px;background-repeat: no-repeat;}
 </style>
 <!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
 
@@ -68,7 +71,10 @@ require "info.php"
           <div class="summary" >
             开发:<?=$pls_dev?><br>
             维护:<?=$pls_maintenance?><br>
-            <div id="mail">邮件反馈</div>
+            <table>
+              <tr><td><div id="mail"></div></td><td><div id="noah"></div></td></tr>
+            </table>
+           
           </div>
           <div class="clearfix"></div>
         </div>
@@ -95,5 +101,8 @@ require "info.php"
   });
   Button.initialize(document.getElementById('mail'), function() {
     window.location.href='native://browser?url=mailto:<?=$pls_support_mail?>';
+  });
+  Button.initialize(document.getElementById('noah'), function() {
+    window.location.href='native://browser?url=http://dash.moe';
   });
 </script>

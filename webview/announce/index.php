@@ -14,14 +14,19 @@
 <script src="/resources/things/list.js"></script>
 
 <style>
-.Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;text-align: center;}
-.Welcome-Icon tr td{width: 33%; }
+.Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;}
+.Welcome-Icon tr td{width: 33%;}
+.Welcome-Icon tr{height: 50px;}
 .Welcome-Icon tr td a{color: #ffffff !important;}
 .main-icon{
   width: 100%;
-  border: 4px solid #878787;
-  border-radius: 15px;background-color:#FF6699;
+  height: 60px;
+  background-position: center;
+  background-size: 100%;
 }
+.icon1{background-image: url(/resources/things/tab/setting.png);}
+.icon2{background-image: url(/resources/things/tab/help.png);}
+.icon3{background-image: url(/resources/things/tab/mod.png);}
 a{text-decoration:none;}
 a:active{text-decoration:none;}
 a:visited{text-decoration:none;}
@@ -37,15 +42,6 @@ require "config/database.php";
 require "config/maintenance.php";
 require "version.php";
 ?>
-
-<!--<DIV id="wrapper_news">
-<div class="title_news_all_tab">
-<UL id="tabs">
-  <LI class="fs30 open" id="newstab1" name="box1">最新公告 News</LI>
-  <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/announce">查看全部 ALL</A></LI>
-  <LI class="fs30" id="newstab2" name="box2"><A href="/webview.php/announce/info">关于 About</A></LI>
-</UL>
-</DIV>-->
  <ul id="tab">
       <li class="on">
     <a href="#">
@@ -84,23 +80,23 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
 <table class="Welcome-Icon" cellspacing="20">
   <tr>
     <td>
-      <a href="/webview.php/help/index">
-        <div class="main-icon" style="font-size:4vw;">
-          指南
+      <a href="/webview.php/settings/index">
+        <div class="main-icon icon1" >
+          
         </div>
       </a>
     </td>
     <td>
-      <a href="/webview.php/settings/index">
-        <div class="main-icon" style="font-size:4vw;">
-          設 置
+      <a href="/webview.php/help/index">
+        <div class="main-icon icon2">
+          
         </div>
       </a>
     </td>
     <td>
       <a href="/webview.php/mods/index">
-        <div class="main-icon" style="font-size:4vw;">
-          自定義
+        <div class="main-icon icon3">
+          
         </div>
       </a>
     </td>
@@ -135,27 +131,4 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
 </script>
-
-<!--<A class="big-link"<?=($v['detail_id']?' href="/webview.php/announce/detail?0=&announce_id='.$v['detail_id'].'&disp_faulty='.$_GET['disp_faulty'].'"':'')?> data-animation="fade" data-reveal-id="readlist01">
-  <DIV class="title_news_all fs30">
-    <SPAN class="ml40"><?=$v['title']?></SPAN>
-  </DIV>
-  <DIV class="content_all">
-    <DIV class="note">
-      <P>
-        <?=$v['content']?>
-        <?=($v['detail_id']?'<BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>
-        <BR><BR>
-      </P>
-    <?=$time?> 
-    </DIV>
-  </DIV>
-</A>
-
-
-</DIV></div>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>
-<SCRIPT src="http://d3llrff26gioiw.cloudfront.net/resources/js/tab.js" type="text/javascript"></SCRIPT>
-</div></div>-->
 </BODY></HTML>
