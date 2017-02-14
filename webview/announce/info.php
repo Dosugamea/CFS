@@ -9,6 +9,9 @@
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
 <script src="/resources/things/list.js"></script>
+<style type="text/css">
+  #mail{font-size:40px;color: #ffffff;background-color: #fd689a;width: 230px;height: 50px;text-align: center;position:initial;border: 3px solid #ffffff; border-radius: 15px;padding-top: 18px;box-shadow: 0px 0px 10px #666666;margin: 20px;}
+</style>
 <!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
 
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
@@ -63,14 +66,13 @@ require "info.php"
         <div class="entry-container">
           <h2 class="text">支持信息</h2>
           <div class="summary" >
-            维护:<?=$pls_maintenance?><br>
             开发:<?=$pls_dev?><br>
-            运营:<?=$pls_operation?><br><br>
-            <a href="native://browser?url=mailto:<?=$pls_support_mail?>" style="color:red;" >邮件反馈</a>
+            维护:<?=$pls_maintenance?><br>
+            <div id="mail">邮件反馈</div>
           </div>
           <div class="clearfix"></div>
         </div>
-      </li>
+      </li><br><br><br>
     </ul>
     <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示
@@ -87,9 +89,11 @@ require "info.php"
   updateButtons();
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
-</script>
-<script>
+
   Button.initialize(document.getElementById('href'), function() {
     window.location.href='/webview.php/help/index';
+  });
+  Button.initialize(document.getElementById('mail'), function() {
+    window.location.href='native://browser?url=mailto:<?=$pls_support_mail?>';
   });
 </script>

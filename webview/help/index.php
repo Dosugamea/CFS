@@ -90,7 +90,7 @@
 
 <script>
   Button.initialize(document.getElementById('back'), function() {
-    window.location.href='/webview.php/announce/info';
+    window.location.href='/webview.php/announce/index';
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>

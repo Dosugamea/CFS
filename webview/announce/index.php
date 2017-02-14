@@ -84,9 +84,9 @@ $announcement=$mysql->query('select * from webview where tab!=0 order by time de
 <table class="Welcome-Icon" cellspacing="20">
   <tr>
     <td>
-      <a href="/webview.php/announce/announce">
+      <a href="/webview.php/help/index">
         <div class="main-icon" style="font-size:4vw;">
-          資 訊
+          指南
         </div>
       </a>
     </td>
