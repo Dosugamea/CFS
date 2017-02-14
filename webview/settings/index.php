@@ -38,9 +38,6 @@
     }
   }
 </script>
-
-
-
 <style type="text/css">
 a{color: #000000;}
 </style>
@@ -87,7 +84,7 @@ a{color: #000000;}
       </li>
       <li class="entry"">
         <div class="entry-container">
-          <h2 class="text">头像设置</h2>
+          <h2 class="text">卡片开关</h2>
           <div class="summary">
           <script type="text/javascript">
           var strUA = "";

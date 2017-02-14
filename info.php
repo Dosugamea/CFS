@@ -1,4 +1,4 @@
-<?php $pls_maintenance='PL维护组';$pls_dev='PL开发组';$pls_operation='PL运营组';$pls_support_mail='';
+<?php $pls_maintenance='双草酸酯 Noah';$pls_dev='双草酸酯 古安 小鱼 Noah';$pls_operation='双草酸酯 Noah';$pls_support_mail='lijun00326@gmail.com';
 $pls_agreement='
 1.本服务端以及所属的代码以及修改版的客户端用途为研究学习交流使用为个人开发,严禁在公开场合传播宣传并且禁止用于商业用途,一经发现我们将会采取相应措施<br />
 2.严禁在公开场合（贴吧、微博等）发布与PL有关的任何消息、截图、视频等

@@ -40,7 +40,8 @@ require "info.php"
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">版本信息</h2>
-          <div class="summary">Programmed Live! Server {<?=$pls_version_date?>}<br />客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
+          <div class="summary">Programmed Live! Server <span style="color: red;">*<?=$pls_version?>* </span><?=$pls_version_date?> <br />
+            客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
           <div class="clearfix"></div>
         </div>
       </li>
@@ -71,7 +72,7 @@ require "info.php"
         </div>
       </li>
     </ul>
-  <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
+    <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示
     </div>
   </div>
