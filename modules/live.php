@@ -254,7 +254,8 @@ function live_deckList($post) {
 			$add_center_buff = function ($skill) use (&$v) {
 				$unitdb = getUnitDb();
 				$leader_skill = $unitdb->query('SELECT leader_skill_effect_type, effect_value FROM unit_leader_skill_m WHERE unit_leader_skill_id = '.$skill)->fetch();
-				switch((int)($leader_skill['leader_skill_effect_type'])){
+				$leader_skill['leader_skill_effect_type'] = (int)($leader_skill['leader_skill_effect_type']);
+				switch($leader_skill['leader_skill_effect_type']){
 					case 1:
 						$src_attr = "smile";
 						$target_attr = "smile";
@@ -288,7 +289,7 @@ function live_deckList($post) {
 			if(isset($center_skill)) {
 				$add_center_buff($center_skill);
 			}
-			if(isset($party_skill)) {
+			if(isset($party_skill) && $party_skill != 0) {
 				$add_center_buff($party_skill);
 			}
 			$deck_ret[] = [
