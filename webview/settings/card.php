@@ -60,6 +60,7 @@ $max_album_id=$unit->query('SELECT max(unit_number) FROM unit_m WHERE unit_id<='
 
 if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
   $mysql->prepare('UPDATE user_params SET value=? WHERE user_id=? and param="card_switch"')->execute([$_GET['switch_card'], $uid]);
+  $mysql->prepare('UPDATE users SET authorize_token = "0" WHERE user_id=?')->execute([$uid]);
   $params['card_switch']=$_GET['switch_card'];
 }elseif(isset($_GET['submit']) && $_GET['submit']=='提交') {
   if(is_numeric($_GET['avatar']) && $_GET['avatar']>0 && $_GET['avatar']<=$max_album_id) {
