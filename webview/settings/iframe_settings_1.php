@@ -8,6 +8,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
 }
 if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
   $mysql->prepare('UPDATE user_params SET value=? WHERE user_id=? and param="card_switch"')->execute([$_GET['switch_card'], $uid]);
+  $mysql->prepare('UPDATE users SET authorize_token = "0" WHERE user_id=?')->execute([$uid]);
   $params['card_switch']=$_GET['switch_card'];
 }
 ?>
