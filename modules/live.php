@@ -325,6 +325,9 @@ function live_deckList($post) {
 		foreach ($deck as $k => $v){
 			//处理C位社员
 			$v['unit_deck_detail'] = $unitSort($v['unit_deck_detail']);
+			if(count($v['unit_deck_detail']) != 9){
+				continue;
+			}
 			$center_unit_owning_user_id = $v['unit_deck_detail'][4]['unit_owning_user_id'];
 			$center_unit_id = $mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id='.$center_unit_owning_user_id)->fetchColumn();
 			$leader_skill_id = $unitdb->query('SELECT default_leader_skill_id FROM unit_m WHERE unit_id = '.$center_unit_id)->fetch();
