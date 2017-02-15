@@ -45,7 +45,7 @@ if(strUA.indexOf("iphone") >= 0) {
 <div class="Welcome-N2">
 <h1 class="Welcome-Header shadow">Welcome to Programmed Live!</h1>
 <p>使用协议：<br />
-1、严禁在公开场合（贴吧、微博等）发布与PL有关的任何消息、截图、视频等
+1、除了官方钦定的宣传方式外，严禁在公开场合（贴吧、微博等）发布与PL有关的任何消息、截图、视频等
 （特别的，在公开场合公开了群号的QQ群属于公开场合）<br />
 2、若私下传播，则必须确保【所有看到消息的人也遵守前面一条】</p>
 <p>Usage agreement:<br>
