@@ -1048,9 +1048,9 @@ function live_reward($post) {
 				"daily_reward_info": [],
 				"effort_point": [{
 						"live_effort_point_box_spec_id": 5,
-						"capacity": 1,
+						"capacity": 4000000,
 						"before": 0,
-						"after": 0,
+						"after": 7657,
 						"rewards": []
 				}]
 		}',true));
