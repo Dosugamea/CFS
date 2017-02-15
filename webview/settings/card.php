@@ -119,7 +119,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
         <div class="entry-container">
           <h2 class="text">相关信息</h2>
           <div class="summary">
-          注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！<br />（若您只是想查看另一模式的排行榜可以不用重启游戏）
+          注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！
           </div>
           <div class="clearfix"></div>
         </div>
