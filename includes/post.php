@@ -3,12 +3,18 @@ function curls($url, $headers, $data_string) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_HEADER, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
     $data = curl_exec($ch);
     curl_close($ch);
-    return $data;
+	$resp = explode("\r\n\r\n", $data);
+	$header = explode("\r\n", $resp[0]);
+	$resp[1] = json_decode($resp[1],true);
+	$resp[0] = $header;
+	//$resp[1] = $body;
+    return $resp;
 }
 
 function login(){
@@ -16,7 +22,7 @@ function login(){
 	include 'config/maintenance.php';
 	$headers = array(
 			'Accept: */*',
-			'Accept-Encoding: gzip,deflate',
+			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
@@ -31,8 +37,8 @@ function login(){
 			'Expect:'
 		);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/login/authkey",$headers,"");
-	$r = json_decode(gzdecode($r));
-	$token = $r->response_data->authorize_token;
+	$r = $r[1];
+	$token = $r['response_data']['authorize_token'];
 	
 	$time = time();
 	$headers[12] = "Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=2";
@@ -50,7 +56,7 @@ function login(){
 	$headers[] = "X-Message-Code: $XMC";
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/login/login",$headers,$body);
 	//$r = json_decode(gzdecode($r));
-	return json_decode(gzdecode($r),true)['response_data'];
+	return $r = $r[1]['response_data'];
 }
 
 ?>
