@@ -7,10 +7,10 @@ function tos_tosCheck() {
 	include "config/tos.php";
 	$ret['tos_id'] = $tos_id;
 	$agreed_tos = $mysql->query('SELECT * FROM tos WHERE user_id='.$uid)->fetch();
-	if($agreed_tos == false || $agreed_tos != $tos_id){
-		$ret['is_agree'] = false;
+	if($agreed_tos == false || $agreed_tos['tos_id'] != $tos_id){
+		$ret['is_agreed'] = false;
 	}else{
-		$ret['is_agree'] = true;
+		$ret['is_agreed'] = true;
 	}
 	return $ret;
 }
