@@ -55,7 +55,7 @@ function download_additional($post) {
 		"request_data" => json_encode($post)
 	);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/additional",$headers,$post_server);
-	$ret = json_decode($r,true)['response_data'];
+	$ret = $r[1]['response_data'];
 	return $ret;
 }
 
@@ -113,8 +113,13 @@ function download_batch($post) {
 		"request_data" => json_encode($post)
 	);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/batch",$headers,$post_server);
-	$ret = json_decode($r,true)['response_data'];
-	return $ret;
+	if(in_array("Maintenance: 1", $r[0])){
+		return [];
+	}
+	else{
+		$ret = $r[1]['response_data'];
+		return $ret;
+	}
 }
 function download_getUrl($post) {
 	global $getUrl_address;
@@ -147,7 +152,7 @@ function download_update($post) {
 	$time = time();
 	$headers = array(
 			'Accept: */*',
-			'Accept-Encoding: gzip,deflate',
+			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
@@ -174,7 +179,7 @@ function download_update($post) {
 		"request_data" => json_encode($post)
 	);
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/update",$headers,$post_server);
-	$ret = json_decode(gzdecode($r),true)['response_data'];
+	$ret = $r[1]['response_data'];
 	return $ret;
 }
 
