@@ -161,6 +161,12 @@ CREATE TABLE IF NOT EXISTS `secretbox` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `tos` (
+  `user_id` int(11) NOT NULL,
+  `tos_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `tmp_authorize` (
   `token` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL DEFAULT '',
