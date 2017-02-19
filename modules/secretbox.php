@@ -392,6 +392,7 @@ function secretBox_all() {
 			'page_list' => $processPage($t[0])
 		];
 	}
+	//批量替换物品ID
 	foreach($ret['member_category_list'] as &$i1){
 		foreach($i1['tab_list'] as &$i2){
 			foreach($i2['page_list'] as &$i3){
@@ -406,6 +407,39 @@ function secretBox_all() {
 						case 3:
 							$i4['all_cost'][0]['type'] = 3002;
 							break;
+					}
+				}
+			}
+		}
+	}
+//	//批量移除cost（没错我就是有强迫症）（然后又发现后面会炸。。就算了吧）
+//	foreach($ret['member_category_list'] as &$i1){
+//		foreach($i1['tab_list'] as &$i2){
+//			foreach($i2['page_list'] as &$i3){
+//				foreach($i3['secret_box_list'] as &$i4){
+//					unset($i4['cost']);
+//				}
+//			}
+//		}
+//	}
+	//使用辅助券的卡池不能十一连
+	foreach($ret['member_category_list'] as &$i1){
+		foreach($i1['tab_list'] as &$i2){
+			foreach($i2['page_list'] as &$i3){
+				foreach($i3['secret_box_list'] as &$i4){
+					if ($i4['all_cost'][0]['type'] == 1000 && $i4['all_cost'][0]['item_id'] == 5){
+						$i3['page_layout'] = 4;
+						$i4['add_gauge'] = 0;
+						unset($i4['multi_type']);
+						unset($i4['multi_count']);
+						//unset($i4['is_pay_cost']);
+						unset($i4['is_pay_multi_cost']);
+						unset($i4['within_single_limit']);
+						unset($i4['within_multi_limit']);
+						unset($i4['all_cost'][0]['multi_amount']);
+						unset($i4['all_cost'][0]['multi_count']);
+						unset($i4['all_cost'][0]['is_pay_multi_cost']);
+						unset($i4['all_cost'][0]['within_multi_limit']);
 					}
 				}
 			}
