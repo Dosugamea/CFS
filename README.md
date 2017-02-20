@@ -56,10 +56,4 @@ A: Contact the developer to update data.sql.
 
 A: No. We will never tell you. Disassemble the game and figure them out yourself. The $code is easy to find, and the decrpytion algorithm is not difficult too.
 
-#Licensing
 
-PLS is licensed under the terms of the GNU Affero General Public License (AGPL) 3.0, available in the LICENSE file.
-
-For those who don't know about the AGPL license:
-
-If you modified this work AND provided service through the Internet with your modified version, then you are REQUIRED to open source your modified version under the same license.
