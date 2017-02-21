@@ -1,45 +1,76 @@
-<!DOCTYPE HTML>
-<!DOCTYPE html PUBLIC "" ""><HTML lang="ja"><HEAD><META content="IE=11.0000" 
-http-equiv="X-UA-Compatible">
- 
-<META charset="utf-8"> 
-<META name="apple-mobile-web-app-capable" content="yes"> <TITLE>news 
-detail 2</TITLE> <LINK href="/resources/bstyle.css" rel="stylesheet"> 
-<LINK href="/resources/news.css" rel="stylesheet"> 
-<STYLE>
-    html, body {
-    background-color: transparent;
-  }
-p{     
-    background-image: url(/resources/bug_trans.png); 
-}
-</STYLE>
- 
-<SCRIPT type="text/javascript">
- window.onload = function() {
- setTimeout(function(){window.scrollTo(0, 1);}, 100);
- }
+<head>
+	<meta charset="utf-8">
+	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
+	<link rel="stylesheet" href="/resources/things/detail.css?">
+	<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+	<link rel="stylesheet" href="/resources/things/list2.css">
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38" />');
-}
-</SCRIPT>
- 
-<META name="GENERATOR" content="MSHTML 11.00.10011.0"></HEAD> 
-<BODY>
-<DIV id="wrapper">
-<DIV class="title_news fs34"><SPAN class="ml30">暂无内容</SPAN></DIV>
-<DIV class="content_news">
-<DIV class="note">
-<p>程序猿需要亲亲抱抱么么哒才能起来继续淦</p>
-</DIV></DIV>
-<DIV class="footer_news fs34"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV></DIV>
- </BODY></HTML>
+	<script src="/resources/things/perfect-scrollbar.min.js"></script>
+	<script src="/resources/things/button.js"></script>
+	<style type="text/css">
+		.main-text-head{text-align: center;}
+		.time{width:100%;text-align: right;}
+		.talk{
+			width: 90% !important;
+			margin: 4% !important;
+			border-radius: 40px;
+			z-index: 999;
+		}
+		#tawkchat-container{
+			z-index: 998;
+		}
+	</style>
+
+</head>
+<body>
+	<div id="outer">
+  <div id="inner">
+        <div id="body">
+        <div class="talk">
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/58ac0ffe57ed180aac24011b/default';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<style type="text/css">
+	#tawkchat-container{
+		display: block !important;
+		width: 90% !important;
+		margin: 4% !important;
+		border-radius: 40px;
+	}
+</style>
+</div>
+
+	</div>
+  </div>
+</div>
+
+<script>
+  Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
+</script>
+</body>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

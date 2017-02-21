@@ -22,7 +22,7 @@ elseif($_GET['id']==5) {
 }
 //利用规约
 elseif($_GET['id']==1) {
-  header('Location: /webview.php/announce/info');
+  header('Location: /webview.php/tos/read');
 }
 else{
   header('Location: /webview.php');
