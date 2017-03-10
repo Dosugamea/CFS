@@ -99,4 +99,36 @@ function ranking_player($post) {
   }
   return $ret;
 }
+
+function ranking_eventPlayer($post) {
+	$ret = [];
+	$ret['total_cnt'] = 0;
+	$ret['page'] = 0;
+	$ret['items'] = [];
+	return $ret;
+}
+
+function ranking_eventLive($post) {
+	$ret = [];
+	$ret['total_cnt'] = 0;
+	$ret['page'] = 0;
+	$ret['items'] = [];
+	return $ret;
+}
+
+function ranking_eventFriendLive($post) {
+	$ret = [];
+	$ret['total_cnt'] = 0;
+	$ret['page'] = 0;
+	$ret['items'] = [];
+	return $ret;
+}
+
+function ranking_eventFriendPlayer($post) {
+	$ret = [];
+	$ret['total_cnt'] = 0;
+	$ret['page'] = 0;
+	$ret['items'] = [];
+	return $ret;
+}
 ?>
