@@ -20,7 +20,7 @@ $additional_for_ios=true;
 //允许的最低数据包版本（低于会触发自动更新）
 $server_ver='21.1';
 //允许的最低客户端版本
-$bundle_ver='4.2';
+$bundle_ver='4.3';
 $restrict_ver=false; //此版本号的用户必须拥有allow_test_func权限才能登录（为了防止开发版客户端泄露）
 //最大LIVE数
 $max_live_difficulty_id=9999;
