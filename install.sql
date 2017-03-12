@@ -171,6 +171,7 @@ CREATE TABLE IF NOT EXISTS `tmp_authorize` (
   `token` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL DEFAULT '',
   `password` varchar(255) NOT NULL DEFAULT '',
+  `sessionKey` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`token`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
@@ -248,6 +249,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` text NOT NULL,
   `login_password` text NOT NULL,
   `authorize_token` varchar(255) NOT NULL DEFAULT '',
+  `sessionKey` VARCHAR(255) NULL DEFAULT '',
   `nonce` int(11) NOT NULL DEFAULT '1',
   `elapsed_time_from_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`user_id`)
