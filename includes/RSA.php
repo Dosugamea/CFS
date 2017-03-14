@@ -5,3 +5,10 @@ function RSAdecrypt($encrypted){
 	openssl_private_decrypt(base64_decode($encrypted),$decrypted,$priv_key);
 	return $decrypted;
 }
+
+function RSAencrypt($data){
+	include('config/RSA_KeyPair.php');
+	$official_pub_key =  openssl_pkey_get_public($official_pub_key);
+	openssl_public_encrypt($data, $encrypted, $official_pub_key);
+	return base64_encode($encrypted);
+}
