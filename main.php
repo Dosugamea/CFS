@@ -43,7 +43,7 @@ if ($_SERVER['PATH_INFO'] == '/login/login'){
 }
 
 require 'config/code.php';
-if ($_SERVER['PATH_INFO'] != '/login/authkey' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
+if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
 	throw403('X-MESSAGE-CODE-WRONG');
 }
 
@@ -70,7 +70,6 @@ if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/logi
 			$ret['response_data'] = [];
 			$ret['status_code'] = 423;
 			$ret = json_encode($ret);
-			header('X-Message-Code: '.hash_hmac('sha1', $ret, $code));
 			header('Content-Type: application/json');
 			echo $ret;
 			die();
@@ -216,6 +215,5 @@ function retError($statusCode) {
 
 $mysql->query('commit');
 header('Server-Version: '.$server_ver);
-header('X-Message-Code: '.hash_hmac('sha1', $ret, $code));
 header('Content-Type: application/json');
 echo $ret;
