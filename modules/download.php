@@ -18,6 +18,7 @@ function download_additional($post) {
 	$tokenanduid = login();
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
+	$sessionKey = $tokenanduid['sessionKey'];
 	$os = $post['os'];
 	if($post['os'] == 'Android'){
 		$PlatformType = 2;
@@ -33,7 +34,7 @@ function download_additional($post) {
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
 			"Client-Version: $server_ver",
-			'OS-Version: Nexus 6P google angler 7.0',
+			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
 			'Application-ID: 626776655',
@@ -46,8 +47,7 @@ function download_additional($post) {
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
-	require 'config/code.php';
-	$XMC = hash_hmac('sha1', json_encode($post), $code);
+	$XMC = hash_hmac('sha1', json_encode($post), $sessionKey);
 	$headers[] = "X-Message-Code: $XMC";
 	$headers[] = "User-ID: $user_id";
 	
@@ -76,6 +76,7 @@ function download_batch($post) {
 	$tokenanduid = login();
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
+	$sessionKey = $tokenanduid['sessionKey'];
 	$os = $post['os'];
 	if($post['os'] == 'Android'){
 		$PlatformType = 2;
@@ -91,7 +92,7 @@ function download_batch($post) {
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
 			"Client-Version: $server_ver",
-			'OS-Version: Nexus 6P google angler 7.0',
+			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
 			'Application-ID: 626776655',
@@ -104,8 +105,7 @@ function download_batch($post) {
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
-	require 'config/code.php';
-	$XMC = hash_hmac('sha1', json_encode($post), $code);
+	$XMC = hash_hmac('sha1', json_encode($post), $sessionKey);
 	$headers[] = "X-Message-Code: $XMC";
 	$headers[] = "User-ID: $user_id";
 	
@@ -147,6 +147,7 @@ function download_update($post) {
 	$tokenanduid = login();
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
+	$sessionKey = $tokenanduid['sessionKey'];
 	$user_cli_ver = $post['external_version'];
 	
 	$time = time();
@@ -157,7 +158,7 @@ function download_update($post) {
 			'Debug: 1',
 			"Bundle-Version: $bundle_ver",
 			"Client-Version: $user_cli_ver",
-			'OS-Version: Nexus 6P google angler 7.0',
+			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
 			'Application-ID: 626776655',
@@ -171,7 +172,7 @@ function download_update($post) {
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
 	require 'config/code.php';
-	$XMC = hash_hmac('sha1', json_encode($post), $code);
+	$XMC = hash_hmac('sha1', json_encode($post), $sessionKey);
 	$headers[] = "X-Message-Code: $XMC";
 	$headers[] = "User-ID: $user_id";
 	
