@@ -1,8 +1,8 @@
 <?php
 //common/recoveryEnergy 恢复LP防止崩溃
 function common_recoveryEnergy() {
-	  return json_decode('{
-            "error_code": 1102,
-        }');
+	$ret['error_code'] = 1102;
+	retError(600);
+	return $ret;
 }
 ?>
