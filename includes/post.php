@@ -60,7 +60,7 @@ function login(){
 	}';
 	include 'includes/AES.php';
 	include 'config/modules_download.php';
-	$auth_data = json_encode(["1"=>$login_key,"2"=>$login_passwd,"3"=>$device_data]);
+	$auth_data = json_encode(["1"=>$login_key,"2"=>$login_passwd,"3"=>base64_encode($device_data)]);
 	$auth_data_enc = AESencrypt($auth_data, substr($AES_token_client,0,16), $iv);
 	//生成body
 	$body = array(
