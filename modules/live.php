@@ -533,6 +533,9 @@ function live_play($post) {
 			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, play_count=play_count+1
 		");
 	}
+	if(date("m-d") == '04-01'){
+		$map['live_se_id'] = 99;
+	}
 	return $map;
 }
 
