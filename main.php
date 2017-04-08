@@ -43,7 +43,7 @@ if ($_SERVER['PATH_INFO'] == '/login/login'){
 }
 
 require 'config/code.php';
-if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
+if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && $_SERVER['PATH_INFO'] != '/lbonus/execute' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
 	throw403('X-MESSAGE-CODE-WRONG');
 }
 
