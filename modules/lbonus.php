@@ -2,80 +2,103 @@
 //lbonus.php 登录奖励module
 //lbonus/execute 执行登录奖励
 function lbonus_execute() {
-  global $uid, $mysql, $perm;
-  require 'config/modules_lbonus.php';
-  $ret['login_count'] = 1;
-  $days = $mysql->query('
-  SELECT last_login_date, lbonus_point,
-  to_days(`last_login_date`) - to_days(insert_date) days_from_first_login,
-  to_days(CURRENT_TIMESTAMP) - to_days(last_login_date) has_bonus,
-  month(CURRENT_TIMESTAMP) - month(last_login_date) new_month
-  FROM `login_bonus`,`users` WHERE login_bonus.user_id='.$uid.' AND users.user_id=login_bonus.user_id')->fetch();
-  if (empty($days)) {
-    $mysql->query("INSERT INTO login_bonus (user_id) VALUES($uid)");
-    $days = ['days_from_first_login'=>0, 'last_login_date'=>'2014-01-01 00:00:00', 'lbonus_point'=>0, 'has_bonus'=>1, 'new_month'=>0];
-  }
-  $ret['days_from_first_login'] = abs((int)$days['days_from_first_login']);
-  $ret['last_login_date'] = $days['last_login_date'];
-  $ret['before_lbonus_point'] = (int)$days['lbonus_point'];
-  $ret['after_lbonus_point'] = (int)$days['lbonus_point'];
-  $ret['items'] = ['point'=>[]];
-  if ($days['has_bonus']) {
-    if ($days['new_month']) {
-      $ret['before_lbonus_point'] = 0;
-      $ret['after_lbonus_point'] = 1;
-    } else {
-      $ret['after_lbonus_point']++;
-    }
-    $bonus = $login_bonus_list[$ret['before_lbonus_point']];
-    switch ($bonus[0]) {
-    case 'ticket': $bonus['incentive_item_id'] = 1;$bonus['add_type'] = 1000;break;
-    case 'social': $bonus['incentive_item_id'] = 2;$bonus['add_type'] = 3002;break;
-    case 'coin': $bonus['incentive_item_id'] = 3;$bonus['add_type'] = 3000;break;
-    case 'loveca': $bonus['incentive_item_id'] = 4;$bonus['add_type'] = 3001;break;
-    case 's_ticket': $bonus['incentive_item_id'] = 5;$bonus['add_type'] = 1000;break;
-    default: $bonus['incentive_item_id'] = $bonus[0];$bonus['add_type'] = 1001;break;
-    }
-    $is_card = ($bonus['add_type'] == 1001) ? 1 : 0;
-    $bonus['amount'] = $bonus[1];
-    $bonus['incentive_id'] = [];
-    $ret['items']['point'][0] = $bonus;
-    $mysql->exec('UPDATE login_bonus SET lbonus_point='.$ret['after_lbonus_point'].',last_login_date=CURRENT_TIMESTAMP WHERE user_id='.$uid);
-    $mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES ($uid,{$bonus['incentive_item_id']},{$bonus['amount']}, $is_card, '".date('m')."月登録獎励：第".$ret['after_lbonus_point']."天！')");
-  }
-  //如果客户端大于2.0，合并lbonus/getCard和nlbonus/execute的返回值
-  //if(version_compare($_SERVER['HTTP_BUNDLE_VERSION'], '2.0', '>=')) {
-    $card['card_info'] = lbonus_getCard();
-    $sheets = runAction('nlbonus', 'execute');
-    $ret = array_merge($ret, $card, $sheets);
-  //}
-  $ret['bushimo_reward_info'] = [];
-  return $ret;
+	global $uid, $mysql, $perm;
+	require 'config/modules_lbonus.php';
+	$data = $mysql->query("SELECT day FROM login_bonus WHERE user_id = ".$uid." AND year = ".(int)date('Y')." AND month = ".(int)date('m'))->fetchAll(PDO::FETCH_NUM);
+	$login_query = [];
+	if(!empty($data)){
+		foreach($data as $i){
+			$login_query[] = $i[0];
+		}
+	}
+	//本月
+	$calendar_info['current_date'] = date('Y-m-d');
+	$calendar_info['current_month']['year'] = (int)date('Y');
+	$calendar_info['current_month']['month'] = (int)date('m');
+	$calendar_info['current_month']['days'] = [];
+	foreach($login_bonus_list as $k => $v) {
+		$item['day'] = $k + 1;
+		$item['day_of_the_week'] = (int)date('w', strtotime(date('Y-m-').(string)$item['day']));
+		if ($item['day'] ==1 || $v[0] == 'loveca'){
+			$item['special_day'] = true;
+			$item['special_image_asset'] = "assets/image/ui/login_bonus/loge_icon_01.png";
+		}else{
+			$item['special_day'] = false;
+			$item['special_image_asset'] = "";
+		}
+		$item['received'] = in_array($item['day'], $login_query);
+		switch($v[0]) {
+			case 'ticket': $item['item']['item_id'] = 1;$item['item']['add_type'] = 1000;break;
+			case 'social': $item['item']['item_id'] = 2;$item['item']['add_type'] = 3002;break;
+			case 'coin': $item['item']['item_id'] = 3;$item['item']['add_type'] = 3000;break;
+			case 'loveca': $item['item']['item_id'] = 4;$item['item']['add_type'] = 3001;break;
+			case 's_ticket': $item['item']['item_id'] = 5;$item['item']['add_type'] = 1000;break;
+			case 'r_sticker': $item['item']['item_id'] = 2;$item['item']['add_type'] = 3006;break;
+			default: $item['item']['unit_id'] = $v[0];$item['item']['add_type'] = 1001;$item['item']['is_rank_max'] = false;break;
+		}
+		$item['item']['amount'] = $v[1];
+		$calendar_info['current_month']['days'][] = $item;
+		unset($item);
+		if($k == (int)date('t',strtotime(date('Y-m-d')))-1){
+			break;
+		}
+	}
+	//下个月的
+	$calendar_info['next_month']['year'] = (int)date('Y');
+	$calendar_info['next_month']['month'] = (int)date('m') + 1;
+	if($calendar_info['next_month']['month'] > 12){
+		$calendar_info['next_month']['year'] += 1;
+		$calendar_info['next_month']['month'] = 1;
+	}
+	$calendar_info['next_month']['days'] = [];
+	foreach($login_bonus_list as $k => $v) {
+		$item['day'] = $k + 1;
+		$item['day_of_the_week'] = (int)date('w', strtotime($calendar_info['next_month']['year']."-".$calendar_info['next_month']['month']."-".(string)$item['day']));
+		if ($item['day'] ==1 || $v[0] == 'loveca'){
+			$item['special_day'] = true;
+			$item['special_image_asset'] = "assets/image/ui/login_bonus/loge_icon_01.png";
+		}else{
+			$item['special_day'] = false;
+			$item['special_image_asset'] = "";
+		}
+		$item['received'] = false;
+		switch($v[0]) {
+			case 'ticket': $item['item']['item_id'] = 1;$item['item']['add_type'] = 1000;break;
+			case 'social': $item['item']['item_id'] = 2;$item['item']['add_type'] = 3002;break;
+			case 'coin': $item['item']['item_id'] = 3;$item['item']['add_type'] = 3000;break;
+			case 'loveca': $item['item']['item_id'] = 4;$item['item']['add_type'] = 3001;break;
+			case 's_ticket': $item['item']['item_id'] = 5;$item['item']['add_type'] = 1000;break;
+			case 'r_sticker': $item['item']['item_id'] = 2;$item['item']['add_type'] = 3006;break;
+			default: $item['item']['unit_id'] = $v[0];$item['item']['add_type'] = 1001;$item['item']['is_rank_max'] = false;break;
+		}
+		$item['item']['amount'] = $v[1];
+		$calendar_info['next_month']['days'][] = $item;
+		unset($item);
+		if($k == 13){
+			break;
+		}
+	}
+	//获取是否领取了当天的登录奖励
+	if(!in_array((int)date('d'), $login_query)){
+		$mysql->query("INSERT INTO login_bonus (user_id, year, month, day) VALUES(".$uid.", ".(int)date('Y').", ".(int)date('m').", ".(int)date('d').")");
+		$calendar_info['get_item'] = $calendar_info['current_month']['days'][(int)date('d')-1]['item'];
+		switch($calendar_info['get_item']['add_type']){
+			case 1000: $calendar_info['get_item']['item_category_id'] = 1;break;
+			case 3002: $calendar_info['get_item']['item_category_id'] = 2;break;
+			case 3000: $calendar_info['get_item']['item_category_id'] = 3;break;
+			case 3001: $calendar_info['get_item']['item_category_id'] = 4;break;
+			case 1000: $calendar_info['get_item']['item_category_id'] = 5;break;
+			default: $calendar_info['get_item']['item_category_id'] = 0;break;
+		}
+		$calendar_info['get_item']['reward_box_flag'] = true;
+		$is_card = isset($calendar_info['get_item']['unit_id']);
+		$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$calendar_info['get_item']['item_category_id'].",".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");
+	}
+	
+	$ret['calendar_info'] = $calendar_info;
+	$sheets = runAction('nlbonus', 'execute');
+	$ret = array_merge($ret, $sheets);
+	
+	return $ret;
 }
-
-//lbonus/getCard 获取登录奖励列表
-function lbonus_getCard() {
-  require 'config/modules_lbonus.php';
-  $incentive_item_ids = ['ticket'=>1, 'coin'=>2, 'social'=>3, 'loveca'=>4, 's_ticket'=>5];
-  $ret['lbonus_count'] = (int)date('t');
-  $ret['start_date'] = date('Y-m').'-01 00:00:00';
-  $ret['end_date'] = date('Y-m-t').' 23:59:59';
-  $ret['description'] = '';
-  $ret['items'] = [];
-  foreach($login_bonus_list as $k => $v) {
-    $item['lbonus_point'] = $k + 1;
-    switch($v[0]) {
-    case 'ticket': $item['incentive_item_id'] = 1;$item['add_type'] = 1000;break;
-    case 'social': $item['incentive_item_id'] = 2;$item['add_type'] = 3002;break;
-    case 'coin': $item['incentive_item_id'] = 3;$item['add_type'] = 3000;break;
-    case 'loveca': $item['incentive_item_id'] = 4;$item['add_type'] = 3001;break;
-    case 's_ticket': $item['incentive_item_id'] = 5;$item['add_type'] = 1000;break;
-    default: $item['incentive_item_id'] = $item[0];$item['add_type'] = 1001;break;
-    }
-    $item['amount'] = $v[1];
-    $ret['items'][] = $item;
-  }
-  return $ret;
-}
-
 ?>
