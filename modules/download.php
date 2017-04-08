@@ -121,6 +121,60 @@ function download_batch($post) {
 		return $ret;
 	}
 }
+
+function download_event($post) {
+	global $uid, $mysql, $additional_for_android, $additional_for_ios;
+	include 'includes/post.php';
+	include 'config/maintenance.php';
+	$tokenanduid = login();
+	$token = $tokenanduid['authorize_token'];
+	$user_id = $tokenanduid['user_id'];
+	$sessionKey = $tokenanduid['sessionKey'];
+	$os = $post['os'];
+	if($post['os'] == 'Android'){
+		$PlatformType = 2;
+	}else{
+		$PlatformType = 1;
+	}
+	
+	$time = time();
+	$headers = array(
+			'Accept: */*',
+			'Accept-Encoding: deflate',
+			'API-Model: straightforward',
+			'Debug: 1',
+			"Bundle-Version: $bundle_ver",
+			"Client-Version: $server_ver",
+			'OS-Version: Nexus 5 google hammerhead 4.4.4',
+			"OS: $os",
+			"Platform-Type: $PlatformType",
+			'Application-ID: 626776655',
+			'Time-Zone: JST',
+			'Reigion: 392',
+			"Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=3",
+			'Expect:'
+		);
+	include 'config/modules_download.php';
+	$post['timeStamp'] = time();
+	$post['commandNum'] = $login_key.".".time()."."."3";
+	
+	$XMC = hash_hmac('sha1', json_encode($post), $sessionKey);
+	$headers[] = "X-Message-Code: $XMC";
+	$headers[] = "User-ID: $user_id";
+	
+	$post_server = array(
+		"request_data" => json_encode($post)
+	);
+	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/event",$headers,$post_server);
+	if(in_array("Maintenance: 1", $r[0])){
+		return [];
+	}
+	else{
+		$ret = $r[1]['response_data'];
+		return $ret;
+	}
+}
+
 function download_getUrl($post) {
 	global $getUrl_address;
 	return ['url_list' => array_map(function ($e) use ($getUrl_address) {
