@@ -31,6 +31,8 @@ function login_authkey($post) {
 	$sessionKey = implode("",$sessionKey);
 	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['authorize_token'] = sha1(rand(10000000, 99999999));
+	$ret['review_version'] = "";
+	$ret['server_timestamp'] = time();
 	global $mysql;
 	$mysql->query('insert into tmp_authorize(token, sessionKey) values (?,?)', [$ret['authorize_token'],base64_encode($sessionKey)]);
 	header('version_up: 0');
