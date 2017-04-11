@@ -16,7 +16,7 @@ function rollback() {
 
 //写入访问日志
 $LOGFILE = fopen("PLSLOG.log","a");
-fwrite($LOGFILE,date("Y-m-d H:m:s"));
+fwrite($LOGFILE,date("Y-m-d H:i:s"));
 fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
 fwrite($LOGFILE," ".$_SERVER["REMOTE_ADDR"]);
 if(isset($_SERVER['HTTP_USER_ID'])){
