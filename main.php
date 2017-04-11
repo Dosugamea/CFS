@@ -14,7 +14,17 @@ function rollback() {
 	$mysql->query('rollback');
 }
 
-
+//写入访问日志
+$LOGFILE = fopen("PLSLOG.log","a");
+fwrite($LOGFILE,date("Y-m-d H:m:s"));
+fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
+fwrite($LOGFILE," ".$_SERVER["REMOTE_ADDR"]);
+if(isset($_SERVER['HTTP_USER_ID'])){
+	fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']."\n");
+}else{
+	fwrite($LOGFILE," Unknown user\n");
+}
+fclose($LOGFILE);
 /* 验证访问合法性 */
 if(!isset($_SERVER['PATH_INFO'])) {
 	throw403('NO_PATH_INFO');
