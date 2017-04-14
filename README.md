@@ -18,6 +18,8 @@ MySQL 5.6 or higher
 
 PDO_mysql and PDO_sqlite3 module
 
+php5-mcrypt
+
 # Installation
 > Put all the files into web root
 
