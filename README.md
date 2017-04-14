@@ -4,9 +4,9 @@ Online since 2014/9/15, the two-year-old infamous SIF private server PLS (aka LL
 
 Try out our public server at `www.plserver.xyz`
 
-**REQUIRE LLSIF Japanese 4.2 or 4.2.1 client（4.0 Client might crash in some situation）, with XMS disabled** (No we will never provide or tell how to make one).
+**REQUIRE LLSIF Japanese 5.0 Client, with XMS disabled** (No we will never provide or tell how to make one).
 
-Client version 4.1 (or lower, as well as other regions' client) is NO LONGER supported.
+Client version under 5.0 as well as other regions' client is NO LONGER supported.
 
 (Note that most code of PLS is written when I just started to learn PHP, so those "legacy" code is completely in a mess...)
 
