@@ -225,34 +225,34 @@ function generateRandomLive($note) {
 }
 //generateRandomLiveOld 生成旧随机谱面，外部访问无法调用
 function generateRandomLiveOld($note) {
-  $timing=[];
-  foreach($note as $v)
-    $timing[]=$v['timing_sec'];
-  array_multisort($timing,SORT_ASC,$note);
-  $holding=false;
-  $holdend=0;
-  $lasttime=0;
-  foreach($note as $k=>&$v) {
-    if($v['timing_sec']>$holdend+0.1)
-      $holding=false;
-    if(!$holding && $v['effect']==3) {
-      //长条，什么都不做
-      $holdend=$v['timing_sec']+$v['effect_value'];
-      $holding=true;
-    }
-    elseif($holding) {
-      //长按中，什么都不做
-      if($v['effect']==3) {
-        $holdend=max($holdend,$v['timing_sec']+$v['effect_value']);
-      }
-    }
-    elseif($v['timing_sec']==$lasttime || (isset($note[$k+1]['timing_sec']) && $v['timing_sec']==$note[$k+1]['timing_sec'])) {
-      //双押，什么都不做
-    }
-    else $v['position']=0; //单点
-    $lasttime=$v['timing_sec'];
-  }
-  return $note;
+	$timing=[];
+	foreach($note as $v)
+		$timing[]=$v['timing_sec'];
+	array_multisort($timing,SORT_ASC,$note);
+	$holding=false;
+	$holdend=0;
+	$lasttime=0;
+	foreach($note as $k=>&$v) {
+		if($v['timing_sec']>$holdend+0.1)
+			$holding=false;
+		if(!$holding && $v['effect']==3) {
+			//长条，什么都不做
+			$holdend=$v['timing_sec']+$v['effect_value'];
+			$holding=true;
+		}
+		elseif($holding) {
+			//长按中，什么都不做
+			if($v['effect']==3) {
+				$holdend=max($holdend,$v['timing_sec']+$v['effect_value']);
+			}
+		}
+		elseif($v['timing_sec']==$lasttime || (isset($note[$k+1]['timing_sec']) && $v['timing_sec']==$note[$k+1]['timing_sec'])) {
+			//双押，什么都不做
+		}
+		else $v['position']=rand(1,9); //单点
+		$lasttime=$v['timing_sec'];
+	}
+	return $note;
 }
 
 //calcScore 计算分数
