@@ -88,7 +88,11 @@ function login(){
 	$XMC = hash_hmac('sha1', $body['request_data'], $HMACKey);
 	$headers[] = "X-Message-Code: $XMC";
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/login/authkey",$headers,$body);
+	if(in_array("Maintenance: 1",$r[0])){
+		return "Maintenance";
+	}
 	$r = $r[1];
+	
 	$token = $r['response_data']['authorize_token'];
 	$AES_token_server = base64_decode($r['response_data']['dummy_token']);
 	//计算新的密钥

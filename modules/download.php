@@ -74,6 +74,9 @@ function download_batch($post) {
 	include 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
+	if($tokenanduid == "Maintenance"){
+		return [];
+	}
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
 	$sessionKey = $tokenanduid['sessionKey'];
@@ -127,6 +130,9 @@ function download_event($post) {
 	include 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
+	if($tokenanduid == "Maintenance"){
+		return [];
+	}
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
 	$sessionKey = $tokenanduid['sessionKey'];
