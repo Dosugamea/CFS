@@ -99,7 +99,7 @@ function scout($id, $count) {
 		$rule = preg_replace('/\bruby\b/', 'unit_type_id=109', $rule);
 		$rule = preg_replace('/\bmuse\b/', 'unit_type_id in (1,2,3,4,5,6,7,8,9)', $rule);
 		$rule = preg_replace('/\baqours\b/', 'unit_type_id in (101,102,103,104,105,106,107,108,109)', $rule);
-		$rule = preg_replace('/\barise\b/', 'unit_type_id in (80,81,82)', $rule);
+		$rule = preg_replace('/\barise\b/', 'unit_type_id in (80,81,82,112,113)', $rule);
 		$rule = preg_replace('/\bnot_tokuten\b/', 'normal_icon_asset not like "%rankup%" and rank_max_icon_asset not like "%normal%"', $rule);
 		$rule = preg_replace('/\btokuten\b/', 'disable_rank_up != 1 and normal_icon_asset like "%rankup%"', $rule);
 		$rule = preg_replace('/\bskillup\b/', 'default_unit_skill_id >= 190 and default_unit_skill_id <= 201', $rule);
