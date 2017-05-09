@@ -35,7 +35,18 @@ function unit_supporterAll() {
 }
 
 function unit_removableSkillInfo() {
-  return ['owning_info' => [], 'equipment_info' => []];
+	global $uid, $mysql;
+	$ret = ['owning_info' => [], 'equipment_info' => []];
+	$skill_info = $mysql->query('SELECT * FROM removable_skill WHERE user_id = '.$uid)->fetchAll();
+	foreach($skill_info as $i){
+		$owning_detail = [];
+		$owning_detail['unit_removable_skill_id'] = (int)$i['skill_id'];
+		$owning_detail['total_amount'] = (int)$i['amount'];
+		$owning_detail['equipped_amount'] = (int)$i['equipped'];
+		$owning_detail['insert_date'] = $i['insert_date'];
+		$ret['owning_info'][] = $owning_detail;
+	}
+	return $ret;
 }
 
 //unit/deckInfo 获取队伍列表
