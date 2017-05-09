@@ -29,8 +29,8 @@ function login_authkey($post) {
 		$sessionKey[$i] = ($AES_token_server[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
 	}
 	$sessionKey = implode("",$sessionKey);
-	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['authorize_token'] = sha1(rand(10000000, 99999999));
+	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['review_version'] = "";
 	$ret['server_timestamp'] = time();
 	global $mysql;

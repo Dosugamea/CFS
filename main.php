@@ -38,7 +38,7 @@ foreach (explode('&', $_SERVER['HTTP_AUTHORIZE']) as $v) {
 if ($_SERVER['PATH_INFO'] == '/login/login'){
 	$sessionKey = $mysql->query('SELECT sessionKey FROM tmp_authorize WHERE token=?', [$authorize['token']])->fetchColumn();
 	if (!$sessionKey) {
-		throw403('AUTHORIZE_TOKEN_NOT_FOUND');
+		throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
 	}
 	$sessionKey = base64_decode($sessionKey);
 }elseif($_SERVER['PATH_INFO'] != '/login/authkey'){
@@ -47,7 +47,7 @@ if ($_SERVER['PATH_INFO'] == '/login/login'){
 		$sessionKey = $mysql->query('SELECT sessionKey FROM tmp_authorize WHERE token=?', [$authorize['token']])->fetchColumn();
 	}
 	if (!$sessionKey) {
-		throw403('AUTHORIZE_TOKEN_NOT_FOUND');
+		throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
 	}
 	$sessionKey = base64_decode($sessionKey);
 }
@@ -70,7 +70,7 @@ if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/logi
 		}
 		$res = $mysql->query('SELECT username FROM users WHERE authorize_token=? AND user_id=?', [$authorize['token'], $_SERVER['HTTP_USER_ID']])->fetchColumn();
 		if (!$res) {
-			throw403('AUTHORIZE_TOKEN_NOT_FOUND');
+			throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
 		}
 		$mysql->query('UPDATE users SET nonce=? WHERE authorize_token=? AND user_id=? AND username=?', [$authorize['nonce'], $authorize['token'], $_SERVER['HTTP_USER_ID'], $res]);
 		$uid = (int)$_SERVER['HTTP_USER_ID'];
