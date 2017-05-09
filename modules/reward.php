@@ -43,14 +43,19 @@ function getRewardList($post, $history) {
 		}
 		if ($r['is_card']) {
 			$r['add_type'] = 1001;
-		}else if($r['incentive_item_id'] == 0){
+			$r['item_category_id'] = $r['incentive_item_id'];
+		}else if($r['incentive_item_id'] == 3006){
 			$r['add_type'] = 3006;
-		} else {
+			$r['item_category_id'] = 0;
+			$r['incentive_type'] = 6100;
+			$r['incentive_item_id'] = 2;
+		}else {
 			$r['add_type'] = $correct_add_type[$r['incentive_item_id'] - 1];
+			$r['item_category_id'] = $r['incentive_item_id'];
 		}
-		$r['item_category_id'] = $r['incentive_item_id'];
 		$r['remaining_time'] = '无限期';
 		unset($r[$unset], $r['user_id'], $r['is_card']);
+		unset($r[0],$r[1],$r[2],$r[3],$r[4],$r[5],$r[6],$r[7]);
 		$ret[$array_name][] = $r;
 	}
 	return $ret;
@@ -86,8 +91,13 @@ function reward_open($post) {
 	}
 	if(!$res['is_card']) {
 		$res['item_id'] = $res['incentive_item_id'];
-		$params['item' . $res['item_id']] += $res['amount'];
-		$res['add_type'] = $correct_add_type[$res['item_id'] - 1];
+		if($res['item_id'] == 3006){
+			$params['seal1'] += $res['amount'];
+			$res['add_type'] = 3006;
+		}else{
+			$params['item' . $res['item_id']] += $res['amount'];
+			$res['add_type'] = $correct_add_type[$res['item_id'] - 1];
+		}
 		$res['item_category_id'] = 0;
 		$res['reward_box_flag'] = false;
 		unset($res['is_card']);
@@ -136,8 +146,15 @@ function reward_openAll($post) {
 		}
 		if(!$r['is_card']) {
 			$r['item_id'] = $r['incentive_item_id'];
-			$params['item' . $r['item_id']] += $r['amount'];
-			$r['add_type'] = $correct_add_type[$r['item_id'] - 1];
+			if($r['item_id'] == 3006){
+				$params['seal1'] += $r['amount'];
+				$r['add_type'] = 3006;
+				$r['incentive_item_id'] = 2;
+				$r['incentive_type'] = 6100;
+			}else{
+				$params['item' . $r['item_id']] += $r['amount'];
+				$r['add_type'] = $correct_add_type[$r['item_id'] - 1];
+			}
 			$r['item_category_id'] = 0;
 			$r['reward_box_flag'] = false;
 			unset($r['is_card']);
