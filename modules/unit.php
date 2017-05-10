@@ -32,6 +32,9 @@ function unit_unitAll() {
 
 function unit_supporterAll() {
 	global $uid, $mysql;
+	if($params['card_switch'] == 0) {
+		return ['unit_support_list' => []];
+	}
 	$ret = [];
 	$support_list = $mysql->query("SELECT * FROM unit_support_list WHERE user_id=".$uid)->fetchAll();
 	foreach($support_list as $i){
@@ -43,6 +46,9 @@ function unit_supporterAll() {
 function unit_removableSkillInfo() {
 	global $uid, $mysql;
 	$ret = ['owning_info' => [], 'equipment_info' => []];
+	if($params['card_switch'] == 0) {
+		return $ret;
+	}
 	$skill_info = $mysql->query('SELECT * FROM removable_skill WHERE user_id = '.$uid)->fetchAll();
 	foreach($skill_info as $i){
 		$owning_detail = [];
