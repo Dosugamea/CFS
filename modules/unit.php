@@ -31,7 +31,13 @@ function unit_unitAll() {
 }
 
 function unit_supporterAll() {
-  return ['unit_support_list' => []];
+	global $uid, $mysql;
+	$ret = [];
+	$support_list = $mysql->query("SELECT * FROM unit_support_list WHERE user_id=".$uid)->fetchAll();
+	foreach($support_list as $i){
+		$ret[] = ['unit_id' => (int)$i['unit_id'], 'amount' => (int)$i['amount']];
+	}
+	return ['unit_support_list' => $ret];
 }
 
 function unit_removableSkillInfo() {

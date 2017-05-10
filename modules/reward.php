@@ -74,6 +74,7 @@ function reward_rewardHistory($post) {
 //reward/open //开一个礼物
 function reward_open($post) {
 	global $params, $mysql, $uid;
+	include_once("includes/unit.php");
 	$res = $mysql->query('SELECT incentive_id,incentive_item_id,is_card,amount FROM incentive_list WHERE incentive_id='.$post['incentive_id'].' and opened_date=0')->fetch(PDO::FETCH_ASSOC);
 	if (empty($res)) {
 		return [];
@@ -103,14 +104,15 @@ function reward_open($post) {
 		unset($res['is_card']);
 		$ret['success'][] = $res;
 	} else {
-		$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$res['incentive_item_id'].",1,0,0,1,0,2)");
-		$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$res['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
-		$unit_detail = GetUnitDetail($unit_owning_user_id);
-		if($res['incentive_item_id'] == 382){
+		$support_list = getSupportUnitList();
+		if(in_array($res['incentive_item_id'],$support_list)){
+			$unit_detail = addUnit($res['incentive_item_id'],$res['amount'],true);
 			$res['is_support_member'] = true;
-		}
-		else{
-			$res['is_support_member'] = false;
+		}else{
+			$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$res['incentive_item_id'].",1,0,0,1,0,2)");
+			$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$res['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
+			$unit_detail = GetUnitDetail($unit_owning_user_id);
+			$res['is_support_member'] = false;	
 		}
 		$res['item_category_id'] = 0;
 		$res['reward_box_flag'] = false;
@@ -119,7 +121,9 @@ function reward_open($post) {
 		unset($res['incentive_item_id'], $res['is_card'], $res['insert_date']);
 		$ret['success'][] = $res;
 	}
-	$ret['opened_num']++;
+	include_once("modules/unit.php");
+	$ret['unit_support_list'] = unit_supporterAll()['unit_support_list'];
+	//$ret['opened_num']++;
 	$mysql->exec('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id='.$res['incentive_id']);
 	return $ret;
 }
@@ -160,13 +164,14 @@ function reward_openAll($post) {
 			unset($r['is_card']);
 			$ret['reward_item_list'][] = $r;
 		} else {
-			$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$r['incentive_item_id'].",1,0,0,1,0,2)");
-			$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$r['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
-			$unit_detail = GetUnitDetail($unit_owning_user_id);
-			if($r['incentive_item_id'] == 382){
+			$support_list = getSupportUnitList();
+			if(in_array($r['incentive_item_id'],$support_list)){
+				$unit_detail = addUnit($r['incentive_item_id'],$r['amount'],true)[0];
 				$r['is_support_member'] = true;
-			}
-			else{
+			}else{
+				$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$r['incentive_item_id'].",1,0,0,1,0,2)");
+				$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$r['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
+				$unit_detail = GetUnitDetail($unit_owning_user_id);
 				$r['is_support_member'] = false;
 			}
 			$r['item_category_id'] = 0;
@@ -179,6 +184,8 @@ function reward_openAll($post) {
 		$ret['opened_num']++;
 		$mysql->exec('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id='.$r['incentive_id']);
 	}
+	include_once("modules/unit.php");
+	$ret['unit_support_list'] = unit_supporterAll()['unit_support_list'];
 	//$ret['total_num'] = $ret['reward_num'] - $ret['opened_num'];
 	return $ret;
 }

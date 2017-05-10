@@ -244,6 +244,13 @@ CREATE TABLE IF NOT EXISTS `unit_list` (
   PRIMARY KEY (`unit_owning_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `unit_support_list` (
+	`user_id` INT(11) NOT NULL,
+	`unit_id` INT(11) NOT NULL,
+	`amount` INT(11) NOT NULL,
+	`insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,
