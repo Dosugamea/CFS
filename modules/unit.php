@@ -31,7 +31,7 @@ function unit_unitAll() {
 }
 
 function unit_supporterAll() {
-	global $uid, $mysql;
+	global $uid, $mysql, $params;
 	if($params['card_switch'] == 0) {
 		return ['unit_support_list' => []];
 	}
@@ -44,7 +44,7 @@ function unit_supporterAll() {
 }
 
 function unit_removableSkillInfo() {
-	global $uid, $mysql;
+	global $uid, $mysql, $params;
 	$ret = ['owning_info' => [], 'equipment_info' => []];
 	if($params['card_switch'] == 0) {
 		return $ret;
