@@ -208,7 +208,7 @@ function download_update($post) {
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
 	$sessionKey = $tokenanduid['sessionKey'];
-	$user_cli_ver = $post['external_version'];
+	$user_cli_ver = (((float)$server_ver - (float)$post['external_version']) > 1)?floor($server_ver):$post['external_version'];
 	
 	$time = time();
 	$headers = array(
