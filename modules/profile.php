@@ -59,7 +59,16 @@ function profile_profileInfo($post) {
   }
   $time = $mysql->query('SELECT elapsed_time_from_login FROM users WHERE user_id='.$post['user_id'])->fetchColumn();
   $ret['user_info'] = $ret2;
-  $ret['user_info']['elapsed_time_from_login'] = (($time === false) ? 'Unknown' : $time);
+  $elapsed_time = " ".strtotime("now")-strtotime($time);
+  if($elapsed_time >= 86400)
+	  $time = " ".floor($elapsed_time / 86400)."天前";
+  else if($elapsed_time >= 3600)
+	  $time = " ".floor($elapsed_time / 3600)."小時前";
+  else if($elapsed_time >= 60)
+	  $time = " ".floor($elapsed_time / 60)."分前";
+  else
+	  $time = " ".$elapsed_time."秒前";
+  $ret['user_info']['elapsed_time_from_login'] = $time;
   $center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn());
   $ret['center_unit_info'] = $center;
   loadExtendAvatar([$post['user_id']]);
