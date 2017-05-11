@@ -189,3 +189,42 @@ input{
   width: 98%;
   margin:0 auto;
 }
+.kawai-div a{
+  color: #000000;
+  text-decoration:none;
+}
+.kawai-div a:link{
+text-decoration:none;
+}
+.kawai-div a:visited{
+text-decoration:none;
+}
+.kawai-div a:hover{
+text-decoration:none;
+}
+.kawai-div a:active{
+text-decoration:none;
+}
+
+.kawai-icon{
+  background-color: #ccc;
+  border:2px solid #ff699c;
+  box-shadow: 0px 0px 10px #ccc;
+  width: 24px;
+  height: 24px;
+  border-radius: 60px;
+  margin:10px;
+}
+.kawai-icon2{
+  background-color: #ff699c;
+  border:2px solid #ffffff;
+  box-shadow: 0px 0px 10px #ff699c;
+}
+.kawai-ne{
+  float: right;
+  text-align: left;
+  color: #000000;
+}
+.kawai-ne2{
+  color: #ff699c;
+}

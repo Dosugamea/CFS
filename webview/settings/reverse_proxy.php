@@ -9,7 +9,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
 
 global $mysql;
 
-if(isset($_POST['site']) && ($_POST['site'] == 1 || $_POST['site'] == 2)) {
-	$mysql->query("UPDATE users SET download_site = ".$_POST['site']." WHERE user_id = ".$uid);
+if(isset($_GET['site']) && ($_GET['site'] == 1 || $_GET['site'] == 2)) {
+	$mysql->query("UPDATE users SET download_site = ".$_GET['site']." WHERE user_id = ".$uid);
 	header('Location: /webview.php/settings/index');
 }else echo '<h3>内部错误!请关闭本页重试</h3>';
