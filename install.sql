@@ -23,6 +23,13 @@ CREATE TABLE IF NOT EXISTS `banned_user` (
   PRIMARY KEY (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `effort_box` (
+  `user_id` INT(11) NOT NULL,
+  `box_id` INT(11) NOT NULL,
+  `point` INT(11) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `error_report` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `token` varchar(40) NOT NULL,
