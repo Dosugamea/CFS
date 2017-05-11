@@ -23,6 +23,13 @@ CREATE TABLE IF NOT EXISTS `banned_user` (
   PRIMARY KEY (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `effort_box` (
+  `user_id` INT(11) NOT NULL,
+  `box_id` INT(11) NOT NULL,
+  `point` INT(11) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `error_report` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `token` varchar(40) NOT NULL,
@@ -266,6 +273,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `authorize_token` varchar(255) NOT NULL DEFAULT '',
   `nonce` int(11) NOT NULL DEFAULT '1',
   `elapsed_time_from_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `download_site` INT(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
