@@ -59,7 +59,7 @@ function download_additional($post) {
 	$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
 	if($download_site == "1"){
 		$ret = json_encode($ret);
-		$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
+		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 		$ret = json_decode($ret);
 	}
 	return $ret;
@@ -130,7 +130,7 @@ function download_batch($post) {
 		$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
 		if($download_site == "1"){
 			$ret = json_encode($ret);
-			$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
+			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 			$ret = json_decode($ret);
 		}
 		return $ret;
@@ -189,6 +189,12 @@ function download_event($post) {
 	}
 	else{
 		$ret = $r[1]['response_data'];
+		$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
+		if($download_site == "1"){
+			$ret = json_encode($ret);
+			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
+			$ret = json_decode($ret);
+		}
 		return $ret;
 	}
 }
@@ -256,7 +262,7 @@ function download_update($post) {
 	$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
 	if($download_site == "1"){
 		$ret = json_encode($ret);
-		$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
+		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 		$ret = json_decode($ret);
 	}
 	return $ret;
