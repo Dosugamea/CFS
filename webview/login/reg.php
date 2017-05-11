@@ -256,7 +256,7 @@ var num=3;
               <input type="radio" name="a" value="a1" checked>中国大陆地区<br>
               <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
               <input type="radio" name="a" value="a2">海外地区<br>
-              <span style="color: #ff699c;">注:适用于除国际地区,中国大陆地区下载可能会失败</span><br>
+              <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
               <input type="submit">
             </form>
             <br>
