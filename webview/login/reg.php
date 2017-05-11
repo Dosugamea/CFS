@@ -51,7 +51,9 @@ if(isset($_POST['submit'])) {
     echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
   } elseif($_POST['id']>999999999) {
     echo '<h3><font color="red">错误：你输入的数太大了！Number is too large</font></h3>';
-  } else {
+  } else if(!is_numeric($_POST['site'])){
+    echo '<h3><font color="red">错误：提交数据异常</font></h3>';
+  } else	{
     $check_uid = $mysql->prepare('SELECT user_id FROM users WHERE user_id=?');
     $check_uid->execute([$_POST['id']]);
     if ($check_uid->rowCount()) {
@@ -59,9 +61,9 @@ if(isset($_POST['submit'])) {
     } else {
       $password = genpassv2($_POST['password'], $_POST['id']);
       $mysql->prepare('
-        INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`)
-        VALUES (?, ?, ?, ?, ?, "")
-      ')->execute([$_POST['id'], $username['username'], $username['password'], $password, $_POST['name']]);
+        INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`, `download_site`)
+        VALUES (?, ?, ?, ?, ?, "", ?)
+      ')->execute([$_POST['id'], $username['username'], $username['password'], $password, $_POST['name'], $_POST['site']]);
       $param = $mysql->prepare('INSERT INTO user_params VALUES('.$_POST['id'].', ?, ?)');
       $param->execute(['enable_card_switch', $disable_card_by_default ? 0 : 1]);
       $param->execute(['card_switch', $disable_card_by_default ? 0 : 1]);
@@ -72,6 +74,11 @@ if(isset($_POST['submit'])) {
       $param->execute(['item3', 2525200]);
       $param->execute(['item4', 0]);
       $param->execute(['item5', 0]);
+	  
+	  //送三个初期宝石
+	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",1,1,0)");
+	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",2,1,0)");
+	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",3,1,0)");
       
       if($all_card_by_default) {
         $card_list=$unit->query('select unit_id from unit_m where unit_id<='.$max_unit_id)->fetchAll();
