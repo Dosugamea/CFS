@@ -266,6 +266,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `authorize_token` varchar(255) NOT NULL DEFAULT '',
   `nonce` int(11) NOT NULL DEFAULT '1',
   `elapsed_time_from_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `download_site` INT(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
