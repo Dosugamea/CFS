@@ -36,22 +36,49 @@ input{
     border: 0;
     height: 100%;
 }
+.line-br{
+    width: 100%;
+    height: 50px;
+    text-align: center;
+}
 .confirm{
 	width: 100%;
 }
 .confirm input{
-	background-color:#000000;
+	background-color:#ff699c;
     color: #fff;
     display: block;
     height: auto !important;
-    border: 1px solid #00a1d6;
+    border: 2px solid #ffffff;
     text-align: center;
     box-sizing: border-box;
     width: 100% !important;
-    border-radius: 32px;
-    padding: 12px;
+    border-radius: 15px;
+    padding: 5px;
     margin:0 !important;
     margin-bottom: 10px;
     font: inherit;
 }
 .tittle{font-size: 20px;}
+.first-kawai{
+    font-size: 15px;
+  width: 100%;
+  border: 2px solid #ff699c;
+  border-radius: 10px;
+}
+.first-kawai-h{
+  font-weight: 900;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  text-align: center;
+  color: #ffffff;
+  background-color: #ff699c;
+  width: 98%;
+  margin:0 auto;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+}
+.first-kawai-t{
+  width: 98%;
+  margin:0 auto;
+}

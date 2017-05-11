@@ -178,45 +178,6 @@ function verify3() {
   .table-input{z-index: 1;}
 </style>
 <link href="/resources/css/web.css" rel="stylesheet">
-<!--<link href="/resources/bstyle.css" rel="stylesheet">
-<link href="/resources/news.css" rel="stylesheet">
-<link href="/resources/css/style.css" rel="stylesheet">
-
-<DIV id="wrapper_news" style="width: 100% !important">
-<div class="title_news fs34" style="width:100%">
-  <span class="ml30">注册 Signup
-  </span><a id="back" href="javascript:void(0);" onclick="window.opener=null; window.open('','_self');window.close();">
-  <div class="topback">
-    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
-  </div>
-  </a>
-</div>
-<div class="content_news_all" style="margin-top:0">
-  <div id="box1">
-    <div class="title_news_all fs30">
-      <span class="ml40">注册 (Signup)</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-       <form method="post" action="/webview/login/reg_ios.php" autocomplete="off">
-          authkey：<input type="text" name="token" style="height:27px" value="<?=$token?>" /><br />
-          username：<input type="text" name="username" style="height:27px" value="<?=$username['username']?>" /><br />
-          请输入一个你想使用的ID：<input type="text" name="id" id="id" style="height:27px" onkeyup="verify()" onchange="verify()"/><span id="info" style="color:red"></span><br />
-          昵称：<input type="text" name="name" id="name" style="height:27px" onkeyup="verify()" onchange="verify()"/><br />
-          密码：<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><span id="info2" style="color:red"></span><br />
-          再次输入密码：<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br /><br />
-
-          <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。请避免使用任何使用过的密码。</span></h3>' ?>
-          <input type="submit" name="submit" id="submit" style="height:30px;width:50px" value="注册" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          </form>
-      </div>
-    </div>
-  </div>
-</div>
-</DIV>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>-->
-
 
 
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -252,12 +213,18 @@ function verify3() {
       <input type="password" id="pass2"  onKeyUp="verify2();" onchange="verify2();" />
     </div>
 
-
+ <div class="first-kawai">
+                  <div class="first-kawai-h">数据包下载节点选择</div>
+                  <div class="first-kawai-t">
+                  <input type="radio" name="site" value="1" checked>中国大陆地区<br>
+                  <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
+                  <input type="radio" name="site" value="2" >海外地区<br>
+                  <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
+                  </div>
+                  </div><br>
     <div class="confirm">
       <input type="submit" name="submit" id="submit" value="登录" />
     </div>
      
     </form>
-
- <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<h3><span style="color:red">警告：将通过不安全的连接发送您的密码。</span></h3>'; ?>
 </div>

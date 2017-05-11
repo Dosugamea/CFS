@@ -58,7 +58,6 @@ if(isset($_POST['submit'])) {
 		console.log('%c 为了您和您的账户安全','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
 		console.log('%c 请不要在这里执行任何命令','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
 		console.log('%c 否则你的JJ可能不保','background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:3em;');
-		console.log("%c", "padding:30px 300px;line-height:120px;background:url('http://app.lovelivesupport.com/pl/jitui.gif');");
 	</script>
 <link href="/resources/css/web.css" rel="stylesheet">
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -85,6 +84,17 @@ if(isset($_POST['submit'])) {
     <div class="table-input">
       <input type="password" id="pass1" name="password" />
     </div>
+                  <div class="first-kawai">
+                  <div class="first-kawai-h">数据包下载节点选择</div>
+                  <div class="first-kawai-t">
+                  <input type="radio" name="site" value="1" checked>中国大陆地区<br>
+                  <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
+                  <input type="radio" name="site" value="2" >海外地区<br>
+                  <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
+                  </div>
+                  </div><br>
+
+
 
     <div class="confirm">
       <input type="submit" name="submit" id="submit" value="登录" />
