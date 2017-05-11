@@ -1060,22 +1060,24 @@ function live_reward($post) {
 		$mysql->query("INSERT INTO effort_box (user_id, box_id, point) VALUES(".$uid.",1,0)");
 		$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
 	}
-	$reward_list = [null,[1,2,3],[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],[28,29,30,31,32,33,34,35,36,37,38,39]];
+	$reward_list = array(null,array(1,2,3),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15),array(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),array(16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39),array(28,29,30,31,32,33,34,35,36,37,38,39));
 	$score_still = $score;
+	include("includes/SIS.php");
 	do{
 		$rewards = [];
 		$is_full = $score > $capacity_list[(int)$box_now['box_id']] - (int)$box_now['point'];
 		if($is_full){
 			for($i=0;$i<3;$i++){
-				$stone_id = array_rand($reward_list[(int)$box_now['box_id']],1);
+				$rand_id = array_rand($reward_list[(int)$box_now['box_id']]);
 				$rewards[] = [
 				"rarity"           => 1,
-				"item_id"          => $stone_id,
+				"item_id"          => $reward_list[(int)$box_now['box_id']][$rand_id],
 				"add_type"         => 5500,
 				"amount"           => 1,
 				"item_category_id" => 0,
 				"reward_box_flag"  => false,
 				"insert_date"      => date("Y-m-d H:i:s",time())];
+				addSIS($reward_list[(int)$box_now['box_id']][$rand_id]);
 			}
 		}
 		$ret['effort_point'][] = [
@@ -1084,6 +1086,7 @@ function live_reward($post) {
 		"before"                        => (int)$box_now['point'],
 		"after"                         => $is_full?$capacity_list[(int)$box_now['box_id']]:(int)$box_now['point'] + $score,
 		"rewards"                       => $rewards];
+		$score_ = $score;
 		$score += ((int)$box_now['point'] - $capacity_list[(int)$box_now['box_id']]);
 		if($is_full){
 			//根据分数生成箱子
@@ -1109,7 +1112,7 @@ function live_reward($post) {
 			
 		}
 	}while($score > 0);
-	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score)." WHERE user_id = ".$uid);
+	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score_)." WHERE user_id = ".$uid);
 	
 	//写入奖励并返回新的用户信息
 	global $user;
