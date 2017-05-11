@@ -20,8 +20,8 @@ if(isset($_POST['submit'])) {
   require '../../includes/db.php';
   $token = isset($_POST['token']) ? $_POST['token'] : '';
   $username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-  if (!$username || $username['username'] != $_POST['username']) {
-    echo '<h1>非法登录请求（authkey&username验证失败）。请重新进入客户端内登录页，然后重新跳转到本页。</h1>';
+  if (!$username || $username['username'] != $_POST['username'] || !is_numeric($_POST['site'])) {
+    echo '<h1>非法登录请求。请重新进入客户端内登录页，然后重新跳转到本页。</h1>';
     die();
   }
   $pass_v2 = genpassv2($_POST['password'], $_POST['id']);
@@ -37,9 +37,9 @@ if(isset($_POST['submit'])) {
   }
   if ($success !== false) {
     $result = $mysql->prepare('
-      UPDATE users SET username = ?, password = ?
+      UPDATE users SET username = ?, password = ?, download_site = ?
       WHERE login_password=? AND user_id=?'
-    )->execute([$username['username'], $username['password'], $pass_v2, $_POST['id']]);
+    )->execute([$username['username'], $username['password'], $_POST['site'], $pass_v2, $_POST['id']]);
     if ($result) {
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
       echo '<h3>登录成功！请重启游戏。</h3>';
