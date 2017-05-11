@@ -49,9 +49,9 @@ if(isset($_POST['submit'])) {
   }
   if ($success !== false) {
     $result = $mysql->prepare('
-      UPDATE users SET username = ?, password = ?
+      UPDATE users SET username = ?, password = ?, download_site = ?
       WHERE login_password=? AND user_id=?'
-    )->execute([$username['username'], $username['password'], $pass_v2, $_POST['id']]);
+    )->execute([$username['username'], $username['password'], (int)$_POST['site'], $pass_v2, $_POST['id']]);
     if ($result) {
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
       echo '<h3>登录成功！关闭本窗口即可进入游戏。<br> Login Success! Plz Close This Window</h3>';
@@ -131,9 +131,9 @@ var num=3;
           <div class="summary" >
           <br>
             <form method="post" action="">
-              <input type="radio" name="a" value="a1" checked>中国大陆地区<br>
+              <input type="radio" name="site" value="1" checked>中国大陆地区<br>
               <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
-              <input type="radio" name="a" value="a2">海外地区<br>
+              <input type="radio" name="site" value="2">海外地区<br>
               <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
               <input type="submit">
             </form>
