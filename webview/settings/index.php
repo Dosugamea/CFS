@@ -58,10 +58,15 @@ a{color: #000000;}
         <div class="entry-container">
           <h2 class="text">数据包下载节点设置</h2>
           <div class="summary">
-            <form method="post" action="">
-              <input type="radio" name="a" value="a1" checked>中国大陆地区<br>
+            <form method="post" action="/webview.php/settings/reverse_proxy">
+				<?php
+				$uid=$_SESSION['server']['HTTP_USER_ID'];
+				global $mysql;
+				$download_site = $mysql->query("SELECT download_site FROM users WHERE user_id = ".$uid)->fetch()[0];
+				?>
+              <input type="radio" name="site" value="1" <?php if($download_site == 1) print("checked");?>>中国大陆地区<br>
               <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
-              <input type="radio" name="a" value="a2">海外地区<br>
+              <input type="radio" name="site" value="2" <?php if($download_site == 2) print("checked");?>>海外地区<br>
               <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
               <input type="submit">
             </form>
