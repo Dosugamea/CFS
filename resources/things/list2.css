@@ -163,3 +163,29 @@ body {
 #load-next.disabled {
   background-color: #888888;
 }
+input{
+  border: solid 2px #ff699c;
+  border-radius: 5px;
+}
+.first-kawai{
+  width: 95%;
+  border: 2px solid #ff699c;
+  border-radius: 10px;
+}
+.first-kawai-h{
+  font-weight: 900;
+  font-size: 25px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  text-align: center;
+  color: #ffffff;
+  background-color: #ff699c;
+  width: 99%;
+  margin:0 auto;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+}
+.first-kawai-t{
+  width: 98%;
+  margin:0 auto;
+}
