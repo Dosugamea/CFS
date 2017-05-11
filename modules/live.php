@@ -1051,15 +1051,65 @@ function live_reward($post) {
 				"event_info": [],
 				"accomplished_achievement_list": [],
 				"new_achievement_cnt": 0,
-				"daily_reward_info": [],
-				"effort_point": [{
-						"live_effort_point_box_spec_id": 5,
-						"capacity": 4000000,
-						"before": 0,
-						"after": 7657,
-						"rewards": []
-				}]
+				"daily_reward_info": []
 		}',true));
+	$ret['effort_point'] = [];
+	$capacity_list = [null,100000,400000,1200000,2000000,4000000];
+	$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
+	if($box_now == false){
+		$mysql->query("INSERT INTO effort_box (user_id, box_id, point) VALUES(".$uid.",1,0)");
+		$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
+	}
+	$reward_list = [null,[1,2,3],[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],[28,29,30,31,32,33,34,35,36,37,38,39]];
+	$score_still = $score;
+	do{
+		$rewards = [];
+		$is_full = $score > $capacity_list[(int)$box_now['box_id']] - (int)$box_now['point'];
+		if($is_full){
+			for($i=0;$i<3;$i++){
+				$stone_id = array_rand($reward_list[(int)$box_now['box_id']],1);
+				$rewards[] = [
+				"rarity"           => 1,
+				"item_id"          => $stone_id,
+				"add_type"         => 5500,
+				"amount"           => 1,
+				"item_category_id" => 0,
+				"reward_box_flag"  => false,
+				"insert_date"      => date("Y-m-d H:i:s",time())];
+			}
+		}
+		$ret['effort_point'][] = [
+		"live_effort_point_box_spec_id" => (int)$box_now['box_id'],
+		"capacity"                      => $capacity_list[(int)$box_now['box_id']],
+		"before"                        => (int)$box_now['point'],
+		"after"                         => $is_full?$capacity_list[(int)$box_now['box_id']]:(int)$box_now['point'] + $score,
+		"rewards"                       => $rewards];
+		$score += ((int)$box_now['point'] - $capacity_list[(int)$box_now['box_id']]);
+		if($is_full){
+			//根据分数生成箱子
+			if($score_still < 10000){
+				$box_now['box_id'] = 1;
+				$box_now['point'] = 0;
+			}else if($score_still < 40000){
+				$box_now['box_id'] = 2;
+				$box_now['point'] = 0;
+			}else if($score_still < 120000){
+				$box_now['box_id'] = 3;
+				$box_now['point'] = 0;
+			}else if($score_still < 200000){
+				$box_now['box_id'] = 4;
+				$box_now['point'] = 0;
+			}else if($score_still < 400000){
+				$box_now['box_id'] = 5;
+				$box_now['point'] = 0;
+			}else{
+				$box_now['box_id'] = 5;
+				$box_now['point'] = 0;
+			}
+			
+		}
+	}while($score > 0);
+	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score)." WHERE user_id = ".$uid);
 	
 	//写入奖励并返回新的用户信息
 	global $user;
