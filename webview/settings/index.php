@@ -64,9 +64,9 @@ a{color: #000000;}
 				global $mysql;
 				$download_site = $mysql->query("SELECT download_site FROM users WHERE user_id = ".$uid)->fetch()[0];
 				?>
-              <input type="radio" name="site" value="1" <?php if($download_site == 1) print("checked");?> onclick="cdn()">中国大陆地区<br>
+              <input type="radio" name="site" value="1" <?php if((int)$download_site == 1) print("checked");?> onclick="cdn()">中国大陆地区<br>
               <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
-              <input type="radio" name="site" value="2" <?php if($download_site == 2) print("checked");?> onclick="cdn()">海外地区<br>
+              <input type="radio" name="site" value="2" <?php if((int)$download_site == 2) print("checked");?> onclick="cdn()">海外地区<br>
               <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
               <!--<input type="submit">-->
               
