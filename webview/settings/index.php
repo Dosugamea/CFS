@@ -56,9 +56,24 @@ a{color: #000000;}
 <ul id="list">
       <li class="entry"">
         <div class="entry-container">
+          <h2 class="text">数据包下载节点设置</h2>
+          <div class="summary">
+            <form method="post" action="">
+              <input type="radio" name="a" value="a1" checked>中国大陆地区<br>
+              <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
+              <input type="radio" name="a" value="a2">海外地区<br>
+              <span style="color: #ff699c;">注:适用于除国际地区,中国大陆地区下载可能会失败</span><br>
+              <input type="submit">
+            </form>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
           <h2 class="text">自定义组曲</h2>
           <a href="/webview.php/settings/medley"><div class="summary">点击跳转至自定义组曲设置页<br>
-          (您可在游戏中选择“其他-利用规约”来快速进入组曲设置页)<br></div></a>
+          </div></a>
           <div class="clearfix"></div>
         </div>
       </li>
@@ -111,6 +126,8 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
+     
+     
 </ul>
 
 </div>

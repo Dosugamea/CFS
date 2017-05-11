@@ -1,23 +1,16 @@
 <meta charset='utf-8' />
 
-<SCRIPT type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
-</script>
-<!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
-<link href="/resources/bstyle.css" rel="stylesheet">
-<link href="/resources/news.css" rel="stylesheet">
-<link href="/resources/css/style.css" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
+
+<link rel="stylesheet" href="/resources/things/detail.css?">
+<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+<link rel="stylesheet" href="/resources/things/list2.css">
+
+<script src="/resources/things/perfect-scrollbar.min.js"></script>
+<script src="/resources/things/button.js"></script>
+
 <?php
 require 'config/reg.php';
 
@@ -69,8 +62,8 @@ if(isset($_POST['submit'])) {
   }
 }
 ?>
-
-<SCRIPT type="text/javascript">
+<body>
+<!--<SCRIPT type="text/javascript">
 var strUA = "";
 strUA = navigator.userAgent.toLowerCase();
 
@@ -79,7 +72,7 @@ if(strUA.indexOf("iphone") >= 0) {
 } else if (strUA.indexOf("ipad") >= 0) {
   document.write('<h3>我们检测到您的设备是iOS设备 暂不支持iOS设备游戏内登陆 将在<span id="num"></span>秒后自动调用外部浏览器进行登陆</h3><br><a href="/webview.php/login/welcome">返回欢迎页</a>');
 } else {
-  document.write('<DIV id="wrapper_news" style="width: 100% !important"><div class="title_news fs34" style="width:100%"><span class="ml30">登录 Login</span><a id="back" href="/webview.php/login/welcome"><div class="topback"><img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png"></div></a></div><div class="content_news_all" style="margin-top:0"><div id="box1"><div class="title_news_all fs30"><span class="ml40">iOS登陆专用链接(iOS special login link)</span></div><div class="content_all"><div class="note"><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>iOS plz use this to Login,If you click the text eara under the this box</a></div></div><div class="title_news_all fs30"><span class="ml40">普通登陆(Normal Login)</span></div><div class="content_all"><div class="note"><form method="post" action="/webview.php/login/login" autocomplete="off">          用户ID UserID：<input type="text" name="id" id="id" style="height:27px" /><br />          密码 Password：<input type="password" id="pass1" name="password" style="height:27px" /><br /><input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br></form><?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<span style="color:red;font-size:2vw;">*警告：将通过不安全的连接发送您的密码*</span>'; ?></div></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div></div></DIV><DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"></DIV>');
+  document.write('<div id="outer"><div id="inner"><div id="header"><h2>登录</h2><div id="back"></div></div><div id="body"><div id="container"><ul id="list"><li class="entry""><div class="entry-container"><h2 class="text">如果您的设备是 iOS</h2><a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>"><div class="summary" style="color: #000000 !important;">                     iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>           iOS use this link to Login,If you client crash when click the text eara under the this box</div></a><div class="clearfix"></div></div></li><li class="entry""><div class="entry-container"><h2 class="text">用户密码登录</h2><div class="summary" ><br><form method="post" action="/webview.php/login/login" autocomplete="off">              用户ID/UserID：<input type="text" name="id" id="id" style="height:27px" /><br />              密码/Password：<input type="password" id="pass1" name="password" style="height:27px" /><br /><input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br></form><br></div><div class="clearfix"></div></div></li><li class="entry""><div class="entry-container"><h2 class="text">下载节点选择</h2><div class="summary" ><br><form method="post" action=""><input type="radio" name="a" value="a1" checked>中国大陆地区<br><span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br><input type="radio" name="a" value="a2">海外地区<br><span style="color: #ff699c;">注:适用于除国际地区,中国大陆地区下载可能会失败</span><br><input type="submit"></form><br></div><div class="clearfix"></div></div></li></ul></div></div></div></div>');
 }
 
 var num=3;
@@ -92,48 +85,72 @@ var num=3;
 			}
 		}
 	setInterval("redirect()", 1000);
+
+</script>-->
+
+<div id="outer">
+  <div id="inner">
+    <div id="header">
+      <h2>登录</h2>
+      <div id="back"></div>
+    </div>
+
+<div id="body">
+<div id="container">
+<ul id="list">
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">如果您的设备是 iOS</h2>
+           <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">
+           <div class="summary" style="color: #000000 !important;">
+           iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>
+           iOS use this link to Login,If you client crash when click the text eara under the this box
+          </div></a>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">用户密码登录</h2>
+          <div class="summary" >
+          <br>
+            <form method="post" action="/webview.php/login/login" autocomplete="off">
+              用户ID/UserID：<input type="text" name="id" id="id" style="height:27px" /><br />
+              密码/Password：<input type="password" id="pass1" name="password" style="height:27px" /><br />
+            
+              <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
+            </form>
+            <br>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">下载节点选择</h2>
+          <div class="summary" >
+          <br>
+            <form method="post" action="">
+              <input type="radio" name="a" value="a1" checked>中国大陆地区<br>
+              <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
+              <input type="radio" name="a" value="a2">海外地区<br>
+              <span style="color: #ff699c;">注:适用于除国际地区,中国大陆地区下载可能会失败</span><br>
+              <input type="submit">
+            </form>
+            <br>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+  </ul>
+  </div>
+</div>
+</div>
+</div>
+<script>
+  Button.initialize(document.getElementById('back'), function() {
+    window.location.href='/webview.php/login/welcome';
+  });
+  Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>
-
-
-
-
-
-
-
-<!--<DIV id="wrapper_news" style="width: 100% !important">
-<div class="title_news fs34" style="width:100%">
-  <span class="ml30">登录 Login
-  </span><a id="back" href="/webview.php/login/welcome">
-  <div class="topback">
-    <img src="/resources/com_button_01.png" data-on="/resources/com_button_02se.png">
-  </div>
-  </a>
-</div>
-<div class="content_news_all" style="margin-top:0">
-  <div id="box1">
-    <div class="title_news_all fs30">
-      <span class="ml40">iOS登陆专用链接(iOS special login link)</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-        <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">iOS用户专用登录链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>iOS plz use this to Login,If you click the text eara under the this box</a>
-      </div>
-    </div>
-    <div class="title_news_all fs30">
-      <span class="ml40">普通登陆(Normal Login)</span>
-    </div>
-    <div class="content_all">
-      <div class="note">
-       <form method="post" action="/webview.php/login/login" autocomplete="off">
-          用户ID UserID：<input type="text" name="id" id="id" style="height:27px" /><br />
-          密码 Password：<input type="password" id="pass1" name="password" style="height:27px" /><br />
-        
-        <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br></form>
-        <?php if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS']!='on') echo '<span style="color:red;font-size:2vw;">*警告：将通过不安全的连接发送您的密码*</span>'; ?>
-      </div>
-    </div>
-  </div>
-</div>
-</DIV>
-<DIV class="footer_news_all"><IMG width="100%" src="/resources/bg03.png"> 
-</DIV>-->
+</body>

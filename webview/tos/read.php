@@ -4,7 +4,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
-	<link rel="stylesheet" href="/resources/things/detail.css?">
+	<link rel="stylesheet" href="/resources/things/detail.css">
 	<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
 	<link rel="stylesheet" href="/resources/things/list2.css">
 

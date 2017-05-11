@@ -1,42 +1,63 @@
 <?php require('config/maintenance.php'); ?>
-<!doctype html>
-<html>
 <head>
-<meta charset="utf-8">
-<title>メンテナンス</title>
-<link rel="stylesheet" href="/resources/bstyle.css">
-<script type="text/javascript">
-var strUA = "";
-strUA = navigator.userAgent.toLowerCase();
+	<meta charset="utf-8">
+	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
-if(strUA.indexOf("iphone") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, user-scalable=no" />');
-} else if (strUA.indexOf("ipad") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.9, maximum-scale=0.9, user-scalable=no" />');
-} else if (strUA.indexOf("android 2.3") >= 0) {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.45, maximum-scale=0.45, initial-scale=0.45, user-scalable=yes" />');
-} else {
-  document.write('<meta name="viewport" content="width=100%, minimum-scale=0.38, maximum-scale=0.38, user-scalable=no" />');
-}
-</script>
+	<link rel="stylesheet" href="/resources/things/detail.css">
+	<link rel="stylesheet" href="/resources/things/perfect-scrollbar.css">
+	<link rel="stylesheet" href="/resources/things/list2.css">
+
+	<script src="/resources/things/perfect-scrollbar.min.js"></script>
+	<script src="/resources/things/button.js"></script>
+	<style type="text/css">
+		#noah{width: 250px;height: 50px;background-image: url(/resources/things/tab/noah.png);background-position: center;background-size: 88%;margin: 5px;background-repeat: no-repeat;}
+	</style>
+
 </head>
-
 <body>
-<div id="wrapper">
-<div class="title">
-<img src="/resources/bg01_maint.png" width="95%">
-</div>
+	<div id="outer">
+  <div id="inner">
+    <div id="header">
+      <h2>维护</h2>
 
-<div class="content">
-  <div class="note">
+    </div>
+
+<div id="body">
 <p>
-<?=$maintenance_info?>
+<?=$maintenance_info?><br><br>
+如果您觉得无聊 可以点击下方按钮
+<div id="noah"></div>
+-----------------------------------------------滑稽分割线--------------------------------------------------
 </p>
+<p style="text-align: center;">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto">
+<img src="/resources/images/heiheihei.gif" width="100px" height="auto"><br>
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+<img src="/resources/images/jitui.gif" width="100px" height="auto">
+</p>
+</div>
   </div>
 </div>
-<div class="footer">
-<img src="/resources/bg03.png" width="95%">
 </div>
+  </div>
 </div>
+
+<script>
+  Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
+   Button.initialize(document.getElementById('noah'), function() {
+    window.location.href='native://browser?url=http://dash.moe';
+  });
+</script>
 </body>
-</html>
