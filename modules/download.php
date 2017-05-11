@@ -57,9 +57,9 @@ function download_additional($post) {
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/additional",$headers,$post_server);
 	$ret = $r[1]['response_data'];
 	$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
-	if($download_site == 1){
+	if($download_site == "1"){
 		$ret = json_encode($ret);
-		str_replace('dnw5grz2619mn.cloudfront.net','wiki.llsupport.cn',$ret);
+		$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
 		$ret = json_decode($ret);
 	}
 	return $ret;
@@ -128,9 +128,9 @@ function download_batch($post) {
 	else{
 		$ret = $r[1]['response_data'];
 		$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
-		if($download_site == 1){
+		if($download_site == "1"){
 			$ret = json_encode($ret);
-			str_replace('dnw5grz2619mn.cloudfront.net','wiki.llsupport.cn',$ret);
+			$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
 			$ret = json_decode($ret);
 		}
 		return $ret;
@@ -254,9 +254,9 @@ function download_update($post) {
 	$r = curls("prod-jp.lovelive.ge.klabgames.net/main.php/download/update",$headers,$post_server);
 	$ret = $r[1]['response_data'];
 	$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
-	if($download_site == 1){
+	if($download_site == "1"){
 		$ret = json_encode($ret);
-		str_replace('dnw5grz2619mn.cloudfront.net','wiki.llsupport.cn',$ret);
+		$ret = (str_replace('dnw5grz2619mn.cloudfront.net','prop-plserver.llsupport.cn',$ret));
 		$ret = json_decode($ret);
 	}
 	return $ret;
