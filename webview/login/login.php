@@ -117,25 +117,16 @@ var num=3;
             <form method="post" action="/webview.php/login/login" autocomplete="off">
               用户ID/UserID：<input type="text" name="id" id="id" style="height:27px" /><br />
               密码/Password：<input type="password" id="pass1" name="password" style="height:27px" /><br />
-            
+			  <h2 class="text">下载节点选择</h2>
+                <div class="summary" >
+                <br>
+                  <input type="radio" name="site" value="1" checked>中国大陆地区<br>
+                  <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
+                  <input type="radio" name="site" value="2">海外地区<br>
+                  <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
+                  <br>
+                </div>
               <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
-            </form>
-            <br>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </li>
-      <li class="entry"">
-        <div class="entry-container">
-          <h2 class="text">下载节点选择</h2>
-          <div class="summary" >
-          <br>
-            <form method="post" action="">
-              <input type="radio" name="site" value="1" checked>中国大陆地区<br>
-              <span style="color: #ff699c;">注:在中国大陆地区下载会加速,中国大陆以外地区下载可能会减速</span><br>
-              <input type="radio" name="site" value="2">海外地区<br>
-              <span style="color: #ff699c;">注:适用于国际地区,中国大陆地区下载可能会失败</span><br>
-              <input type="submit">
             </form>
             <br>
           </div>
