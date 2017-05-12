@@ -19,7 +19,7 @@ $items["gold"] = ["incentive_item_id"  => 3, //G
 $items["lovaca"] = ["incentive_item_id"  => 4, //ラブカストーン
                     "item_category_id"   => 4,
 			        "add_type"           => 3001,
-				    "incentive_type"     => null];
+				    "incentive_type"     => 25000];
 					
 $items["sticket"] = ["incentive_item_id"  => 5, //補助チケット
                     "item_category_id"   => 5,
