@@ -276,3 +276,7 @@ function unit_setDisplayRank($post) {
   $mysql->exec('UPDATE unit_list set display_rank=' . $post['display_rank'] . ' WHERE unit_owning_user_id=' . $post['unit_owning_user_id']);
   return array();
 }
+
+function unit_addUnitMax(){
+	return ["before_unit_max" => 9000, "after_unit_max" => 9000, "used_loveca" => 1];
+}
