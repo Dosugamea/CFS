@@ -14,15 +14,16 @@ function addUnit($unit_id, $cnt = 1, $detail = false) {
 		$ret = [GetUnitDetail($unit_id, false, false, true)];
 	}else{
 		$default_rankup = $unit->query('select unit_id from unit_m where unit_id=? and (disable_rank_up=1 or normal_icon_asset like "%rankup%")', [$unit_id])->fetch();
+		$default_skill_count = $unit->query("SELECT default_removable_skill_capacity FROM unit_m WHERE unit_id = ".$unit_id)->fetch()[0];
 		if ($default_rankup) {
 			$mysql->query('insert ignore into album (user_id, unit_id, rank_max_flag) values (?, ?, 1)', [$uid, $unit_id]);
-			$sql = $mysql->prepare('insert into unit_list (user_id, unit_id, rank) values (?, ?, 2)');
+			$sql = $mysql->prepare('insert into unit_list (user_id, unit_id, rank, removable_skill_count) values (?, ?, 2, ?)');
 		} else {
 			$mysql->query('insert ignore into album (user_id, unit_id) values (?, ?)', [$uid, $unit_id]);
-			$sql = $mysql->prepare('insert into unit_list (user_id, unit_id) values (?, ?)');
+			$sql = $mysql->prepare('insert into unit_list (user_id, unit_id, removable_skill_count) values (?, ?, ?)');
 		}
 		for ($i = 0; $i < $cnt; $i++) {
-			$sql->execute([$uid, $unit_id]);
+			$sql->execute([$uid, $unit_id, $default_skill_count]);
 			$ret[] = GetUnitDetail($mysql->lastInsertId(), $detail);
 		}
 	}
@@ -137,9 +138,11 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 					break;
 				}
 			}
+			$ret['unit_removable_skill_capacity'] = (int)$ret['removable_skill_count'];
+			unset($ret['removable_skill']);
+			$ret['is_removable_skill_capacity_max'] = $card['max_removable_skill_capacity'] == $ret['unit_removable_skill_capacity'];
+			
 			//4.0假数据（目前不支持）：
-			$ret['is_removable_skill_capacity_max'] = false;
-			$ret['unit_removable_skill_capacity'] = 0;
 			$ret['unit_skill_exp'] = 0;
 			$ret2[] = $ret;
 		}
