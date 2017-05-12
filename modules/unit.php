@@ -55,7 +55,39 @@ function unit_removableSkillInfo() {
 		$owning_detail['insert_date'] = $i['insert_date'];
 		$ret['owning_info'][] = $owning_detail;
 	}
+	$unit_info = $mysql->query("SELECT unit_owning_user_id, removable_skill FROM unit_list WHERE user_id = ".$uid." AND (removable_skill != '[]' OR removable_skill IS NOT NULL)")->fetchAll();
+	foreach($unit_info as $i){
+		$detail = [];
+		$unit_skill_detail = json_decode($i['removable_skill']);
+		foreach($unit_skill_detail as $j)
+			$detail[] = ["unit_removable_skill_id" => $j];
+		$ret['equipment_info'][$i['unit_owning_user_id']] = ["unit_owning_user_id" => (int)$i['unit_owning_user_id'], "detail" => $detail];
+	}
 	return $ret;
+}
+
+function unit_removableSkillEquipment($post) {
+	global $uid, $mysql;
+	$remove = $post['remove'];
+	foreach($remove as $i){
+		$unit_detail = $mysql->query("SELECT * FROM unit_list WHERE unit_owning_user_id = ".$i['unit_owning_user_id']." AND user_id = ".$uid)->fetch();
+		if($unit_detail == false) throw403("CANNOT FIND YOUR UNIT");
+		$removable_skill = json_decode($unit_detail['removable_skill']);
+		$key = array_search($i['unit_removable_skill_id'],$removable_skill);
+		array_splice($removable_skill,$key);
+		$mysql->query("UPDATE unit_list SET removable_skill = '".json_encode($removable_skill)."' WHERE unit_owning_user_id = ".$i['unit_owning_user_id']);
+		$mysql->query("UPDATE removable_skill SET equipped = equipped - 1 WHERE user_id = ".$uid." AND skill_id = ".$i['unit_removable_skill_id']);
+	}
+	$equip = $post['equip'];
+	foreach($equip as $i){
+		$unit_detail = $mysql->query("SELECT * FROM unit_list WHERE unit_owning_user_id = ".$i['unit_owning_user_id']." AND user_id = ".$uid)->fetch();
+		if($unit_detail == false) throw403("CANNOT FIND YOUR UNIT");
+		$removable_skill = json_decode($unit_detail['removable_skill']);
+		$removable_skill[] = $i['unit_removable_skill_id'];
+		$mysql->query("UPDATE unit_list SET removable_skill = '".json_encode($removable_skill)."' WHERE unit_owning_user_id = ".$i['unit_owning_user_id']);
+		$mysql->query("UPDATE removable_skill SET equipped = equipped + 1 WHERE user_id = ".$uid." AND skill_id = ".$i['unit_removable_skill_id']);
+	}
+	return [];
 }
 
 //unit/deckInfo 获取队伍列表
