@@ -223,35 +223,75 @@ function unit_merge($post) {
   $ret['unit_removable_skill'] = [];
   return $ret;
 }
+
 //unit/rankUp 特别练习
 function unit_rankUp($post) {
-  global $params;
-  if ($params['card_switch'] == 0) {
-    return array();
-  }
-  $evolution_base_id = $post['base_owning_unit_user_id'];
-  $evolution_merge_id = $post['unit_owning_user_ids'][0];
-  global $uid, $mysql;
-  $unit = getUnitDb();
-  $base_unit_id = $mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
-  $rank_up_cost = $unit->query('SELECT rank_up_cost FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
-  $ret['use_game_coin'] = (int) $rank_up_cost['rank_up_cost'];
-  $ret['open_subscenario_id'] = null;
-  $ret['before'] = GetUnitDetail(array($evolution_base_id))[0];
-  $ret['before_user_info'] = runAction('user', 'userInfo')['user'];
-  $mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
-  $mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
-  $params['coin'] -= $rank_up_cost['rank_up_cost'];
-  $mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
-  $ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
-  $ret['after_user_info'] = runAction('user', 'userInfo')['user'];
-  $ret['get_exchange_point_list'] = array();
-  $ret['unit_removable_skill'] = [];
-  return $ret;
+	global $params;
+	if ($params['card_switch'] == 0) {
+		return array();
+	}
+	$evolution_base_id = $post['base_owning_unit_user_id'];
+	$evolution_merge_id = $post['unit_owning_user_ids'][0];
+	global $uid, $mysql;
+	$unit = getUnitDb();
+	$base_unit_id = $mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+	$rank_up_cost = $unit->query('SELECT rank_up_cost FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
+	$rank = (int)$mysql->query('SELECT rank FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+	$ret['use_game_coin'] = (int) $rank_up_cost['rank_up_cost'];
+	$ret['before'] = GetUnitDetail(array($evolution_base_id))[0];
+	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
+	if($rank == 1){
+		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
+		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
+		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+	}else if($rank == 2){
+		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+2 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
+		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+	}
+	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
+	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
+	$ret['get_exchange_point_list'] = [];
+	$ret['unit_removable_skill'] = runAction('unit', 'removableSkillInfo');
+	unset($ret['unit_removable_skill']['equipment_info']);
+	return $ret;
 }
+
 function unit_exchangePointRankUp($post) {
-  trigger_error('exchangePointRankUp：本功能暂未实现！');
+	global $params,$uid, $mysql;
+	if ($params['card_switch'] == 0) {
+		return array();
+	}
+	$point_table = [null,null,[null,null,1,null,null,null],[null,null,20,1,null,null],[null,null,500,25,1,5],[null,null,100,5,null,1]];
+	$evolution_base_id = $post['base_owning_unit_user_id'];
+	$evolution_use_point = $post['exchange_point_id'];
+	$unit = getUnitDb();
+	$base_unit_id = (int)$mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+	$rank = (int)$mysql->query('SELECT rank FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+	$rank_up_cost = $unit->query('SELECT rank_up_cost FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
+	$rarity = (int)$unit->query('SELECT rarity FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch()['rarity'];
+	$ret['before'] = GetUnitDetail(array($evolution_base_id))[0];
+	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
+	if($point_table[$rarity][$evolution_use_point] == null)
+		throw403("INVALID DATA");
+	if($rank == 1){
+		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
+		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
+	}else if($rank == 2){
+		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
+	}
+	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
+	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
+	$ret['after_exchange_point'] = $params['seal'.($evolution_use_point-1)];
+	return $ret;
 }
+
 //unit/sale 转部
 function unit_sale($post) {
   global $params;
