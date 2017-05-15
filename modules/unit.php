@@ -279,7 +279,7 @@ function unit_exchangePointRankUp($post) {
 	$unit = getUnitDb();
 	$base_unit_id = (int)$mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
 	$rank = (int)$mysql->query('SELECT rank FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
-	$rank_up_cost = $unit->query('SELECT rank_up_cost FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
+	$rank_up_cost = $unit->query('SELECT exchange_point_rank_up_cost FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
 	$rarity = (int)$unit->query('SELECT rarity FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch()['rarity'];
 	$ret['before'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
@@ -287,12 +287,12 @@ function unit_exchangePointRankUp($post) {
 		throw403("INVALID DATA");
 	if($rank == 1){
 		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
-		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
 		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
 		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
 	}else if($rank == 2){
 		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
-		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
 		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
 	}
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
