@@ -241,13 +241,22 @@ function unit_rankUp($post) {
 	$ret['before'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
 	if($rank == 1){
+		$skill_capacity = (int)$unit->query('SELECT max_removable_skill_capacity FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch()['max_removable_skill_capacity'];
+		$skill_count = (int)$mysql->query('SELECT removable_skill_count FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+		if($skill_count + 1 <= $skill_capacity)
+			$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
-		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
 		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
 		$params['coin'] -= $rank_up_cost['rank_up_cost'];
 	}else if($rank == 2){
-		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+2 WHERE unit_owning_user_id=' . $evolution_base_id);
+		$skill_capacity = (int)$unit->query('SELECT max_removable_skill_capacity FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch()['max_removable_skill_capacity'];
+		$skill_count = (int)$mysql->query('SELECT removable_skill_count FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
+		if($skill_count + 1 <= $skill_capacity)
+			if($skill_count + 2 <= $skill_capacity)
+				$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+2 WHERE unit_owning_user_id=' . $evolution_base_id);
+			else
+				$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
 		$params['coin'] -= $rank_up_cost['rank_up_cost'];
 	}
