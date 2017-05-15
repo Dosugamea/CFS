@@ -70,7 +70,7 @@ $items["memberMax"] = ["incentive_item_id"  => 0, //部員枠
                     "item_category_id"   => 0,
 			        "add_type"           => 3005];
 					
-$items["sticker"] = ["incentive_item_id"  => null, //シール，incentive_item_id为贴纸序号，2为R贴纸
+$items["sticker"] = ["incentive_item_id"  => null, //シール，incentive_item_id为贴纸序号，2为R贴纸，3为SR，5为SSR（按照稀有度）
                     "item_category_id"   => 0,
 			        "add_type"           => 3006];
 					
