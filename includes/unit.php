@@ -102,8 +102,22 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 					$level = ['unit_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
 				}
 			}
+			if($card['default_unit_skill_id'] == null){
+				$skill_level = ['skill_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
+			}else{
+				$skill_pattern_id = $unit->query("SELECT unit_skill_level_up_pattern_id FROM unit_skill_m WHERE unit_skill_id = ".$card['default_unit_skill_id'])->fetch()[0];
+				$skill_level = $unit->query('SELECT * FROM unit_skill_level_up_pattern_m WHERE unit_skill_level_up_pattern_id='.$skill_pattern_id.' AND next_exp>'.$ret['unit_skill_exp'].' LIMIT 1')->fetch();
+				if ($skill_level == null) {
+					$skill_level = $unit->query('SELECT * FROM unit_skill_level_up_pattern_m WHERE unit_skill_level_up_pattern_id='.$skill_pattern_id.' AND next_exp=0')->fetch();
+				}
+				if ($skill_level == null) {
+					$skill_level = ['skill_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
+				}
+			}
 			$ret['favorite_flag'] = (bool) $ret['favorite_flag'];
 			$ret['level'] = $level['unit_level'];
+			$ret['unit_skill_level'] = (int)$skill_level['skill_level'];
+			$ret['unit_skill_exp'] = (int)$ret['unit_skill_exp'];
 			$ret['max_hp'] = $card['hp_max'];
 			$ret['max_level'] = $ret['rank'] == 1 ? $card['before_level_max'] : $card['after_level_max'];
 			$ret['max_love'] = $ret['rank'] == 1 ? $card['before_love_max'] : $card['after_love_max'];
@@ -122,7 +136,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				$ret['smile'] = $card['smile_max'] - $level['smile_diff'];
 				$ret['cute'] = $card['pure_max'] - $level['pure_diff'];
 				$ret['cool'] = $card['cool_max'] - $level['cool_diff'];
-				$ret['skill'] = 0;
+				
 			} else {
 				unset($ret['center_skill']);
 			}
@@ -143,7 +157,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 			$ret['is_removable_skill_capacity_max'] = $card['max_removable_skill_capacity'] == $ret['unit_removable_skill_capacity'];
 			
 			//4.0假数据（目前不支持）：
-			$ret['unit_skill_exp'] = 0;
+			
 			$ret2[] = $ret;
 		}
 		if ($noarray) {

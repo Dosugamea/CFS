@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `unit_list` (
   `rank` tinyint(2) NOT NULL DEFAULT '1',
   `exp` int(11) NOT NULL DEFAULT '0',
   `love` int(11) NOT NULL DEFAULT '0',
-  `unit_skill_level` tinyint(4) NOT NULL DEFAULT '1',
+  `unit_skill_exp` int(11) NOT NULL DEFAULT '0',
   `favorite_flag` tinyint(1) NOT NULL DEFAULT '0',
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_owning_user_id`)
