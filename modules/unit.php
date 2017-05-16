@@ -161,7 +161,7 @@ function unit_merge($post) {
 	$base_unit = $unit->query('SELECT unit_level_up_pattern_id,rarity,attribute_id,default_unit_skill_id FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch();
 	$get_seal_list = [];
 	if($merge_id != []){
-		$merge_unit_id_all = $mysql->query('SELECT exp,unit_id,rank FROM unit_list WHERE unit_owning_user_id in (' . implode(', ', $merge_id) . ')')->fetchAll();
+		$merge_unit_id_all = $mysql->query('SELECT exp,unit_id,rank,unit_owning_user_id FROM unit_list WHERE unit_owning_user_id in (' . implode(', ', $merge_id) . ')')->fetchAll();
 		pl_assert(count($merge_unit_id_all) == count($merge_id), '练习错误：找不到陪练卡片。如果你是在通信错误后看到这个错误，说明练习已经成功了，否则请报告给作者。');
 		foreach ($merge_unit_id_all as $merge_unit_id) {
 			$merge_unit = $unit->query('SELECT unit_level_up_pattern_id,default_unit_skill_id,rarity,attribute_id,disable_rank_up,normal_icon_asset FROM unit_m WHERE unit_id=' . $merge_unit_id['unit_id'])->fetch();
@@ -178,7 +178,9 @@ function unit_merge($post) {
 				}
 			}
 			if ($merge_unit['default_unit_skill_id'] !== null && $merge_unit['default_unit_skill_id'] == $base_unit['default_unit_skill_id']) {
-				$total_skill++;
+				$merge_unit_skill_level = GetUnitDetail((int)$merge_unit_id['unit_owning_user_id'])['unit_skill_level'];
+				$grant_exp = $unit->query("SELECT grant_exp FROM unit_skill_level_m WHERE unit_skill_id = ".$merge_unit['default_unit_skill_id']." AND skill_level = ".$merge_unit_skill_level)->fetch()['grant_exp'];
+				$total_skill_exp += $grant_exp;
 			}
 			if ($merge_unit['disable_rank_up'] == 0 && strpos($merge_unit['normal_icon_asset'], 'rankup') === false) {
 				$get_seal_list[] = (int)$merge_unit['rarity'];
