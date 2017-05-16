@@ -171,10 +171,11 @@ function unit_merge($post) {
 			}
 			$total_exp += $merge_exp_cost['merge_exp'];
 			$total_cost += $merge_exp_cost['merge_cost'];
-			if ($merge_unit['default_unit_skill_id'] >= 190 && $merge_unit['default_unit_skill_id'] <= 201) {
+			if ($merge_unit['default_unit_skill_id'] >= 489 && $merge_unit['default_unit_skill_id'] <= 500) {
 				//如果是升级技能卡
 				if ($merge_unit['rarity'] == $base_unit['rarity'] && ($merge_unit['attribute_id'] == $base_unit['attribute_id'] || $merge_unit['attribute_id'] == 5)) {
-					$total_skill++;
+					$skill_info = $unit->query('SELECT * FROM unit_skill_level_m WHERE unit_skill_id='.$merge_unit['default_unit_skill_id'])->fetch();
+					$total_skill_exp += $skill_info['grant_exp'];
 				}
 			}
 			if ($merge_unit['default_unit_skill_id'] !== null && $merge_unit['default_unit_skill_id'] == $base_unit['default_unit_skill_id']) {
