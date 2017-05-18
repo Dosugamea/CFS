@@ -102,7 +102,7 @@ function scout($id, $count) {
 		$rule = preg_replace('/\barise\b/', 'unit_type_id in (80,81,82,112,113)', $rule);
 		$rule = preg_replace('/\bnot_tokuten\b/', 'normal_icon_asset not like "%rankup%" and rank_max_icon_asset not like "%normal%"', $rule);
 		$rule = preg_replace('/\btokuten\b/', 'disable_rank_up != 1 and normal_icon_asset like "%rankup%"', $rule);
-		$rule = preg_replace('/\bskillup\b/', 'default_unit_skill_id >= 190 and default_unit_skill_id <= 201', $rule);
+		$rule = preg_replace('/\bskillup\b/', 'default_unit_skill_id >= 489 AND default_unit_skill_id <= 500', $rule);
 		$rule = preg_replace('/\balpaca\b/', 'disable_rank_up = 1 and default_unit_skill_id is null', $rule);
 		$rule = preg_replace('/\bno-skill\b/', 'default_unit_skill_id is null', $rule);
 		$rule = preg_replace('/\bhantei-syo\b/', 'default_unit_skill_id in (select unit_skill_id from unit_skill_m where skill_effect_type=4)', $rule);
@@ -147,6 +147,11 @@ function scout($id, $count) {
 		}
 		$unit_id = $unit->query($process_rule($this_rule).' order by random() limit 1')->fetchColumn();
 		$got_cards[] = addUnit($unit_id, 1, true)[0];
+	}
+	foreach($got_cards as &$i){
+		$i['add_type'] = 1001;
+		$i['amount'] = 1;
+		$i['item_category_id'] = 0;
 	}
 	if ($box['type'] == 4 && isset($box['once_per_day'])) {
 		$got_free_gacha_list = explode(',', $mysql->query('select got_free_gacha_list from secretbox where user_id=?', [$uid])->fetchColumn());
@@ -562,8 +567,6 @@ function secretBox_multi($post) {
 	$ret['new_achievement_cnt'] = 0;
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 	$ret['secret_box_items']['unit'] = array_map(function ($unit) {
-		$unit['description'] = '';
-		$unit['comment'] = '';
 		$unit['unit_rarity_id'] = $unit['rarity'];
 		$unit['skill_level'] = 1;
 		$unit['reward_box_flag'] = false;

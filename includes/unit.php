@@ -37,7 +37,9 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 	}
 	$support_list = getSupportUnitList();
 	if($is_support_unit || in_array($unit_owning_user_id, $support_list)){
-		$ret['unit_id'] = $unit_owning_user_id;
+		$unit = getUnitDb();
+		$ret['rarity'] = (int)$unit->query("SELECT rarity FROM unit_m WHERE unit_id = ".$unit_owning_user_id)->fetch()['rarity'];
+		$ret['unit_id'] = (int)$unit_owning_user_id;
 		$ret['unit_owning_user_id'] = 0;
 		$ret['is_support_member'] = true;
 		$ret['exp'] = 0;
