@@ -11,6 +11,7 @@ function addUnit($unit_id, $cnt = 1, $detail = false) {
 			$mysql->query('INSERT INTO unit_support_list (user_id, unit_id, amount) VALUES (?,?,?)', [$uid, $unit_id, $cnt]);
 		else
 			$mysql->query('UPDATE unit_support_list SET amount = '.($amount[0] + $cnt).' WHERE user_id = '.$uid.' AND unit_id = '.$unit_id);
+		$mysql->query('insert ignore into album (user_id, unit_id, rank_max_flag) values (?, ?, 1)', [$uid, $unit_id]);
 		$ret = [GetUnitDetail($unit_id, false, false, true)];
 	}else{
 		$default_rankup = $unit->query('select unit_id from unit_m where unit_id=? and (disable_rank_up=1 or normal_icon_asset like "%rankup%")', [$unit_id])->fetch();
