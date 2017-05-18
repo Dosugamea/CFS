@@ -4,6 +4,7 @@
 //download/additional 下载附加内容
 function download_additional($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
+	include 'config/modules_download.php';
 	/*
 	pl_assert(($_SERVER['HTTP_OS'] == 'Android' && $additional_for_android) || ($_SERVER['HTTP_OS'] == 'iOS' && $additional_for_ios), '暂不提供您区系统的客户端的数据包下载！');
 	$ret = $mysql->query(
@@ -32,8 +33,8 @@ function download_additional($post) {
 			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
-			"Bundle-Version: $bundle_ver",
-			"Client-Version: $server_ver",
+			"Bundle-Version: $official_bundle_ver",
+			"Client-Version: $official_client_ver",
 			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
@@ -43,7 +44,7 @@ function download_additional($post) {
 			"Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=3",
 			'Expect:'
 		);
-	include 'config/modules_download.php';
+	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
@@ -67,6 +68,7 @@ function download_additional($post) {
 
 function download_batch($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
+	include 'config/modules_download.php';
 	//虹原的旧代码先注释掉啦=w=
 	/*pl_assert(($_SERVER['HTTP_OS'] == 'Android' && $additional_for_android) || ($_SERVER['HTTP_OS'] == 'iOS' && $additional_for_ios), '暂不提供您区系统的客户端的数据包下载！');
 	$ret = $mysql->query(
@@ -99,8 +101,8 @@ function download_batch($post) {
 			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
-			"Bundle-Version: $bundle_ver",
-			"Client-Version: $server_ver",
+			"Bundle-Version: $official_bundle_ver",
+			"Client-Version: $official_client_ver",
 			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
@@ -110,7 +112,7 @@ function download_batch($post) {
 			"Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=3",
 			'Expect:'
 		);
-	include 'config/modules_download.php';
+	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
@@ -139,6 +141,7 @@ function download_batch($post) {
 
 function download_event($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
+	include 'config/modules_download.php';
 	include 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
@@ -161,8 +164,8 @@ function download_event($post) {
 			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
-			"Bundle-Version: $bundle_ver",
-			"Client-Version: $server_ver",
+			"Bundle-Version: $official_bundle_ver",
+			"Client-Version: $official_client_ver",
 			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
 			"Platform-Type: $PlatformType",
@@ -172,7 +175,7 @@ function download_event($post) {
 			"Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=3",
 			'Expect:'
 		);
-	include 'config/modules_download.php';
+	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	
@@ -209,6 +212,7 @@ function download_getUrl($post) {
 //download/update 下载更新
 function download_update($post) {
 	global $uid, $mysql;
+	include 'config/modules_download.php';
 	pl_assert($post);
 	pl_assert(isset($post['install_version']), '请升级到4.0客户端！');
 	if ($post['os'] != 'Android' && $post['os'] != 'iOS') {
@@ -220,13 +224,14 @@ function download_update($post) {
 	}else{
 		$PlatformType = 1;
 	}
+	$post['install_version'] = $official_client_ver;
 	include 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
 	$token = $tokenanduid['authorize_token'];
 	$user_id = $tokenanduid['user_id'];
 	$sessionKey = $tokenanduid['sessionKey'];
-	$user_cli_ver = (((float)$server_ver - (float)$post['external_version']) > 1)?floor($server_ver):$post['external_version'];
+	$user_cli_ver = $official_client_ver > $post['external_version']?$official_client_ver:$post['external_version'];
 	
 	$time = time();
 	$headers = array(
@@ -234,7 +239,7 @@ function download_update($post) {
 			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
-			"Bundle-Version: $bundle_ver",
+			"Bundle-Version: $official_bundle_ver",
 			"Client-Version: $user_cli_ver",
 			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			"OS: $os",
@@ -245,7 +250,7 @@ function download_update($post) {
 			"Authorize: consumerKey=lovelive_test&timeStamp=$time&version=1.1&token=$token&nonce=3",
 			'Expect:'
 		);
-	include 'config/modules_download.php';
+	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
 	

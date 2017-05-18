@@ -132,14 +132,18 @@ if (isset($params) && isset($restrict_ver) && !$params['allow_test_func'] && $_S
 //数据包版本
 if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 	if (($_SERVER['HTTP_OS'] == 'Android' && $update_for_android == true) || ($_SERVER['HTTP_OS'] == 'iOS' && $update_for_ios == true)) {
-		header("Server-Version: {$_SERVER['HTTP_CLIENT_VERSION']}.$server_ver");
+		if(floor((float)$_SERVER['HTTP_CLIENT_VERSION']) < floor((float)$server_ver)){
+			header("Server-Version: ".((float)$_SERVER['HTTP_CLIENT_VERSION']+0.1));}
+		else
+			header("Server-Version: {$_SERVER['HTTP_CLIENT_VERSION']}.$server_ver");
 	} else {
 		header('Maintenance: 1');
 		die();
 	}
 }
+
 //扩展下载
-if (isset($uid)) {
+/*if (isset($uid)) {
 	$res = $mysql->query('
 		SELECT extend_download.* FROM extend_download_queue
 		LEFT JOIN extend_download
@@ -150,7 +154,7 @@ if (isset($uid)) {
 	if (!empty($res)) {
 		header("Server-Version: {$_SERVER['HTTP_CLIENT_VERSION']}.$server_ver");
 	}
-}
+}*/
 //维护
 if ($maintenance && isset($uid) && array_search($uid, $bypass_maintenance) === false) {
 	header('Maintenance: 1');
@@ -224,6 +228,6 @@ function retError($statusCode) {
 }
 
 $mysql->query('commit');
-header('Server-Version: '.$server_ver);
+//header('Server-Version: '.$server_ver);
 header('Content-Type: application/json');
 echo $ret;
