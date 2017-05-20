@@ -11,7 +11,7 @@ function addUnit($unit_id, $cnt = 1, $detail = false) {
 			$mysql->query('INSERT INTO unit_support_list (user_id, unit_id, amount) VALUES (?,?,?)', [$uid, $unit_id, $cnt]);
 		else
 			$mysql->query('UPDATE unit_support_list SET amount = '.($amount[0] + $cnt).' WHERE user_id = '.$uid.' AND unit_id = '.$unit_id);
-		$mysql->query('insert ignore into album (user_id, unit_id, rank_max_flag) values (?, ?, 1)', [$uid, $unit_id]);
+		$mysql->query('insert ignore into album (user_id, unit_id, rank_max_flag, love_max_flag, rank_level_max_flag) values (?, ?, 1, 1, 1)', [$uid, $unit_id]);
 		$ret = [GetUnitDetail($unit_id, false, false, true)];
 	}else{
 		$default_rankup = $unit->query('select unit_id from unit_m where unit_id=? and (disable_rank_up=1 or normal_icon_asset like "%rankup%")', [$unit_id])->fetch();
@@ -109,6 +109,8 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				$skill_level = ['skill_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
 			}else{
 				$skill_pattern_id = $unit->query("SELECT unit_skill_level_up_pattern_id FROM unit_skill_m WHERE unit_skill_id = ".$card['default_unit_skill_id'])->fetch()[0];
+				if($skill_pattern_id == null|| $skill_pattern_id == "")
+					trigger_error("skill_pattern_id NOT FOUND! Skill ID: ".$card['default_unit_skill_id']." Card ID: ".$card['unit_id']);
 				$skill_level = $unit->query('SELECT * FROM unit_skill_level_up_pattern_m WHERE unit_skill_level_up_pattern_id='.$skill_pattern_id.' AND next_exp>'.$ret['unit_skill_exp'].' LIMIT 1')->fetch();
 				if ($skill_level == null) {
 					$skill_level = $unit->query('SELECT * FROM unit_skill_level_up_pattern_m WHERE unit_skill_level_up_pattern_id='.$skill_pattern_id.' AND next_exp=0')->fetch();
