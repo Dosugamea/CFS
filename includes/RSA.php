@@ -12,3 +12,10 @@ function RSAencrypt($data){
 	openssl_public_encrypt($data, $encrypted, $official_pub_key);
 	return base64_encode($encrypted);
 }
+
+function RSAsign($data){
+	include('config/RSA_KeyPair.php');
+	$priv_key =  openssl_pkey_get_private($priv_key);
+	openssl_sign($data, $signature, $priv_key, OPENSSL_ALGO_SHA1);
+	return base64_encode($signature);
+}

@@ -2,7 +2,7 @@
 date_default_timezone_set("Asia/Tokyo");
 
 /* 错误处理 */
-require 'includes/errorHandler.php';
+//require 'includes/errorHandler.php';
 
 /* 连接数据库 */
 require 'includes/db.php';
@@ -229,5 +229,8 @@ function retError($statusCode) {
 
 $mysql->query('commit');
 //header('Server-Version: '.$server_ver);
+include_once('includes/RSA.php');
+$XMS = RSAsign($ret);
+header("X-Message-Sign: ".$XMS);
 header('Content-Type: application/json');
 echo $ret;

@@ -16,8 +16,9 @@ function login_authkey($post) {
 	if($nonce != 1) {
 		throw403('HTTP_AUTHORIZE_INVALID_AUTHKEY');
 	}
-	include('includes/RSA.php');
+	include_once('includes/RSA.php');
 	$AES_token_client = RSAdecrypt($post['dummy_token']);
+	
 	//生成随机AES key
 	$chars='ABDEFGHJKLMNPQRSTVWXYabdefghijkmnpqrstvwxy23456789#%*';
 	mt_srand((double)microtime()*1000000*getmypid());
@@ -58,7 +59,7 @@ function login_login($post) {
 	$mysql->query('delete from tmp_authorize where token=?', [$token]);
 	$raw_login_key = base64_decode($post['login_key']);
 	$iv = substr($raw_login_key,0,16);
-	include('includes/AES.php');
+	include_once('includes/AES.php');
 	$login_key = AESdecrypt(substr($raw_login_key,16), substr($sessionKey,0,16), $iv);
 	$post['login_key'] = $login_key;
 	
