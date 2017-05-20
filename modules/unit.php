@@ -329,15 +329,25 @@ function unit_exchangePointRankUp($post) {
 		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
 		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
-		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
+		switch($evolution_use_point){
+			case 2: $params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 3: $params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 4: $params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 5: $params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
+		}
 	}else if($rank == 2){
 		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
-		$params['seal'.($evolution_use_point-1)] -= $point_table[$rarity][$evolution_use_point];
+		switch($evolution_use_point){
+			case 2: $params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 3: $params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 4: $params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 5: $params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
+		}
 	}
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
-	$ret['after_exchange_point'] = $params['seal'.($evolution_use_point-1)];
+	$ret['after_exchange_point'] = $params['seal'.($evolution_use_point)];
 	return $ret;
 }
 
