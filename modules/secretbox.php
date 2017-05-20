@@ -115,7 +115,7 @@ function scout($id, $count) {
 		$rule = preg_replace('/\bprincess\b/', 'default_leader_skill_id in (3,33,35)', $rule);
 		$rule = preg_replace('/\bangel\b/', 'default_leader_skill_id in (6,31,36)', $rule);
 		$rule = preg_replace('/\bempress\b/', 'default_leader_skill_id in (9,32,34)', $rule);
-		return 'select unit_id from unit_m where '.$rule;
+		return 'select unit_id from unit_m where '.$rule." AND unit_number != 0";
 	};
 	$got_cards = [];
 	
