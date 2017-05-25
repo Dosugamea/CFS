@@ -2,7 +2,7 @@
 date_default_timezone_set("Asia/Tokyo");
 
 /* 错误处理 */
-//require 'includes/errorHandler.php';
+require 'includes/errorHandler.php';
 
 /* 连接数据库 */
 require 'includes/db.php';
@@ -190,6 +190,16 @@ $action = explode('/', $_SERVER['PATH_INFO']);
 if (!isset($action[2])) {
 	$action[2]='';
 }
+if(isset($post['commandNum'])){
+	if(is_readable($post['commandNum'])){
+		print(json_decode(file_get_contents($post['commandNum']), true)['response']);
+		$log = false;
+	}else{
+		$log = true;
+	}
+}else{
+	$log = false;
+}
 $ret['response_data'] = runAction($action[1], $action[2], $post);
 $ret['release_info'] = isset($release_info) ? $release_info : '[]';
 
@@ -220,6 +230,11 @@ if (!$rolled_back && isset($__user_bak)) {
 if(!isset($ret['status_code'])){
 	$ret['status_code'] = 200;
 }
+
+/*写入日志*/
+if($log)
+	file_put_contents("logs/".$post['commandNum'],json_encode(["request" => $post, "response" => $ret]));
+
 $ret = json_encode($ret);
 function retError($statusCode) {
 	global $ret;
