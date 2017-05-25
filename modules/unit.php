@@ -347,7 +347,12 @@ function unit_exchangePointRankUp($post) {
 	}
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
-	$ret['after_exchange_point'] = $params['seal'.($evolution_use_point)];
+	switch($evolution_use_point){
+		case 2: $ret['after_exchange_point'] = $params['seal1'];break;
+		case 3: $ret['after_exchange_point'] = $params['seal2'];break;
+		case 4: $ret['after_exchange_point'] = $params['seal4'];break;
+		case 5: $ret['after_exchange_point'] = $params['seal3'];break;
+	}
 	return $ret;
 }
 
