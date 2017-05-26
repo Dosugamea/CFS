@@ -180,3 +180,17 @@ function getSupportUnitList(){
 		$i = $i['unit_id'];
 	return $ret;
 }
+
+function removeFromDeck($unit_owning_user_id){
+	global $uid, $mysql;
+	$deck_orig = $mysql->query("SELECT json FROM user_deck WHERE user_id = ".$uid)->fetchColumn();
+	$deck_orig = json_decode($deck_orig, true);
+	$deck = $deck_orig;
+	foreach($deck as &$i)
+		foreach($i['unit_deck_detail'] as $j => $k)
+			if($unit_owning_user_id == $k['unit_owning_user_id'])
+				array_slice($i['unit_deck_detail'],$j,1);
+	if($deck != $deck_orig)
+		$mysql->query("UPDATE user_deck SET json = '".json_encode($deck)."' WHERE user_id = ".$uid);
+	return 1;
+}

@@ -189,6 +189,7 @@ function unit_merge($post) {
 				$get_seal_list[] = (int)$merge_unit['rarity'];
 				}
 			}
+			removeFromDeck((int)$merge_unit_id['unit_owning_user_id']);
 		}
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id in(' . implode(', ', $merge_id) . ')');
 	}
@@ -300,6 +301,7 @@ function unit_rankUp($post) {
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
 		$params['coin'] -= $rank_up_cost['rank_up_cost'];
 	}
+	removeFromDeck((int)$evolution_merge_id);
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 	$ret['get_exchange_point_list'] = [];
@@ -385,9 +387,12 @@ function unit_sale($post) {
 	if (count($ret['detail']) == count($post['unit_owning_user_id'])) {
 		$params['coin'] += $total_money;
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id in(' . implode(', ', $post['unit_owning_user_id']) . ')');
+		foreach($post['unit_owning_user_id'] as $i)
+			removeFromDeck((int)$i);
 		$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 		$ret['get_exchange_point_list'] = addExchangePoint($get_seal_list);
-		$ret['unit_removable_skill'] = [];
+		$ret['unit_removable_skill'] = runAction('unit', 'removableSkillInfo');
+		unset($ret['unit_removable_skill']['equipment_info']);
 		return $ret;
 	} else {
 		return array();
