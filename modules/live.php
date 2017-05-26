@@ -948,7 +948,7 @@ function live_reward($post) {
 	
 	/* 分配绊点 */
 	
-	$max_love = [null,[null,25,100,250,500], [null,50,200,500,1000]];
+	$max_love = [null,[null,25,100,250,500,375], [null,50,200,500,1000,750]];
 	$love_max_num = 0;
 	$center_love_max = false;
 	$total_love = $ret['total_love'];
@@ -961,7 +961,7 @@ function live_reward($post) {
 		//读取卡组
 		$res = $mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn();
 		$deck = json_decode($res,true);
-		$deckid = $mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		$deckid = (int)$mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
 		foreach($deck as $v) {
 			if ($v['unit_deck_id'] != $deckid) {
 				continue; //定位到当前的卡组
