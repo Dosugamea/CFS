@@ -57,7 +57,7 @@
 <script>
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
    Button.initialize(document.getElementById('noah'), function() {
-    window.location.href='native://browser?url=http://dash.moe';
+    window.location.href='native://browser?url=https://www.lovelivesupport.com';
   });
 </script>
 </body>
