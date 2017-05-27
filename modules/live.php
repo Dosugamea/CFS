@@ -172,6 +172,16 @@ function live_partyList() {
 		$party['available_social_point'] = 5;
 		$default_party['party_list'][] = $party;
 	}
+	$friend_list = runAction("friend", "list",["type" => 0])['friend_list'];
+	foreach($friend_list as &$i){
+		$i["user_info"] = $i["user_data"];
+		$i["user_info"]['user_id'] = (int)$i["user_info"]['user_id'];
+		$i["user_info"]['level'] = (int)$i["user_info"]['level'];
+		$i["available_social_point"] = 0;
+		$i['friend_status'] = 1;
+		unset($i["user_data"]);
+	}
+	$default_party['party_list'] = array_merge($default_party['party_list'], $friend_list);
 	return $default_party;
 }
 
