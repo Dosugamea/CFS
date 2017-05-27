@@ -190,6 +190,7 @@ function login_topInfo() {
 	$free_gacha = $mysql->query('select to_days(CURRENT_TIMESTAMP)-to_days(last_scout_time) free_gacha, got_free_gacha_list from secretbox where user_id=?', [$uid])->fetch();
 	$free_gacha = ($params['card_switch'] && ($free_gacha['free_gacha'] > 0 || $free_gacha['got_free_gacha_list'] == ''));
 	$mail_cnt = count($mysql->query("SELECT * FROM mail WHERE `read` = 0 AND `to_id` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
+	$friend_cnt = count($mysql->query("SELECT * FROM friend WHERE `read` = 0 AND `applicated` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	return json_decode('{
 						"free_gacha_flag": '.($free_gacha ? 'true' : 'false').',
 						"next_free_gacha_timestamp": '.strtotime(date('Y-m-d',strtotime('+1 day'))).',
@@ -200,7 +201,8 @@ function login_topInfo() {
 						"notice_mail_datetime": "2000-01-01 12:00:00",
 						"present_cnt": '.$present_count.',
 						"server_datetime": "'.date('Y-m-d H:i:s').'",
-						"server_timestamp": '.time().'
+						"server_timestamp": '.time().',
+						"friends_approval_wait_cnt": '.$friend_cnt.'
 				}');
 }
 

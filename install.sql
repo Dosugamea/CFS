@@ -89,6 +89,15 @@ CREATE TABLE IF NOT EXISTS `extend_medley_song_30` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `friend` (
+  `applicant` INT(11) NOT NULL,
+  `applicated` INT(11) NOT NULL,
+  `status` TINYINT(4) NOT NULL DEFAULT '1',
+  `insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `agree_date` TIMESTAMP NULL DEFAULT NULL,
+  `read` TINYINT(4) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `incentive_list` (
   `incentive_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
