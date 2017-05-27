@@ -14,6 +14,18 @@
   table td tr{width: 50%;}
   #mail{width: 140px;height: 50px;background-image: url(/resources/things/tab/mail.png);background-position: center;background-size: cover;margin: 5px;}
   #noah{width: 250px;height: 50px;background-image: url(/resources/things/tab/noah.png);background-position: center;background-size: 88%;margin: 5px;background-repeat: no-repeat;}
+  #license-url , #license-eng-url{
+    width: 140px;
+    height: 50px;
+    background-color: #FC6B9F;
+    border: 2px solid #CCC;
+    border-radius: 15px;
+    text-align: center;
+    margin: 10px;
+    color: #FFFFFF;
+    padding-top: 15px;
+    box-shadow: 2px 2px 2px #ccc;
+  }
 </style>
 <!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
 
@@ -55,6 +67,17 @@ require "info.php"
         <div class="entry-container" id="href">
           <h2 class="text">使用帮助</h2>
           <div class="summary">点击此处进入使用帮助</div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+       <li class="entry" >
+        <div class="entry-container" id="href">
+          <h2 class="text">软件许可</h2>
+          <div class="summary" style="width:760px !important;">
+            <?=$pls_license?><hr>
+            <div id="license-url">开源许可</div>
+            <div id="license-eng-url">引擎项目地址</div>
+          </div>
           <div class="clearfix"></div>
         </div>
       </li>
@@ -103,6 +126,12 @@ require "info.php"
     window.location.href='native://browser?url=mailto:<?=$pls_support_mail?>';
   });
   Button.initialize(document.getElementById('noah'), function() {
-    window.location.href='native://browser?url=http://dash.moe';
+    window.location.href='native://browser?url=https://www.lovelivesupport.com';
+  });
+  Button.initialize(document.getElementById('license-url'), function() {
+    window.location.href='native://browser?url=<?=$pls_license_url?>';
+  });
+  Button.initialize(document.getElementById('license-eng-url'), function() {
+    window.location.href='native://browser?url=<?=$pls_license_eng_url?>';
   });
 </script>

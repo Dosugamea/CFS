@@ -1,1 +1,1 @@
-<?php $pls_version='14-02 test';$pls_version_date='17/02/08';
+<?php $pls_version='25-05 5.0.2ver';$pls_version_date='17/05/26';

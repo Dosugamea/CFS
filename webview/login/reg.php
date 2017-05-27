@@ -10,7 +10,11 @@
 
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
-
+<style type="text/css">
+  #num{
+    color: red;
+  }
+</style>
 <?php
 require 'config/reg.php';
 if(!$allow_reg) {
@@ -198,17 +202,19 @@ function verify3() {
 <div id="body">
 <div id="container">
 <ul id="list">
-      <li class="entry"">
-        <div class="entry-container">
-          <h2 class="text">如果您的设备是 iOS</h2>
-           <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">
-           <div class="summary" style="color: #000000 !important;">
-           iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>
-           iOS use this link to Login,If you client crash when click the text eara under the this box
-          </div></a>
-          <div class="clearfix"></div>
-        </div>
-      </li>
+      <script type="text/javascript">
+        var strUA = "";
+        strUA = navigator.userAgent.toLowerCase();
+
+        if(strUA.indexOf("iphone") >= 0) {
+          document.write('<li class="entry""><div class="entry-container"><h2 class="text">您的设备是iOS？</h2><div class="summary" style="color: #000000 !important;">           我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内注册<br>            将在 <span id="num"></span> 秒 后跳转到外部浏览器进行注册</div><div class="clearfix"></div></div></li>');
+        } else if (strUA.indexOf("ipad") >= 0) {
+          document.write('<li class="entry""><div class="entry-container"><h2 class="text">您的设备是iOS？</h2><div class="summary" style="color: #000000 !important;">           我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内注册<br>            将在 <span id="num"></span> 秒 后跳转到外部浏览器进行注册</div><div class="clearfix"></div></div></li>');
+        } else {
+            document.write('');
+          }
+      </script>
+      
       <li class="entry"">
         <div class="entry-container">
           <h2 class="text">注册</h2>
@@ -256,4 +262,16 @@ function verify3() {
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>
+ <script type="text/javascript">
+        var num=5;
+          function redirect(){
+            num--;
+            document.getElementById("num").innerHTML=num;
+            if(num<0){
+              document.getElementById("num").innerHTML=0;
+              location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
+              }
+            }
+          setInterval("redirect()", 1000);
+  </script>
 </body>

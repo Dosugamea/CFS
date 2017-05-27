@@ -43,7 +43,7 @@ if ($error) {
 #bomb-img {
     width: 100%;
     height: 100%;
-    background: #fff url("/resources/bomb.jpg") no-repeat center center;
+    background: #fff url("/resources/error.png") no-repeat center center;
     background-size: contain;
 }
 #right {

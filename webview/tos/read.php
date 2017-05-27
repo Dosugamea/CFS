@@ -50,7 +50,7 @@
 		#3.若私下传播，则必须确保【所有看到消息的人也遵守前面一条】<br /><br />
 	 </div><br /><br />
 	 <div class="time">
-	 	Programmed Live!<br>
+	 	HoshizaraCodeAcademy!<br>
 	 	2017/02/15 23:30:00
 	 </div>
       <br><br><br>
