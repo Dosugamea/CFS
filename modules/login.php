@@ -189,11 +189,12 @@ function login_topInfo() {
 	$present_count = $mysql->query('SELECT count(*) FROM incentive_list WHERE user_id='.$uid.' and opened_date=0')->fetchColumn();
 	$free_gacha = $mysql->query('select to_days(CURRENT_TIMESTAMP)-to_days(last_scout_time) free_gacha, got_free_gacha_list from secretbox where user_id=?', [$uid])->fetch();
 	$free_gacha = ($params['card_switch'] && ($free_gacha['free_gacha'] > 0 || $free_gacha['got_free_gacha_list'] == ''));
+	$mail_cnt = count($mysql->query("SELECT * FROM mail WHERE `read` = 0 AND `to_id` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	return json_decode('{
 						"free_gacha_flag": '.($free_gacha ? 'true' : 'false').',
 						"next_free_gacha_timestamp": '.strtotime(date('Y-m-d',strtotime('+1 day'))).',
-						"friend_action_cnt": 0,
-						"friend_greet_cnt": 0,
+						"friend_action_cnt": '.$mail_cnt.',
+						"friend_greet_cnt": '.$mail_cnt.',
 						"friend_variety_cnt": 0,
 						"notice_friend_datetime": "2013-04-15 11:47:00",
 						"notice_mail_datetime": "2000-01-01 12:00:00",

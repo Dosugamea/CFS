@@ -135,6 +135,17 @@ CREATE TABLE IF NOT EXISTS `login_bonus_n` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `mail` (
+  `notice_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `from_id` INT(11) NOT NULL,
+  `to_id` INT(11) NOT NULL,
+  `message` TEXT NULL,
+  `read` TINYINT(4) NOT NULL DEFAULT '0',
+  `replied` TINYINT(4) NOT NULL DEFAULT '0',
+  `insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`notice_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `notes_setting` (
   `notes_setting_asset` varchar(255) NOT NULL,
   `notes_list` mediumtext NOT NULL,
