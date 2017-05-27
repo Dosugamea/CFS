@@ -90,6 +90,24 @@ function unit_removableSkillEquipment($post) {
 	return [];
 }
 
+function unit_removableSkillSell($post) {
+	global $uid, $mysql, $params;
+	$sell_prize = [null,7900,7900,7900,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000];
+	$list = $post['selling_list'];
+	$ret = [];
+	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
+	$get_coin = 0;
+	foreach($list as $i){
+		$mysql->query("UPDATE removable_skill SET amount = amount - ".(int)$i['amount']." WHERE user_id = ".$uid." AND skill_id = ".(int)$i['unit_removable_skill_id']);
+		$get_coin += $sell_prize[$i['unit_removable_skill_id']] * $i['amount'];
+	}
+	$params['item3'] += $get_coin;
+	$ret['total'] = $get_coin;
+	$ret['reward_box_flag'] = false;
+	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
+	return $ret;
+}
+
 //unit/deckInfo 获取队伍列表
 function unit_deckInfo() {
 	global $uid, $mysql, $params;
