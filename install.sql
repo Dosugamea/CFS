@@ -96,6 +96,7 @@ CREATE TABLE `friend` (
   `insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `agree_date` TIMESTAMP NULL DEFAULT NULL,
   `read` TINYINT(4) NOT NULL DEFAULT '0'
+  UNIQUE INDEX `Index 1` (`applicant`, `applicated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `incentive_list` (
