@@ -13,7 +13,7 @@ function friend_list($post) {
 		$friends = $mysql->query("SELECT * FROM friend WHERE applicant = ".$uid." AND status = 1")->fetchAll(PDO::FETCH_ASSOC);
 	if($post['type'] == 2){
 		$friends = $mysql->query("SELECT * FROM friend WHERE applicated = ".$uid." AND status = 1")->fetchAll(PDO::FETCH_ASSOC);
-		$mysql->query("UPDATE friend SET `read` = 1 WHERE applicated = ".$uid." AND status = 1")
+		$mysql->query("UPDATE friend SET `read` = 1 WHERE applicated = ".$uid." AND status = 1");
 	}
 	$ret['item_count'] = count($friends);
 	$ret['friend_list'] = [];
