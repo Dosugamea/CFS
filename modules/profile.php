@@ -49,7 +49,7 @@ function profile_cardRanking($post) {
 
 //profile/profileInfo 返回详细信息
 function profile_profileInfo($post) {
-	global $mysql, $params;
+	global $mysql, $params, $uid;
 	$ret2 = $mysql->query('SELECT user_id,name,level,award,background,9999 as unit_max,999 as friend_max,user_id as invite_code,introduction FROM users WHERE user_id='.$post['user_id'])->fetch(PDO::FETCH_ASSOC);
 	if (empty($ret2)) {
 		return [];
@@ -74,7 +74,16 @@ function profile_profileInfo($post) {
 	loadExtendAvatar([$post['user_id']]);
 	setExtendAvatar($post['user_id'], $ret['center_unit_info']);
 	$ret['is_alliance'] = false;
-	$ret['friend_status'] = 0;
+	//处理好友状态
+	$friend = $mysql->query("SELECT * FROM friend WHERE applicant IN(".$uid.", ".$post['user_id'].") AND applicated IN(".$uid.", ".$post['user_id'].")")->fetch(PDO::FETCH_ASSOC);
+	if($friend == false)
+		$ret['friend_status'] = 0;
+	else if($friend['status'] == "0")
+		$ret['friend_status'] = 1;
+	else if((int)$friend['applicant'] == $uid)
+		$ret['friend_status'] = 3;
+	else if((int)$friend['applicated'] == $uid)
+		$ret['friend_status'] = 2;
 	if (!$ret['user_info']['award']) $ret['user_info']['award'] = 1;
 	if (!$ret['user_info']['background']) $ret['user_info']['background'] = 1;
 	$ret['setting_award_id'] = $ret['user_info']['award'];
