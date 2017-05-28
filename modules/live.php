@@ -422,6 +422,7 @@ function live_deckList($post) {
 //live/play 获取游戏谱面
 function live_play($post) {
 	global $mysql, $uid, $params;
+	include_once("includes/energy.php");
 	if(isset($post['festival'])) { //读取festival曲目列表
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
 		foreach($festival_lives as $v) {
@@ -434,6 +435,8 @@ function live_play($post) {
 	}
 	$post['do_not_use_multiply'] = false;
 	$map_count = 0;
+	$energy_use = 0;
+	$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	foreach($live_id_list as $k2 => $v2) {
 		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
@@ -443,11 +446,12 @@ function live_play($post) {
 		$live_info['live_difficulty_id'] = (int)$v2;
 		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
 		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
-		$live_info['dangerous'] = $live_settings['difficulty'] >= 11;
+		$live_info['dangerous'] = false;
 		$live_info['is_random'] = $random[$k2] > 0;
 		$live_info['use_quad_point'] = $random[$k2] == 2;
 		$live_info['guest_bonus'] = [];
 		$live_info['sub_guest_bonus'] = [];
+		$energy_use += $energy_list[(int)$live_settings['difficulty']];
 		if ($random[$k2] == 1) { //新随机算法
 			$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);
 		} elseif ($random[$k2] == 2) { //旧随机
@@ -516,8 +520,19 @@ function live_play($post) {
 		$map['is_marathon_event'] = true;
 		$map['marathon_event_id'] = 52;
 	}
-	$map['energy_full_time'] = "2014-01-01 10:00:00";
-	$map['over_max_energy']=0;
+	if(isset($post['lp_factor']))
+		$energy_result = energyDecrease($energy_use * $post['lp_factor']);
+	else
+		$energy_result = energyDecrease($energy_use);
+	
+	if($energy_result && isset($post['lp_factor']))
+		$lp_factor = $post['lp_factor'];
+	else if($energy_result && !isset($post['lp_factor']))
+		$lp_factor = 1;
+	else
+		$lp_factor = 0.5;
+	$current_energy = getCurrentEnergy();
+	$map = array_merge($map, $current_energy);
 	if (!isset($post['party_user_id'])) {
 		$post['party_user_id'] = 0;
 	}
@@ -533,14 +548,14 @@ function live_play($post) {
 	}
 	if($params['card_switch'] && $post['party_user_id'] > 0) {
 		$mysql->exec("
-			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1)
-			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, play_count=IF (play_count+1 < 6, play_count+1, 5)
+			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1,'".$lp_factor."')
+			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, factor = '".$lp_factor."', play_count=IF (play_count+1 < 6, play_count+1, 5)
 		");
-		$mysql->exec("UPDATE `tmp_live_playing` SET play_count = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = {$post['party_user_id']}");
+		$mysql->exec("UPDATE `tmp_live_playing` SET `factor` = '".$lp_factor."'， `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = {$post['party_user_id']}");
 	} else {
 		$mysql->exec("
-			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1)
-			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, play_count=play_count+1
+			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1,'".$lp_factor."')
+			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, factor = '".$lp_factor."', play_count=play_count+1
 		");
 	}
 	if(date("m-d") == '04-01'){
@@ -552,6 +567,7 @@ function live_play($post) {
 //live/reward 获取奖励
 function live_reward($post) {
 	global $uid, $mysql, $params;
+	include_once("includes/energy.php");
 	$live = getLiveDb();
 	//验证访问合法性，有人反映有问题，不验了
 	if (isset($post['ScoreMatch']) || isset($post['festival'])) {
@@ -701,11 +717,13 @@ function live_reward($post) {
 		$coin_list = [1=>[null,2250,1800,1200,600,300],2=>[null,3000,2400,1600,800,400],
 						3=>[null,3750,3000,2000,1000,500],4=>[null,4500,3600,2400,1200,600],5=>[null,4500,3600,2400,1200,600],6=>[null,4500,3600,2400,1200,600]];
 		//获取本次获得的EXP和金币
-		$ret['base_reward_info']['player_exp'] = $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']];
-		$ret['base_reward_info']['game_coin'] = $coin_list[$map_info['difficulty']][$ret['rank']];
+		$factor = (float)$mysql->query('SELECT factor FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		$ret['base_reward_info']['player_exp'] = floor($factor * $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']]);
+		$ret['base_reward_info']['game_coin'] = floor($factor * $coin_list[$map_info['difficulty']][$ret['rank']]);
 		$ret['base_reward_info']['game_coin_reward_box_flag'] = false;
 		$ret['base_reward_info']['social_point'] = 0;
-		$party=$mysql->query('SELECT party_user_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		$party = $mysql->query('SELECT party_user_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		
 		if($party > 0) {
 			$ret['base_reward_info']['social_point'] = 5; //TODO:好友写好后检测好友
 		}
@@ -722,6 +740,7 @@ function live_reward($post) {
 				"before": 100,
 				"after": 100
 		}}' ,true));
+		$ret['base_reward_info']['player_exp_lp_max']['before'] = getCurrentEnergy()['energy_max'];
 	} else {//如果是FESTIVAL
 		//读取本次的曲目列表
 		$lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(),true);
@@ -813,8 +832,8 @@ function live_reward($post) {
 		//每首曲子的奖励相加
 		foreach($live_id_list as $v2) {
 			$map_info = $live_settings[$k];
-			$ret['base_reward_info']['player_exp'] += $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']];
-			$ret['base_reward_info']['game_coin'] += $coin_list[$map_info['difficulty']][$ret['rank']];
+			$ret['base_reward_info']['player_exp'] += floor($factor * $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']]);
+			$ret['base_reward_info']['game_coin'] += floor($factor * $coin_list[$map_info['difficulty']][$ret['rank']]);
 		}
 		$ret['base_reward_info'] = array_merge($ret['base_reward_info'], json_decode('
 		{"player_exp_unit_max": {
@@ -829,12 +848,13 @@ function live_reward($post) {
 				"before": 100,
 				"after": 100
 		}}' ,true));
+		$ret['base_reward_info']['player_exp_lp_max']['before'] = getCurrentEnergy()['energy_max'];
 	}
 	
 	/* 分配基本奖励 */
 	
 	//客户端提交的绊点数
-	$ret['total_love'] = $post['love_cnt'];
+	$ret['total_love'] = floor($factor * $post['love_cnt']);
 	//如果评价是无，经验值和绊点减半
 	if ($ret['rank'] == 5) {
 		$ret['base_reward_info']['player_exp'] = ceil($ret['base_reward_info']['player_exp'] / 2);
@@ -852,6 +872,7 @@ function live_reward($post) {
 	while ($newexp >= $exp[$newlevel]) {
 		$ret['next_level_info'][] = ['level'=>$newlevel,' from_exp'=>$exp[$newlevel]];
 		$newlevel++;
+		energyRecover();
 	}
 	$newsocial = $ret['before_user_info']['social_point'];
 	$newloveca = $ret['before_user_info']['sns_coin'];
@@ -1071,6 +1092,7 @@ function live_reward($post) {
 		$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
 	}
 	$reward_list = array(null,array(1,2,3),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15),array(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),array(16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39),array(28,29,30,31,32,33,34,35,36,37,38,39));
+	$score = floor($score * $factor);
 	$score_still = $score;
 	include("includes/SIS.php");
 	do{
@@ -1133,6 +1155,7 @@ function live_reward($post) {
 	$params['loveca'] = $newloveca;
 	$ret['after_user_info']=runAction('user','userInfo');
 	$ret['after_user_info']=$ret['after_user_info']['user'];
+	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy()['energy_max'];
 	return $ret;
 }
 

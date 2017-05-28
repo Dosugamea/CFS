@@ -99,6 +99,7 @@ function login_login($post) {
 		$mysql->query('insert into tmp_authorize (token, username, password, sessionKey) values (?, ?, ?, ?)', [$ret['authorize_token'], $login_result[1], $login_result[2], base64_encode($sessionKey)]);
 	}
 	$ret['review_version'] = '';
+	$ret['server_timestamp'] = time();
 	return $ret;
 }
 
