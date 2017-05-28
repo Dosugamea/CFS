@@ -183,7 +183,7 @@ function login_unitSelect($post) {
 	return [];
 }
 
-//login/topInfo 返回首页显示的一些信息 这里面绝大多数功能LLSP都没实现所以返回定值
+//login/topInfo 返回首页显示的一些信息
 function login_topInfo() {
 	global $uid, $mysql, $params;
 	$present_count = $mysql->query('SELECT count(*) FROM incentive_list WHERE user_id='.$uid.' and opened_date=0')->fetchColumn();
@@ -191,19 +191,20 @@ function login_topInfo() {
 	$free_gacha = ($params['card_switch'] && ($free_gacha['free_gacha'] > 0 || $free_gacha['got_free_gacha_list'] == ''));
 	$mail_cnt = count($mysql->query("SELECT * FROM mail WHERE `read` = 0 AND `to_id` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	$friend_cnt = count($mysql->query("SELECT * FROM friend WHERE `read` = 0 AND `applicated` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
-	return json_decode('{
-						"free_gacha_flag": '.($free_gacha ? 'true' : 'false').',
-						"next_free_gacha_timestamp": '.strtotime(date('Y-m-d',strtotime('+1 day'))).',
-						"friend_action_cnt": '.$mail_cnt.',
-						"friend_greet_cnt": '.$mail_cnt.',
-						"friend_variety_cnt": 0,
-						"notice_friend_datetime": "2013-04-15 11:47:00",
-						"notice_mail_datetime": "2000-01-01 12:00:00",
-						"present_cnt": '.$present_count.',
-						"server_datetime": "'.date('Y-m-d H:i:s').'",
-						"server_timestamp": '.time().',
-						"friends_approval_wait_cnt": '.$friend_cnt.'
-				}');
+	$ret = [];
+	$ret['free_gacha_flag'] = $free_gacha ? true : false;
+	$ret['next_free_gacha_timestamp'] = strtotime(date('Y-m-d',strtotime('+1 day')));
+	$ret['friend_action_cnt'] = $mail_cnt;
+	$ret['friend_greet_cnt'] = $mail_cnt;
+	$ret['friend_variety_cnt'] = 0;
+	$ret['notice_friend_datetime'] = "2013-04-15 11:47:00";
+	$ret['notice_mail_datetime'] = "2000-01-01 12:00:00";
+	$ret['present_cnt'] = (int)$present_count;
+	$ret['server_datetime'] = date('Y-m-d H:i:s');
+	$ret['server_timestamp'] = time();
+	$ret['friends_approval_wait_cnt'] = $friend_cnt;
+	
+	return $ret;
 }
 
 //login/topInfoOnce 返回新成就数目

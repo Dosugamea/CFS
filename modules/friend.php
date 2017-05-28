@@ -5,8 +5,8 @@ require_once('includes/extend_avatar.php');
 function friend_list($post) {
 	global $uid, $mysql;
 	include_once("includes/unit.php");
-	if($post['module'] != "friend" && $post['action'] != "list")
-		throw403("WRONG-MODULE&ACTION");
+	//if($post['module'] != "friend" && $post['action'] != "list")
+		//throw403("WRONG-MODULE&ACTION");
 	if($post['type'] == 0)
 		$friends = $mysql->query("SELECT * FROM friend WHERE (applicant = ".$uid." AND status = 0) OR (applicated = ".$uid." AND status = 0)")->fetchAll(PDO::FETCH_ASSOC);
 	if($post['type'] == 1)
