@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `tmp_live_playing` (
   `unit_deck_id` smallint(6) NOT NULL,
   `party_user_id` int(11) NOT NULL DEFAULT '0',
   `play_count` int(11) NOT NULL DEFAULT '0',
+  `factor` FLOAT NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -295,6 +296,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nonce` int(11) NOT NULL DEFAULT '1',
   `elapsed_time_from_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `download_site` INT(11) NOT NULL DEFAULT '1',
+  `over_max_energy` INT(11) NOT NULL DEFAULT '0',
+  `energy_full_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
