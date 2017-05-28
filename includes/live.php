@@ -142,6 +142,8 @@ function generateRandomLive($note) {
 
 		//error_log($i);
 		//error_log(json_encode($occupied));
+		if($decoded[$i]["effect"] >= 10)//跳过滑键
+			continue;
 
 		if ($double) {
 			//error_log("is double");
@@ -248,6 +250,9 @@ function generateRandomLiveOld($note) {
 		}
 		elseif($v['timing_sec']==$lasttime || (isset($note[$k+1]['timing_sec']) && $v['timing_sec']==$note[$k+1]['timing_sec'])) {
 			//双押，什么都不做
+		}
+		elseif($v['effect'] >= 10) {
+			//滑键，什么都不做
 		}
 		else $v['position']=rand(1,9); //单点
 		$lasttime=$v['timing_sec'];
