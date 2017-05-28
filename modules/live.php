@@ -551,7 +551,7 @@ function live_play($post) {
 			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1,'".$lp_factor."')
 			ON DUPLICATE KEY UPDATE unit_deck_id={$post['unit_deck_id']}, party_user_id={$post['party_user_id']}, factor = '".$lp_factor."', play_count=IF (play_count+1 < 6, play_count+1, 5)
 		");
-		$mysql->exec("UPDATE `tmp_live_playing` SET `factor` = '".$lp_factor."'， `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = {$post['party_user_id']}");
+		$mysql->exec("UPDATE `tmp_live_playing` SET `factor` = '".$lp_factor."', `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = {$post['party_user_id']}");
 	} else {
 		$mysql->exec("
 			INSERT INTO `tmp_live_playing` VALUES ({$uid},{$post['unit_deck_id']},{$post['party_user_id']},1,'".$lp_factor."')
