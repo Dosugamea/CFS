@@ -9,7 +9,7 @@ function getCurrentEnergy(){
 	if($energy['over_max_energy'] > $energy_max){
 		$ret['energy_full_need_time'] = 0;
 		$ret['energy_full_time'] = $energy['energy_full_time'];
-		$ret['over_max_energy'] = $energy['over_max_energy'];
+		$ret['over_max_energy'] = (int)$energy['over_max_energy'];
 	}else{
 		$ret['energy_full_need_time'] = strtotime($energy['energy_full_time']) - strtotime("now");
 		$ret['energy_full_time'] = $energy['energy_full_time'];
