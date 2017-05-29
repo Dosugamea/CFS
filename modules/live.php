@@ -429,14 +429,15 @@ function live_play($post) {
 			$live_id_list[] = $v['live_difficulty_id'];
 			$random[] = $v['random_switch'];
 		}
+		$energy_list = [null, 4, 8, 12, 20, 20, 20];
 	} else {
 		$live_id_list[0] = $post['live_difficulty_id'];
 		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $params['random_switch']);
+		$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	}
 	$post['do_not_use_multiply'] = false;
 	$map_count = 0;
 	$energy_use = 0;
-	$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	foreach($live_id_list as $k2 => $v2) {
 		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
@@ -830,6 +831,7 @@ function live_reward($post) {
 		$ret['base_reward_info']['game_coin_reward_box_flag'] = false;
 		$ret['base_reward_info']['social_point'] = 0;
 		//每首曲子的奖励相加
+		$factor = (float)$mysql->query('SELECT factor FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
 		foreach($live_id_list as $v2) {
 			$map_info = $live_settings[$k];
 			$ret['base_reward_info']['player_exp'] += floor($factor * $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']]);
