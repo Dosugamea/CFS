@@ -298,6 +298,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `download_site` INT(11) NOT NULL DEFAULT '1',
   `over_max_energy` INT(11) NOT NULL DEFAULT '0',
   `energy_full_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `daily_reward` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
