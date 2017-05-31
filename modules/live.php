@@ -1083,8 +1083,7 @@ function live_reward($post) {
 				"special_reward_info": [],
 				"event_info": [],
 				"accomplished_achievement_list": [],
-				"new_achievement_cnt": 0,
-				"daily_reward_info": []
+				"new_achievement_cnt": 0
 		}',true));
 	$ret['effort_point'] = [];
 	$capacity_list = [null,100000,400000,1200000,2000000,4000000];
@@ -1147,6 +1146,17 @@ function live_reward($post) {
 		}
 	}while($score > 0);
 	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score_)." WHERE user_id = ".$uid);
+	
+	//每日奖励
+	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
+	if(date("Y-m-d",strtotime($daily_reward)) != date("Y-m-d",time())){
+		$params['loveca'] += 5;
+		$params['coin'] += 1500000;
+		$ret['daily_reward_info'][] = ["item_id" => 4, "add_type" => 3001, "amount" => 5, "item_category_id" => 0, "reward_box_flag" => false];
+		$ret['daily_reward_info'][] = ["item_id" => 3, "add_type" => 3000, "amount" => 1500000, "item_category_id" => 0, "reward_box_flag" => false];
+		$mysql->query("UPDATE users SET daily_reward = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
+	}else
+		$ret['daily_reward_info'] = [];
 	
 	//写入奖励并返回新的用户信息
 	global $user;

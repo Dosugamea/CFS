@@ -210,7 +210,9 @@ function login_topInfo() {
 
 //login/topInfoOnce 返回新成就数目
 function login_topInfoOnce() {
-	return ["new_achievement_cnt"=>0, 'unaccomplished_achievement_cnt'=>0, 'handover_expire_status'=>0,'live_daily_reward_exist'=>false];
+	global $mysql, $uid;
+	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
+	return ["new_achievement_cnt"=>0, 'unaccomplished_achievement_cnt'=>0, 'handover_expire_status'=>0,'live_daily_reward_exist' => date("Y-m-d",strtotime($daily_reward)) != date("Y-m-d",time())];
 }
 
 ?>
