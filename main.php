@@ -245,7 +245,7 @@ function retError($statusCode) {
 $mysql->query('commit');
 //header('Server-Version: '.$server_ver);
 include_once('includes/RSA.php');
-$XMS = RSAsign($ret);
+$XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
 header("X-Message-Sign: ".$XMS);
 header('Content-Type: application/json');
 echo $ret;
