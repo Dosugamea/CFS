@@ -112,5 +112,5 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 </body>
 </html>
 
-<!--<?=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>-->
-<!--<?=($v['banner_on']?'<h2 class="banner"><img class="banner" src="<?=$banner_url?>"></h2>':'')?>-->
+<!--<?//=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>-->
+<!--<?//=($v['banner_on']?'<h2 class="banner"><img class="banner" src="<?=$banner_url?>"></h2>':'')?>-->

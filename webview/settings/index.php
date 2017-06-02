@@ -128,6 +128,7 @@ a{color: #000000;}
         <div class="entry-container">
           <h2 class="text">用户</h2>
           <div class="summary">
+          	<a href="/webview.php/settings/mail">绑定/修改 邮箱</a><br><br>
             <a href="/webview.php/login/changePassword">修改密码 ChangePassword</a><br><br>
             <a href="/webview.php/login/logout">退出登录 Logout</a><br>
           </div>
