@@ -86,7 +86,7 @@ function live_eventList() {
 function live_schedule() {
 	global $mysql, $max_live_difficulty_id, $params;
 	$ret['event_list']=json_decode('[{
-		"event_id": 35,
+		"event_id": 97,
 		"event_category_id": 2,
 		"name": "SCORE MATCH",
 		"open_date": "'.date('Y').'-01-01 00:00:00",
@@ -98,7 +98,7 @@ function live_schedule() {
 		"result_banner_asset_name": "assets\/image\/event\/banner\/e_bt_03_re.png",
 		"description": "\u30b9\u30b3\u30a2\u30de\u30c3\u30c1\u3067\u7af6\u3046\u30a4\u30d9\u30f3\u30c8\u3067\u3059\uff01"
 	}, {
-		"event_id": 39,
+		"event_id": 91,
 		"event_category_id": 3,
 		"event_name": "\u30e1\u30c9\u30ec\u30fc\u30d5\u30a7\u30b9",
 		"open_date": "'.date('Y').'-01-01 00:00:00",
@@ -742,6 +742,12 @@ function live_reward($post) {
 				"after": 100
 		}}' ,true));
 		$ret['base_reward_info']['player_exp_lp_max']['before'] = getCurrentEnergy()['energy_max'];
+		$live_accomplish = $mysql->query("SELECT * FROM live_accomplish WHERE user_id = ".$uid." AND notes_setting_asset = '".$map_info['notes_setting_asset']."'")->fetch(PDO::FETCH_ASSOC);
+		if(!$live_accomplish && !isset($post['ScoreMatch']) && $map_info['difficulty'] >= 4){
+			$mysql->query("INSERT INTO live_accomplish (user_id, notes_setting_asset) VALUES(".$uid.", '".$map_info['notes_setting_asset']."')");
+			$ret['special_reward_info'][] = ["item_id" => 4, "add_type" => 3001, "amount" => 1, "item_category_id" => 0, "reward_box_flag" => false];
+			$params['loveca'] += 1;
+		}
 	} else {//如果是FESTIVAL
 		//读取本次的曲目列表
 		$lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(),true);
@@ -1080,11 +1086,12 @@ function live_reward($post) {
 	//以下的内容PLS不处理。event_info交由对应模块添加
 	$ret=array_merge($ret,json_decode('{
 				"unlocked_subscenario_ids": [],
-				"special_reward_info": [],
 				"event_info": [],
 				"accomplished_achievement_list": [],
 				"new_achievement_cnt": 0
 		}',true));
+	if(!isset($ret['special_reward_info']))
+		$ret['special_reward_info'] = [];
 	$ret['effort_point'] = [];
 	$capacity_list = [null,100000,400000,1200000,2000000,4000000];
 	$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
@@ -1150,8 +1157,8 @@ function live_reward($post) {
 	//每日奖励
 	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
 	if(date("Y-m-d",strtotime($daily_reward)) != date("Y-m-d",time())){
-		$params['loveca'] += 5;
-		$params['coin'] += 1500000;
+		$newloveca += 5;
+		$newcoin += 1500000;
 		$ret['daily_reward_info'][] = ["item_id" => 4, "add_type" => 3001, "amount" => 5, "item_category_id" => 0, "reward_box_flag" => false];
 		$ret['daily_reward_info'][] = ["item_id" => 3, "add_type" => 3000, "amount" => 1500000, "item_category_id" => 0, "reward_box_flag" => false];
 		$mysql->query("UPDATE users SET daily_reward = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
