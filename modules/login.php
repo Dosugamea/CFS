@@ -17,7 +17,12 @@ function login_authkey($post) {
 		throw403('HTTP_AUTHORIZE_INVALID_AUTHKEY');
 	}
 	include_once('includes/RSA.php');
+	include_once('includes/AES.php');
 	$AES_token_client = RSAdecrypt($post['dummy_token']);
+	//解密auth_data
+	/*$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
+	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
+	die();*/
 	
 	//生成随机AES key
 	$chars='ABDEFGHJKLMNPQRSTVWXYabdefghijkmnpqrstvwxy23456789#%*';
