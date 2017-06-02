@@ -9,13 +9,13 @@ function banner_bannerList() {
       "member_category": 1,
       "banner_list": [{
         "banner_type": 0,
-        "target_id": 39,
+        "target_id": 91,
         "asset_path": "assets\/image\/event\/banner\/e_fs_04.png",
         "asset_path_se": "assets\/image\/event\/banner\/e_fs_04se.png",
         "master_is_active_event": true
       }, {
         "banner_type": 0,
-        "target_id": 35,
+        "target_id": 97,
         "asset_path": "assets\/image\/event\/banner\/e_bt_03.png",
         "asset_path_se": "assets\/image\/event\/banner\/e_bt_03se.png",
         "master_is_active_event": true
@@ -24,13 +24,13 @@ function banner_bannerList() {
       "member_category": 2,
       "banner_list": [{
         "banner_type": 0,
-        "target_id": 39,
+        "target_id": 91,
         "asset_path": "assets\/image\/event\/banner\/e_fs_04.png",
         "asset_path_se": "assets\/image\/event\/banner\/e_fs_04se.png",
         "master_is_active_event": true
       }, {
         "banner_type": 0,
-        "target_id": 35,
+        "target_id": 97,
         "asset_path": "assets\/image\/event\/banner\/e_bt_03.png",
         "asset_path_se": "assets\/image\/event\/banner\/e_bt_03se.png",
         "master_is_active_event": true

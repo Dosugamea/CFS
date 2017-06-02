@@ -3,7 +3,7 @@
 //festival/festivalInfo 返回festival相关信息
 function festival_festivalInfo() {
         return json_decode('{"base_info": {
-            "event_id": 39,
+            "event_id": 91,
             "asset_bgm_id": 4,
             "event_point": 0,
             "total_event_point": 0,
@@ -93,7 +93,7 @@ function festival_liveStart($post) {
 function festival_liveReward($post) {
   $ret=runAction('live','reward',array_merge($post,['festival'=>true]));
   $ret['event_info'] = json_decode('{
-    "event_id": 39,
+    "event_id": 91,
     "event_point_info": {
             "before_event_point": 0,
             "before_total_event_point": 0,
@@ -123,7 +123,7 @@ function festival_continue() {
 
 function festival_gameover() {
   $ret['event_info'] = json_decode('{
-    "event_id": 39,
+    "event_id": 91,
     "event_point_info": {
             "before_event_point": 0,
             "before_total_event_point": 0,
