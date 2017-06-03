@@ -48,10 +48,11 @@ function energyDecrease($amount){
 
 function energyRecover(){
 	global $uid, $mysql, $params;
+	$energy_max = 100 + floor($energy['level']/2);
 	$energy = $mysql->query("SELECT energy_full_time, over_max_energy, level FROM users WHERE user_id = ".$uid)->fetch(PDO::FETCH_ASSOC);
 	if($energy['over_max_energy'] != 0 || strtotime($energy['energy_full_time']) <= time())
-		return false;
-	$energy_max = 100 + floor($energy['level']/2);
+		if($energy['over_max_energy'] >= $energy_max)
+			return false;
 	$energy_now = $energy_max - floor((strtotime($energy['energy_full_time']) - strtotime("now"))/360);
 	if($energy_now == 0)
 		$mysql->query("UPDATE users SET energy_full_time = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
