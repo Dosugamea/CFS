@@ -93,7 +93,8 @@ require "info.php"
           <h2 class="text">支持信息</h2>
           <div class="summary" >
             开发:<?=$pls_dev?><br>
-            维护:<?=$pls_maintenance?><br>
+            维护:<?=$pls_maintenance?><br><br>
+            交流群: <?=$pls_qq_group?>
             <table>
               <tr><td><div id="mail"></div></td><td><div id="noah"></div></td></tr>
             </table>

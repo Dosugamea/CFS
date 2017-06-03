@@ -112,6 +112,16 @@ if(isset($_POST['submit'])) {
               <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
             </form>
             <br>
+            <a href="/webview.php/login/mailto">忘记密码</a>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry" id="login_bor">
+        <div class="entry-container">
+          <h2 class="text">其他登陆选项</h2>
+          <div class="summary" >
+          如果在上方输入无法登陆或者闪退等现象 可以点击此处跳转到外部浏览器进行登录
           </div>
           <div class="clearfix"></div>
         </div>
@@ -124,6 +134,9 @@ if(isset($_POST['submit'])) {
 <script>
   Button.initialize(document.getElementById('back'), function() {
     window.location.href='/webview.php/login/welcome';
+  });
+   Button.initialize(document.getElementById('login_bor'), function() {
+    window.location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>';
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
 </script>

@@ -29,7 +29,7 @@ if(isset($_GET['switch_param']) && isset($_GET['param']) && array_search($_GET['
   }
 }
 ?>
-<!DOCTYPE html PUBLIC "" "">
+<!DOCTYPE html>
 <html>
 <head>
 <meta content="IE=11.0000" http-equiv="X-UA-Compatible">
@@ -39,6 +39,20 @@ if(isset($_GET['switch_param']) && isset($_GET['param']) && array_search($_GET['
 <style type="text/css">
 .note img { margin-left: -12px; }
 a{color: #000000;}
+        .white_content { 
+            display: none; 
+            position: absolute; 
+            margin-left: 22%;
+            width: 50%; 
+            height: 50px; 
+            padding: 20px; 
+            border: 10px solid  #ff699c;
+            border-radius: 15px; 
+            background-color: #ffffff; 
+            box-shadow: 2px 2px 2px #ccc;
+            z-index:1002; 
+            overflow: auto; 
+        } 
 </style>
 <meta name="GENERATOR" content="MSHTML 11.00.10011.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -95,6 +109,26 @@ a{color: #000000;}
 <div id="body">
 <div id="container">
 <ul id="list">
+     <!-- <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">兑换码</h2>
+          <div class="summary">
+            <input type="text" name="" id="numkeyboard1" class="numkeyboard" style="border:1px solid;height:27px; readonly="true">
+            <a href = "JavaScript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">
+            <input type="" style="border:1px solid;height:27px;width:64px;" value="提交" readonly="readonly" /></a>
+          <key></key>
+            <div id="light" class="white_content">
+              <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">兑换码有误 请点击重试</a>
+            </div> 
+           
+            <div id="light" class="white_content">
+                <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">兑换码有误 请点击重试</a>
+                </div> 
+            
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>-->
       <li class="entry"">
         <div class="entry-container">
           <h2 class="text">使用方法</h2>
@@ -125,6 +159,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
+     
       <li class="entry"">
         <div class="entry-container">
           <h2 class="text">附加自定义功能</h2>
@@ -141,7 +176,6 @@ a{color: #000000;}
         </div>
       </li>
 
-      <br><br><br>
 </ul>
 
 </div>
