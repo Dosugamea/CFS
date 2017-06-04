@@ -68,7 +68,7 @@ function friend_search($post) {
 		return $ret;
 	}
 	foreach($ret2 as $k2 => &$v2) {
-		if ($k2 != 'invite_code' && is_numeric($v2)) $v2 = (int)$v2;
+		if ($k2 != 'invite_code' && $k2 != 'introduction' && $k2 != 'name' && is_numeric($v2)) $v2 = (int)$v2;
 	}
 	$time = $mysql->query('SELECT elapsed_time_from_login FROM users WHERE user_id='.$post['invite_code'])->fetchColumn();
 	$ret['user_info'] = $ret2;
