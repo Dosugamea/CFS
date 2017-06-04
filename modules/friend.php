@@ -63,7 +63,9 @@ function friend_search($post) {
 	global $mysql, $params;
 	$ret2 = $mysql->query('SELECT user_id,name,level,award,background,9999 as unit_max,999 as friend_max,user_id as invite_code,introduction FROM users WHERE user_id='.$post['invite_code'])->fetch(PDO::FETCH_ASSOC);
 	if (empty($ret2)) {
-		return [];
+		$ret['error_code'] = 1102;
+		retError(600);
+		return $ret;
 	}
 	foreach($ret2 as $k2 => &$v2) {
 		if ($k2 != 'invite_code' && is_numeric($v2)) $v2 = (int)$v2;
