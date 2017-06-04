@@ -1076,7 +1076,7 @@ function live_reward($post) {
 					$res = $mysql->query("SELECT love_max_flag FROM album WHERE user_id=$uid and unit_id=$v")->fetchColumn();
 					if ($res === 0) {
 						$mysql->exec("UPDATE album SET love_max_flag=1 WHERE user_id=$uid and unit_id=$v");
-						$mysql->exec("INSERT INTO `incentive_list` ( `user_id`, `incentive_item_id`, `amount`, `is_card`, `incentive_type`, `incentive_message`) VALUES ( '$uid', '4', '1', '0', '6000', '與部員的絆達到MAX');");
+						$mysql->exec("INSERT INTO `incentive_list` ( `user_id`, `incentive_item_id`, `amount`, `is_card`, `incentive_message`) VALUES ( '$uid', '4', '1', '0', '與部員的絆達到MAX');");
 					}
 				}
 			}
