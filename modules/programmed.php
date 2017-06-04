@@ -8,9 +8,6 @@ function programmed_getCustomLiveList($post = []) {
   global $mysql, $uid, $params;
   $list = array_map(function ($e) use ($post) {
     $live = json_decode($e['live_json'], true);
-    if ($post['api_ver'] < 161211 || $live['stage_level'] > 13) { //4.1初版客户端，不显示星数
-      $live['name'] .= ' ★'.$live['stage_level'];
-    }
     return [
       'live_difficulty_id' => 0 - $e['ID'],
       'dl' => $e['dl'] ? json_decode($e['dl']) : false,
