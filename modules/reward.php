@@ -109,9 +109,7 @@ function reward_open($post) {
 			$unit_detail = addUnit($res['incentive_item_id'],$res['amount'],true);
 			$res['is_support_member'] = true;
 		}else{
-			$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$res['incentive_item_id'].",1,0,0,1,0,2)");
-			$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$res['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
-			$unit_detail = GetUnitDetail($unit_owning_user_id);
+			$unit_detail = addUnit($res['incentive_item_id'],$res['amount'],true);
 			$res['is_support_member'] = false;	
 		}
 		$res['item_category_id'] = 0;
@@ -169,9 +167,7 @@ function reward_openAll($post) {
 				$unit_detail = addUnit($r['incentive_item_id'],$r['amount'],true)[0];
 				$r['is_support_member'] = true;
 			}else{
-				$mysql->query("INSERT INTO unit_list (user_id, unit_id, rank, exp, love, unit_skill_level, favorite_flag, display_rank) VALUES(".$uid.", ".$r['incentive_item_id'].",1,0,0,1,0,2)");
-				$unit_owning_user_id = $mysql->query("SELECT unit_owning_user_id FROM unit_list WHERE user_id = ".$uid." AND unit_id = ".$r['incentive_item_id']." ORDER BY unit_owning_user_id desc")->fetch()['unit_owning_user_id'];
-				$unit_detail = GetUnitDetail($unit_owning_user_id);
+				$unit_detail = addUnit($r['incentive_item_id'],$r['amount'],true)[0];
 				$r['is_support_member'] = false;
 			}
 			$r['item_category_id'] = 0;
