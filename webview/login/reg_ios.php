@@ -2,110 +2,116 @@
 <style>body{font-size:2em;}table{font-size:1em;}</style>
 
 <?php
-require '../../config/reg.php';
-require '../../includes/db.php';
+require 'config/reg.php';
 if(!$allow_reg) {
-  echo '<h1>注册已关闭！</h1>';
-  die();
+	echo '<h1>注册已关闭！</h1>';
+	die();
+}
+
+if($enable_ssl && $_SERVER['HTTPS'] != 'on') {
+	header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
+	die();
 }
 
 $unit = getUnitDb();
 
-$token = isset($_GET['token']) ? $_GET['token'] : '';
-$username['username'] = isset($_GET['username']) ? $_GET['username'] : '';
+$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
+$token = substr($authorize, 0, strpos($authorize, '&'));
+$username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
+if (!$username) {
+	echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
+	die();
+}
 
-require '../../config/maintenance.php';
+require 'config/maintenance.php';
 
 $id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
 $id[] = 0;
 
 function genpassv2($_pass, $id) {
-  $_pass .= $id;
-  $pass = hash('sha512', $_pass);
-  $pass .= hash('sha512', str_replace($_pass[0], 'RubyRubyRu', $_pass));
-  $pass .= $pass;
-  return substr($pass, hexdec(substr(md5($_pass), ord($_pass[0]) % 30, 2)), 32);
+	$_pass .= $id;
+	$pass = hash('sha512', $_pass);
+	$pass .= hash('sha512', str_replace($_pass[0], 'RubyRubyRu', $_pass));
+	$pass .= $pass;
+	return substr($pass, hexdec(substr(md5($_pass), ord($_pass[0]) % 30, 2)), 32);
 }
 
+include_once("includes/unit.php");
 if(isset($_POST['submit'])) {
-  $token = isset($_POST['token']) ? $_POST['token'] : '';
-  $username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-  if (!$username || $username['username'] != $_POST['username']) {
-    echo '<h1>非法注册请求（authkey&username验证失败）。请重新进入客户端内注册页，然后重新跳转到本页。</h1>';
-    die();
-  }
-  if (!is_numeric($_POST['id'])) {
-    echo '<h3><font color="red">错误：ID必须是数字</font></h3>';
-  } elseif($_POST['id']>999999999) {
-    echo '<h3><font color="red">错误：你输入的数太大了！</font></h3>';
-  } else if(!is_numeric($_POST['site'])){
-    echo '<h3><font color="red">错误：提交数据异常</font></h3>';
-  }else {
-    $check_uid = $mysql->prepare('SELECT user_id FROM users WHERE user_id=?');
-    $check_uid->execute([$_POST['id']]);
-    if ($check_uid->rowCount()) {
-      echo '<h3><font color="red">错误：此ID已被注册</font></h3>';
-    } else {
-      $password = genpassv2($_POST['password'], $_POST['id']);
-      $mysql->prepare('
-        INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`, `download_site`)
-        VALUES (?, ?, ?, ?, ?, "", ?)
-      ')->execute([$_POST['id'], $username['username'], $username['password'], $password, $_POST['name'], $_POST['site']]);
-      $param = $mysql->prepare('INSERT INTO user_params VALUES('.$_POST['id'].', ?, ?)');
-      $param->execute(['enable_card_switch', $disable_card_by_default ? 0 : 1]);
-      $param->execute(['card_switch', $disable_card_by_default ? 0 : 1]);
-      $param->execute(['random_switch', 0]);
-      $param->execute(['allow_test_func', 0]);
-      $param->execute(['item1', 0]);
-      $param->execute(['item2', 0]);
-      $param->execute(['item3', 2525200]);
-      $param->execute(['item4', 0]);
-      $param->execute(['item5', 0]);
-	  
-	  //送三个初期宝石
-	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",1,1,0)");
-	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",2,1,0)");
-	  $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",3,1,0)");
-      
-      if($all_card_by_default) {
-        $card_list=$unit->query('select unit_id from unit_m where unit_id<='.$max_unit_id)->fetchAll();
-        $query='INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ';
-        foreach($card_list as $v)
-          $query.='('.$_POST['id'].', '.$v[0].'),';
-        $query=substr($query, 0,strlen($query)-1);
-        $mysql->exec($query);
-      }
-      
-      $position=1;
-      foreach($default_deck_web as $k=>$v) {
-        $mysql->exec("INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ('{$_POST['id']}', '$v');");
-        $tmp['position']=$position;
-        $tmp['unit_owning_user_id']=(int)$mysql->lastInsertId();
-        if($position==5)
-          $center=$tmp['unit_owning_user_id'];
-        $unit_deck_detail[]=$tmp;
-        $position++;
-      }
-      
-      $mysql->exec("INSERT INTO album (user_id,unit_id) SELECT DISTINCT {$_POST['id']}, unit_id FROM unit_list WHERE user_id = {$_POST['id']}");
-      //修正特典卡的rank
-      $default_rankup = $unit->query('select unit_id from unit_m where unit_m.normal_icon_asset like "%rankup%"')->fetchAll(PDO::FETCH_COLUMN);
-      $mysql->exec('UPDATE unit_list SET rank=2 WHERE user_id='.$_POST['id'].' AND unit_id in('.implode(', ', $default_rankup).')');
-      $mysql->exec('UPDATE album SET rank_max_flag=1 WHERE user_id='.$_POST['id'].' AND unit_id in('.implode(', ', $default_rankup).')');
-      
-      $tmp2['unit_deck_detail']=$unit_deck_detail;
-      $tmp2['unit_deck_id']=1;
-      $tmp2['main_flag']=true;
-      $tmp2['deck_name']='';
-      $unit_deck_list[]=$tmp2;
-      $json=json_encode($unit_deck_list);
-      $mysql->exec("INSERT INTO user_deck (user_id,json,center_unit) VALUES ({$_POST['id']}, '$json', $center)");
-      
-      $mysql->query('delete from tmp_authorize where token=?', [$token]);
-      echo '<h3>注册成功！请重启游戏。<br /><br />若重启游戏后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
-      die();
-    }
-  }
+	if (!is_numeric($_POST['id'])) {
+		echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
+	} elseif($_POST['id']>999999999) {
+		echo '<h3><font color="red">错误：你输入的数太大了！Number is too large</font></h3>';
+	} else if(!is_numeric($_POST['site'])){
+		echo '<h3><font color="red">错误：提交数据异常</font></h3>';
+	} else	{
+		$check_uid = $mysql->prepare('SELECT user_id FROM users WHERE user_id=?');
+		$check_uid->execute([$_POST['id']]);
+		if ($check_uid->rowCount()) {
+			echo '<h3><font color="red">错误：此ID已被注册 </font></h3>';
+		} else {
+			$password = genpassv2($_POST['password'], $_POST['id']);	
+			$mysql->prepare('
+				INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`, `download_site`)
+				VALUES (?, ?, ?, ?, ?, "", ?)
+			')->execute([$_POST['id'], $username['username'], $username['password'], $password, $_POST['name'], $_POST['site']]);
+			$param = $mysql->prepare('INSERT INTO user_params VALUES('.$_POST['id'].', ?, ?)');
+			$param->execute(['enable_card_switch', $disable_card_by_default ? 0 : 1]);
+			$param->execute(['card_switch', $disable_card_by_default ? 0 : 1]);
+			$param->execute(['random_switch', 0]);
+			$param->execute(['allow_test_func', 0]);
+			$param->execute(['item1', 0]);
+			$param->execute(['item2', 0]);
+			$param->execute(['item3', 2525200]);
+			$param->execute(['item4', 0]);
+			$param->execute(['item5', 0]);
+		
+			//送三个初期宝石
+			$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",1,1,0)");
+			$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",2,1,0)");
+			$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",3,1,0)");
+			
+			$uid = $_POST['id'];
+			if($all_card_by_default) {
+				$card_list=$unit->query('select unit_id from unit_m where unit_id<='.$max_unit_id)->fetchAll();
+				//$query='INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ';
+				foreach($card_list as $v){
+					addUnit($v[0]);
+				}
+			//$query.='('.$_POST['id'].', '.$v[0].'),';
+				//$query=substr($query, 0,strlen($query)-1);
+				//$mysql->exec($query);
+			}
+			
+			$position=1;
+			foreach($default_deck_web as $k=>$v) {
+				$tmp['position'] = $position;
+				$tmp['unit_owning_user_id'] = addUnit($v)[0]['unit_owning_user_id'];
+				if($position == 5)
+					$center = $tmp['unit_owning_user_id'];
+				$unit_deck_detail[] = $tmp;
+				$position++;
+			}
+			
+			//$mysql->exec("INSERT INTO album (user_id,unit_id) SELECT DISTINCT {$_POST['id']}, unit_id FROM unit_list WHERE user_id = {$_POST['id']}");
+			//修正特典卡的rank
+			//$default_rankup = $unit->query('select unit_id from unit_m where unit_m.normal_icon_asset like "%rankup%"')->fetchAll(PDO::FETCH_COLUMN);
+			//$mysql->exec('UPDATE unit_list SET rank=2 WHERE user_id='.$_POST['id'].' AND unit_id in('.implode(', ', $default_rankup).')');
+			//$mysql->exec('UPDATE album SET rank_max_flag=1 WHERE user_id='.$_POST['id'].' AND unit_id in('.implode(', ', $default_rankup).')');
+			
+			$tmp2['unit_deck_detail']=$unit_deck_detail;
+			$tmp2['unit_deck_id']=1;
+			$tmp2['main_flag']=true;
+			$tmp2['deck_name']='';
+			$unit_deck_list[]=$tmp2;
+			$json=json_encode($unit_deck_list);
+			$mysql->exec("INSERT INTO user_deck (user_id,json,center_unit) VALUES ({$_POST['id']}, '$json', $center)");
+			
+			$mysql->query('delete from tmp_authorize where token=?', [$token]);
+			echo '<h3>注册成功！关闭本窗口即可进入游戏 <br />Registration Success! Plz Close This Window <br />若关闭窗口后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
+			die();
+		}
+	}
 }
 ?>
 <script>
