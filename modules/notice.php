@@ -18,7 +18,7 @@ function notice_noticeFriendVariety() {
 function notice_noticeFriendGreeting() {
 	global $uid, $mysql;
 	include("includes/unit.php");
-	$mails = $mysql->query("SELECT * FROM mail WHERE to_id = ".$uid)->fetchAll(PDO::FETCH_ASSOC);
+	$mails = $mysql->query("SELECT * FROM mail WHERE to_id = ".$uid." ORDER BY notice_id DESC")->fetchAll(PDO::FETCH_ASSOC);
 	$ret = [];
 	$ret['item_count'] = count($mails);
 	$ret['notice_list'] = [];
@@ -57,7 +57,7 @@ function notice_noticeFriendGreeting() {
 function notice_noticeUserGreetingHistory() {
 	global $uid, $mysql;
 	include("includes/unit.php");
-	$mails = $mysql->query("SELECT * FROM mail WHERE from_id = ".$uid)->fetchAll(PDO::FETCH_ASSOC);
+	$mails = $mysql->query("SELECT * FROM mail WHERE from_id = ".$uid." ORDER BY notice_id DESC")->fetchAll(PDO::FETCH_ASSOC);
 	$ret = [];
 	$ret['item_count'] = count($mails);
 	$ret['has_next'] = false;
