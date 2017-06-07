@@ -49,8 +49,9 @@ function friend_list($post) {
 		else
 			$detail['user_data']['elapsed_time_from_applied'] = " ".$elapsed_time."秒前";
 		
-		$center_id = $mysql->query("SELECT center_unit FROM user_deck WHERE user_id = ".$friend_id)->fetchColumn();
-		$center_info = GetUnitDetail((int)$center_id);
+		$center_info = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$friend_id)->fetchColumn());
+		loadExtendAvatar([$friend_id]);
+		setExtendAvatar($friend_id, $center_info);
 		$detail['center_unit_info'] = $center_info;
 		$detail['setting_award_id'] = (int)$friend_detail['award'];
 		$ret['friend_list'][] = $detail;

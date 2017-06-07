@@ -71,7 +71,9 @@ function profile_profileInfo($post) {
 	$ret['user_info']['elapsed_time_from_login'] = $time;
 	$center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn());
 	$ret['center_unit_info'] = $center;
+	$ret['navi_unit_info'] = $center;
 	loadExtendAvatar([$post['user_id']]);
+	setExtendAvatarForce($post['user_id'], $ret['navi_unit_info']);
 	setExtendAvatar($post['user_id'], $ret['center_unit_info']);
 	$ret['is_alliance'] = false;
 	//处理好友状态

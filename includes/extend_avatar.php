@@ -19,6 +19,27 @@ function setExtendAvatar($uid, &$unit) {
   $avatar_info = $avatar[$uid];
   if (isset($avatar_info['extend_avatar']) && (!$params['card_switch'] || ($params['card_switch'] && !$avatar_info['enable_card_switch']))) {
     $unit['unit_id'] = $avatar_info['extend_avatar'];
+	$unit['level'] = 1;
+	$unit['exp'] = 0;
+	$unit['unit_skill_level'] = 1;
+	$unit['unit_skill_exp'] = 0;
+    $unit['is_rank_max'] = (bool)$avatar_info['extend_avatar_is_rankup'];
+    $unit['display_rank'] = $avatar_info['extend_avatar_is_rankup'] + 1;
+  }
+}
+
+function setExtendAvatarForce($uid, &$unit) {
+  global $avatar, $params;
+  if (!isset($avatar[$uid])) {
+    return;
+  }
+  $avatar_info = $avatar[$uid];
+  if (isset($avatar_info['extend_avatar'])) {
+    $unit['unit_id'] = $avatar_info['extend_avatar'];
+	$unit['level'] = 1;
+	$unit['exp'] = 0;
+	$unit['unit_skill_level'] = 1;
+	$unit['unit_skill_exp'] = 0;
     $unit['is_rank_max'] = (bool)$avatar_info['extend_avatar_is_rankup'];
     $unit['display_rank'] = $avatar_info['extend_avatar_is_rankup'] + 1;
   }
