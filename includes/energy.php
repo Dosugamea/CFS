@@ -38,9 +38,9 @@ function energyDecrease($amount){
 		}
 	}else if(($energy_now - $amount) >= 0){
 		if($energy_now == $energy_max)
-			$mysql->query("UPDATE users SET energy_full_time = '". date("Y-m-d H:i:s",(time() + $amount * 360))."' WHERE user_id = ".$uid);
+			$mysql->query("UPDATE users SET over_max_energy = 0, energy_full_time = '". date("Y-m-d H:i:s",(time() + $amount * 360))."' WHERE user_id = ".$uid);
 		else
-			$mysql->query("UPDATE users SET energy_full_time = '". date("Y-m-d H:i:s",(strtotime($energy['energy_full_time']) + $amount * 360))."' WHERE user_id = ".$uid);
+			$mysql->query("UPDATE users SET over_max_energy = 0, energy_full_time = '". date("Y-m-d H:i:s",(strtotime($energy['energy_full_time']) + $amount * 360))."' WHERE user_id = ".$uid);
 		return true;
 	}else
 		return false;
