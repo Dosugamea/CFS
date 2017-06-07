@@ -20,7 +20,8 @@ function login_authkey($post) {
 	include_once('includes/AES.php');
 	$AES_token_client = RSAdecrypt($post['dummy_token']);
 	//解密auth_data
-	/*$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
+	$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
+	/*var_dump($auth_data);
 	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
 	die();*/
 	
