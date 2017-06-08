@@ -402,6 +402,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `over_max_energy` int(11) NOT NULL DEFAULT '0',
   `energy_full_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `daily_reward` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mail` TEXT NULL DEFAULT NULL,
+  `mail_pending` TEXT NULL DEFAULT NULL,
+  `mail_secret_key` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
