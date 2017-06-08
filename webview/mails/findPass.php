@@ -1,4 +1,13 @@
-<?php
+<html>
+	<meta charset='utf-8'/>
+	<head>
+		<title>重置密码-PLServer</title>
+		<link href="/resources/css/web.css" rel="stylesheet">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<style>body{font-size:2em;}table{font-size:1em;}</style>
+	</head>
+	<body>
+	<?php
 if(!isset($_GET['uid']) || !isset($_GET['verify']) || !is_numeric($_GET['uid'])){
 	header("HTTP 403 Forbidden");
 	print("非法访问。");
@@ -27,45 +36,39 @@ if(isset($_POST['password'])){
 	die();
 }
 ?>
-<html>
-	<meta charset='utf-8'/>
-	<head><title>重置密码-PLServer</title></head>
-	<body>
 		<script>
-			var valid2;
-			function verify2() {
-			verify();
-			valid2=true;
-			var info='';
-			var t1=document.getElementById('pass1');
-			var t2=document.getElementById('pass2');
-			if(t1.value=='') {
-				valid2=false;
-				t1.style.backgroundColor='#FF0000';
-				info='请输入密码'
-			} else {
-				t1.style.backgroundColor='#00FF00';
-			}
-			if(t1.value!=t2.value && t1.value!='') {
-				valid2=false;
-				t2.style.backgroundColor='#FF0000';
-				info='两次输入的密码不一致'
-			} else if(t1.value=='') {
-				t2.style.backgroundColor='#FF0000';
-			} else {
-				t2.style.backgroundColor='#00FF00';
-			}
-			document.getElementById('info2').innerText=info;
-			verify3();
+			function beforeSubmit(form){
+				if(form.password.value==''){
+					alert('密码不能为空');
+					form.username.focus();
+					return false;
+				}
+				if(form.pass1.value!=form.password2.value) {
+					alert('你两次输入的密码不一致，请重新输入！');
+					form.password2.focus();
+					return false;
+				}
+			return true;
 			}
 		</script>
-		<form method="post" action="/webview/mails/findPass.php?uid=<?php print($_GET['uid'])?>&verify=<?php print($_GET['verify'])?>" autocomplete="off">
-			请输入新密码:
-			<input type="password" id="pass1" name="password" style="height:27px" onKeyUp="verify2();" onchange="verify2();" />
-			<span id="info2" style="color:red"></span><br />
-			再次输入密码:
-			<input type="password" id="pass2" style="height:27px" onKeyUp="verify2();" onchange="verify2();" /><br />
-			<input type="submit" name="submit" id="submit" value="确认" />
-		</form>
+		</script>
+		<div class="header">
+		    <a class="header-text">重置密码</a>
+		</div>
+		<div class="table">
+			<form method="post" action="/webview/mails/findPass.php?uid=<?php print($_GET['uid'])?>&verify=<?php print($_GET['verify'])?>" autocomplete="off">
+				请输入新密码:
+				<div class="table-input">
+					<input type="password" name="password" style="height:27px" value="" />
+				</div>
+				再次输入密码:
+				<div class="table-input">
+				<input type="password" name="password2" style="height:27px" value="" /><br />
+				</div>
+				<div class="confirm">
+				<input type="submit" name="submit" id="submit" value="确认" />
+				</div>
+			</form>
+		</div>
 	</body>
 </html>

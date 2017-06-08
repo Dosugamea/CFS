@@ -48,7 +48,7 @@ a{color: #000000;}
 <div id="outer">
   <div id="inner">
     <div id="header">
-      <h2>卡片设置</h2>
+      <h2>忘记密码</h2>
       <div id="back"></div>
     </div>
 
@@ -61,7 +61,7 @@ a{color: #000000;}
           <div class="summary">
             在下方输入您账号绑定的邮箱 我们会自动发送密码到您绑定的邮箱 为了您的账号安全 建议忘记密码后更改密码<br>
             <form method="" action="">
-            请输入账号绑定的邮箱<input type="text" name="" autocomplete="off" id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" /><br>
+            请输入账号绑定的邮箱<input type="text" name="" autocomplete="off" id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" readonly="readonly" /><br>
             <input type="submit" name="submit" value="提交" />
             </form>
             <key></key>

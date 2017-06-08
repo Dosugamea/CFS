@@ -273,7 +273,7 @@ if(!$check){
 $mail = $mysql->query('SELECT mail FROM users WHERE user_id='.$uid)->fetchColumn();
 include_once("includes/sendmail.php");
 if(isset($_GET['submit']) && $_GET['submit']=='绑定') {
-	$check = $mysql->query('SELECT mail FROM users WHERE mail = ?', [$_GET['mail']]);
+	$check = $mysql->query('SELECT mail FROM users WHERE mail = ?', [$_GET['mail']])->fetchColumn();
 	if($check){
 		echo '<h3>该邮箱已被绑定！  <a href="javascript:history.go(-1);">返回</a></h3>';
 		die();
@@ -313,10 +313,9 @@ if(isset($_GET['submit']) && $_GET['submit']=='提交') {
           <div class="summary">
             <span>您当前绑定的邮箱:<?php $mail?print($mail):print("暂未绑定")?></span><br><br>
             <form method="" action="">
-            请输入绑定邮箱<input type="text" name="mail" autocomplete="off" id="numkeyboard1" class="numkeyboard"/><br>
+            请输入绑定邮箱<input type="text" name="mail" autocomplete="off" id="numkeyboard1" class="numkeyboard" readonly="true"/><br>
             <input type="submit" name="submit" value="绑定" />
             </form>
-
             <key></key>
           </div>
           <div class="clearfix"></div>
@@ -328,7 +327,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='提交') {
           <div class="summary">
           在下方输入您账号绑定的邮箱，我们会将重置密码的链接发送到您的邮箱。<br>
             <form method="" action="">
-            请输入账号绑定的邮箱<input type="text" name="mail" autocomplete="off" id="numkeyboard1" class="numkeyboard"/><br>
+            请输入账号绑定的邮箱<input type="text" name="mail" autocomplete="off" id="numkeyboard1" class="numkeyboard" readonly="true"/><br>
             <input type="submit" name="submit" value="提交" />
             </form>
             <key></key>

@@ -112,7 +112,7 @@ if(isset($_POST['submit'])) {
               <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" /><br>
             </form>
             <br>
-            <a href="/webview.php/login/mailto">忘记密码</a>
+            <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Fmails%2FforgetPass.php">忘记密码</a>
           </div>
           <div class="clearfix"></div>
         </div>
