@@ -30,7 +30,7 @@ if(strUA.indexOf("iphone") >= 0) {
 <div class="content">
   <div class="note">
 <p>
-您在使用Programmed Live内部开发客户端，但您的ID未经过授权。<br />
+您在使用内部开发客户端，但您的ID未经过授权。<br />
 <br />
 若您确定您有权使用此版本客户端，请联系PLS开发者申请授权，并带上以下信息：<br />
 您的ID：<?=$_SESSION['server']['HTTP_USER_ID'] ?><br />

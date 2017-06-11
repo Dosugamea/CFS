@@ -1,3 +1,11 @@
+<html>
+	<meta charset='utf-8'/>
+	<head>
+		<title>忘记密码-PLServer</title>
+		<link href="/resources/css/web.css" rel="stylesheet">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<style>body{font-size:2em;}table{font-size:1em;}</style>
+		
 <?php
 include("../../includes/db.php");
 include("../../includes/sendmail.php");
@@ -56,7 +64,7 @@ function genFindPassMail($uid, $code){
 													<td width="522" style="color: #000001; font-size: 20px; font-family: Helvetica, Arial, sans-serif;">
 														Dear ';
 	$mail .= $mysql->query('SELECT name FROM users WHERE user_id = ?', [$uid])->fetchColumn();
-	$mail .= '<br><br>感谢使用 PL！<br>Thanks for using Programmed Live!
+	$mail .= '<br><br>感谢使用 PL！<br>Thanks for using Custom Festival!
 													</td>
 												</tr>
 												<tr>
@@ -123,13 +131,6 @@ if(isset($_POST['mail'])){
 	echo '<h3>重置密码申请已提交，请到邮箱内查收。</h3>';
 }
 ?>
-<html>
-	<meta charset='utf-8'/>
-	<head>
-		<title>忘记密码-PLServer</title>
-		<link href="/resources/css/web.css" rel="stylesheet">
-		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<style>body{font-size:2em;}table{font-size:1em;}</style>
 		<script type="text/javascript">
 			function beforeSubmit(form){
 				if(form.mail.value==''){

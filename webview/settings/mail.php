@@ -205,7 +205,7 @@ function randomKey($pw_length){
 		$randpwd .= chr(mt_rand(33, 126));
 	}
 	return $randpwd; 
-}
+} 
 ?>
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>

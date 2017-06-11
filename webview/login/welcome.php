@@ -40,7 +40,7 @@
 <div id="outer">
   <div id="inner">
     <div id="header">
-      <h2>Welcome to Programmed Live!</h2>
+      <h2>Welcome to Custom Festival</h2>
     </div>
 
 <div id="body">
