@@ -1,6 +1,5 @@
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>
-<title>Custom Festival Server</title>
 
 
 <?php
