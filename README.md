@@ -1,14 +1,10 @@
-# Programmed Live! Server
-
-Online since 2014/9/15, the two-year-old infamous SIF private server PLS (aka LLSP), now becomes open source!
+# Custom Festival Server
 
 Try out our public server at `www.plserver.xyz`
 
-**REQUIRE LLSIF Japanese 5.0 Client, with XMS disabled** (No we will never provide or tell how to make one).
+**REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (No we will never provide or tell how to make one).
 
-Client version under 5.0 as well as other regions' client is NO LONGER supported.
-
-(Note that most code of PLS is written when I just started to learn PHP, so those "legacy" code is completely in a mess...)
+Client version under 5.0.2 as well as other regions' client is NO LONGER supported.
 
 #Requirements
 
