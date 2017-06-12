@@ -6,28 +6,21 @@ Try out our public server at `www.plserver.xyz`
 
 Client version under 5.0.2 as well as other regions' client is NO LONGER supported.
 
-#Requirements
+# Requirements
 
-PHP 7.0 stable
-
-MySQL 5.6 or higher
-
-PDO_mysql and PDO_sqlite3 module
-
-php5-mcrypt
+* PHP 7.0 stable
+* MySQL 5.6 or higher
+* PDO_mysql and PDO_sqlite3 module
+* php5-mcrypt
 
 # Installation
-> Put all the files into web root
 
-> Rename config.sample to config and fill out all required fields (code.php and database.php)
-
-> Import install.sql (which frequently breaks on schema changes. If error occurs report issue immediately)
-
-> Import data.sql, which contains song data and download data.
-
-> Put **DECRYPTED** dbs from game data into the path spicified in config/database.php.
-
-> Done!
+1. Put all the files into web root
+2. Rename `config.sample` to `config` and fill out all required fields (`code.php` and `database.php`)
+3. Import `install.sql` (which frequently breaks on schema changes. If error occurs report issue immediately)
+4. Import `data.sql`, which contains song data and download data.
+5. Put **DECRYPTED** dbs from game data into the path spicified in `config/database.php`.
+6. Done!
 
 
 # Update
