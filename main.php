@@ -135,7 +135,7 @@ if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 		if(floor((float)$_SERVER['HTTP_CLIENT_VERSION']) < floor((float)$server_ver)){
 			header("Server-Version: ".((float)$_SERVER['HTTP_CLIENT_VERSION']+0.1));}
 		else
-			header("Server-Version: {$_SERVER['HTTP_CLIENT_VERSION']}.$server_ver");
+			header("Server-Version: ".$server_ver);
 	} else {
 		header('Maintenance: 1');
 		die();
