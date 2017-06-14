@@ -3,6 +3,7 @@
 
 <?php
 require '../../config/reg.php';
+require '../../includes/db.php';
 if(!$allow_reg) {
 	echo '<h1>注册已关闭！</h1>';
 	die();
@@ -15,13 +16,9 @@ if($enable_ssl && $_SERVER['HTTPS'] != 'on') {
 
 $unit = getUnitDb();
 
-$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
-$token = substr($authorize, 0, strpos($authorize, '&'));
-$username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-if (!$username) {
-	echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
-	die();
-}
+//$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
+$token = isset($_GET['token']) ? $_GET['token'] : $_POST['token'];
+$username = $mysql->query('select username, password from tmp_authorize where token=?', [isset($_GET['username']) ? $_GET['username'] : $_POST['username']])->fetch();
 
 require '../../config/maintenance.php';
 
@@ -36,7 +33,7 @@ function genpassv2($_pass, $id) {
 	return substr($pass, hexdec(substr(md5($_pass), ord($_pass[0]) % 30, 2)), 32);
 }
 
-include_once("includes/unit.php");
+include_once("../../includes/unit.php");
 if(isset($_POST['submit'])) {
 	if (!is_numeric($_POST['id'])) {
 		echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
@@ -108,7 +105,7 @@ if(isset($_POST['submit'])) {
 			$mysql->exec("INSERT INTO user_deck (user_id,json,center_unit) VALUES ({$_POST['id']}, '$json', $center)");
 			
 			$mysql->query('delete from tmp_authorize where token=?', [$token]);
-			echo '<h3>注册成功！关闭本窗口即可进入游戏 <br />Registration Success! Plz Close This Window <br />若关闭窗口后仍然无法进入游戏，或者进入游戏时游戏崩溃，请通知开发者！</h3>';
+			echo '<h3>注册成功！请直接进入游戏。</h3>';
 			die();
 		}
 	}
@@ -207,7 +204,7 @@ function verify3() {
       <input type="text" name="token" value="<?=$token?>"/>
     </div>
     <div class="table-input">
-     <input type="text" name="username" value="<?=$username['username']?>" />
+     <input type="text" name="username" value="<?=$username?>" />
     </div>
     <span class="tittle">用户ID：</span>
     <div class="table-input">
