@@ -7,6 +7,7 @@ if(!isset($_GET['uid']) || !isset($_GET['verify']) || !is_numeric($_GET['uid']))
 
 include("../../includes/db.php");
 $key = $mysql->query("SELECT mail_secret_key FROM users WHERE user_id = ?", [$_GET['uid']])->fetchColumn();
+$key = str_replace("+"," ",$key);
 if($key == $_GET['verify']){
 	$mail_pending = $mysql->query("SELECT mail_pending FROM users WHERE user_id = ?", [$_GET['uid']])->fetchColumn();
 	$mail_check = $mysql->query("SELECT mail FROM users WHERE mail = ?", [$mail_pending])->fetchColumn();
