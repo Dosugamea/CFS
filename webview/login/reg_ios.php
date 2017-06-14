@@ -1,8 +1,8 @@
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>
-<title>Custom Festival Server</title>
+
 <?php
-require 'config/reg.php';
+require '../../config/reg.php';
 if(!$allow_reg) {
 	echo '<h1>注册已关闭！</h1>';
 	die();
@@ -23,7 +23,7 @@ if (!$username) {
 	die();
 }
 
-require 'config/maintenance.php';
+require '../../config/maintenance.php';
 
 $id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
 $id[] = 0;
