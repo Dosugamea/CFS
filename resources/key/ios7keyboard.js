@@ -75,7 +75,7 @@ this.each(function(){
     "<li>B</li>"+
     "<li>N</li>"+
     "<li>M</li>"+
-	"<li><span>-</span><span>_</span></li>"+
+	"<li><span>-</span><span>@</span></li>"+
 	"<li><span>/</span><span>.</span></li>"+
     "<li>Exit</li>"+
 	"<div id='keyboard_5xbogf8c_left'></div>"+
