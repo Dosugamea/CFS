@@ -205,7 +205,7 @@ function randomKey($pw_length){
 		$randpwd .= chr(mt_rand(33, 126));
 	}
 	return $randpwd; 
-} 
+}
 ?>
 <meta charset='utf-8' />
 <style>body{font-size:2em;}table{font-size:1em;}</style>
@@ -332,7 +332,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='提交') {
             </form>
             <key></key>
 
-            <a href="mailto:lijun00326@gmail.com"><p>进行账号申诉</p></a>
+            <!--<a href="mailto:lijun00326@gmail.com"><p>进行账号申诉</p></a>-->
           </div>
           <div class="clearfix"></div>
         </div>
