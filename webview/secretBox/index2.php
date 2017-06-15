@@ -26,7 +26,7 @@
     <div class="entry-container">
       <h2 class="text"></h2>
       <div class="summary">
-        <del>此功能尚未完成，需要亲亲抱抱么么才能继续淦</del></br>
+        <!--<del>此功能尚未完成，需要亲亲抱抱么么才能继续淦</del></br>-->
         <pre><?php
         require 'includes/errorUtil.php'; 
         if(!isset($_SERVER["QUERY_STRING"])||empty($_SERVER["QUERY_STRING"])){
