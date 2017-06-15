@@ -69,9 +69,13 @@ function profile_profileInfo($post) {
 	else
 		$time = " ".$elapsed_time."秒前";
 	$ret['user_info']['elapsed_time_from_login'] = $time;
+    
 	$center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn());
+    $partner_id=$mysql->query('SELECT value FROM user_params WHERE param="navi" and user_id='.$post['user_id'])->fetchColumn();
+    $partner=empty($partner_id)?$center:GetUnitDetail($partner_id);
 	$ret['center_unit_info'] = $center;
-	$ret['navi_unit_info'] = $center;
+	$ret['navi_unit_info'] = $partner;
+    
 	loadExtendAvatar([$post['user_id']]);
 	setExtendAvatarForce($post['user_id'], $ret['navi_unit_info']);
 	setExtendAvatar($post['user_id'], $ret['center_unit_info']);
