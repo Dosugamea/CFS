@@ -3,6 +3,7 @@ date_default_timezone_set("Asia/Tokyo");
 
 /* 错误处理 */
 require 'includes/errorHandler.php';
+require 'includes/errorUtil.php';
 
 /* 连接数据库 */
 require 'includes/db.php';

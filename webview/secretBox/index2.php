@@ -22,15 +22,58 @@
 <div id="body">
 <div id="container">
 <ul id="list">
-      <li class="entry"">
-        <div class="entry-container">
-          <h2 class="text"></h2>
-          <div class="summary">
-          此功能尚未完成，需要亲亲抱抱么么才能继续淦
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </li>
+  <li class="entry"">
+    <div class="entry-container">
+      <h2 class="text"></h2>
+      <div class="summary">
+        <del>此功能尚未完成，需要亲亲抱抱么么才能继续淦</del></br>
+        <pre><?php
+        require 'includes/errorUtil.php'; 
+        if(!isset($_SERVER["QUERY_STRING"])||empty($_SERVER["QUERY_STRING"])){
+          header('HTTP/1.1 403 Forbidden');
+          echo '<h1>出现了一些问题，请尝试关闭页面重新打开 (Query String不存在)</h1>';
+          die();
+        }
+        
+        require 'modules/secretbox.php';
+        function get_text($rule,$index,$total){
+          if(empty($rule)||$rule<=0)
+            return "";
+          switch($index){
+            case 0:$pre="N&nbsp;&nbsp;&nbsp;";break;
+            case 1:$pre="R&nbsp;&nbsp;&nbsp;";break;
+            case 2:$pre=     "SR&nbsp;&nbsp;";break;
+            case 3:$pre=          "SSR&nbsp;";break;
+            case 4:$pre=     "UR&nbsp;&nbsp;";break;
+          }
+          return $pre.sprintf("%.1f", ($rule/$total)*100)."%\n";
+        }
+        
+        $id_list=explode('&', $_SERVER["QUERY_STRING"]);
+        $last_index=count($id_list)-1;
+        global $params;
+        $params['card_switch']=($id_list[$last_index]=="true");
+        
+        for($i=0;$i<$last_index;$i++){
+          $id=$id_list[$i];
+          $box=getBoxObjectById($id);
+          //echo "Box ".$id."\n";
+          if(isset($box['rule'])&&!empty($box['rule'])){
+            $total_chance = array_reduce($box['rule'], function ($sum, $next) {
+              return $sum + $next;
+              }, 0);
+            $counter=0;
+            foreach($box['rule'] as $r)
+              echo get_text($r,$counter++,$total_chance);
+          }
+          break;//仅输出第一个Box
+        }
+        ?>
+        </pre>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </li>
 </ul>
 
 </div>

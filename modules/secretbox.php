@@ -3,19 +3,25 @@ require_once('includes/unit.php');
 
 $setting = false;
 function getSecretboxSetting() {
-	global $setting;
+	global $setting,$params;
 	if (!$setting) {
 		require('config/modules_secretbox.php');
 		$id = 0;
-		$make_code = function (&$category) use (&$id) {
+		$make_code = function (&$category) use (&$id,&$params) {
 			foreach ($category as &$tab) {
 				foreach ($tab[0] as &$page) {
 					pl_assert(isset($page['page_layout']) && ($page['page_layout'] == 0 || $page['page_layout'] == 1), 'secretbox: 某一页面没有设置页面类型：'.print_r($page, true));
 					pl_assert(isset($page['box']), 'secretbox: 某一页面没有设置抽卡信息：'.print_r($page, true));
+					$id_list="";
 					foreach($page['box'] as &$box) {
 						$box['secret_box_id'] = ++$id;
+                        if($id_list!="")
+                            $id_list.="&";
+                        $id_list.=$box['secret_box_id'];
 					}
+                    $page['url']='/webview.php/secretBox/index2?'.$id_list."&".((isset($params) && $params['card_switch'])?'true':'false');
 				}
+                
 			}
 		};
 		pl_assert($scout_muse, 'secretbox: $scout_muse未设置！');
@@ -31,22 +37,25 @@ function getSecretboxSetting() {
 	return $setting;
 }
 
-function scout($id, $count) {
-	global $mysql, $uid;
-	$unit = getUnitDb();
-	$box = false;
-	foreach (getSecretboxSetting()['modes'] as $category) {
+function getBoxObjectById($id){
+    foreach (getSecretboxSetting()['modes'] as $category) {
 		foreach($category as $tab) {
 			foreach ($tab[0] as $page) {
 				foreach ($page['box'] as $b) {
 					if ($b['secret_box_id'] == $id) {
-						$box	= $b;
-						break 3;
+						return $b;
 					}
 				}
 			}
 		}
 	}
+    return null;
+}
+
+function scout($id, $count) {
+	global $mysql, $uid;
+	$unit = getUnitDb();
+	$box = getBoxObjectById($id);
 	pl_assert($box, 'secretbox: 找不到对应的box');
 	pl_assert(isset($box['rule']), 'secretbox: 某项抽卡信息没有指定抽卡规则：'.print_r($box, true));
 	if (!isset($box['special_rule'])) {
