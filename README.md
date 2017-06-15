@@ -10,7 +10,7 @@ Client version under 5.0.2 as well as other regions' client is NO LONGER support
 
 * PHP 7.0 stable
 * MySQL 5.6 or higher
-* PDO_mysql and PDO_sqlite3 module
+* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module
 * php5-mcrypt
 
 # Installation

@@ -260,6 +260,26 @@ function generateRandomLiveOld($note) {
 	return $note;
 }
 
+function generateRandomLiveLimitless($note) {
+	$timing=[];
+	foreach($note as $v)
+		$timing[]=$v['timing_sec'];
+	array_multisort($timing,SORT_ASC,$note);
+    
+    $holding=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
+    
+	foreach($note as $k=>&$v){
+        while(true){
+            $v['position']=rand(1,9);
+            if($v['timing_sec']>$holding[$v['position']]+0.1)
+                break;
+        }
+        if($v['effect']==3) //长条
+			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
+    }
+	return $note;
+}
+
 //calcScore 计算分数
 function calcScore($base, $map) {
   $total = 0;

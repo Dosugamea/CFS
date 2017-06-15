@@ -457,7 +457,9 @@ function live_play($post) {
 			$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);
 		} elseif ($random[$k2] == 2) { //旧随机
 			$live_info['notes_list'] = generateRandomLiveOld($live_info['notes_list']);
-		}
+		} elseif ($random[$k2] == 3) { //无限制随机
+            $live_info['notes_list'] = generateRandomLiveLimitless($live_info['notes_list']);
+        }
 		if (isset($params['extend_mods_vanish']) && $params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
 				$set['vanish'] = $params['extend_mods_vanish'];
