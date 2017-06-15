@@ -166,8 +166,10 @@ function live_partyList() {
     $self_center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$uid)->fetchColumn());
     $self = $mysql->query('SELECT user_id,name,level,award FROM users WHERE user_id='.$uid)->fetch(PDO::FETCH_ASSOC);
     $self_info['user_info'] = $self;
+    $self_info["user_info"]['user_id'] = (int)$i["user_info"]['user_id'];
+    $self_info["user_info"]['level'] = (int)$i["user_info"]['level'];
     $self_info['center_unit_info'] = $self_center;
-    $self_info['setting_award_id'] = $self['award'];
+    $self_info['setting_award_id'] = (int)$self['award'];
     $self_info['friend_status'] = 0;
     $self_info["available_social_point"] = 0;
 	$friend_list []= $self_info;
