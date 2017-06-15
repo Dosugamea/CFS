@@ -465,7 +465,7 @@ function live_play($post) {
 				$set['vanish'] = $params['extend_mods_vanish'];
 			}
 		}
-		if (isset($params['extend_mods_mirror']) && $params['extend_mods_vanish']) {
+		if (isset($params['extend_mods_mirror']) && $params['extend_mods_mirror']) {
 			foreach ($live_info['notes_list'] as &$set) {
 				if (isset($set['position']) && $set['position'] != 0) {
 					$set['position'] = 10 - $set['position'];
