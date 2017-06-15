@@ -147,13 +147,38 @@ function live_partyList() {
 		return json_decode('{"party_list":[{"user_info":{"user_id":0,"name":"らぶらいぶ","level":1},"center_unit_info":{"unit_id":49,"level":1,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"love":0,"is_love_max":false,"is_level_max":false,"is_rank_max":true},"setting_award_id":1,"friend_status":1,"available_social_point":0}]}');
 	}
 	$default_party = json_decode('{"party_list":[{"user_info":{"user_id":-1,"name":"Default(smile)","level":1},"center_unit_info":{"unit_id":49,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-2,"name":"Default(pure)","level":1},"center_unit_info":{"unit_id":40,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-3,"name":"Default(cool)","level":1},"center_unit_info":{"unit_id":31,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0}]}',true);
-	//TODO:拉取好友列表
+    
+    $friend_list = runAction("friend", "list",["type" => 0])['friend_list'];
+    $friend_ids = "";
+	foreach($friend_list as &$i){
+		$i["user_info"] = $i["user_data"];
+		$i["user_info"]['user_id'] = (int)$i["user_info"]['user_id'];
+		$i["user_info"]['level'] = (int)$i["user_info"]['level'];
+		$i["available_social_point"] = 0;
+		$i['friend_status'] = 1;
+		unset($i["user_data"]);
+        
+        if($friend_ids!="")
+            $friend_ids.=",";
+        $friend_ids.=$i["user_info"]['user_id'];
+	}
+    
+    $self_center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$uid)->fetchColumn());
+    $self = $mysql->query('SELECT user_id,name,level,award FROM users WHERE user_id='.$uid)->fetch(PDO::FETCH_ASSOC);
+    $self_info['user_info'] = $self;
+    $self_info['center_unit_info'] = $self_center;
+    $self_info['setting_award_id'] = $self['award'];
+    $self_info['friend_status'] = 0;
+    $self_info["available_social_point"] = 0;
+	$friend_list []= $self_info;
+    
+    //TODO:拉取好友列表
 	$non_friend = $mysql->query('
 		SELECT tmp_live_playing.user_id, name, level, center_unit,award FROM tmp_live_playing
 		LEFT JOIN users ON tmp_live_playing.user_id=users.user_id
 		LEFT JOIN user_deck ON tmp_live_playing.user_id=user_deck.user_id
 		WHERE play_count>0 AND tmp_live_playing.user_id!='.$uid.'
-		#AND tmp_live_playing.user_id NOT IN (好友ID)
+		AND tmp_live_playing.user_id NOT IN ('.$friend_ids.')
 		ORDER BY rand() LIMIT 3
 	')->fetchAll(PDO::FETCH_ASSOC);
 	$center_unit = [];
@@ -169,17 +194,8 @@ function live_partyList() {
 		$party['setting_award_id'] = $party['user_info']['award'];
 		unset($party['user_info']['center_unit'], $party['user_info']['award']);
 		$party['friend_status'] = 0; //TODO
-		$party['available_social_point'] = 5;
+		$party['available_social_point'] = 0;
 		$default_party['party_list'][] = $party;
-	}
-	$friend_list = runAction("friend", "list",["type" => 0])['friend_list'];
-	foreach($friend_list as &$i){
-		$i["user_info"] = $i["user_data"];
-		$i["user_info"]['user_id'] = (int)$i["user_info"]['user_id'];
-		$i["user_info"]['level'] = (int)$i["user_info"]['level'];
-		$i["available_social_point"] = 0;
-		$i['friend_status'] = 1;
-		unset($i["user_data"]);
 	}
 	$default_party['party_list'] = array_merge($default_party['party_list'], $friend_list);
 	return $default_party;
@@ -187,7 +203,7 @@ function live_partyList() {
 
 //live/deckList 获取所有的可用卡组列表（4.0不调用，live_play里调用）
 function live_deckList($post) {
-	global $uid, $mysql, $params;
+global $uid, $mysql, $params;
 	if($params['card_switch'] == 0) {
 		if (isset($post['do_not_use_multiply']) && $post['do_not_use_multiply']) { //4.0计分修正
 			$deck_ret = json_decode('[{"unit_deck_id": 1,"total_smile": 55000,"total_cute": 50000,"total_cool": 55000,"total_hp": 20},{"unit_deck_id": 2,"total_smile": 55000,"total_cute": 60500,"total_cool": 60500,"total_hp": 30},{"unit_deck_id": 3,"total_smile": 39940,"total_cute": 41072,"total_cool": 40940,"total_hp": 39}]',true);
@@ -882,7 +898,7 @@ function live_reward($post) {
 	while ($newexp >= $exp[$newlevel]) {
 		$ret['next_level_info'][] = ['level'=>$newlevel,' from_exp'=>$exp[$newlevel]];
 		$newlevel++;
-		energyRecover();
+		energyRecover(true);
 	}
 	$newsocial = $ret['before_user_info']['social_point'];
 	$newloveca = $ret['before_user_info']['sns_coin'];
@@ -934,19 +950,23 @@ function live_reward($post) {
 	
 	/* 卡片奖励，此部分代码【将被完全重写】 */
 	
-	$scout = function ($type, $ret_key) use (&$ret, $uid, $mysql, $post) {
+	$scout = function ($type, $ret_key, $miss_rate) use (&$ret, $uid, $mysql, $post) {
 		global $max_unit_id;
 		$random = rand(1, 100);
-		if ($type == 1) {
-			if($random <= 95) $rarity = 1; else $rarity = 2;
-		} elseif($type == 2) {
-			if($random<=90) $rarity = 2; elseif($random <= 99) $rarity = 3; else $rarity = 4;
-		} else {
-			if($random <= 20) $rarity = 4; else $rarity = 3;
+        if ($type == 1) {//Clear-ea/nm/hd Rank-any-ea/nm Combo-c-nm Combo-any-ea
+			if($random <= 95) $rarity = 1; else $rarity = 2;//R 5%, N 95%
+		} elseif($type == 2) {//Clear-ex/ma Rank-any-hd Combo-b/c-hd Combo-s/a/b-nm
+			if($random<=80) $rarity = 2; elseif($random >= 99) $rarity = 4; elseif($random <= 95) $rarity = 3; else $rarity = 5;//UR 1%, SSR 4% SR 15%, R 80%
+		} else {//Rank-any-ex/ma Combo-any-ex/ma Combo-s/a-hd
+			if($random <= 20) $rarity = 4; else $rarity = 3;//UR 20%, SR 80%
 		}
-		$unit = getUnitDb();
-		$unit_got = $unit->query("SELECT * FROM unit_m WHERE unit_id<='$max_unit_id' and rarity=$rarity order by random() limit 1")->fetch();
-		$unit_id = $unit_got['unit_id'];
+        
+        $unit = getUnitDb();
+        if(rand(1, 100)>$miss_rate)
+            $unit_got = $unit->query("SELECT * FROM unit_m WHERE unit_id<='$max_unit_id' and rarity=$rarity order by random() limit 1")->fetch();
+        else
+            $unit_got = $unit->query("SELECT * FROM unit_m WHERE unit_id=1170 limit 1")->fetch();
+        $unit_id = $unit_got['unit_id'];
 		$result = addUnit($unit_id);
 		$result[0]['new_unit_flag']=false;
 		$result[0]['is_support_member']=$unit_got['disable_rank_up'] != 0;
@@ -978,12 +998,13 @@ function live_reward($post) {
 		$ret['reward_unit_list']['live_combo'] = [];
 	}
 	if ($params['card_switch']) { //暂时关掉
-		$scout($clear_card[$map_info['difficulty']],'live_clear');
+        $miss_rate=floor($post['miss_cnt']*10 / $map_info['s_rank_combo'])*10;
+		$scout($clear_card[$map_info['difficulty']],'live_clear',$miss_rate);
 		if ($ret['rank'] < 5) {
-			$scout($rank_card[$map_info['difficulty']][$ret['rank'] - 1], 'live_rank');
+			$scout($rank_card[$map_info['difficulty']][$ret['rank'] - 1], 'live_rank',$miss_rate);
 		}
 		if ($ret['combo_rank'] < 5) {
-			$scout($combo_card[$map_info['difficulty']][$ret['combo_rank'] - 1],'live_combo');
+			$scout($combo_card[$map_info['difficulty']][$ret['combo_rank'] - 1],'live_combo',$miss_rate);
 		}
 	}
 	

@@ -289,12 +289,14 @@ function secretBox_all() {
 						if ($box['type'] == 3) {
 							pl_assert(isset($box['multi']), 'secretbox: 没有指定连抽数目：'.print_r($box, true));
 							$multi = $box['multi'];
+                            $multi_pay = $multi;
 						} else {
-							$multi = 10;
+							$multi_pay = 10;
+                            $multi = 11;
 						}
 						$ret_box['multi_type'] = $box['type'] == 1 ? 1 : 0;
 						$ret_box['multi_count'] = $multi;
-						$ret_box['is_pay_multi_cost'] = $check_cost($item, $box['amount'] * $multi);
+						$ret_box['is_pay_multi_cost'] = $check_cost($item, $box['amount'] * $multi_pay);
 						if (!$ret_box['is_pay_multi_cost'] && $box['type'] == 3 && isset($box['allow_lesser_multi']) && $box['allow_lesser_multi']) {
 							$count = floor($userinfo['social_point'] / $box['amount']);
 							if ($count >= 2) {
@@ -310,7 +312,7 @@ function secretBox_all() {
 							"type" => $box['type'],
 							"item_id" => null,
 							"amount" => $box['amount'],
-							"multi_amount" => $box['amount'] * $ret_box['multi_count']
+							"multi_amount" => $box['amount'] * $multi_pay
 						];
 					} elseif ($box['type'] == 4) {
 						if (isset($box['once_per_day']) && $box['once_per_day']) {

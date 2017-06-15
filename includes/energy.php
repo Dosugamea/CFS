@@ -46,11 +46,11 @@ function energyDecrease($amount){
 		return false;
 }
 
-function energyRecover(){
+function energyRecover($force=false){
 	global $uid, $mysql, $params;
 	$energy = $mysql->query("SELECT energy_full_time, over_max_energy, level FROM users WHERE user_id = ".$uid)->fetch(PDO::FETCH_ASSOC);
 	$energy_max = 100 + floor($energy['level']/2);
-	if($energy['over_max_energy'] != 0 || strtotime($energy['energy_full_time']) <= time())
+	if(!$force && ($energy['over_max_energy'] != 0 || strtotime($energy['energy_full_time']) <= time()))
 		if($energy['over_max_energy'] >= $energy_max)
 			return false;
 	$energy_now = $energy_max - floor((strtotime($energy['energy_full_time']) - strtotime("now"))/360);
