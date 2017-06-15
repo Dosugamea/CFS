@@ -1,5 +1,6 @@
 <?php 
-	if('anti-bang' != $_GET['pw']){
+	require "../config/database.php";
+	if(!isset($_GET['pw']) || ($_GET['pw'] !=$admin_pw)){
 		print("<head><title>403 Forbidden</title></head><body bgcolor='white'><center><h1>403 Forbidden</h1></center><hr><center>F**K U 1.3.8</center></body>");
 		die();
 	}
