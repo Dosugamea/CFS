@@ -3,7 +3,7 @@
 $mysql_server='localhost';
 $mysql_user='root';
 $mysql_pass='';
-$mysql_db='lovelive';
+$mysql_db='';
 
 $unit_db='db/unit.db_';
 $live_db='db/live.db_';
@@ -12,3 +12,5 @@ $battle_db='db/battle.db_';
 $festival_db='db/festival.db_';
 $scenario_db='db/scenario.db_';
 $subscenario_db='db/subscenario.db_';
+
+$admin_pw='';
