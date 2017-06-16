@@ -149,7 +149,7 @@ function live_partyList() {
 	$default_party = json_decode('{"party_list":[{"user_info":{"user_id":-1,"name":"Default(smile)","level":1},"center_unit_info":{"unit_id":49,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-2,"name":"Default(pure)","level":1},"center_unit_info":{"unit_id":40,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-3,"name":"Default(cool)","level":1},"center_unit_info":{"unit_id":31,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0}]}',true);
     
     $friend_list = runAction("friend", "list",["type" => 0])['friend_list'];
-    $friend_ids = "";
+    $friend_id_list = [0];
 	foreach($friend_list as &$i){
 		$i["user_info"] = $i["user_data"];
 		$i["user_info"]['user_id'] = (int)$i["user_info"]['user_id'];
@@ -157,11 +157,10 @@ function live_partyList() {
 		$i["available_social_point"] = 0;
 		$i['friend_status'] = 1;
 		unset($i["user_data"]);
-        
-        if($friend_ids!="")
-            $friend_ids.=",";
-        $friend_ids.=$i["user_info"]['user_id'];
+
+		$friend_id_list[] = $i["user_info"]['user_id'];
 	}
+	$friend_ids = implode(',', $friend_id_list);
     
     $self_center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$uid)->fetchColumn());
     $self = $mysql->query('SELECT user_id,name,level,award FROM users WHERE user_id='.$uid)->fetch(PDO::FETCH_ASSOC);
@@ -180,7 +179,7 @@ function live_partyList() {
 		LEFT JOIN users ON tmp_live_playing.user_id=users.user_id
 		LEFT JOIN user_deck ON tmp_live_playing.user_id=user_deck.user_id
 		WHERE play_count>0 AND tmp_live_playing.user_id!='.$uid.'
-		AND tmp_live_playing.user_id NOT IN (0, '.$friend_ids.')
+		AND tmp_live_playing.user_id NOT IN ('.$friend_ids.')
 		ORDER BY rand() LIMIT 3
 	')->fetchAll(PDO::FETCH_ASSOC);
 	$center_unit = [];
@@ -380,43 +379,14 @@ global $uid, $mysql, $params;
 					continue;
 				}
 				$detail = GetUnitDetail($v2['unit_owning_user_id'],true);
-				switch($unit_leader_skill_extra['leader_skill_effect_type']){
-					case 1:
-						$buff_attribute = "smile";
-					case 2:
-						$buff_attribute = "cute";
-					case 3:
-						$buff_attribute = "cool";
-				}
-				switch((int)($leader_skill['leader_skill_effect_type'])){
-					case 1:
-						$src_attr = "smile";
-						$target_attr = "smile";
-					case 2:
-						$src_attr = "cute";
-						$target_attr = "cute";
-					case 3:
-						$src_attr = "cool";
-						$target_attr = "cool";
-					case 112:
-						$src_attr = "smile";
-						$target_attr = "cute";
-					case 113:
-						$src_attr = "smile";
-						$target_attr = "cool";
-					case 121:
-						$src_attr = "cute";
-						$target_attr = "smile";
-					case 123:
-						$src_attr = "cute";
-						$target_attr = "cool";
-					case 131:
-						$src_attr = "cool";
-						$target_attr = "smile";
-					case 132:
-						$src_attr = "cool";
-						$target_attr = "cute";
-				}
+
+				$attributes = ["", "smile", "cute", "cool"];
+				$buff_attribute = $attributes[$unit_leader_skill_extra['leader_skill_effect_type']];
+				$leader_skill_type = $unit_leader_skill['leader_skill_effect_type'] . $unit_leader_skill['leader_skill_effect_type'];
+				$src_attr = $attributes[(int)substr($leader_skill_type, -2, 1)];
+				$target_attr = $attributes[(int)substr($leader_skill_type, -1, 1)];
+
+
 				$detail[$target_attr] += ceil($detail[$src_attr] * $unit_leader_skill['effect_value'] * 0.01);
 				$deck_ret[$deck_count]['total_'.$buff_attribute] += ceil($detail[$buff_attribute] * $unit_leader_skill_extra['effect_value'] * 0.01);
 			}

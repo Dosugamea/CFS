@@ -282,18 +282,30 @@ function generateRandomLiveLimitless($note) {
 	return $note;
 }
 
+
+function beatmap_timing_cmp($u, $v) {
+	return $u['timing_sec'] - $v['timing_sec'];
+}
+
 //calcScore 计算分数
 function calcScore($base, $map) {
   $total = 0;
   $combo = 0;
   $rate = 1;
+
+
   if (isset($map[0]['timing_sec'])) {
     $map_ = [['live_info'=>Null]];
 	$map_[0]['live_info']['notes_list'] = $map;
 	$map = $map_;
   }
   foreach($map as $v2) {
-    $total += array_reduce($v2['live_info']['notes_list'], function ($sum, $next) use (&$combo, $base, &$rate) {
+
+	  foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ($p['effect_value']);
+	  usort($v2['live_info']['notes_list'], 'beatmap_timing_cmp');
+
+
+	  $total += array_reduce($v2['live_info']['notes_list'], function ($sum, $next) use (&$combo, $base, &$rate) {
       $combo++;
       switch($combo) {
       case 51:$rate = 1.1;break;
@@ -304,15 +316,8 @@ function calcScore($base, $map) {
       case 801:$rate = 1.35;break;
       }
       $score = $base * 1.25 * $rate;
-      if ($next['effect'] == 3) {
-        $score *= 1.25;
-      }
-	  if (in_array($next['effect'], [11,12])) {
-        $score *= 0.5;
-      }
-	  if ($next['effect'] == 13) {
-        $score *= 0.625;
-      }
+      if ($next['effect'] > 10) $score *= 0.5;
+      if ($next['effect'] % 10 == 3) $score *= 1.25;
       return $sum + floor($score / 100);
     }, 0);
   }
