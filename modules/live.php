@@ -1026,6 +1026,8 @@ function live_reward($post) {
 		$res = $mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn();
 		$deck = json_decode($res,true);
 		$deckid = (int)$mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		$total_love+=0;//供调试使用
+        $new_love_max=[];
 		foreach($deck as $v) {
 			if ($v['unit_deck_id'] != $deckid) {
 				continue; //定位到当前的卡组
@@ -1061,6 +1063,11 @@ function live_reward($post) {
 						//并记录更新信息
 						$unitid_list[] = $v3['unit_owning_user_id'];
 						$love_list[] = $v3['love'];
+                        if ((int)$v3['rank'] == 2) {
+							echo $v3['unit_id'].'\n';
+							$v3['is_love_max'] = true;
+							$new_love_max []= $v3['unit_id'];
+						}
 					}
 				}
 			}
@@ -1075,9 +1082,9 @@ function live_reward($post) {
 						if($v3['love'] >= $max_love[$v3['rank']][$v3['rarity']]) {
 							$v3['love'] = $max_love[$v3['rank']][$v3['rarity']];
 							//如果绊满了，记录下来
-							if ($v3['rank'] == 2) {
+							if ((int)$v3['rank'] == 2) {
 								$v3['is_love_max'] = true;
-								$new_love_max[] = $v3['unit_id'];
+								$new_love_max []= $v3['unit_id'];
 							}
 						}
 						//记录更新信息
@@ -1098,11 +1105,8 @@ function live_reward($post) {
 			//如果有新卡满绊，写相册信息，发1个心
 			if (isset($new_love_max)) {
 				foreach($new_love_max as $v) {
-					$res = $mysql->query("SELECT love_max_flag FROM album WHERE user_id=$uid and unit_id=$v")->fetchColumn();
-					if ($res === 0) {
-						$mysql->exec("UPDATE album SET love_max_flag=1 WHERE user_id=$uid and unit_id=$v");
-						$mysql->exec("INSERT INTO `incentive_list` ( `user_id`, `incentive_item_id`, `amount`, `is_card`, `incentive_message`) VALUES ( '$uid', '4', '1', '0', '與部員的絆達到MAX');");
-					}
+					$mysql->exec("UPDATE album SET love_max_flag=1 WHERE user_id=$uid and unit_id=$v");
+					$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES ($uid, 4, 1, 0, '與部員的絆達到MAX')");
 				}
 			}
 			break;

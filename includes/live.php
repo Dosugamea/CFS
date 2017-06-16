@@ -276,6 +276,8 @@ function generateRandomLiveLimitless($note) {
         }
         if($v['effect']==3||$v['effect']==13) //长条
 			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
+        else
+            $holding[$v['position']]=$v['timing_sec'];
     }
 	return $note;
 }
