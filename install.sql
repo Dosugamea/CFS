@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS `album` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
+-- 导出  表 lovelive.award 结构
+CREATE TABLE IF NOT EXISTS `award` (
+  `user_id` INT(11) NOT NULL,
+	`award_id` INT(11) NOT NULL,
+	`insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
 -- 导出  表 lovelive.banned_user 结构
 CREATE TABLE IF NOT EXISTS `banned_user` (
   `user` varchar(255) NOT NULL,
