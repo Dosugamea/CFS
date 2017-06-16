@@ -180,7 +180,7 @@ function live_partyList() {
 		LEFT JOIN users ON tmp_live_playing.user_id=users.user_id
 		LEFT JOIN user_deck ON tmp_live_playing.user_id=user_deck.user_id
 		WHERE play_count>0 AND tmp_live_playing.user_id!='.$uid.'
-		AND tmp_live_playing.user_id NOT IN ('.$friend_ids.')
+		AND tmp_live_playing.user_id NOT IN (0, '.$friend_ids.')
 		ORDER BY rand() LIMIT 3
 	')->fetchAll(PDO::FETCH_ASSOC);
 	$center_unit = [];
