@@ -11,3 +11,4 @@
 !upgrade_scripts
 !*.php
 !*.sql
+*.DS_Store

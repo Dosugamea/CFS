@@ -1,4 +1,6 @@
-<head>
+<!DOCTYPE html>
+<html>
+  <head>
 	<meta charset="utf-8">
 	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,67 +12,50 @@
 
 	<script src="/resources/things/perfect-scrollbar.min.js"></script>
 	<script src="/resources/things/button.js"></script>
-	<style type="text/css">
-		.main-text-head{text-align: center;}
-		.time{width:100%;text-align: right;}
-		.talk{
-			width: 90% !important;
-			margin: 4% !important;
-			border-radius: 40px;
-			z-index: 999;
-		}
-		#tawkchat-container{
-			z-index: 998;
-		}
-	</style>
 
-</head>
-<body>
-	<div id="outer">
-  <div id="inner">
-        <div id="body">
-        <div class="talk">
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/58ac0ffe57ed180aac24011b/default';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<style type="text/css">
-	#tawkchat-container{
-		display: block !important;
-		width: 90% !important;
-		margin: 4% !important;
-		border-radius: 40px;
+	<style>
+	body{
+		background-color: white
 	}
-</style>
-</div>
+	pre{
+		font-size:90px;
+		text-align: center;
+	}
+	</style>
+  </head>
+  <body>
+	  <pre><?php
+		//$assets='"Live_s0364.json","Live_s0391.json","Live_s0402.json","Live_s0526.json","Live_s0609.json"';//歌曲列表填在这里
+		if(!isset($assets)||empty($assets))
+			die();
+		$count=count(explode(',',$assets)); 
+		$infos=$mysql->query("SELECT user_id,hi_score from live_ranking WHERE notes_setting_asset IN ($assets) AND card_switch=0 AND random_switch=0")->fetchAll();
 
-	</div>
-  </div>
-</div>
+		$users=[];
+		foreach($infos as $info){
+			$id=(int)$info['user_id'];
+			$users[$id]['id']=$id;
 
-<script>
-  Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
-</script>
-</body>
-</body>
+			if(!isset($users[$id]['count']))
+			  $users[$id]['count']=0;
+		  $users[$id]['count']++;
 
+			if(!isset($users[$id]['score']))
+			  $users[$id]['score']=0;
+		  $users[$id]['score']+=(int)$info['hi_score'];
+		}
 
+		$scores=[];
+		foreach($users as $user)
+		  $scores[]=$user['score'];
+    array_multisort($scores,SORT_DESC,$users);
 
-
-
-
-
-
-
-
-
-
-
-
+		foreach($users as $p => $user){
+			if($user['count']!=$count)
+				continue;
+			$user_info=$mysql->query("SELECT name FROM users WHERE user_id=".$user['id'])->fetch(PDO::FETCH_ASSOC);
+			echo ($p+1)." - ".$user_info['name']." ".$user['score']."\n";
+		}
+		?></pre>
+  </body>
+</html>

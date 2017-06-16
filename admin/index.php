@@ -18,7 +18,7 @@
 		<tr>
 			<td>
 				<form action="user.php" method="post" name="form1">
-					<input type="text" name="pw" value="<? print($_POST['pw'])?>" style="display: none;">
+					<input type="text" name="pw" value="<?=$_POST['pw']?>" style="display: none;">
 					<a href="javascript:document.form1.submit();">
 						<div class="index-icon">用户详情</div>
 					</a>
@@ -26,7 +26,7 @@
 			</td>
 			<td>
 				<form action="card_en.php" method="post" name="form2">
-					<input type="text" name="pw" value="<? print($_POST['pw'])?>" style="display: none;">
+					<input type="text" name="pw" value="<?=$_POST['pw']?>" style="display: none;">
 					<a href="javascript:document.form2.submit();">
 						<div class="index-icon">用户管理</div>
 					</a>
