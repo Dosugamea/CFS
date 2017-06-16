@@ -1,0 +1,7 @@
+CREATE TABLE `award` (
+	`user_id` INT(11) NOT NULL,
+	`award_id` INT(11) NOT NULL,
+	`insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+ENGINE=InnoDB
+;
