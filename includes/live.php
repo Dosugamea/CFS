@@ -305,6 +305,12 @@ function calcScore($base, $map) {
       if ($next['effect'] == 3) {
         $score *= 1.25;
       }
+	  if (in_array($next['effect'], [11,12])) {
+        $score *= 0.5;
+      }
+	  if ($next['effect'] == 13) {
+        $score *= 0.625;
+      }
       return $sum + floor($score / 100);
     }, 0);
   }
