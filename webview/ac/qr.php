@@ -18,8 +18,12 @@
 		.info_rank{color: #000000;font-weight: 800;font-size: 30px;margin-right: 30px;}
 		.info_name{color: #000000;font-weight: 400;font-size:23px;}
 	.user_score{position: absolute;background-color: #FF679A;color: #ffffff;border-radius: 30px;height: 30px;width: 440px;margin-left: 350px;margin-top: 45px;font-family: 'microsoft yahei'}
-		.pt_title{font-size: 24px;font-weight: 500;margin-left: 10px;margin-right: 50px}
-		.pt_s{font-size: 25px;font-weight: 600}
+		.pt_title{font-size: 24px;font-weight: 500;margin-left: 10px;margin-right: 30px}
+		.pt_s{font-size: 25px;font-weight: 600;display:inline-block;width:125px}
+		.pt_r{font-size: 24px;font-weight: 500;display:inline-block;width:40px;margin-right:15px;}
+		.pt_p{font-size: 24px;font-weight: 500;display:inline-block;}
+		img{width:95%;height:auto;}
+		.avatar{width:95%;height:auto;}
 	</style>
 	<?php 
 		
@@ -31,12 +35,21 @@
 		//$assets='"Live_s0743.json","custom_chrono_diver_ex","Live_s0732.json","Live_s0526.json","Live_s0609.json"';//歌曲列表填在这里
 		//告白日和-MA Chrono-MA ? ? ?
 
+		require("includes/live.php");
 		if(!isset($assets)||empty($assets))
 			die();
-		$count=count(explode(',',$assets)); 
+		$assets_list=explode(',',$assets);
+		$count=count($assets_list); 
+		$score_max=0;
+		foreach($assets_list as $asset){
+			$notes=$mysql->query("SELECT notes_list FROM notes_setting WHERE notes_setting_asset=$asset")->fetch(PDO::FETCH_ASSOC)['notes_list'];
+			//print_r($notes);
+			$score_max+=calcScore(60500,json_decode($notes,true));
+			echo $score_max;
+		}
 
 		//获取有参与的用户并初始化用户资料
-		$infos=$mysql->query("SELECT user_id,hi_score from live_ranking WHERE notes_setting_asset IN ($assets) AND card_switch=0 AND random_switch=0")->fetchAll();
+		$infos=$mysql->query("SELECT user_id,hi_score,mx_perfect_cnt from live_ranking WHERE notes_setting_asset IN ($assets) AND card_switch=0 AND random_switch=0")->fetchAll();
 		$users=[];
 		foreach($infos as $info){
 			$id=(int)$info['user_id'];
@@ -49,6 +62,10 @@
 			if(!isset($users[$id]['score']))
 			  $users[$id]['score']=0;
 		  $users[$id]['score']+=(int)$info['hi_score'];
+
+			if(!isset($users[$id]['perfect']))
+			  $users[$id]['perfect']=0;
+		  $users[$id]['perfect']+=(int)$info['mx_perfect_cnt'];
 		}
 
 		//以分数进行排序
@@ -83,13 +100,15 @@
 			$name=$user_info['name'];
 			$level=$user_info['level'];
 			$score=$user['score'];
+			$rate=number_format($score/$score_max*100, 1, '.', '')."%";
+			$perfect=$user['perfect']>0?$user['perfect'].'P':'';
 			echo 
 	"<div class='user_frame'>
-	  <div class='user_icon_bg'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/b_$user_avatar_bg.png' width='100%' height='auto'></div>
-		<div class='user_icon_f'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/f_$user_avatar_f.png' width='100%' height='auto'></div>
-		<div class='user_icon'><img src='https://card.lovelivesupport.com/asset/$user_avatar' width='100%' height='auto'></div>
+	  <div class='user_icon_bg'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/b_$user_avatar_bg.png' class='avatar'></div>
+		<div class='user_icon'><img src='https://card.lovelivesupport.com/asset/$user_avatar' class='avatar'></div>
+		<div class='user_icon_f'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/f_$user_avatar_f.png' class='avatar'></div>
 		<div class='user_rank'>第 $position 位</div>
-		<div class='user_award'><img src='https://card.lovelivesupport.com/asset/assets/image/award/award_$award.png' width='100%' height='auto'></div>
+		<div class='user_award'><img src='https://card.lovelivesupport.com/asset/assets/image/award/award_$award.png'></div>
 		<div class='user_info'>
 			<span class='info_rk'>Rank.</span>
 			<span class='info_rank'>$level</span>
@@ -98,6 +117,8 @@
 		<div class='user_score'>
 			<span class='pt_title'>SCORE</span>
 			<span class='pt_s'>$score</span>
+			<span class='pt_r'>$rate</span>
+			<span class='pt_p'>$perfect</span>
 		</div>
 	</div>";
 		}
