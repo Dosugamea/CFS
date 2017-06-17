@@ -672,14 +672,19 @@ function live_reward($post) {
 		}
 		//如果以前插入过最高分，更新成绩数据
 		if (!$unranked) {
+			foreach(['perfect_cnt', 'great_cnt', 'good_cnt', 'bad_cnt', 'miss_cnt', 'max_combo'] as $idx) $post[$idx] = (int)$post[$idx];
 			if (!empty($hiscore)) {
 				$clear_cnt = $hiscore['clear_cnt'] + 1;
 				$hi_combo_count = max($post['max_combo'], $hiscore['hi_combo_count']);
-				$mysql->exec("UPDATE live_ranking SET clear_cnt=$clear_cnt, hi_combo_count=$hi_combo_count, hi_score={$ret['hi_score']} WHERE card_switch={$params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
+				$mysql->exec("UPDATE live_ranking SET clear_cnt=$clear_cnt, hi_combo_count=$hi_combo_count, hi_score={$ret['hi_score']},  ".
+				             "mx_perfect_cnt = {$post['perfect_cnt']}, mx_great_cnt = {$post['great_cnt']}, mx_good_cnt = {$post['good_cnt']}, ".
+				             "mx_bad_cnt = {$post['bad_cnt']}, mx_miss_cnt = {$post['miss_cnt']}, mx_max_combo = {$post['max_combo']}".
+				             "WHERE card_switch={$params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
 			} else { //否则插入一条新的
 				$hi_combo_count = $post['max_combo'];
 				if ($ret['hi_score'] != 0) {
-					$mysql->exec("INSERT INTO live_ranking VALUES ($uid, '{$map_info['notes_setting_asset']}', {$params['card_switch']},$random, {$ret['hi_score']}, $hi_combo_count, 1)");
+					$mysql->exec("INSERT INTO live_ranking VALUES ($uid, '{$map_info['notes_setting_asset']}', {$params['card_switch']},$random, {$ret['hi_score']}, $hi_combo_count, 1,".
+					             "{$post['perfect_cnt']}, {$post['great_cnt']}, {$post['good_cnt']}, {$post['bad_cnt']}, {$post['miss_cnt']}, {$post['max_combo']} )");
 				}
 				$clear_cnt = 1;
 			}
