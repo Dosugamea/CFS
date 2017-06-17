@@ -601,6 +601,7 @@ function secretBox_multi($post) {
 			$ret['secret_box_info']['is_pay_multi_cost'] = $box['box']['is_pay_multi_cost'];
 		}
 	}
+	$ret['unit_support_list'] = runAction('unit','supporterAll')['unit_support_list'];
 	if (!$params['card_switch']) {
 		//关卡的可以随便抽……但是不保存……
 		rollback();
