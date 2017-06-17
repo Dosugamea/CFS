@@ -18,7 +18,12 @@ $unit = getUnitDb();
 
 //$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
 $token = isset($_GET['token']) ? $_GET['token'] : $_POST['token'];
-$username = $mysql->query('select username, password from tmp_authorize where token=?', [isset($_GET['username']) ? $_GET['username'] : $_POST['username']])->fetch();
+$username = isset($_GET['username']) ? $_GET['username'] : $_POST['username'];
+$tmp_authorize = $mysql->query('select username, password from tmp_authorize where token=? and username=?', [$token, $username])->fetch();
+if (!$tmp_authorize) {
+	echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
+	die();
+}
 
 require '../../config/maintenance.php';
 
@@ -51,7 +56,7 @@ if(isset($_POST['submit'])) {
 			$mysql->prepare('
 				INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`, `download_site`)
 				VALUES (?, ?, ?, ?, ?, "", ?)
-			')->execute([$_POST['id'], $username['username'], $username['password'], $password, $_POST['name'], $_POST['site']]);
+			')->execute([$_POST['id'], $tmp_authorize['username'], $tmp_authorize['password'], $password, $_POST['name'], $_POST['site']]);
 			$param = $mysql->prepare('INSERT INTO user_params VALUES('.$_POST['id'].', ?, ?)');
 			$param->execute(['enable_card_switch', $disable_card_by_default ? 0 : 1]);
 			$param->execute(['card_switch', $disable_card_by_default ? 0 : 1]);
@@ -204,7 +209,7 @@ function verify3() {
       <input type="text" name="token" value="<?=$token?>"/>
     </div>
     <div class="table-input">
-     <input type="text" name="username" value="<?=$username?>" />
+     <input type="text" name="username" value="<?=$tmp_authorize['username']?>" />
     </div>
     <span class="tittle">用户ID：</span>
     <div class="table-input">
