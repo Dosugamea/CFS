@@ -181,15 +181,21 @@ CREATE TABLE IF NOT EXISTS `live_goal` (
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.live_ranking 结构
-CREATE TABLE IF NOT EXISTS `live_ranking` (
-  `user_id` int(11) NOT NULL,
-  `notes_setting_asset` varchar(255) NOT NULL,
-  `card_switch` tinyint(1) NOT NULL DEFAULT '0',
-  `random_switch` tinyint(2) NOT NULL DEFAULT '0',
-  `hi_score` int(11) NOT NULL,
-  `hi_combo_count` int(11) NOT NULL,
-  `clear_cnt` int(11) NOT NULL,
-  UNIQUE KEY `user_id` (`user_id`,`notes_setting_asset`,`card_switch`,`random_switch`)
+CREATE TABLE `live_ranking` (
+	`user_id` INT(11) NOT NULL,
+	`notes_setting_asset` VARCHAR(255) NOT NULL,
+	`card_switch` TINYINT(1) NOT NULL DEFAULT '0',
+	`random_switch` TINYINT(2) NOT NULL DEFAULT '0',
+	`hi_score` INT(11) NOT NULL,
+	`hi_combo_count` INT(11) NOT NULL,
+	`clear_cnt` INT(11) NOT NULL,
+	`mx_perfect_cnt` INT(11) NOT NULL DEFAULT '0',
+	`mx_great_cnt` INT(11) NOT NULL DEFAULT '0',
+	`mx_good_cnt` INT(11) NOT NULL DEFAULT '0',
+	`mx_bad_cnt` INT(11) NOT NULL DEFAULT '0',
+	`mt_miss_cnt` INT(11) NOT NULL DEFAULT '0',
+	`mx_max_combo` INT(11) NOT NULL DEFAULT '0',
+	UNIQUE INDEX `user_id` (`user_id`, `notes_setting_asset`, `card_switch`, `random_switch`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
