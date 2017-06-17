@@ -7,20 +7,20 @@
 	<meta name="viewport" content="width=880px, target-densitydpi=device-dpi, user-scalable=no">
 	<style>
 	body{min-width: 870px;width: 870px;background-color: #ffffff;border:4px solid #FF679A;border-radius: 15px;position: absolute;top: 0px;left: 0px;margin: 0;}
-	.user_frame{width: 800px;height: 80px; margin: 0 auto;margin-top:30px;margin-bottom:10px;background-color: #ffffff;border:3px solid #FF679A;border-radius: 20px;box-shadow: 4px 4px 4px #cccccc;}
+	.user_frame{width: 810px;height: 80px; margin-right:auto;margin-left:37px;margin-top:30px;margin-bottom:10px;background-color: #ffffff;border:3px solid #FF679A;border-radius: 20px;box-shadow: 4px 4px 4px #cccccc;}
 	.user_icon{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
 	.user_icon_bg{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
 	.user_icon_f{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
-	.user_rank{position:absolute;color: #FF679A;font-size: 25px;font-weight: 800;text-align: center;    width: 100px;height: 40px;font-family: 'microsoft yahei';margin-top: 20px;margin-left: 120px; }
+	.user_rank{position:absolute;color: #FF679A;font-size: 25px;font-weight: 800;text-align: center;    width: 100px;height: 40px;font-family: sans-serif;margin-top: 20px;margin-left: 120px; }
 	.user_award{position: absolute;width: 100px;height: 70px;margin-left: 230px;margin-top: 3px;}
-	.user_info{position: absolute;font-family: 'microsoft yahei';margin-left: 380px;margin-top: 3px;}
+	.user_info{position: absolute;font-family: sans-serif;margin-left: 380px;margin-top: 3px;}
 		.info_rk{color: #FF679A;font-weight: 500;font-size:25px; margin-right: 10px;}
 		.info_rank{color: #000000;font-weight: 800;font-size: 30px;margin-right: 30px;}
 		.info_name{color: #000000;font-weight: 400;font-size:23px;}
-	.user_score{position: absolute;background-color: #FF679A;color: #ffffff;border-radius: 30px;height: 30px;width: 440px;margin-left: 350px;margin-top: 45px;font-family: 'microsoft yahei'}
+	.user_score{position: absolute;background-color: #FF679A;color: #ffffff;border-radius: 30px;height: 30px;width: 440px;margin-left: 350px;margin-top: 45px;font-family: sans-serif}
 		.pt_title{font-size: 24px;font-weight: 500;margin-left: 10px;margin-right: 30px}
-		.pt_s{font-size: 25px;font-weight: 600;display:inline-block;width:125px}
-		.pt_r{font-size: 24px;font-weight: 500;display:inline-block;width:40px;margin-right:15px;}
+		.pt_s{font-size: 25px;font-weight: 600;display:inline-block;width:120px}
+		.pt_r{font-size: 24px;font-weight: 500;display:inline-block;width:90px;}
 		.pt_p{font-size: 24px;font-weight: 500;display:inline-block;}
 		img{width:95%;height:auto;}
 		.avatar{width:95%;height:auto;}
@@ -45,7 +45,7 @@
 			$notes=$mysql->query("SELECT notes_list FROM notes_setting WHERE notes_setting_asset=$asset")->fetch(PDO::FETCH_ASSOC)['notes_list'];
 			//print_r($notes);
 			$score_max+=calcScore(60500,json_decode($notes,true));
-			echo $score_max;
+			//echo $score_max;
 		}
 
 		//获取有参与的用户并初始化用户资料
@@ -100,7 +100,7 @@
 			$name=$user_info['name'];
 			$level=$user_info['level'];
 			$score=$user['score'];
-			$rate=number_format($score/$score_max*100, 1, '.', '')."%";
+			$rate=number_format($score/$score_max*100, 2, '.', '')."%";
 			$perfect=$user['perfect']>0?$user['perfect'].'P':'';
 			echo 
 	"<div class='user_frame'>
