@@ -9,6 +9,8 @@
 	body{min-width: 870px;width: 870px;background-color: #ffffff;border:4px solid #FF679A;border-radius: 15px;position: absolute;top: 0px;left: 0px;margin: 0;}
 	.user_frame{width: 800px;height: 80px; margin: 0 auto;margin-top:30px;margin-bottom:10px;background-color: #ffffff;border:3px solid #FF679A;border-radius: 20px;box-shadow: 4px 4px 4px #cccccc;}
 	.user_icon{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
+	.user_icon_bg{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
+	.user_icon_f{position: absolute;width: 120px;height: 120px;margin-top: -18px;margin-left: -30px;}
 	.user_rank{position:absolute;color: #FF679A;font-size: 25px;font-weight: 800;text-align: center;    width: 100px;height: 40px;font-family: 'microsoft yahei';margin-top: 20px;margin-left: 120px; }
 	.user_award{position: absolute;width: 100px;height: 70px;margin-left: 230px;margin-top: 3px;}
 	.user_info{position: absolute;font-family: 'microsoft yahei';margin-left: 380px;margin-top: 3px;}
@@ -18,39 +20,23 @@
 	.user_score{position: absolute;background-color: #FF679A;color: #ffffff;border-radius: 30px;height: 30px;width: 440px;margin-left: 350px;margin-top: 45px;font-family: 'microsoft yahei'}
 		.pt_title{font-size: 24px;font-weight: 500;margin-left: 10px;margin-right: 50px}
 		.pt_s{font-size: 25px;font-weight: 600}
-	pre{
-		font-size:30px;
-		text-align: center;
-	}
 	</style>
 	<?php 
-		$assets_base_url ='https://card.lovelivesupport.com';
+		
 	?>
 </head>
 <body>
-	<div class="user_frame">
-		<div class="user_icon"><img src="<?=$assets_base_url?>/asset/assets/image/units/u_rankup_icon_41105001.png" width="100%" height="anto"></div>
-		<div class="user_rank">第 1 位</div>
-		<div class="user_award"><img src="<?=$assets_base_url?>/asset/assets/image/award/award_42.png" width="100%" height="anto"></div>
-		<div class="user_info">
-			<span class="info_rk">Rank.</span>
-			<span class="info_rank">89</span>
-			<span class="info_name">NOAHLUALU</span>
-		</div>
-		<div class="user_score">
-			<span class="pt_title">SCORE</span>
-			<span class="pt_s">691191</span>
-		</div>
-	</div>
-	
+	  <?php
+		$assets='"Live_s0732.json"';
+		//$assets='"Live_s0743.json","custom_chrono_diver_ex","Live_s0732.json","Live_s0526.json","Live_s0609.json"';//歌曲列表填在这里
+		//告白日和-MA Chrono-MA ? ? ?
 
-	  <!--<?php
-		$assets='"Live_s0364.json","Live_s0391.json","Live_s0402.json","Live_s0526.json","Live_s0609.json"';//歌曲列表填在这里
 		if(!isset($assets)||empty($assets))
 			die();
 		$count=count(explode(',',$assets)); 
-		$infos=$mysql->query("SELECT user_id,hi_score from live_ranking WHERE notes_setting_asset IN ($assets) AND card_switch=0 AND random_switch=0")->fetchAll();
 
+		//获取有参与的用户并初始化用户资料
+		$infos=$mysql->query("SELECT user_id,hi_score from live_ranking WHERE notes_setting_asset IN ($assets) AND card_switch=0 AND random_switch=0")->fetchAll();
 		$users=[];
 		foreach($infos as $info){
 			$id=(int)$info['user_id'];
@@ -65,17 +51,56 @@
 		  $users[$id]['score']+=(int)$info['hi_score'];
 		}
 
+		//以分数进行排序
 		$scores=[];
 		foreach($users as $user)
 		  $scores[]=$user['score'];
     array_multisort($scores,SORT_DESC,$users);
 
+		//输出
 		foreach($users as $p => $user){
 			if($user['count']!=$count)
 				continue;
-			$user_info=$mysql->query("SELECT name FROM users WHERE user_id=".$user['id'])->fetch(PDO::FETCH_ASSOC);
-			echo ($p+1)." - ".$user_info['name']." ".$user['score']."\n";
+			$id=$user['id'];
+			$user_info=$mysql->query("SELECT name,level,award FROM users WHERE user_id=$id")->fetch(PDO::FETCH_ASSOC);
+
+			$user_avatar=(int)$mysql->query("SELECT value FROM user_params WHERE param='extend_avatar' AND user_id=$id")->fetch(PDO::FETCH_ASSOC)['value'];
+			if($user_avatar==0)
+				$user_avatar=49;
+			$user_avatar_rankup=(int)$mysql->query("SELECT value FROM user_params WHERE param='extend_avatar_is_rankup' AND user_id=$id")->fetch(PDO::FETCH_ASSOC)['value'];
+			$unit=getUnitDb();
+			$card_info=$unit->query("SELECT normal_icon_asset,rank_max_icon_asset,rarity,attribute_id FROM unit_m WHERE unit_id=$user_avatar")->fetch(PDO::FETCH_ASSOC);
+			$user_avatar=$card_info[$user_avatar_rankup==0?'normal_icon_asset':'rank_max_icon_asset'];
+			$rarity=['','N','R','SR','UR','SSR'];
+			$attribute=[1=>'smile',2=>'pure',3=>'cool',9=>'all'];
+			$user_avatar_bg=$attribute[(int)$card_info['attribute_id']]."_".$rarity[(int)$card_info['rarity']]."_00".($user_avatar_rankup+1);
+			$user_avatar_f=$rarity[(int)$card_info['rarity']]."_".$card_info['attribute_id'];
+			
+			$award=(int)$user_info['award'];
+			$award=($award>=100||(42<=$award&&$award<=46))?$award:($award<10?"00".$award:"0".$award);
+
+			$position=$p+1;
+			$name=$user_info['name'];
+			$level=$user_info['level'];
+			$score=$user['score'];
+			echo 
+	"<div class='user_frame'>
+	  <div class='user_icon_bg'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/b_$user_avatar_bg.png' width='100%' height='auto'></div>
+		<div class='user_icon_f'><img src='https://card.lovelivesupport.com/asset/assets/image/cards/icon/f_$user_avatar_f.png' width='100%' height='auto'></div>
+		<div class='user_icon'><img src='https://card.lovelivesupport.com/asset/$user_avatar' width='100%' height='auto'></div>
+		<div class='user_rank'>第 $position 位</div>
+		<div class='user_award'><img src='https://card.lovelivesupport.com/asset/assets/image/award/award_$award.png' width='100%' height='auto'></div>
+		<div class='user_info'>
+			<span class='info_rk'>Rank.</span>
+			<span class='info_rank'>$level</span>
+			<span class='info_name'>$name</span>
+		</div>
+		<div class='user_score'>
+			<span class='pt_title'>SCORE</span>
+			<span class='pt_s'>$score</span>
+		</div>
+	</div>";
 		}
-		?></pre>-->
+		?></pre>
 </body>
 </html>
