@@ -678,7 +678,7 @@ function live_reward($post) {
 				$hi_combo_count = max($post['max_combo'], $hiscore['hi_combo_count']);
 				$mysql->exec("UPDATE live_ranking SET clear_cnt=$clear_cnt, hi_combo_count=$hi_combo_count, hi_score={$ret['hi_score']},  ".
 				             "mx_perfect_cnt = {$post['perfect_cnt']}, mx_great_cnt = {$post['great_cnt']}, mx_good_cnt = {$post['good_cnt']}, ".
-				             "mx_bad_cnt = {$post['bad_cnt']}, mx_miss_cnt = {$post['miss_cnt']}, mx_max_combo = {$post['max_combo']}".
+				             "mx_bad_cnt = {$post['bad_cnt']}, mx_miss_cnt = {$post['miss_cnt']}, mx_max_combo = {$post['max_combo']} ".
 				             "WHERE card_switch={$params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
 			} else { //否则插入一条新的
 				$hi_combo_count = $post['max_combo'];
