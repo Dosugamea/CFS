@@ -672,6 +672,7 @@ function live_reward($post) {
 		}
 		//如果以前插入过最高分，更新成绩数据
 		if (!$unranked) {
+			foreach(['perfect_cnt', 'great_cnt', 'good_cnt', 'bad_cnt', 'miss_cnt', 'max_combo'] as $idx) $post[$idx] = (int)$post[$idx];
 			if (!empty($hiscore)) {
 				$clear_cnt = $hiscore['clear_cnt'] + 1;
 				$hi_combo_count = max($post['max_combo'], $hiscore['hi_combo_count']);
