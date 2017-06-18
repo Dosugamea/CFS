@@ -6,6 +6,10 @@ Try out our public server at `prod.customfe.su`
 
 Client version under 5.0.2 as well as other regions' client is NO LONGER supported.
 
+# Aggrement
+
+The project is developed by the enthusiasts of personal behavior, does not contain any commercial use, the code is closed source code, must comply with the code confidentiality agreement. If the user uses any of the items in the other project and leaks the source code, we will close your access and request to stop using it.
+
 # Requirements
 
 * PHP 7.0 stable
