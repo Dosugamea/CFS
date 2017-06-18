@@ -1,10 +1,11 @@
 # Custom Festival Server
 
-Try out our public server at `prod.customfe.su`
+	
+attempt our public server at `prod.customfe.su`
 
 **REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (No we will never provide or tell how to make one).
 
-Client version under 5.0.2 as well as other regions' client is NO LONGER supported.
+We only supported the JP client which above the 5.0.2
 
 # Aggrement
 
