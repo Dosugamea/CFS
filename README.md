@@ -1,6 +1,6 @@
 # Custom Festival Server
 
-Try out our public server at `www.plserver.xyz`
+Try out our public server at `prod.customfe.su`
 
 **REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (No we will never provide or tell how to make one).
 
@@ -22,6 +22,7 @@ Client version under 5.0.2 as well as other regions' client is NO LONGER support
 3. Import `install.sql` (which frequently breaks on schema changes. If error occurs report issue immediately)
 4. Import `data.sql`, which contains song data and download data.
 5. Put **DECRYPTED** dbs from game data into the path spicified in `config/database.php`.
+6. Enable the PHP pathinfo() and test the database conetion.
 6. Done!
 
 
