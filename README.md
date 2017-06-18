@@ -9,9 +9,11 @@ Client version under 5.0.2 as well as other regions' client is NO LONGER support
 # Requirements
 
 * PHP 7.0 stable
-* MySQL 5.6 or higher
-* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module
-* php5-mcrypt
+* Maria DB 10.6 or higher / Mysql 5.7 or higher , both must including with InnoDB and MyISAM
+* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module , exec , system
+* php7-mcrypt
+* Node.js up to 7
+* Python
 
 # Installation
 
