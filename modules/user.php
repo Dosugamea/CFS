@@ -11,8 +11,8 @@ function user_userInfo() {
 		'invite_code' => (string)$uid,
 		'name' => $user['name'],
 		'introduction' => $user['introduction'],
-		'level' => $user['level'],
-		'exp' => $user['exp'],
+		'level' => (int)$user['level'],
+		'exp' => (int)$user['exp'],
 		'previous_exp' => $exp[$user['level'] - 1],
 		'next_exp' => $exp[$user['level']],
 		'game_coin' => $params['item3'],
@@ -58,6 +58,12 @@ function user_showAllItem() {
 				"item_category_id": 5,
 				"item_sub_category_id": 1,
 				"amount": '.$params['item5'].',
+				"insert_date": "2014-01-01 00:00:00"
+		}, {
+				"item_id": 8,
+				"item_category_id": 8,
+				"item_sub_category_id": 1,
+				"amount": '.$params['item8'].',
 				"insert_date": "2014-01-01 00:00:00"
 		}]
 }', true);

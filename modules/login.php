@@ -194,12 +194,12 @@ function login_unitSelect($post) {
 function login_topInfo() {
 	global $uid, $mysql, $params;
 	$present_count = $mysql->query('SELECT count(*) FROM incentive_list WHERE user_id='.$uid.' and opened_date=0')->fetchColumn();
-	$free_gacha = $mysql->query('select to_days(CURRENT_TIMESTAMP)-to_days(last_scout_time) free_gacha, got_free_gacha_list from secretbox where user_id=?', [$uid])->fetch();
-	$free_gacha = ($params['card_switch'] && ($free_gacha['free_gacha'] > 0 || $free_gacha['got_free_gacha_list'] == ''));
+	/*$free_gacha = $mysql->query('select to_days(CURRENT_TIMESTAMP)-to_days(last_scout_time) free_gacha, got_free_gacha_list from secretbox where user_id=?', [$uid])->fetch();
+	$free_gacha = ($params['card_switch'] && ($free_gacha['free_gacha'] > 0 || $free_gacha['got_free_gacha_list'] == ''));*/
 	$mail_cnt = count($mysql->query("SELECT * FROM mail WHERE `read` = 0 AND `to_id` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	$friend_cnt = count($mysql->query("SELECT * FROM friend WHERE `read` = 0 AND `applicated` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	$ret = [];
-	$ret['free_gacha_flag'] = $free_gacha ? true : false;
+	$ret['free_gacha_flag'] = true;
 	$ret['next_free_gacha_timestamp'] = strtotime(date('Y-m-d',strtotime('+1 day')));
 	$ret['friend_action_cnt'] = $mail_cnt;
 	$ret['friend_greet_cnt'] = $mail_cnt;
