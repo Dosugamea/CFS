@@ -31,9 +31,9 @@
 </head>
 <body>
 	  <?php
-		$assets='"Live_s0732.json"';
-		//$assets='"Live_s0743.json","custom_chrono_diver_ex","Live_s0732.json","Live_s0526.json","Live_s0609.json"';//歌曲列表填在这里
-		//告白日和-MA Chrono-MA ? ? ?
+		//$assets='"Live_s0732.json"';
+		$assets='"Live_s0743.json","custom_chrono_diver_ex","Live_s0588.json","Live_s0563.json","Live_s0725.json"';//歌曲列表填在这里
+		//告白日和-MA Chrono-MA 爱上你万岁-MA Snow Halation-MA 人鱼2-MA
 
 		require("includes/live.php");
 		if(!isset($assets)||empty($assets))
