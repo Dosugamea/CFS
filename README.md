@@ -1,17 +1,24 @@
 # Custom Festival Server
 
-Try out our public server at `www.plserver.xyz`
+	
+attempt our public server at `prod.customfe.su`
 
 **REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (No we will never provide or tell how to make one).
 
-Client version under 5.0.2 as well as other regions' client is NO LONGER supported.
+We only supported the JP client which above the 5.0.2
+
+# Aggrement
+
+The project is developed by the enthusiasts of personal behavior, does not contain any commercial use, the code is closed source code, must comply with the code confidentiality agreement. If the user uses any of the items in the other project and leaks the source code, we will close your access and request to stop using it.
 
 # Requirements
 
 * PHP 7.0 stable
-* MySQL 5.6 or higher
-* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module
-* php5-mcrypt
+* Maria DB 10.6 or higher / Mysql 5.7 or higher , both must including with InnoDB and MyISAM
+* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module , exec , system
+* php7-mcrypt
+* Node.js up to 7
+* Python
 
 # Installation
 
@@ -20,6 +27,7 @@ Client version under 5.0.2 as well as other regions' client is NO LONGER support
 3. Import `install.sql` (which frequently breaks on schema changes. If error occurs report issue immediately)
 4. Import `data.sql`, which contains song data and download data.
 5. Put **DECRYPTED** dbs from game data into the path spicified in `config/database.php`.
+6. Enable the PHP pathinfo() and test the database conetion.
 6. Done!
 
 
