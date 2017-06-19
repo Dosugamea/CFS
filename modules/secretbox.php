@@ -357,14 +357,14 @@ function secretbox_pon($post) {
 		$cost_detail['multi_type'] = (int)$i['multi_type'];
 		switch($cost_detail['multi_type']){
 			case 0: //只允许单抽
-				$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount'], 1);
+				$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], 2 * $cost_detail['amount'], 1);
 				$cost_detail['within_single_limit'] = 1;
 				break;
 			case 1: //允许单抽和十一连
 				$cost_detail['multi_amount'] = 10 * $cost_detail['amount'];
 				$cost_detail['multi_count'] = (int)$secret_box_info['multi_additional'] ? 11 : 10;
 				$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount']);
-				$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['multi_amount']);
+				$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], 2 * $cost_detail['multi_amount']);
 				$cost_detail['within_single_limit'] = 1;
 				$cost_detail['within_multi_limit'] = 1;
 				break;
@@ -372,7 +372,7 @@ function secretbox_pon($post) {
 				$cost_detail['multi_amount'] = $cost_detail['amount'];
 				$cost_detail['multi_count'] = (int)$secret_box_info['multi_additional'] ? 11 : 10;
 				$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount']);
-				$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['multi_amount']);
+				$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], 2 * $cost_detail['multi_amount']);
 				$cost_detail['within_single_limit'] = 1;
 				$cost_detail['within_multi_limit'] = 1;
 				break;
@@ -484,6 +484,7 @@ function secretbox_pon($post) {
 		$params['item'.$gauge_reward_info['item_id']] += (int)$gauge_reward_info['amount'];
 		$gauge_info['gauge_point'] -= 100;
 	}
+	$mysql->query("UPDATE secretbox SET gauge = ? WHERE user_id = ?", [$gauge_info['gauge_point'], $uid]);
 	$ret['gauge_info'] = $gauge_info;
 	
 	/*处理礼物箱相关信息*/
@@ -504,20 +505,50 @@ function secretbox_pon($post) {
 	$got_units = [];
 	$unit_count = $post['action'] == "multi" ? ((int)$secret_box_info['multi_additional'] ? 11 : 10) : 1;
 	for($j = 0; $j < $unit_count; $j++){
-		//获取卡池中的社员以及权重
-		$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
-		$random_pick = function ($array) {
-			$pick = mt_rand(1, array_sum($array));
-			foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
-		};
-		$unit_group = [];
-		foreach($unit_group_ as $i){
-			$unit_group[$i['unit_group_id']] = (int)$i['weight'];
+		if($post['action'] == "multi" && $j == $unit_count - 1){//查看是否需要保底
+			$fix_rarity = $secretboxdb->query("SELECT * FROM secret_box_fix_rarity_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetch(PDO::FETCH_ASSOC);
+			if(!empty($fix_rarity) && strtotime($fix_rarity['start_date']) < time() && strtotime($fix_rarity['end_date']) > time()){
+				$fix_count = 0;
+				foreach($got_units as $k){//查找低于保底下限的卡数目
+					if($k['unit_rarity_id'] < (int)$fix_rarity['unit_group_id']){
+						$fix_count++;
+					}
+				}
+				if($fix_count == $unit_count - 1){
+					$rarity = (int)$fix_rarity['unit_group_id'];
+				}
+			}else{ //超过保底期限
+				//获取卡池中的社员以及权重
+				$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+				$random_pick = function ($array) {
+					$pick = mt_rand(1, array_sum($array));
+					foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
+				};
+				$unit_group = [];
+				foreach($unit_group_ as $i){
+					$unit_group[$i['unit_group_id']] = (int)$i['weight'];
+				}
+				if(empty($unit_group))
+					trigger_error("未配置稀有度对应权重！");
+				//抽一张看看稀有度
+				$rarity = (int)$random_pick($unit_group);
+			}
+		}else{
+			//获取卡池中的社员以及权重
+			$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+			$random_pick = function ($array) {
+				$pick = mt_rand(1, array_sum($array));
+				foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
+			};
+			$unit_group = [];
+			foreach($unit_group_ as $i){
+				$unit_group[$i['unit_group_id']] = (int)$i['weight'];
+			}
+			if(empty($unit_group))
+				trigger_error("未配置稀有度对应权重！");
+			//抽一张看看稀有度
+			$rarity = (int)$random_pick($unit_group);
 		}
-		if(empty($unit_group))
-			trigger_error("未配置稀有度对应权重！");
-		//抽一张看看稀有度
-		$rarity = (int)$random_pick($unit_group);
 		//取该稀有度的所有卡
 		$unit_all_ = $secretboxdb->query("SELECT unit_id, weight FROM secret_box_unit_m WHERE secret_box_id = ".$secret_box_info['secret_box_id']." AND unit_group_id = ".$rarity)->fetchAll(PDO::FETCH_ASSOC);
 		$unit_all = [];
