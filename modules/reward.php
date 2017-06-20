@@ -134,7 +134,8 @@ function reward_open($post) {
 				default:
 					trigger_error("未定义该物品的追加方式！");
 			}
-			//$res['incentive_id'] = $res['item_id'];
+			$res['incentive_item_id'] = $res['item_id'];
+			unset($res['item_id']);
 			$res['item_category_id'] = 0;
 			$res['reward_box_flag'] = false;
 			unset($res['is_card']);
@@ -167,7 +168,7 @@ function reward_open($post) {
 function reward_openAll($post) {
 	global $uid, $mysql, $params;
 	$filter = getfilter($post['category'], $post['filter']);
-	$res = $mysql->query('SELECT incentive_id,incentive_item_id,is_card,amount FROM incentive_list WHERE user_id='.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
+	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE user_id='.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['reward_num'] = count($res);
 	$ret['opened_num'] = 0;
 	$ret['total_num'] = $ret['reward_num'];
@@ -177,7 +178,7 @@ function reward_openAll($post) {
 	$ret['bushimo_reward_info'] = [];
 	$ret['unit_support_list'] = [];
 	$correct_add_type = [1000, 3002, 3000, 3001, 1000];
-	foreach($res as $r) {
+	foreach($res as &$r) {
 		foreach($r as &$rr){
 			if(is_numeric($rr)){
 				$rr = (int)$rr;
@@ -189,13 +190,13 @@ function reward_openAll($post) {
 				$r['item_category_id'] = $r['incentive_item_id'];
 				switch($r['incentive_item_id']){
 					case 2:
-						$r['add_type'] = 3002;
+						$r['add_type'] = 3002;break;
 					case 3:
-						$r['add_type'] = 3000;
+						$r['add_type'] = 3000;break;
 					case 4:
-						$r['add_type'] = 3001;
+						$r['add_type'] = 3001;break;
 					default:
-						$r['add_type'] = 1000;
+						$r['add_type'] = 1000;break;
 				}
 			}else{
 				$r['add_type'] = $r['incentive_item_id'];
@@ -225,7 +226,8 @@ function reward_openAll($post) {
 					default:
 						trigger_error("未定义该物品的追加方式！");
 				}
-				//$r['incentive_id'] = $r['item_id'];
+				$r['incentive_item_id'] = $r['item_id'];
+				unset($r['item_id']);
 				$r['item_category_id'] = 0;
 				$r['reward_box_flag'] = false;
 				unset($r['is_card']);
