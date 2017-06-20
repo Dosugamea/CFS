@@ -2,7 +2,7 @@
 //reward.php 礼物
 require_once 'includes/unit.php';
 //处理客户端发送的category和filter
-function getfilter($category, $filter) {
+function getfilter($category, $filter, $order) {
 	$ret = '';
 	switch($category) {
 	case 1: $ret = ' and is_card=1';break;
@@ -19,6 +19,8 @@ function getfilter($category, $filter) {
 		$unit_id_list = $unit->query('SELECT unit_id FROM unit_m WHERE rarity='.$filter)->fetchAll(PDO::FETCH_COLUMN, 0);
 		$ret .= ' and incentive_item_id in ('.implode(', ', $unit_id_list).')';
 	}
+	if($order)
+		$ret .= " ORDER BY incentive_id DESC";
 	return $ret;
 }
 
@@ -32,11 +34,11 @@ function getRewardList($post, $history) {
 		$unset = 'opened_date';
 	}
 	global $uid, $mysql;
-	$filter = getfilter($post['category'], $post['filter']);
-	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter.' ORDER BY incentive_id DESC')->fetchAll();
+	$filter = getfilter($post['category'], $post['filter'], $post['order']);
+	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter)->fetchAll();
 	$ret['item_count'] = count($res);
 	$ret[$array_name] = [];
-	$correct_add_type = [1000, 3002, 3000, 3001, 1000];
+	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
 	foreach ($res as $r) {
 		foreach ($r as &$v) {
 			if (is_numeric($v)) $v = (int)$v;
@@ -44,11 +46,11 @@ function getRewardList($post, $history) {
 		if ($r['is_card']) {
 			$r['add_type'] = 1001;
 			$r['item_category_id'] = $r['incentive_item_id'];
-		}else if($r['incentive_item_id'] == 3006){
-			$r['add_type'] = 3006;
+		}else if($r['incentive_item_id'] > 1000){
+			$r['add_type'] = $r['incentive_item_id'];
 			$r['item_category_id'] = 0;
-			$r['incentive_type'] = 6100;
-			$r['incentive_item_id'] = 2;
+			$r['incentive_type'] = 0; //物品获得来源，暂时空
+			$r['incentive_item_id'] = $r['item_id'];
 		}else {
 			$r['add_type'] = $correct_add_type[$r['incentive_item_id'] - 1];
 			$r['item_category_id'] = $r['incentive_item_id'];
@@ -75,7 +77,7 @@ function reward_rewardHistory($post) {
 function reward_open($post) {
 	global $params, $mysql, $uid;
 	include_once("includes/unit.php");
-	$res = $mysql->query('SELECT incentive_id,incentive_item_id,is_card,amount FROM incentive_list WHERE incentive_id='.$post['incentive_id'].' and opened_date=0')->fetch(PDO::FETCH_ASSOC);
+	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE incentive_id='.$post['incentive_id'].' and opened_date=0')->fetch(PDO::FETCH_ASSOC);
 	if (empty($res)) {
 		return [];
 	}
@@ -84,24 +86,59 @@ function reward_open($post) {
 	$ret['success'] = [];
 	$ret['bushimo_reward_info'] = [];
 	$ret['unit_support_list'] = [];
-	$correct_add_type = [1000, 3002, 3000, 3001, 1000];
+	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
 	foreach($res as &$rr){
 		if(is_numeric($rr)){
 			$rr = (int)$rr;
 		}
 	}
 	if(!$res['is_card']) {
-		$res['item_id'] = $res['incentive_item_id'];
-		if($res['item_id'] == 3006){
-			$params['seal1'] += $res['amount'];
-			$res['add_type'] = 3006;
+		if($res['incentive_item_id'] < 1000){
+			$params['item'.$res['incentive_item_id']] += $res['amount'];
+			$res['item_category_id'] = $res['incentive_item_id'];
+			switch($res['incentive_item_id']){
+				case 2:
+					$res['add_type'] = 3002;
+				case 3:
+					$res['add_type'] = 3000;
+				case 4:
+					$res['add_type'] = 3001;
+				default:
+					$res['add_type'] = 1000;
+			}
 		}else{
-			$params['item' . $res['item_id']] += $res['amount'];
-			$res['add_type'] = $correct_add_type[$res['item_id'] - 1];
+			$res['add_type'] = $res['incentive_item_id'];
+			switch($res['incentive_item_id']){
+				case 3006://贴纸
+					switch($res['item_id']){
+						case 2:
+							$params['seal1'] += $res['amount'];break;
+						case 3:
+							$params['seal2'] += $res['amount'];break;
+						case 4:
+							$params['seal4'] += $res['amount'];break;
+						case 5:
+							$params['seal3'] += $res['amount'];break;
+						default:
+							trigger_error("没有这样的技能宝石：".$res['item_id']);
+					}break;
+				case 5100://称号
+					$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $res['item_id']]);break;
+				case 5500://技能宝石
+					$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $res['item_id']])->fetch(PDO::FETCH_ASSOC);
+					if($skill_check)
+						$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$res['amount'], $uid, $res['item_id']]);
+					else
+						$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount) VALUES (?, ?, ?)", [$uid, $res['item_id'], $res['amount']]);
+					break;
+				default:
+					trigger_error("未定义该物品的追加方式！");
+			}
+			//$res['incentive_id'] = $res['item_id'];
+			$res['item_category_id'] = 0;
+			$res['reward_box_flag'] = false;
+			unset($res['is_card']);
 		}
-		$res['item_category_id'] = 0;
-		$res['reward_box_flag'] = false;
-		unset($res['is_card']);
 		$ret['success'][] = $res;
 	} else {
 		$support_list = getSupportUnitList();
@@ -129,7 +166,7 @@ function reward_open($post) {
 //reward/openAll //开所有礼物
 function reward_openAll($post) {
 	global $uid, $mysql, $params;
-	$filter = getfilter($post['category'], $post['filter']);
+	$filter = getfilter($post['category'], $post['filter'], $post['order']);
 	$res = $mysql->query('SELECT incentive_id,incentive_item_id,is_card,amount FROM incentive_list WHERE user_id='.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['reward_num'] = count($res);
 	$ret['opened_num'] = 0;
@@ -147,19 +184,52 @@ function reward_openAll($post) {
 			}
 		}
 		if(!$r['is_card']) {
-			$r['item_id'] = $r['incentive_item_id'];
-			if($r['item_id'] == 3006){
-				$params['seal1'] += $r['amount'];
-				$r['add_type'] = 3006;
-				$r['incentive_item_id'] = 2;
-				$r['incentive_type'] = 6100;
+			if($r['incentive_item_id'] < 1000){
+				$params['item'.$r['incentive_item_id']] += $r['amount'];
+				$r['item_category_id'] = $r['incentive_item_id'];
+				switch($r['incentive_item_id']){
+					case 2:
+						$r['add_type'] = 3002;
+					case 3:
+						$r['add_type'] = 3000;
+					case 4:
+						$r['add_type'] = 3001;
+					default:
+						$r['add_type'] = 1000;
+				}
 			}else{
-				$params['item' . $r['item_id']] += $r['amount'];
-				$r['add_type'] = $correct_add_type[$r['item_id'] - 1];
+				$r['add_type'] = $r['incentive_item_id'];
+				switch($r['incentive_item_id']){
+					case 3006://贴纸
+						switch($r['item_id']){
+							case 2:
+								$params['seal1'] += $r['amount'];break;
+							case 3:
+								$params['seal2'] += $r['amount'];break;
+							case 4:
+								$params['seal4'] += $r['amount'];break;
+							case 5:
+								$params['seal3'] += $r['amount'];break;
+							default:
+								trigger_error("没有这样的技能宝石：".$r['item_id']);
+						}break;
+					case 5100://称号
+						$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $r['item_id']]);break;
+					case 5500://技能宝石
+						$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $r['item_id']])->fetch(PDO::FETCH_ASSOC);
+						if($skill_check)
+							$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$r['amount'], $uid, $r['item_id']]);
+						else
+							$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount) VALUES (?, ?, ?)", [$uid, $r['item_id'], $r['amount']]);
+						break;
+					default:
+						trigger_error("未定义该物品的追加方式！");
+				}
+				//$r['incentive_id'] = $r['item_id'];
+				$r['item_category_id'] = 0;
+				$r['reward_box_flag'] = false;
+				unset($r['is_card']);
 			}
-			$r['item_category_id'] = 0;
-			$r['reward_box_flag'] = false;
-			unset($r['is_card']);
 			$ret['reward_item_list'][] = $r;
 		} else {
 			$support_list = getSupportUnitList();

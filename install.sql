@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `incentive_list` (
   `incentive_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `incentive_item_id` int(11) NOT NULL,
+  `item_id` INT(11) NULL DEFAULT NULL,
   `amount` int(11) NOT NULL,
   `is_card` tinyint(1) NOT NULL,
   `incentive_message` text NOT NULL,

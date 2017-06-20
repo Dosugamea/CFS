@@ -88,6 +88,7 @@ function lbonus_execute() {
 			case 3000: $calendar_info['get_item']['item_category_id'] = 3;break;
 			case 3001: $calendar_info['get_item']['item_category_id'] = 4;break;
 			case 1000: $calendar_info['get_item']['item_category_id'] = 5;break;
+			case 3006: $calendar_info['get_item']['item_category_id'] = 0;break;
 			default: $calendar_info['get_item']['item_category_id'] = 0;break;
 		}
 		$calendar_info['get_item']['reward_box_flag'] = true;
@@ -95,8 +96,9 @@ function lbonus_execute() {
 		$incentive_item_id = $is_card? $calendar_info['get_item']['unit_id'] : $calendar_info['get_item']['item_category_id'];
 		if($incentive_item_id == 0){
 			$incentive_item_id = 3006;
-		}
-		$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$incentive_item_id.",".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");
+			$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$incentive_item_id.", 2, ".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");
+		}else
+			$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$incentive_item_id.",".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");
 	}
 	
 	$ret['calendar_info'] = $calendar_info;
