@@ -102,3 +102,7 @@ function getScenarioDb () {
 function getSubscenarioDb () {
   return makedb('subscenariodb', 'subscenario_db', false);
 }
+
+function getSecretBoxDb () {
+  return makedb('secretboxdb', 'secretbox_db', false);
+}

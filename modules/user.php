@@ -11,8 +11,8 @@ function user_userInfo() {
 		'invite_code' => (string)$uid,
 		'name' => $user['name'],
 		'introduction' => $user['introduction'],
-		'level' => $user['level'],
-		'exp' => $user['exp'],
+		'level' => (int)$user['level'],
+		'exp' => (int)$user['exp'],
 		'previous_exp' => $exp[$user['level'] - 1],
 		'next_exp' => $exp[$user['level']],
 		'game_coin' => $params['item3'],
@@ -25,8 +25,8 @@ function user_userInfo() {
 		'tutorial_state' => -1,
 		'insert_date' => '2014-01-01 00:00:00',
 		'update_date' => '2014-01-01 00:00:00',
-		'unlock_random_live_muse' => '0',
-		'unlock_random_live_aqours' => '0'
+		'unlock_random_live_muse' => 0,
+		'unlock_random_live_aqours' => 0
 	]];
 	$energy = getCurrentEnergy();
 	$ret['user'] = array_merge($ret['user'], $energy);
@@ -49,16 +49,13 @@ function user_showAllItem() {
 	return json_decode('{
 		"items": [{
 				"item_id": 1,
-				"item_category_id": 1,
-				"item_sub_category_id": 1,
-				"amount": '.$params['item1'].',
-				"insert_date": "2014-01-01 00:00:00"
+				"amount": '.$params['item1'].'
 		}, {
 				"item_id": 5,
-				"item_category_id": 5,
-				"item_sub_category_id": 1,
-				"amount": '.$params['item5'].',
-				"insert_date": "2014-01-01 00:00:00"
+				"amount": '.$params['item5'].'
+		}, {
+				"item_id": 8,
+				"amount": '.$params['item8'].'
 		}]
 }', true);
 }

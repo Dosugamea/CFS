@@ -119,9 +119,11 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 					$skill_level = ['skill_level' => 1, 'next_exp' => 0, 'hp_diff' => 0, 'smile_diff' => 0, 'pure_diff' => 0, 'cool_diff' => 0];
 				}
 			}
+			$ret['is_support_member'] = false;
 			$ret['favorite_flag'] = (bool) $ret['favorite_flag'];
 			$ret['level'] = $level['unit_level'];
 			$ret['unit_skill_level'] = (int)$skill_level['skill_level'];
+			$ret['skill_level'] = $ret['unit_skill_level'];
 			$ret['unit_skill_exp'] = (int)$ret['unit_skill_exp'];
 			$ret['max_hp'] = $card['hp_max'];
 			$ret['max_level'] = $ret['rank'] == 1 ? $card['before_level_max'] : $card['after_level_max'];
