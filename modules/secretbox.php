@@ -284,6 +284,22 @@ function secretBox_all() {
 	}
 	$ret['member_category_list'] []= ["member_category" => 2, "tab_list" => $tab_aqours];
 	
+	if(!$params['card_switch']){
+		foreach($ret['member_category_list'] as &$i){
+			foreach($i['tab_list'] as &$j){
+				foreach($j['page_list'] as &$k){
+					foreach($k['secret_box_list'] as &$l){
+						foreach($l['all_cost'] as &$m){
+							$m['amount'] = 0;
+							if(isset($m['multi_amount'])) $m['multi_amount'] = 0;
+							if(isset($m['is_pay_cost'])) $m['is_pay_cost'] = true;
+							if(isset($m['is_pay_multi_cost'])) $m['is_pay_multi_cost'] = true;
+						}
+					}
+				}
+			}
+		}
+	}
 	return $ret;
 }
 
@@ -388,6 +404,15 @@ function secretbox_pon($post) {
 			$now_cost['item_id'] = (int)$i['item_id'];
 			$now_cost['amount'] = (int)$i['amount'];
 			$now_cost['multi_type'] = (int)$i['multi_type'];
+		}
+	}
+	
+	if(!$params['card_switch']){
+		foreach($all_cost as &$i){
+			$i['amount'] = 0;
+			if(isset($i['multi_amount'])) $i['multi_amount'] = 0;
+			if(isset($i['is_pay_cost'])) $i['is_pay_cost'] = true;
+			if(isset($i['is_pay_multi_cost'])) $i['is_pay_multi_cost'] = true;
 		}
 	}
 	if(!isset($now_cost)){
@@ -497,6 +522,7 @@ function secretbox_pon($post) {
 		$gauge_info['added_gauge_point'] = 0;
 		$gauge_info['added_gauge_point'] = 0;
 		$ret['gauge_info'] = $gauge_info;
+		$get_items = [];
 	}
 	
 	/*处理礼物箱相关信息*/
@@ -578,6 +604,10 @@ function secretbox_pon($post) {
 		$get_unit_detail['new_unit_flag'] = false;
 		$get_unit_detail['reward_box_flag'] = false;
 		$got_units [] = $get_unit_detail;
+	}
+	
+	if(!$params['card_switch']){
+		rollback();
 	}
 	
 	$ret['secret_box_items']['unit'] = $got_units;
