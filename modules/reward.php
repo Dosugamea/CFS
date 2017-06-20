@@ -134,8 +134,8 @@ function reward_open($post) {
 				default:
 					trigger_error("未定义该物品的追加方式！");
 			}
-			$res['incentive_item_id'] = $res['item_id'];
-			unset($res['item_id']);
+			//$res['incentive_item_id'] = $res['item_id'];
+			//unset($res['item_id']);
 			$res['item_category_id'] = 0;
 			$res['reward_box_flag'] = false;
 			unset($res['is_card']);
@@ -227,7 +227,7 @@ function reward_openAll($post) {
 						trigger_error("未定义该物品的追加方式！");
 				}
 				$r['incentive_item_id'] = $r['item_id'];
-				unset($r['item_id']);
+				//unset($r['item_id']);
 				$r['item_category_id'] = 0;
 				$r['reward_box_flag'] = false;
 				unset($r['is_card']);
