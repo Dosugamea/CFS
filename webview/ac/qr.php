@@ -72,12 +72,12 @@
 		$scores=[];
 		foreach($users as $user)
 		  $scores[]=$user['score'];
-    array_multisort($scores,SORT_DESC,$users);
+		array_multisort($scores,SORT_DESC,$users);
 
 		//输出
 		foreach($users as $p => $user){
-			if($user['count']!=$count)
-				continue;
+			//if($user['count']!=$count)
+				//continue;
 			$id=$user['id'];
 			$user_info=$mysql->query("SELECT name,level,award FROM users WHERE user_id=$id")->fetch(PDO::FETCH_ASSOC);
 
