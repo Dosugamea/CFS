@@ -240,8 +240,8 @@ function secretBox_all() {
 				$secret_box_detail['name'] = $k['name'];
 				$secret_box_detail['title_asset'] = $k['title_asset'];
 				$secret_box_detail['description'] = $k['description'];
-				$secret_box_detail['start_date'] = $k['start_date'];
-				$secret_box_detail['end_date'] = $k['end_date'];
+				$secret_box_detail['start_date'] = date("Y-m-d H:i:s", strtotime($k['start_date']));
+				$secret_box_detail['end_date'] = date("Y-m-d H:i:s", strtotime($k['end_date']));
 				$secret_box_detail['add_gauge'] = (int)$k['add_gauge'];
 				$secret_box_detail['pon_count'] = 0; //这是抽卡总数，以单抽记，目前直接0
 				$secret_box_detail['pon_upper_limit'] = (int)$k['upper_limit'];
@@ -429,63 +429,75 @@ function secretbox_pon($post) {
 			trigger_error("未知的cost_type: ".$now_cost['cost_type']);
 	}
 	
-	//检测道具数是否够
-	$member_category = (int)$secretboxdb->query("SELECT member_category FROM secret_box_page_m WHERE secret_box_page_id = ".$secret_box_info['secret_box_page_id'])->fetchColumn();
-	$member_category -= 1;
-	if(!checkScoutAvaliable($now_cost['cost_type'], $now_cost['item_id'], $now_cost['amount'], $member_category)){
-		$ret = retError(1507);
-		return $ret;
-	}
 	
 	//查询个人信息
 	$before_user_info = runAction("user", "userInfo")['user'];
 	
-	//扣道具
-	switch($now_cost['cost_type']){
-		case 100:
-			if($member_category == 0)
-				$mysql->query("UPDATE secretbox SET free_gacha_muse = NOW() WHERE user_id = ?", [$uid]);
+	if($params['card_switch']){
+		//检测道具数是否够
+		$member_category = (int)$secretboxdb->query("SELECT member_category FROM secret_box_page_m WHERE secret_box_page_id = ".$secret_box_info['secret_box_page_id'])->fetchColumn();
+		$member_category -= 1;
+		if(!checkScoutAvaliable($now_cost['cost_type'], $now_cost['item_id'], $now_cost['amount'], $member_category)){
+			$ret = retError(1507);
+			return $ret;
+		}
+		
+		//扣道具
+		switch($now_cost['cost_type']){
+			case 100:
+				if($member_category == 0)
+					$mysql->query("UPDATE secretbox SET free_gacha_muse = NOW() WHERE user_id = ?", [$uid]);
+				else
+					$mysql->query("UPDATE secretbox SET free_gacha_aqours = NOW() WHERE user_id = ?", [$uid]);
+				break;
+			case 3002:
+				$params['item2'] -= $now_cost['amount'];break;
+			case 1000:
+				$params['item'.$now_cost['item_id']] -= $now_cost['amount'];break;
+			case 3001:
+				$params['item4'] -= $now_cost['amount'];break;
+		}
+		
+		$ret = [];
+		$ret['is_unit_max'] = false; //检测社员是否满了，CFS默认为false
+		$ret['item_list'] = runAction('user', 'showAllItem')['items']; //物品列表
+		
+		/*处理优等生招募进度条*/
+		$gauge_info = [];
+		if($post['action'] == "multi"){
+			if((int)$secret_box_info['multi_additional'] == 1)
+				$added_gauge_point = (int)$secret_box_info['add_gauge'] * 11;
 			else
-				$mysql->query("UPDATE secretbox SET free_gacha_aqours = NOW() WHERE user_id = ?", [$uid]);
-			break;
-		case 3002:
-			$params['item2'] -= $now_cost['amount'];break;
-		case 1000:
-			$params['item'.$now_cost['item_id']] -= $now_cost['amount'];break;
-		case 3001:
-			$params['item4'] -= $now_cost['amount'];break;
-	}
-	
-	$ret = [];
-	$ret['is_unit_max'] = false; //检测社员是否满了，CFS默认为false
-	$ret['item_list'] = runAction('user', 'showAllItem')['items']; //物品列表
-	
-	/*处理优等生招募进度条*/
-	$gauge_info = [];
-	if($post['action'] == "multi"){
-		if((int)$secret_box_info['multi_additional'] == 1)
-			$added_gauge_point = (int)$secret_box_info['add_gauge'] * 11;
-		else
-			$added_gauge_point = (int)$secret_box_info['add_gauge'] * 10;
+				$added_gauge_point = (int)$secret_box_info['add_gauge'] * 10;
+		}else{
+			$added_gauge_point = (int)$secret_box_info['add_gauge'];
+		}
+		$gauge_info['max_gauge_point'] = 100;
+		$gauge_info['gauge_point'] = (int)$mysql->query("SELECT gauge FROM secretbox WHERE user_id = ".$uid)->fetchColumn() + $added_gauge_point;
+		$gauge_info['added_gauge_point'] = $added_gauge_point;
+		$gauge_reward_info = $secretboxdb->query("SELECT * FROM secret_box_gauge_reward_m")->fetch(PDO::FETCH_ASSOC);
+		if(empty($gauge_reward_info)){
+			$ret = retError(1505); //ERROR_CODE_SECRET_BOX_GAUGE_INFORMATION_NOT_EXIST
+			return $ret;
+		}
+		$get_items = [];
+		while($gauge_info['gauge_point'] >= 100){
+			$get_items []= ["owning_item_id" => 0, "item_id" => (int)$gauge_reward_info['item_id'], "add_type" => (int)$gauge_reward_info['add_type'], "amount" => (int)$gauge_reward_info['amount'], "item_category_id" => (int)$gauge_reward_info['item_category_id'], "reward_box_flag" => false];
+			$params['item'.$gauge_reward_info['item_id']] += (int)$gauge_reward_info['amount'];
+			$gauge_info['gauge_point'] -= 100;
+		}
+		$mysql->query("UPDATE secretbox SET gauge = ? WHERE user_id = ?", [$gauge_info['gauge_point'], $uid]);
+		$ret['gauge_info'] = $gauge_info;
 	}else{
-		$added_gauge_point = (int)$secret_box_info['add_gauge'];
+		$ret = [];
+		$ret['is_unit_max'] = false; //检测社员是否满了，CFS默认为false
+		$ret['item_list'] = runAction('user', 'showAllItem')['items']; //物品列表
+		$gauge_info['max_gauge_point'] = 100;
+		$gauge_info['gauge_point'] = 0;
+		$gauge_info['added_gauge_point'] = 0;
+		$gauge_info['added_gauge_point'] = 0;
+		$ret['gauge_info'] = $gauge_info;
 	}
-	$gauge_info['max_gauge_point'] = 100;
-	$gauge_info['gauge_point'] = (int)$mysql->query("SELECT gauge FROM secretbox WHERE user_id = ".$uid)->fetchColumn() + $added_gauge_point;
-	$gauge_info['added_gauge_point'] = $added_gauge_point;
-	$gauge_reward_info = $secretboxdb->query("SELECT * FROM secret_box_gauge_reward_m")->fetch(PDO::FETCH_ASSOC);
-	if(empty($gauge_reward_info)){
-		$ret = retError(1505); //ERROR_CODE_SECRET_BOX_GAUGE_INFORMATION_NOT_EXIST
-		return $ret;
-	}
-	$get_items = [];
-	while($gauge_info['gauge_point'] >= 100){
-		$get_items []= ["owning_item_id" => 0, "item_id" => (int)$gauge_reward_info['item_id'], "add_type" => (int)$gauge_reward_info['add_type'], "amount" => (int)$gauge_reward_info['amount'], "item_category_id" => (int)$gauge_reward_info['item_category_id'], "reward_box_flag" => false];
-		$params['item'.$gauge_reward_info['item_id']] += (int)$gauge_reward_info['amount'];
-		$gauge_info['gauge_point'] -= 100;
-	}
-	$mysql->query("UPDATE secretbox SET gauge = ? WHERE user_id = ?", [$gauge_info['gauge_point'], $uid]);
-	$ret['gauge_info'] = $gauge_info;
 	
 	/*处理礼物箱相关信息*/
 	$ret['secret_box_page_id'] = (int)$secret_box_info['secret_box_page_id'];
@@ -493,8 +505,8 @@ function secretbox_pon($post) {
 	$ret['secret_box_info']['name'] = $secret_box_info['name'];
 	$ret['secret_box_info']['title_asset'] = $secret_box_info['title_asset'];
 	$ret['secret_box_info']['description'] = $secret_box_info['description'];
-	$ret['secret_box_info']['start_date'] = $secret_box_info['start_date'];
-	$ret['secret_box_info']['end_date'] = $secret_box_info['end_date'];
+	$ret['secret_box_info']['start_date'] = date("Y-m-d H:i:s", strtotime($secret_box_info['start_date']));
+	$ret['secret_box_info']['end_date'] = date("Y-m-d H:i:s", strtotime($secret_box_info['end_date']));
 	$ret['secret_box_info']['add_gauge'] = (int)$secret_box_info['add_gauge'];
 	$ret['secret_box_info']['pon_count'] = 0;
 	$ret['secret_box_info']['pon_upper_limit'] = (int)$secret_box_info['upper_limit'];
