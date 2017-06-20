@@ -2,7 +2,7 @@
 //reward.php 礼物
 require_once 'includes/unit.php';
 //处理客户端发送的category和filter
-function getfilter($category, $filter, $order) {
+function getfilter($category, $filter) {
 	$ret = '';
 	switch($category) {
 	case 1: $ret = ' and is_card=1';break;
@@ -19,8 +19,6 @@ function getfilter($category, $filter, $order) {
 		$unit_id_list = $unit->query('SELECT unit_id FROM unit_m WHERE rarity='.$filter)->fetchAll(PDO::FETCH_COLUMN, 0);
 		$ret .= ' and incentive_item_id in ('.implode(', ', $unit_id_list).')';
 	}
-	if($order)
-		$ret .= " ORDER BY incentive_id DESC";
 	return $ret;
 }
 
@@ -34,7 +32,9 @@ function getRewardList($post, $history) {
 		$unset = 'opened_date';
 	}
 	global $uid, $mysql;
-	$filter = getfilter($post['category'], $post['filter'], $post['order']);
+	$filter = getfilter($post['category'], $post['filter']);
+	if(isset($post['order']) && $post['order'])
+		$filter .= " ORDER BY incentive_id DESC";
 	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter)->fetchAll();
 	$ret['item_count'] = count($res);
 	$ret[$array_name] = [];
@@ -166,7 +166,7 @@ function reward_open($post) {
 //reward/openAll //开所有礼物
 function reward_openAll($post) {
 	global $uid, $mysql, $params;
-	$filter = getfilter($post['category'], $post['filter'], $post['order']);
+	$filter = getfilter($post['category'], $post['filter']);
 	$res = $mysql->query('SELECT incentive_id,incentive_item_id,is_card,amount FROM incentive_list WHERE user_id='.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['reward_num'] = count($res);
 	$ret['opened_num'] = 0;
