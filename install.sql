@@ -280,7 +280,8 @@ CREATE TABLE IF NOT EXISTS `removable_skill` (
 CREATE TABLE IF NOT EXISTS `secretbox` (
   `user_id` int(11) NOT NULL,
   `last_scout_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `got_free_gacha_list` text,
+  `free_gacha_muse` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `free_gacha_aqours` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   `gauge` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
