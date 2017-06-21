@@ -160,7 +160,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				}
 			}
 			$ret['unit_removable_skill_capacity'] = (int)$ret['removable_skill_count'];
-			unset($ret['removable_skill']);
+			//unset($ret['removable_skill']);
 			$ret['is_removable_skill_capacity_max'] = $card['max_removable_skill_capacity'] == $ret['unit_removable_skill_capacity'];
 			
 			//4.0假数据（目前不支持）：
@@ -195,4 +195,21 @@ function removeFromDeck($unit_owning_user_id){
 	if($deck != $deck_orig)
 		$mysql->query("UPDATE user_deck SET json = '".json_encode($deck)."' WHERE user_id = ".$uid);
 	return 1;
+}
+
+function getCenterSkillInfo($center_skill_id){
+	if(!isset($center_skill_id)||empty($center_skill_id))
+		return null;
+	$unitdb = getUnitDb();
+	$center_skill=$unitdb->query('SELECT * FROM unit_leader_skill_m WHERE unit_leader_skill_id = '.$center_skill_id)->fetch();
+	$leader_skill_type = $center_skill['leader_skill_effect_type'] . $center_skill['leader_skill_effect_type'];
+	$ret['source']=(int)substr($leader_skill_type, -2, 1);
+	$ret['target']=(int)substr($leader_skill_type, -1, 1);
+	$ret['effect']=(int)$center_skill['effect_value'];
+
+	$center_skill_extra=$unitdb->query('SELECT * FROM unit_leader_skill_extra_m WHERE unit_leader_skill_id = '.$center_skill_id)->fetch();
+	$ret['e_attr']=(int)$center_skill_extra['leader_skill_effect_type'];
+	$ret['e_type']=(int)$center_skill_extra['member_tag_id'];
+	$ret['e_effect']=(int)$center_skill_extra['effect_value'];
+	return $ret;
 }

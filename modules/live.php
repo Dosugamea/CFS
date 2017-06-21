@@ -212,185 +212,103 @@ global $uid, $mysql, $params;
 			$deck_ret = json_decode('[{"unit_deck_id": 1,"total_smile": 60500,"total_cute": 55000,"total_cool": 60500,"total_hp": 20},{"unit_deck_id": 2,"total_smile": 55000,"total_cute": 60500,"total_cool": 60500,"total_hp": 30},{"unit_deck_id": 3,"total_smile": 39940,"total_cute": 41072,"total_cool": 40940,"total_hp": 39}]',true);
 		}
 	} else {
-		$default_party = json_decode('{"0":{"user_info": {"user_id": -1,"name": "Guests not supported in custom live yet","level": 1,"friend_status": 1},"center_unit_info": {"unit_owning_user_id": 1,"unit_id": 49,"level": 1,"exp": 0,"rank": 2,"love": 0,"unit_skill_level": 1,"attribute": 1,"max_hp": 3,"smile": 0,"cute": 0,"cool": 0,"skill": 100,"is_love_max": true,"is_level_max": true,"is_rank_max": true},"type": 2,"available_social_point": 0,"festival": {"available_material_flag": 0}},"-1":{"user_info": {"user_id": -1,"name": "Default (smile)","level": 1,"friend_status": 1},"center_unit_info": {"unit_owning_user_id": 1,"unit_id": 49,"level": 1,"exp": 0,"rank": 2,"love": 0,"unit_skill_level": 1,"attribute": 1,"max_hp": 3,"smile": 0,"cute": 0,"cool": 0,"skill": 100,"is_love_max": true,"is_level_max": true,"is_rank_max": true},"type": 2,"available_social_point": 0,"festival": {"available_material_flag": 0}},"-2":{"user_info": {"user_id": -2,"name": "Default (pure)","level": 1,"friend_status": 1},"center_unit_info": {"unit_owning_user_id": 1,"unit_id": 40,"level": 1,"exp": 0,"rank": 2,"love": 0,"unit_skill_level": 1,"attribute": 1,"max_hp": 3,"smile": 0,"cute": 0,"cool": 0,"skill": 100,"is_love_max": true,"is_level_max": true,"is_rank_max": true},"type": 2,"available_social_point": 0,"festival": {"available_material_flag": 0}},"-3":{"user_info": {"user_id": -3,"name": "Default (cool)","level": 1,"friend_status": 1},"center_unit_info": {"unit_owning_user_id": 1,"unit_id": 31,"level": 1,"exp": 0,"rank": 2,"love": 0,"unit_skill_level": 1,"attribute": 1,"max_hp": 3,"smile": 0,"cute": 0,"cool": 0,"skill": 100,"is_love_max": true,"is_level_max": true,"is_rank_max": true},"type": 2,"available_social_point": 0,"festival": {"available_material_flag": 0}}}',true);
-		$deck = json_decode($mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn(),true);
+		$deck_list = json_decode($mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn(),true);
 		$deck_ret = [];
-		foreach($deck as $k => $v) {
-			$v['subtotal_smile'] = 0;
-			$v['subtotal_cute'] = 0;
-			$v['subtotal_cool'] = 0;
-			$v['subtotal_hp'] = 0;
-			$love_bonus=[1=>0, 2=>0, 3=>0];
-			$skip = false;
-			if(count($v['unit_deck_detail']) < 9) {
+		foreach($deck_list as $deck) {//分别处理每一个小组
+			if(count($deck['unit_deck_detail']) < 9)
 				continue;
-			}
-			$v['unit_list'] = $v['unit_deck_detail'];
-			array_multisort(array_map(function ($e) {
-				return $e['position'];
-			}, $v['unit_list']), SORT_ASC, $v['unit_list']);
-			$detail = GetUnitDetail(array_map(function ($e) {
-				return $e['unit_owning_user_id'];
-			}, $v['unit_list']), true);
-			foreach($v['unit_list'] as $k2 => &$v2) {
-				if(!isset($detail[$k2])) {
-					$skip = true;
-					break;
+
+			$deck_info=[0,0,0,0];
+			$member_info=[];
+			$school_skill=[];//记录全体百分比加成
+
+			//第一步 获得基础属性、可换技能以及C位技能
+			foreach($deck['unit_deck_detail'] as $member){
+				$position=$member['position'];
+				$card_info=GetUnitDetail($member['unit_owning_user_id'],true);
+				$deck_info[0]+=$card_info['hp'];
+
+				$info[1]=$card_info['smile'];
+				$info[2]=$card_info['cute'];
+				$info[3]=$card_info['cool'];
+				$info[$card_info['attribute']]+=$card_info['love'];
+				$info['unit_id']=$card_info['unit_id'];
+
+				$info['skill']=[];
+				foreach(json_decode($card_info['removable_skill']) as $skill){
+					if($skill<=24)
+						$info['skill'][]=(int)$skill;
+					elseif($skill<=30)
+						$school_skill[]=(int)$skill;
 				}
-				$this_detail = $detail[$k2];
-				$v['subtotal_smile'] += $this_detail['smile'];
-				$v['subtotal_cute'] += $this_detail['cute'];
-				$v['subtotal_cool'] += $this_detail['cool'];
-				$v['subtotal_hp'] += $this_detail['hp'];
-				$love_bonus[$this_detail['attribute']] += $this_detail['love'];
-				if($v2['position'] == 5) {
-					$center_skill = $this_detail['center_skill'];
-				}
-			}
-			if($skip) {
-				continue;
+
+				$member_info[$position]=$info;
+
+				if($position==5)
+					$center_skill_id=$card_info['center_skill'];
 			}
 			$default_center_skill = [0 => 0, -1 => 1, -2 =>4, -3 => 7];
 			if (!isset($post['ScoreMatch'])) {
-				if ($post['party_user_id'] <= 0) {
-					$v['party_info'] = $default_party[$post['party_user_id']];
-					$party_skill = $default_center_skill[$post['party_user_id']];
-				} else {
-					$party = $mysql->query('
-						SELECT users.user_id, name, level, center_unit,award FROM users
-						LEFT JOIN user_deck ON users.user_id=user_deck.user_id
-						WHERE users.user_id = '.$post['party_user_id']
-					)->fetch();
+				if ($post['party_user_id'] <= 0)
+					$party_skill_id = $default_center_skill[$post['party_user_id']];
+				else {
+					$party = $mysql->query('SELECT users.user_id, center_unit FROM users LEFT JOIN user_deck ON users.user_id=user_deck.user_id WHERE users.user_id = '.$post['party_user_id'])->fetch();
 					$party_center_unit = GetUnitDetail($party['center_unit'],true);
-					$v['party_info']['user_info'] = $party;
-					if ($party['award']>0) {
-						$v['party_info']['setting_award_id'] = (int)$party['award'];
-					}
-					$v['party_info']['friend_status'] = 0; //TODO
-					$v['party_info']['center_unit_info'] = $party_center_unit;
-					$v['party_info']['type'] = 1; //TODO
-					$v['party_info']['available_social_point'] = 5;
-					$v['party_info']['festival']['available_material_flag'] = 0;
-					$party_skill = $party_center_unit['center_skill'];
+					$party_skill_id = $party_center_unit['center_skill'];
 				}
 			}
-			$v['total_smile'] = $v['subtotal_smile'] + $love_bonus[1];
-			$v['total_cute'] = $v['subtotal_cute'] + $love_bonus[2];
-			$v['total_cool'] = $v['subtotal_cool'] + $love_bonus[3];
-			$v['total_hp'] = $v['subtotal_hp'];
-			$add_center_buff = function ($skill) use (&$v) {
+			$center_skill=getCenterSkillInfo($center_skill_id);
+			$party_skill=getCenterSkillInfo($party_skill_id);
+
+			//第二步 计算可换技能加成 + 第三步 计算Center及好友应援加成
+			foreach($member_info as $info){
+				$bonus=[0,0,0,0];
+				$skills=array_merge($info['skill'],$school_skill);
+				foreach($skills as $skill){
+					$skill2=($skill-1)%3+1;
+					if($skill<=3)
+						$bonus[$skill]+=200;
+					elseif($skill<=6)
+						$bonus[$skill2]+=450;
+					elseif($skill<=15)
+						$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.10);
+					elseif($skill<=24)
+						$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.16);
+					elseif($skill<=27)
+						$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.018);
+					else
+						$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.024);
+				}
+				for($i=1;$i<=3;$i++)
+					$info[$i]+=$bonus[$i];
+				
+				$bonus=[0,0,0,0];
+				if(!empty($center_skill))
+					$bonus[$center_skill['target']]+=(int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
+				if(!empty($party_skill))
+					$bonus[$party_skill['target']]+=(int)ceil($info[$party_skill['source']] * $party_skill['effect'] /100);
+				
 				$unitdb = getUnitDb();
-				$leader_skill = $unitdb->query('SELECT leader_skill_effect_type, effect_value FROM unit_leader_skill_m WHERE unit_leader_skill_id = '.$skill)->fetch();
-				$leader_skill['leader_skill_effect_type'] = (int)($leader_skill['leader_skill_effect_type']);
-				switch($leader_skill['leader_skill_effect_type']){
-					case 1:
-						$src_attr = "smile";
-						$target_attr = "smile";
-					case 2:
-						$src_attr = "cute";
-						$target_attr = "cute";
-					case 3:
-						$src_attr = "cool";
-						$target_attr = "cool";
-					case 112:
-						$src_attr = "smile";
-						$target_attr = "cute";
-					case 113:
-						$src_attr = "smile";
-						$target_attr = "cool";
-					case 121:
-						$src_attr = "cute";
-						$target_attr = "smile";
-					case 123:
-						$src_attr = "cute";
-						$target_attr = "cool";
-					case 131:
-						$src_attr = "cool";
-						$target_attr = "smile";
-					case 132:
-						$src_attr = "cool";
-						$target_attr = "cute";
+				$unit_type_id = $unitdb->query('SELECT unit_type_id FROM unit_m WHERE unit_id = '.$info['unit_id'])->fetch()[0];
+				if (in_array($unit_type_id,[1,2,3,4,5,6,7,8,9,101,102,103,104,105,106,107,108,109])){//如果是水缪成员
+					$member_tag_id = $unitdb->query('SELECT member_tag_id FROM unit_type_member_tag_m WHERE unit_type_id = '.$unit_type_id)->fetchAll(PDO::FETCH_COLUMN);
+					if(!empty($center_skill) && in_array($center_skill['e_type'],$member_tag_id))
+						$bonus[$center_skill['e_attr']] += (int)ceil($info[$center_skill['e_attr']] * $center_skill['e_effect'] /100);
+					if(!empty($party_skill) && in_array($party_skill['e_type'],$member_tag_id))
+						$bonus[$party_skill['e_attr']] += (int)ceil($info[$party_skill['e_attr']] * $party_skill['e_effect'] /100);
 				}
-				$v['total_'.$target_attr] += round($v['subtotal_'.$src_attr] * (int)($leader_skill['effect_value']) * 0.01);
-			};
-			if(isset($center_skill)) {
-				$add_center_buff($center_skill);
+
+				for($i=1;$i<=3;$i++)
+					$deck_info[$i]+=($info[$i]+$bonus[$i]);
 			}
-			if(isset($party_skill) && $party_skill != 0) {
-				$add_center_buff($party_skill);
-			}
+
 			$deck_ret[] = [
-				'unit_deck_id' => $v['unit_deck_id'],
-				'total_smile' => $v['total_smile'],
-				'total_cute' => $v['total_cute'],
-				'total_cool' => $v['total_cool'],
-				'total_hp' => $v['total_hp']
+				'unit_deck_id' => $deck['unit_deck_id'],
+				'total_smile' => $deck_info[1],
+				'total_cute' => $deck_info[2],
+				'total_cool' => $deck_info[3],
+				'total_hp' => $deck_info[0]
 			];
-		}
-		//处理副C技能
-		//写一个对队伍按位置进行排序的函数，避免选错center。
-		$unitSort = function ($arr){  
-			$len=count($arr);
-				//该层循环控制 需要冒泡的轮数
-				for($i=1;$i<$len;$i++)
-				{ //该层循环用来控制每轮 冒出一个数 需要比较的次数
-					for($k=0;$k<$len-$i;$k++)
-					{
-					if($arr[$k]['position']>$arr[$k+1]['position'])
-						{
-							$tmp=$arr[$k+1];
-							$arr[$k+1]=$arr[$k];
-							$arr[$k]=$tmp;
-						}
-					}
-				}
-				return $arr;
-			};
-		//对所有队伍拆成单个
-		$unitdb = getUnitDb();
-		$deck_count = 0;
-		foreach ($deck as $k => $v){
-			//处理C位社员
-			$v['unit_deck_detail'] = $unitSort($v['unit_deck_detail']);
-			if(count($v['unit_deck_detail']) != 9){
-				continue;
-			}
-			$center_unit_owning_user_id = $v['unit_deck_detail'][4]['unit_owning_user_id'];
-			$center_unit_id = $mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id='.$center_unit_owning_user_id)->fetchColumn();
-			$leader_skill_id = $unitdb->query('SELECT default_leader_skill_id FROM unit_m WHERE unit_id = '.$center_unit_id)->fetch();
-			$unit_leader_skill = $unitdb->query('SELECT * FROM unit_leader_skill_m WHERE unit_leader_skill_id = '.$leader_skill_id[0])->fetch();
-			$unit_leader_skill_extra = $unitdb->query('SELECT * FROM unit_leader_skill_extra_m WHERE unit_leader_skill_id = '.$leader_skill_id[0])->fetch();
-			foreach($v['unit_deck_detail'] as $k2 => $v2){
-				$unit_id = $mysql->query('SELECT unit_id FROM unit_list WHERE unit_owning_user_id='.$v2['unit_owning_user_id'])->fetchColumn();
-				$unit_type_id = $unitdb->query('SELECT unit_type_id FROM unit_m WHERE unit_id = '.$unit_id)->fetch();
-				//如果不是缪斯或水团成员则跳过
-				if (!in_array($unit_type_id,[1,2,3,4,5,6,7,8,9,101,102,103,104,105,106,107,108,109])){
-					continue;
-				}
-				$member_tag_id = $unitdb->query('SELECT member_tag_id FROM unit_type_member_tag_m WHERE unit_type_id = '.$unit_type_id[0])->fetchAll();
-				//遍历该卡组所属的分类，看他符不符合C位的条件。
-				$add_buff = false;
-				foreach($member_tag_id as $k3 => $v3){
-					if($v3['member_tag_id'] == $unit_leader_skill_extra['member_tag_id']){
-						$add_buff = true;
-					}
-				}
-				if($add_buff == false){
-					continue;
-				}
-				$detail = GetUnitDetail($v2['unit_owning_user_id'],true);
-
-				$attributes = ["", "smile", "cute", "cool"];
-				$buff_attribute = $attributes[$unit_leader_skill_extra['leader_skill_effect_type']];
-				$leader_skill_type = $unit_leader_skill['leader_skill_effect_type'] . $unit_leader_skill['leader_skill_effect_type'];
-				$src_attr = $attributes[(int)substr($leader_skill_type, -2, 1)];
-				$target_attr = $attributes[(int)substr($leader_skill_type, -1, 1)];
-
-
-				$detail[$target_attr] += ceil($detail[$src_attr] * $unit_leader_skill['effect_value'] * 0.01);
-				$deck_ret[$deck_count]['total_'.$buff_attribute] += ceil($detail[$buff_attribute] * $unit_leader_skill_extra['effect_value'] * 0.01);
-			}
-			$deck_count += 1;
 		}
 	}
 	if (isset($params['extend_mods_life'])) {
