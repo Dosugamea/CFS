@@ -12,5 +12,6 @@ $battle_db='db/battle.db_';
 $festival_db='db/festival.db_';
 $scenario_db='db/scenario.db_';
 $subscenario_db='db/subscenario.db_';
+$secretbox_db='db/secretbox_svonly.db_';
 
 $admin_pw='';

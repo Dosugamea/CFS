@@ -78,7 +78,7 @@ $items["friendMax"] = ["incentive_item_id"  => 0, //友達枠
                     "item_category_id"   => 0,
 			        "add_type"           => 3007];
 					
-$items["song"] =  ["incentive_item_id"  => null, //楽曲，猜测incentive_item_id为歌曲ID
+$items["song"] =  ["incentive_item_id"  => null, //楽曲，猜测incentive_item_id为歌曲live_track_id
                     "item_category_id"   => 0,
 			        "add_type"           => 5000];
 					
