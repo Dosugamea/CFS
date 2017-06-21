@@ -179,6 +179,29 @@ $n = $db->query("SELECT * FROM secret_box_unit_m WHERE unit_group_id = 1 AND sec
 		}
 		?>
         </ul>
+	<?php if(isset($precentage[0]['weight_extra'])){
+	print("<h3>■开卡时的概率</h3>
+    <ul>");
+		foreach($precentage as $i){
+			switch((int)$i['unit_group_id']){
+				case 4:
+					print("<li>UR: ".$i['weight_extra']."%</li>");break;
+				case 5:
+					print("<li>SSR: ".$i['weight_extra']."%</li>");break;
+				case 3:
+					print("<li>SR: ".$i['weight_extra']."%</li>");break;
+				case 2:
+					print("<li>R: ".$i['weight_extra']."%</li>");break;
+				case 1:
+					print("<li>N: ".$i['weight_extra']."%</li>");break;
+				default:
+					print("系统出错辣！");
+			}
+		}
+		print("</ul>");
+	}
+		?>
+        
 
     <h3>■注意事项</h3>
     <ul class="notice">

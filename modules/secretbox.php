@@ -564,7 +564,7 @@ function secretbox_pon($post) {
 				};
 				$unit_group = [];
 				foreach($unit_group_ as $i){
-					$unit_group[$i['unit_group_id']] = (int)$i['weight'];
+					$unit_group[$i['unit_group_id']] = (!empty($i['weight_extra']) && $params['card_switch']) ? (int)$i['weight_extra'] : (int)$i['weight'];
 				}
 				if(empty($unit_group))
 					trigger_error("未配置稀有度对应权重！");
