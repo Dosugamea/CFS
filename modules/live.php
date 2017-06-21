@@ -1027,7 +1027,7 @@ function live_reward($post) {
 		$mysql->query("INSERT INTO effort_box (user_id, box_id, point) VALUES(".$uid.",1,0)");
 		$box_now = $mysql->query("SELECT * FROM effort_box WHERE user_id = ".$uid)->fetch();
 	}
-	$reward_list = array(null,array(1,2,3),array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15),array(4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),array(16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39),array(28,29,30,31,32,33,34,35,36,37,38,39));
+	
 	$score = floor($score * $factor);
 	$score_still = $score;
 	include("includes/SIS.php");
@@ -1036,16 +1036,16 @@ function live_reward($post) {
 		$is_full = $score > $capacity_list[(int)$box_now['box_id']] - (int)$box_now['point'];
 		if($is_full){
 			for($i=0;$i<3;$i++){
-				$rand_id = array_rand($reward_list[(int)$box_now['box_id']]);
+				$SIS=getRandomSIS((int)$box_now['box_id']);
 				$rewards[] = [
 				"rarity"           => 1,
-				"item_id"          => $reward_list[(int)$box_now['box_id']][$rand_id],
+				"item_id"          => $SIS,
 				"add_type"         => 5500,
 				"amount"           => 1,
 				"item_category_id" => 0,
 				"reward_box_flag"  => false,
 				"insert_date"      => date("Y-m-d H:i:s",time())];
-				addSIS($reward_list[(int)$box_now['box_id']][$rand_id]);
+				addSIS($SIS);
 			}
 		}
 		$ret['effort_point'][] = [
