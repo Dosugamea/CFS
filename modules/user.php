@@ -54,8 +54,32 @@ function user_showAllItem() {
 				"item_id": 5,
 				"amount": '.$params['item5'].'
 		}, {
+				"item_id": 6,
+				"amount": '.$params['item6'].'
+		}, {
+				"item_id": 7,
+				"amount": '.$params['item7'].'
+		}, {
 				"item_id": 8,
 				"amount": '.$params['item8'].'
+		}, {
+				"item_id": 9,
+				"amount": '.$params['item9'].'
+		}, {
+				"item_id": 10,
+				"amount": '.$params['item10'].'
+		}, {
+				"item_id": 11,
+				"amount": '.$params['item11'].'
+		}, {
+				"item_id": 12,
+				"amount": '.$params['item12'].'
+		}, {
+				"item_id": 13,
+				"amount": '.$params['item13'].'
+		}, {
+				"item_id": 14,
+				"amount": '.$params['item14'].'
 		}]
 }', true);
 }
