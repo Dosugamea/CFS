@@ -147,6 +147,8 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 			} else {
 				unset($ret['center_skill']);
 			}
+			if(empty($ret['removable_skill']))
+				$ret['removable_skill']="[]";
 			unset($ret['user_id']);
 			foreach ($ret as &$v3) {
 				if (is_numeric($v3)) {
