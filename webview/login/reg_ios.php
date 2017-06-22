@@ -75,7 +75,7 @@ if(isset($_POST['submit'])) {
 			
 			$uid = $_POST['id'];
 			if($all_card_by_default) {
-				$card_list=$unit->query('select unit_id from unit_m where unit_id<='.$max_unit_id)->fetchAll();
+				$card_list=$unit->query('select unit_id from unit_m where unit_id<=? and unit_number>0', [$max_unit_id])->fetchAll();
 				//$query='INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ';
 				foreach($card_list as $v){
 					addUnit($v[0]);
