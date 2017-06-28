@@ -33,6 +33,16 @@
 				</form>
 			</td>
 		</tr>
+		<tr>
+			<td colspan="2">
+				<form action="customlive.php" method="post" name="form3">
+					<input type="text" name="pw" value="<?=$_POST['pw']?>" style="display: none;">
+					<a href="javascript:document.form3.submit();">
+						<div class="index-icon">自制谱功能</div>
+					</a>
+				</form>
+			</td>
+		</tr>
 	</table>
 </body>
 </html>
