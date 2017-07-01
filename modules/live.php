@@ -235,14 +235,11 @@ global $uid, $mysql, $params;
 				$info['unit_id']=$card_info['unit_id'];
 
 				$info['skill']=[];
-				$card_arr = array(json_decode($card_info['removable_skill']));
-				foreach($card_arr as $skill){
-					if($skill<=24){
+				foreach(json_decode($card_info['removable_skill']) as $skill){
+					if($skill<=24)
 						$info['skill'][]=(int)$skill;
-					}
-					elseif($skill<=30){
+					elseif($skill<=30)
 						$school_skill[]=(int)$skill;
-					}
 				}
 
 				$member_info[$position]=$info;
