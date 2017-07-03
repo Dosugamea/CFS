@@ -126,105 +126,119 @@ function mapSort($arr)
 }
 
 function generateRandomLive($note) {
-	$decoded = mapSort($note);
-	$len = count($decoded);
-	$occupied = array(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1);
-	$lastisadouble = 0;
-	$sides = [0, 1,1,1,1,3,2,2,2,2];
-
-	$min_ival = 0.2;
-
-	for($i=0; $i<$len; $i++) {
-
-		$timing = $decoded[$i]["timing_sec"];
-
-		$double = (($i+1 < $len) && (abs($decoded[$i]["timing_sec"] - $decoded[$i+1]["timing_sec"])) < 0.04);
-
-		//error_log($i);
-		//error_log(json_encode($occupied));
-		if($decoded[$i]["effect"] >= 10)//跳过滑键
-			continue;
-
-		if ($double) {
-			//error_log("is double");
-
-			do {
-				$pos = rand(1, 4);
-			} while($timing - $occupied[$pos] < $min_ival);
-
-			$decoded[$i]["position"] = $pos;
-			$occupied[$pos] = $decoded[$i]["timing_sec"];
-			if ($decoded[$i]["effect"] == 3) {
-				$occupied[$pos] += $decoded[$i]["effect_value"];
+	$decoded=mapSort($note);
+	$max_combo=count($decoded);
+	for($i=1;$i<=9;$i++){
+		$latest[$i]=-0.2;
+		$toput[$i]=0;
+	}
+	$change=0;
+	
+	for($note=0;$note<$max_combo;$note++){
+		$start[$note]=$decoded[$note]["timing_sec"];
+	}
+	for($note=0;$note<$max_combo;$note++){
+		if($start[$note+1]==$start[$note]&&$decoded[$note]["effect"]<10&&$decoded[$note+1]["effect"]>10){
+			$change++;
+			if($change==1)$note++;
+		}
+		$end[$note]=$decoded[$note]["timing_sec"];
+		if($decoded[$note]["effect"]%10==3){
+			$end[$note]+=$decoded[$note]["effect_value"];
+			$longnote=1;
+		}
+		else $longnote=0;
+		$last=0;
+		$singlelast=0;
+		if($start[$note+1]==$start[$note])$equalnext=1;
+		else $equalnext=0;
+		for($i=1;$i<=9;$i++){
+			if($latest[$i]<$start[$note]-0.2)$toput[$i]=1;
+			else if($latest[$i]>=$start[$note]){
+				$singlelast=10;
+				$last=$i;
 			}
-
-
-			do {
-				$pos = rand(6, 9);
-			} while($timing - $occupied[$pos] < $min_ival);
-
-			$decoded[$i+1]["position"] = $pos;
-			$occupied[$pos] = $decoded[$i+1]["timing_sec"];
-			
-			if ($decoded[$i+1]["effect"] == 3) {
-				$occupied[$pos] += $decoded[$i+1]["effect_value"];
-			}
-			$lastisadouble = 1;
-			$i++;
-
-		} else {
-			//error_log("is single");
-			$latest = 0;
-			$latestpos = 0;
-			for($u=1;$u<=9;$u++) {
-				if ($occupied[$u] > $latest) {
-					$latest = $occupied[$u];
-					$latestpos = $u;
+			else if($singlelast<10){
+				$singlelast++;
+				if($singlelast==1)$last=$i;
+				else{
+					if($latest[$i]>$latest[$last])$last=$i;
+					else if($latest[$i]==$latest[$last])$singlelast=0;
 				}
 			}
-			if ($latest >= $timing - 0.2) {
-				do {
-					if ($latestpos < 5) {
-						$pos = rand(6, 9);
-					} else {
-						$pos = rand(1, 4);
-					} 
-				} while(
-					($timing - $occupied[$pos] < $min_ival)
-				);
-			} else if ($latest < $timing - $min_ival || $lastisadouble || $latestpos == 5) { // any
-				do {
-					$pos = rand(1, 9);
-				} while(
-					($pos == 5 && $decoded[$i]["effect"] == 3)
-					|| ($timing - $occupied[$pos] < $min_ival)
-				);
-			} else {
-				do {
-					if ($latestpos < 5) {
-						$pos = rand(6, 9);
-					} else {
-						$pos = rand(1, 4);
-					} 
-				} while(
-					($timing - $occupied[$pos] < $min_ival)
-				);
-			}
-
-			$occupied[$pos] = $decoded[$i]["timing_sec"];
-
-			if ($decoded[$i]["effect"] == 3) {
-				$occupied[$pos] += $decoded[$i]["effect_value"];
-			}
-
-			$decoded[$i]["position"] = $pos;
-			$lastisadouble = 0;
 		}
-
-	} 
+		if($change==1)$equalnext=1;
+		if($decoded[$note]["effect"]>10){
+			$group=$decoded[$note]["notes_level"];
+			$slide_group[$group][0]++;
+			$num=$slide_group[$group][0];
+			$slide_group[$group][$num]=$note;
+			$last1=$slide_group[$group][$num-1];
+			if($num>1){
+				if($decoded[$last1]["position"]==1)$decoded[$note]["position"]=2;
+				else if($decoded[$last1]["position"]==9)$decoded[$note]["position"]=8;
+				else if($decoded[$last1]["position"]==4&&($singlelast==10||$equalnext==1||$longnote==1))$decoded[$note]["position"]=3;
+				else if($decoded[$last1]["position"]==6&&($singlelast==10||$equalnext==1||$longnote==1))$decoded[$note]["position"]=7;
+				else if($num==2)$decoded[$note]["position"]=2*(rand(0,1))-1+$decoded[$last1]["position"];
+				else{
+					$last2=$slide_group[$group][$num-2];
+					if($num==3)$decoded[$note]["position"]=2*$decoded[$last1]["position"]-$decoded[$last2]["position"];
+					else{
+						$last3=$slide_group[$group][$num-3];
+						if($decoded[$last1]["position"]==$decoded[$last3]["position"])$decoded[$note]["position"]=2*$decoded[$last1]["position"]-$decoded[$last2]["position"];
+						else{
+							$i=rand(0,99);
+							if($i<21)$decoded[$note]["position"]=$decoded[$last2]["position"];
+							else $decoded[$note]["position"]=2*$decoded[$last1]["position"]-$decoded[$last2]["position"];
+						}
+					}
+				}
+			}
+			else{
+				if($equalnext==1||$longnote==1)$toput[5]=0;
+				if($singlelast>=1){
+					$toput[5]=0;
+					if($last<=4)$toput[1]=$toput[2]=$toput[3]=$toput[4]=0;
+					if($last>=6)$toput[6]=$toput[7]=$toput[8]=$toput[9]=0;
+				}
+				for($j=0;$j==0;){
+					$i=rand(1,9);
+					if($toput[$i]==1){
+						$j++;
+						$decoded[$note]["position"]=$i;
+					}
+				}
+			}
+		}
+		else{
+			if($equalnext==1||$longnote==1)$toput[5]=0;
+			if($singlelast>=1){
+				$toput[5]=0;
+				if($last<=4)$toput[1]=$toput[2]=$toput[3]=$toput[4]=0;
+				if($last>=6)$toput[6]=$toput[7]=$toput[8]=$toput[9]=0;
+			}
+			for($j=0;$j==0;){
+				$i=rand(1,9);
+				if($toput[$i]==1){
+					$j++;
+					$decoded[$note]["position"]=$i;
+				}
+			}
+		}
+		for($i=1;$i<=9;$i++){
+			$toput[$i]=0;
+		}
+		$latest[$decoded[$note]["position"]]=$end[$note];
+		if($change==1)$note-=2;
+		if($change==2){
+			$change=0;
+			$note++;
+		}
+	}
 	$live_notes = $decoded;
 	return $decoded;
 }
+
 //generateRandomLiveOld 生成旧随机谱面，外部访问无法调用
 function generateRandomLiveOld($note) {
 	$timing=[];
