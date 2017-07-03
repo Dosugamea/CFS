@@ -266,19 +266,19 @@ function generateRandomLiveLimitless($note) {
 		$timing[]=$v['timing_sec'];
 	array_multisort($timing,SORT_ASC,$note);
     
-    $holding=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
+  $holding=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
     
 	foreach($note as $k=>&$v){
-        while(true){
-            $v['position']=rand(1,9);
-            if($v['timing_sec']>$holding[$v['position']]+0.1)
-                break;
-        }
-        if($v['effect']==3||$v['effect']==13) //长条
-			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
-        else
-            $holding[$v['position']]=$v['timing_sec'];
+    while(true){
+      $v['position']=rand(1,9);
+      if($v['timing_sec']>$holding[$v['position']]+0.05)
+        break;
     }
+    if($v['effect']%10==3) //长条
+			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
+    else
+      $holding[$v['position']]=$v['timing_sec'];
+  }
 	return $note;
 }
 
