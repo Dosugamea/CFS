@@ -89,7 +89,6 @@ function getRankInfo($id) {
   return $ret;
 }
 
-//generateRandomLive 生成新随机谱面，外部访问无法调用
 function detectSameTiming(&$notes) {
   $sameTimingMap = [];
   foreach($notes as $e) {
@@ -105,6 +104,7 @@ function detectSameTiming(&$notes) {
     }
   }
 }
+
 //对谱面按时间排序以免随机谱爆炸
 function mapSort($arr)
 {  
@@ -267,14 +267,14 @@ function generateRandomLiveOld($note) {
 	foreach($note as $k=>&$v) {
 		if($v['timing_sec']>$holdend+0.1)
 			$holding=false;
-		if(!$holding && $v['effect']==3) {
+		if(!$holding && $v['effect']%10==3) {
 			//长条，什么都不做
 			$holdend=$v['timing_sec']+$v['effect_value'];
 			$holding=true;
 		}
 		elseif($holding) {
 			//长按中，什么都不做
-			if($v['effect']==3) {
+			if($v['effect']%10==3) {
 				$holdend=max($holdend,$v['timing_sec']+$v['effect_value']);
 			}
 		}
