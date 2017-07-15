@@ -222,7 +222,8 @@ function getCenterSkillInfo($center_skill_id){
 	return $ret;
 }
 
-function getDeckAttribute($deck){
+function getDeckAttribute($deck,$post){
+	global $mysql;
 	$deck_info=[0,0,0,0];
 	$member_info=[];
 	$school_skill=[];//记录全体百分比加成
