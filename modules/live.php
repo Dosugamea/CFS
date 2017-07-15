@@ -218,7 +218,7 @@ global $uid, $mysql, $params;
 			if(count($deck['unit_deck_detail']) < 9)
 				continue;
 
-			$deck_ret[]=getDeckAttribute($deck);
+			$deck_ret[]=getDeckAttribute($deck,$post);
 		}
 	}
 	if (isset($params['extend_mods_life'])) {
