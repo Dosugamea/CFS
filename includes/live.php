@@ -115,11 +115,11 @@ function mapSort($arr)
 		for($k=0;$k<$len-$i;$k++)
 		{
 			 if($arr[$k]['timing_sec']>$arr[$k+1]['timing_sec'])
-				{
-						$tmp=$arr[$k+1];
-						$arr[$k+1]=$arr[$k];
-						$arr[$k]=$tmp;
-				}
+			{
+				$tmp=$arr[$k+1];
+				$arr[$k+1]=$arr[$k];
+				$arr[$k]=$tmp;
+			}
 		}
 	}
 	return $arr;
@@ -185,12 +185,14 @@ function generateRandomLive($note) {
 			if($num>1){
 				if($decoded[$last1]["position"]==1)$decoded[$note]["position"]=2;
 				else if($decoded[$last1]["position"]==9)$decoded[$note]["position"]=8;
-				else if($decoded[$last1]["position"]==4&&($singlelast==10||$equalnext==1||$longnote==1))$decoded[$note]["position"]=3;
-				else if($decoded[$last1]["position"]==6&&($singlelast==10||$equalnext==1||$longnote==1))$decoded[$note]["position"]=7;//双手原则优先
+				else if($decoded[$last1]["position"]==4&&($singlelast==10||$equalnext==1||$longnote==1||$num==2))$decoded[$note]["position"]=3;//干掉_45 _65
+				else if($decoded[$last1]["position"]==6&&($singlelast==10||$equalnext==1||$longnote==1||$num==2))$decoded[$note]["position"]=7;//双手原则优先
 				else if($num==2)$decoded[$note]["position"]=2*(rand(0,1))-1+$decoded[$last1]["position"];//第二个note随机取滑向
 				else{
 					$last2=$slide_group[$group][$num-2];
 					if($num==3)$decoded[$note]["position"]=2*$decoded[$last1]["position"]-$decoded[$last2]["position"];//第三个note尽可能保滑向
+					else if($decoded[$last1]["position"]==4&&$decoded[$last2]["position"]==5)$decoded[$note]["position"]=3;
+					else if($decoded[$last1]["position"]==6&&$decoded[$last2]["position"]==5)$decoded[$note]["position"]=7;//干掉565 545
 					else{
 						$last3=$slide_group[$group][$num-3];
 						if($decoded[$last1]["position"]==$decoded[$last3]["position"])$decoded[$note]["position"]=2*$decoded[$last1]["position"]-$decoded[$last2]["position"];//连续两个note不同时转滑向
@@ -251,7 +253,7 @@ function generateRandomLive($note) {
 			$note++;
 		}//滑单交换
 	}
-	//$live_notes = $decoded;
+	$live_notes = $decoded;
 	return $decoded;
 }
 
@@ -330,6 +332,7 @@ function calcScore($base, $map) {
 	$map = $map_;
 	}
 	foreach($map as $v2) {
+
 		foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ($p['effect_value']);
 		usort($v2['live_info']['notes_list'], 'beatmap_timing_cmp');
 
