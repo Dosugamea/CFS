@@ -16,7 +16,11 @@ function getLiveSettingsFromCustomLive($id, $rows) {
 					$settings['s_rank_combo'] = $combo;
 					unset($settings['pl_auto_calculate_combo_rank']);
 					$mysql->query('update programmed_live set live_json=? where ID=?', [json_encode($settings), $id]);
+				}else{
+					trigger_error('getLiveSettingsFromCustomLive: 找不到Live谱面'.$id);
 				}
+			}else{
+				trigger_error('getLiveSettingsFromCustomLive: 找不到Live谱面'.$id);
 			}
 		}
 		
