@@ -243,13 +243,13 @@ function live_play($post) {
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
 		foreach($festival_lives as $v) {
 			$live_id_list[] = $v['live_difficulty_id'];
-			$random[] = $v['random_switch'] + $params['extend_mods_5k'] * 10;
+			$random[] = $v['random_switch'] + $params['extend_mods_key'] * 10;
 		}
 		$energy_list = [null, 4, 8, 12, 20, 20, 20];
 	} else {
 		$live_id_list[0] = $post['live_difficulty_id'];
 		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $params['random_switch']);
-		$random[0] += $params['extend_mods_5k'] * 10;
+		$random[0] += $params['extend_mods_key'] * 10;
 		$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	}
 	$post['do_not_use_multiply'] = false;

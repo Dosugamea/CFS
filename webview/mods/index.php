@@ -6,7 +6,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
   $params[$v['param']] = (int)$v['value'];
 }
 
-$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_speed', 'extend_mods_hantei_count', 'extend_mods_5k'];
+$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_speed', 'extend_mods_hantei_count', 'extend_mods_key'];
 
 foreach($allowed_params as $v) {
   if (!isset($params[$v])) {
@@ -140,10 +140,11 @@ a{color: #000000;}
           }?>（当前状态：<?=$status[$params['extend_mods_life']]?>）<br /><br />          
           </div>
 
-          <?php $status = ['关闭', '开启'];?>
-          5K：<br /><?php foreach($status as $k => $v) {
-            echo '<a href="index?switch_param=extend_mods_5k&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
-          }?>（当前状态：<?=$status[$params['extend_mods_5k']]?>）<br /><br />          
+          <?php $status = ['9K', '5K'//, '7K'
+                          ];?>
+          Key：<br /><?php foreach($status as $k => $v) {
+            echo '<a href="index?switch_param=extend_mods_key&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+          }?>（当前状态：<?=$status[$params['extend_mods_key']]?>）<br /><br />          
           </div>
 
           <div class="clearfix"></div>
