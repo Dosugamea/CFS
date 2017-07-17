@@ -1,5 +1,5 @@
 <?php 
-	require "../config/database.php";
+	require "../../config/database.php";
 	if(!isset($_POST['pw']) || ($_POST['pw'] !=$admin_pw)){
 		print("<head><title>403 Forbidden</title></head><body bgcolor='white'><center><h1>403 Forbidden</h1></center><hr><center>F**K U 1.3.8</center></body>");
 		die();
@@ -25,7 +25,7 @@
 			<div class="window-text" disabled="disabled" readonly="readonly" id="text">
 				<table class="window-text" border="2">
 				<?php
-						require "../config/database.php";
+						require "../../config/database.php";
 						$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
 						$rs = $pdo -> query("select * from programmed_live order by id"); 
 						foreach($rs as $v) {

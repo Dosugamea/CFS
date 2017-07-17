@@ -170,6 +170,8 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 			$ret2[] = $ret;
 		}
 		if ($noarray) {
+			if(count($ret2)==0)
+				trigger_error('GetUnitDetail: 部分卡缺失，请重新组卡'.$$unit_owning_user_id[0]);
 			return $ret2[0];
 		}
 		array_multisort($sort, SORT_ASC, $ret2);
