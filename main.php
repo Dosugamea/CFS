@@ -191,7 +191,7 @@ $action = explode('/', $_SERVER['PATH_INFO']);
 if (!isset($action[2])) {
 	$action[2]='';
 }
-if(isset($post['commandNum'])){
+if(isset($post['commandNum']) && isset($post['module']){
 	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",[$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
 	if($cached_history){
 		print(gzdecode($cached_history['response']));
