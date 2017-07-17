@@ -109,14 +109,14 @@ a{color: #000000;}
 <div id="body">
 <div id="container">
 <ul id="list">
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">使用方法</h2>
           <div class="summary">以下的所有Mod均可以在游戏过程中随时切换。<br />使用 その他-ヘルプ 来快速到达本页面。</div>
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">自定义模块</h2>
           <div class="summary">
@@ -138,11 +138,10 @@ a{color: #000000;}
           锁血：<br /><?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_life&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_life']]?>）<br /><br />          
-          </div>
 
           <?php $status = ['9K', '5K'//, '7K'
                           ];?>
-          Key：<br /><?php foreach($status as $k => $v) {
+          Key：<?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_key&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_key']]?>）<br /><br />          
           </div>
@@ -150,7 +149,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">二次调速</h2>
           <style type="text/css">
@@ -183,8 +182,8 @@ a{color: #000000;}
           <div class="summary">
             <form method="get" action="/webview.php/mods/index">
               <input type="hidden" value="extend_mods_speed" name="switch_param" />
-              -8% <input type="range" name="" min="-8" max="8" defaultValue="<?=$params['extend_mods_speed']?>" step="1" class="range"> +8%<br>
-              <input type="submit" value="提交">
+              -8% <input type="range" name="param" min="-8" max="8" value="<?=$params['extend_mods_speed']?>" step="1" class="range"> +8%<br />
+              <input type="submit" value="提交" />
             </form>
           </div>
           <div class="clearfix"></div>
@@ -192,7 +191,7 @@ a{color: #000000;}
       </li>
 
 
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">附加自定义功能</h2>
           <div class="summary">
