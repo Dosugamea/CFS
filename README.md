@@ -3,11 +3,11 @@
 	
 attempt our public server at `prod.customfe.su`
 
-**REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (No we will never provide or tell how to make one).
+**REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (We will never provide or tell the method how to make one).
 
 We only supported the JP client which above the 5.0.2
 
-# Aggrement
+# Agreement
 
 The project is developed by the enthusiasts of personal behavior, does not contain any commercial use, the code is closed source code, must comply with the code confidentiality agreement. If the user uses any of the items in the other project and leaks the source code, we will close your access and request to stop using it.
 
@@ -37,7 +37,7 @@ Check `upgrade_scripts` folder to see if there is any schema changes. If so, imp
 # Troubleshooting
 **Q: A Japanese message pop up saying I need to update the client version.**
 
-A: You connected to the official server. Check your HOSTS to see if you pointed `prod-jp.lovelive.ge.klabgames.net` and `prod-2-jp.lovelive.ge.klabgames.net` to your server IP correctly. Turn off any proxies, network accelerators, etc. If you are using mobile network, please check your APN settings: If you are using CMWAP/UNIWAP/3GWAP/CTWAP, switch to CMNET/UNINET/3GNET/CTNET instead.
+A: Please check if your client version matches the server version.  
 
 **Q: "服务器爆炸了 (Server Bombed)" pops out with error info xxxxxx**
 
@@ -53,6 +53,6 @@ A: Contact the developer to update data.sql.
 
 **Q: What is $code / How to decrypt xxxx.db_ file / How to remove XMS check**
 
-A: No. We will never tell you. Disassemble the game and figure them out yourself. The $code is easy to find, and the decrpytion algorithm is not difficult too.
+A: No. We will never tell you that. Disassemble the game and figure them out yourself. The $code is easy to find, and the decrpytion algorithm is not difficult too.
 
 

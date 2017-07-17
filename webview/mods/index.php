@@ -6,7 +6,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
   $params[$v['param']] = (int)$v['value'];
 }
 
-$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_hantei_count'];
+$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_speed', 'extend_mods_hantei_count'];
 
 foreach($allowed_params as $v) {
   if (!isset($params[$v])) {
@@ -109,26 +109,6 @@ a{color: #000000;}
 <div id="body">
 <div id="container">
 <ul id="list">
-     <!-- <li class="entry"">
-        <div class="entry-container">
-          <h2 class="text">兑换码</h2>
-          <div class="summary">
-            <input type="text" name="" id="numkeyboard1" class="numkeyboard" style="border:1px solid;height:27px; readonly="true">
-            <a href = "JavaScript:void(0)" onclick = "document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">
-            <input type="" style="border:1px solid;height:27px;width:64px;" value="提交" readonly="readonly" /></a>
-          <key></key>
-            <div id="light" class="white_content">
-              <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">兑换码有误 请点击重试</a>
-            </div> 
-           
-            <div id="light" class="white_content">
-                <a href = "javascript:void(0)" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">兑换码有误 请点击重试</a>
-                </div> 
-            
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </li>-->
       <li class="entry"">
         <div class="entry-container">
           <h2 class="text">使用方法</h2>
@@ -159,16 +139,57 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-     
+      <li class="entry"">
+        <div class="entry-container">
+          <h2 class="text">二次调速</h2>
+          <style type="text/css">
+            input[type=range] {
+                -webkit-appearance: none;
+                width: 80%;
+                height: 23px
+                border-radius: 90px;
+                background-color: #675656;
+                margin-top:10px;
+            }
+            input[type=range]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+            }  
+            input[type=range]:focus {
+                outline: none;
+            }  
+            input[type=range]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                height: 25px;
+                width: 25px;
+                margin-top: -5px; 
+                background: #ffffff; 
+                border-radius: 50%; 
+                border: solid 0.125em #9B9081;
+                box-shadow: 0 .125em .125em #000000;
+            }
+          </style>
+          <script type="text/javascript" src="range.js"></script>
+          <div class="summary">
+            <form method="get" action="/webview.php/mods/index">
+              <input type="hidden" value="extend_mods_speed" name="switch_param" />
+              -8% <input type="range" name="" min="-8" max="8" defaultValue="<?=$params['extend_mods_speed']?>" step="1" class="range"> +8%<br>
+              <input type="submit" value="提交">
+            </form>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+
+
       <li class="entry"">
         <div class="entry-container">
           <h2 class="text">附加自定义功能</h2>
           <div class="summary">
             <b>注意：以下的功能会大幅降低游戏难度，因而打开后您的成绩【不会】被记录！</b><br />
           <form method="get" action="/webview.php/mods/index" autocomplete="off">
-          在游戏开始（以及组曲换曲）时获得<input type="text" value="<?=$params['extend_mods_hantei_count']?>" name="param" style="border:1px solid;height:27px;"  id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" readonly="true"/>
-          <input type="hidden" value="extend_mods_hantei_count" name="switch_param" />个超大判（设为0为关闭）<br />
-          <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" />
+            <input type="hidden" value="extend_mods_hantei_count" name="switch_param" />
+            在游戏开始（以及组曲换曲）时获得<input type="text" value="<?=$params['extend_mods_hantei_count']?>" name="param" style="border:1px solid;height:27px;"  id="numkeyboard1" class="numkeyboard"  pattern="[0-9]*" readonly="true"/>个超大判（设为0为关闭）<br />
+           <input type="submit" style="border:1px solid;height:27px;width:64px;" value="提交" />
           </form>
           <key></key>
           </div>

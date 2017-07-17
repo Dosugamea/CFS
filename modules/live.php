@@ -291,6 +291,13 @@ function live_play($post) {
 				}
 			}
 		}
+		if (isset($params['extend_mods_speed']) && $params['extend_mods_speed']) {
+			if($params['extend_mods_speed']>8||$params['extend_mods_speed']<-8)
+				$params['extend_mods_speed']=0;
+			foreach ($live_info['notes_list'] as &$set) {
+				$set['speed'] = 1+$params['extend_mods_speed']/100;
+			}
+		}
 		if (!isset($post['ScoreMatch']) && isset($params['extend_mods_hantei_count']) && $params['extend_mods_hantei_count']) {
 			$live_info['guest_bonus'] = json_decode('{
 				"bonus_id": 8,
