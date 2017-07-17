@@ -714,9 +714,9 @@ function live_reward($post) {
 	//分配基本奖励并计算玩家新的等级
 	$ret['next_level_info'] = [['level' => $ret['before_user_info']['level'], 'from_exp' => $ret['before_user_info']['exp']]];
 	while ($newexp >= $exp[$newlevel]) {
-		$ret['next_level_info'][] = ['level'=>$newlevel,' from_exp'=>$exp[$newlevel]];
 		$newlevel++;
-		energyRecover(true);
+		$ret['next_level_info'][] = ['level'=>$newlevel,' from_exp'=>$exp[$newlevel]];
+		energyRecover($newlevel);
 	}
 	$newsocial = $ret['before_user_info']['social_point'];
 	$newloveca = $ret['before_user_info']['sns_coin'];
@@ -1019,7 +1019,7 @@ function live_reward($post) {
 	$params['loveca'] = $newloveca;
 	$ret['after_user_info']=runAction('user','userInfo');
 	$ret['after_user_info']=$ret['after_user_info']['user'];
-	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy()['energy_max'];
+	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
 	return $ret;
 }
 
