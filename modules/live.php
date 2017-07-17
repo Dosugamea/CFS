@@ -243,12 +243,13 @@ function live_play($post) {
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
 		foreach($festival_lives as $v) {
 			$live_id_list[] = $v['live_difficulty_id'];
-			$random[] = $v['random_switch'];
+			$random[] = $v['random_switch'] + $params['extend_mods_5k'] * 10;
 		}
 		$energy_list = [null, 4, 8, 12, 20, 20, 20];
 	} else {
 		$live_id_list[0] = $post['live_difficulty_id'];
 		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $params['random_switch']);
+		$random[0] += $params['extend_mods_5k'] * 10;
 		$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	}
 	$post['do_not_use_multiply'] = false;
@@ -269,13 +270,24 @@ function live_play($post) {
 		$live_info['guest_bonus'] = [];
 		$live_info['sub_guest_bonus'] = [];
 		$energy_use += $energy_list[(int)$live_settings['difficulty']];
-		if ($random[$k2] == 1) { //新随机算法
-			$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);
-		} elseif ($random[$k2] == 2) { //旧随机
-			$live_info['notes_list'] = generateRandomLiveOld($live_info['notes_list']);
-		} elseif ($random[$k2] == 3) { //无限制随机
-            $live_info['notes_list'] = generateRandomLiveLimitless($live_info['notes_list']);
-        }
+
+		switch($random[$k2]){
+			case 1://新随机算法
+				$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);break;
+			case 2://旧随机
+				$live_info['notes_list'] = generateRandomLiveOld($live_info['notes_list']);break;
+			case 3://无限制随机
+				$live_info['notes_list'] = generateRandomLiveLimitless($live_info['notes_list']);break;
+			case 10://5K
+				$live_info['notes_list'] = generateLiveFiveKey($live_info['notes_list']);break;
+			case 11://新随机算法 5K
+				$live_info['notes_list'] = generateRandomLiveFiveKey($live_info['notes_list']);break;
+			case 12://旧随机 5K
+				$live_info['notes_list'] = generateRandomLiveOldFiveKey($live_info['notes_list']);break;
+			case 13://无限制随机 5K
+				$live_info['notes_list'] = generateRandomLiveLimitlessFiveKey($live_info['notes_list']);break;
+		}
+
 		if (isset($params['extend_mods_vanish']) && $params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
 				$set['vanish'] = $params['extend_mods_vanish'];

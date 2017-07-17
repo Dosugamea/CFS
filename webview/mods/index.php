@@ -6,7 +6,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
   $params[$v['param']] = (int)$v['value'];
 }
 
-$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_speed', 'extend_mods_hantei_count'];
+$allowed_params = ['extend_mods_vanish', 'extend_mods_mirror', 'extend_mods_life', 'extend_mods_speed', 'extend_mods_hantei_count', 'extend_mods_5k'];
 
 foreach($allowed_params as $v) {
   if (!isset($params[$v])) {
@@ -123,19 +123,29 @@ a{color: #000000;}
           HI-SPEED:<font color="red"><b>请升级至3.2客户端，然后在“各种设定”中设置！</b></font>
           <br />
           随机：<a href="/webview.php/mods/index?switch_random=0">关闭</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=1">新随机</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=2">旧随机</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=3">无限制随机</a>&nbsp;&nbsp;（当前状态：<?php if($params['random_switch']==1) echo '新随机';elseif($params['random_switch']==2) echo '旧随机';elseif($params['random_switch']==3) echo '无限制随机'; else echo '关闭'; ?>）<br /><br />
+
           <?php $status = ['关闭', 'HIDDEN', 'SUDDEN'];?>
           VANISH：<?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_vanish&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_vanish']]?>）<br /><br />
+
           <?php $status = ['关闭', '开启'];?>
           MIRROR：<?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_mirror&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_mirror']]?>）<br /><br />
+
           <?php $status = ['关闭', 'NO FAIL', 'SUDDEN DEATH'];?>
           锁血：<br /><?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_life&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_life']]?>）<br /><br />          
           </div>
+
+          <?php $status = ['关闭', '开启'];?>
+          5K：<br /><?php foreach($status as $k => $v) {
+            echo '<a href="index?switch_param=extend_mods_5k&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+          }?>（当前状态：<?=$status[$params['extend_mods_5k']]?>）<br /><br />          
+          </div>
+
           <div class="clearfix"></div>
         </div>
       </li>
