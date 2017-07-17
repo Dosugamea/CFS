@@ -200,6 +200,15 @@ CREATE TABLE `live_ranking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
+CREATE TABLE `log` (
+	`command_num` TEXT NOT NULL,
+	`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`module` TEXT NOT NULL,
+	`action` TEXT NOT NULL,
+	`request` BLOB NOT NULL,
+	`response` BLOB NOT NULL,
+	PRIMARY KEY (`command_num`(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- 导出  表 lovelive.login_bonus 结构
 CREATE TABLE IF NOT EXISTS `login_bonus` (
   `user_id` int(11) NOT NULL,
