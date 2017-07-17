@@ -192,9 +192,9 @@ if (!isset($action[2])) {
 	$action[2]='';
 }
 if(isset($post['commandNum'])){
-	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",［$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
+	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",[$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
 	if($cached_history){
-		print(gzdecode($cached_history［'response']));
+		print(gzdecode($cached_history['response']));
 		$log = false;
 	}else{
 		$log = true;
@@ -235,7 +235,7 @@ if(!isset($ret['status_code'])){
 
 /*写入日志*/
 if($log)
-	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", ［$post['commandNum'], time(), $post['module'], $post['action'], gzencode(json_encode($post)), gzencode(json_encode($ret))]);
+	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], time(), $post['module'], $post['action'], gzencode(json_encode($post)), gzencode(json_encode($ret))]);
 
 $ret = json_encode($ret);
 function retError($statusCode) {
