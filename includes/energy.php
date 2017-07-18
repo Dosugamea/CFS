@@ -66,7 +66,7 @@ function energyRecover($level=0){
 		$mysql->query("UPDATE users SET energy_full_time = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
 	else
 		$mysql->query("UPDATE users SET over_max_energy = ".($energy_now + $energy_max).", energy_full_time = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
-	if(level==0)
+	if($level==0)
 		$params['item4'] -= 1;
 	return true;
 }
