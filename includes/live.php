@@ -415,3 +415,6 @@ function calcScore($base, $map) {
 	}
 	return $total;
 }
+function beatmap_timing_cmp($u, $v) {
+	return $u['timing_sec'] - $v['timing_sec'];
+}
