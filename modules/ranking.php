@@ -16,7 +16,9 @@ function ranking_live($post) {
     SELECT live_ranking.user_id,hi_score,name,level,center_unit,award FROM live_ranking
     LEFT JOIN users ON users.user_id=live_ranking.user_id
     LEFT JOIN user_deck ON user_deck.user_id=live_ranking.user_id
-    WHERE notes_setting_asset="'.$notes_setting['notes_setting_asset'].'" AND card_switch='.$params['card_switch'].' AND random_switch='.$params['random_switch'].'
+    WHERE notes_setting_asset="'.$notes_setting['notes_setting_asset'].'" 
+    AND card_switch='.$params['card_switch'].' 
+    AND random_switch='.($params['random_switch']+$params['extend_mods_key']*10).'
     ORDER BY hi_score DESC LIMIT 0,10
   ) a,(SELECT @id:=0) id');
   while ($item = $rank->fetch()) {

@@ -265,7 +265,7 @@ function live_play($post) {
 		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
 		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
 		$live_info['dangerous'] = false;
-		$live_info['is_random'] = $random[$k2] > 0;
+		$live_info['is_random'] = $random[$k2] %10 > 0;
 		$live_info['use_quad_point'] = $random[$k2] == 2;
 		$live_info['guest_bonus'] = [];
 		$live_info['sub_guest_bonus'] = [];
@@ -457,7 +457,7 @@ function live_reward($post) {
 	
 	if(!isset($post['festival'])) { //如果是单首歌曲
 		$post['live_difficulty_id'] = (int)$post['live_difficulty_id'];
-		$random = $params['random_switch'];
+		$random = $params['random_switch'] + $params['extend_mods_key'] * 10;
 		//读取live信息（消耗等）
 		if (!isset($post['ScoreMatch'])) {
 			$map_info = getLiveSettings($post['live_difficulty_id'], 'capital_type, capital_value, difficulty, c_rank_combo, b_rank_combo, a_rank_combo, s_rank_combo, c_rank_complete, b_rank_complete, a_rank_complete, s_rank_complete, notes_setting_asset');
@@ -475,7 +475,7 @@ function live_reward($post) {
 					"live_difficulty_id": '.$post['live_difficulty_id'].',
 					"dangerous": '.(($map_info['difficulty'] > 11) ? 'true' : 'false').',
 					"use_quad_point": false,
-					"is_random": '.($random ? 'true' : 'false').'
+					"is_random": '.($random%10>0 ? 'true' : 'false').'
 			}]}',true);
 		
 		/* 更新最高分、计算评价 */
@@ -1031,6 +1031,7 @@ function live_reward($post) {
 	$params['loveca'] = $newloveca;
 	$ret['after_user_info']=runAction('user','userInfo');
 	$ret['after_user_info']=$ret['after_user_info']['user'];
+	$ret['after_user_info']['energy_max']=100+(int)floor($newlevel/2);
 	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
 	return $ret;
 }
