@@ -326,7 +326,7 @@ function live_play($post) {
 			if($params['extend_mods_speed']>8||$params['extend_mods_speed']<-8)
 				$params['extend_mods_speed']=0;
 			foreach ($live_info['notes_list'] as &$set) {
-				$set['speed'] = 1+$params['extend_mods_speed']/100;
+				$set['speed'] = 1/(1+$params['extend_mods_speed']/100);
 			}
 		}
 		if (!isset($post['ScoreMatch']) && isset($params['extend_mods_hantei_count']) && $params['extend_mods_hantei_count']) {
