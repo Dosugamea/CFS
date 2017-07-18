@@ -1,9 +1,5 @@
-<?php 
-	require "../config/database.php";
-	if(!isset($_POST['pw']) || ($_POST['pw'] !=$admin_pw)){
-		print('<h1>请输入密码</h1><form action="index.php" method="post"><input type="text" name="pw" ><input type="submit"></form>');
-		die();
-	}
+<?php
+include_once("includes/check_admin.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,30 +13,15 @@
 	<table class="index-table" cellspacing="25">
 		<tr>
 			<td>
-				<form action="user.php" method="post" name="form1">
-					<input type="hidden" name="pw" value="<?=$_POST['pw']?>">
-					<a href="javascript:document.form1.submit();">
-						<div class="index-icon">用户详情</div>
-					</a>
-				</form>
+				<div class="index-icon"><a href="user.php">用户详情</a></div>
 			</td>
 			<td>
-				<form action="card_en.php" method="post" name="form2">
-					<input type="hidden" name="pw" value="<?=$_POST['pw']?>">
-					<a href="javascript:document.form2.submit();">
-						<div class="index-icon">用户管理</div>
-					</a>
-				</form>
+				<div class="index-icon"><a href="card_en.php">用户管理</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
-				<form action="custom/index.php" method="post" name="form3">
-					<input type="hidden" name="pw" value="<?=$_POST['pw']?>">
-					<a href="javascript:document.form3.submit();">
-						<div class="index-icon">自制谱功能</div>
-					</a>
-				</form>
+				<div class="index-icon"><a href="custom/index.php">自制谱功能</a></div>
 			</td>
 		</tr>
 	</table>
