@@ -120,7 +120,7 @@ a{color: #000000;}
         <div class="entry-container">
           <h2 class="text">自定义模块</h2>
           <div class="summary">
-          HI-SPEED:<font color="red"><b>请升级至3.2客户端，然后在“各种设定”中设置！</b></font>
+          HI-SPEED:<font color="red"><b> 请在“其他-各种设定-LIVE”中设置！</b></font>
           <br />
           随机：<a href="/webview.php/mods/index?switch_random=0">关闭</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=1">新随机</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=2">旧随机</a>&nbsp;&nbsp;<a href="/webview.php/mods/index?switch_random=3">无限制随机</a>&nbsp;&nbsp;（当前状态：<?php if($params['random_switch']==1) echo '新随机';elseif($params['random_switch']==2) echo '旧随机';elseif($params['random_switch']==3) echo '无限制随机'; else echo '关闭'; ?>）<br /><br />
 

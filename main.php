@@ -100,7 +100,9 @@ if (isset($uid)) {
 	$__params_bak = $params;
 	$__user_bak = $user;
 	//如果没有某些常用值，置初值，免得代码里判断
-	foreach (['enable_card_switch', 'card_switch', 'random_switch', 'allow_test_func', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'item7', 'item8', 'item9', 'item10', 'item11', 'item12', 'item13', 'item14', 'aqours_flag'] as $name) {
+	$param_list=['enable_card_switch', 'card_switch', 'random_switch', 'extend_mods_key', 'allow_test_func',
+	 'item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'item7', 'item8', 'item9', 'item10', 'item11', 'item12', 'item13', 'item14', 'aqours_flag'];
+	foreach ($param_list as $name) {
 		if (!isset($params[$name])) {
 			$params[$name] = 0;
 		}
