@@ -139,8 +139,7 @@ a{color: #000000;}
             echo '<a href="index?switch_param=extend_mods_life&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_life']]?>）<br /><br />          
 
-          <?php $status = ['9K', '5K'//, '7K'
-                          ];?>
+          <?php $status = ['9K', '5K', '7K'];?>
           Key：<?php foreach($status as $k => $v) {
             echo '<a href="index?switch_param=extend_mods_key&param='.$k.'">'.$v.'</a>&nbsp;&nbsp;&nbsp;&nbsp;';
           }?>（当前状态：<?=$status[$params['extend_mods_key']]?>）<br /><br />          
