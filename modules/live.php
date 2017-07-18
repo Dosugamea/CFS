@@ -1,5 +1,7 @@
 <?php
 require_once('includes/live.php');
+require_once('includes/live5k.php');
+require_once('includes/live7k.php');
 require_once('includes/unit.php');
 
 //live/liveStatus 歌曲信息以及最高分
@@ -271,6 +273,15 @@ function live_play($post) {
 		$live_info['sub_guest_bonus'] = [];
 		$energy_use += $energy_list[(int)$live_settings['difficulty']];
 
+		$part1=['','FiveKey','SevenKey'];
+		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless'];
+		$p1=$params['extend_mods_key'];
+		$p2=$random[$k2]%10;
+		if($random[$k2]>0)
+			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2].$part1[$p1], $live_info['notes_list']);
+
+		/*
+		//使用上面的方法代替
 		switch($random[$k2]){
 			case 1://新随机算法
 				$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);break;
@@ -278,6 +289,7 @@ function live_play($post) {
 				$live_info['notes_list'] = generateRandomLiveOld($live_info['notes_list']);break;
 			case 3://无限制随机
 				$live_info['notes_list'] = generateRandomLiveLimitless($live_info['notes_list']);break;
+
 			case 10://5K
 				$live_info['notes_list'] = generateLiveFiveKey($live_info['notes_list']);break;
 			case 11://新随机算法 5K
@@ -286,7 +298,16 @@ function live_play($post) {
 				$live_info['notes_list'] = generateRandomLiveOldFiveKey($live_info['notes_list']);break;
 			case 13://无限制随机 5K
 				$live_info['notes_list'] = generateRandomLiveLimitlessFiveKey($live_info['notes_list']);break;
-		}
+
+			case 20://7K
+				$live_info['notes_list'] = generateLiveSevenKey($live_info['notes_list']);break;
+			case 21://新随机算法 7K
+				$live_info['notes_list'] = generateRandomLiveSevenKey($live_info['notes_list']);break;
+			case 22://旧随机 7K
+				$live_info['notes_list'] = generateRandomLiveOldSevenKey($live_info['notes_list']);break;
+			case 23://无限制随机 7K
+				$live_info['notes_list'] = generateRandomLiveLimitlessSevenKey($live_info['notes_list']);break;
+		}*/
 
 		if (isset($params['extend_mods_vanish']) && $params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
