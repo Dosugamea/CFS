@@ -129,9 +129,11 @@ function mapSort($arr)
 	return $arr;
 }
 
-function generateRandomLive($note) {
+function generateRandomLive($note,$key) {
 	$decoded=mapSort($note);
 	$max_combo=count($decoded);
+	$min=(11-$key)/2;
+	$max=(9+$key)/2;
 	for($i=1;$i<=9;$i++){
 		$latest[$i]=-0.2;
 		$toput[$i]=0;
@@ -161,7 +163,7 @@ function generateRandomLive($note) {
 		if($note<$max_combo-1&&$start[$note+1]==$start[$note])$equalnext=1;
 		else $equalnext=0;
 		//判断是否为长条，双键的前半
-		for($i=1;$i<=9;$i++){
+		for($i=$min;$i<=$max;$i++){
 			if($latest[$i]<$start[$note]-0.2)$toput[$i]=1;//当且仅当这个这个键位前面0.2s内没有note存在时这个键位可以放这个note
 			else if($latest[$i]>=$start[$note]){
 				$singlelast=10;
@@ -187,8 +189,8 @@ function generateRandomLive($note) {
 			$slide_group[$group][$num]=$note;//滑键的分组
 			$last1=$slide_group[$group][$num-1];
 			if($num>1){
-				if($decoded[$last1]["position"]==1)$decoded[$note]["position"]=2;
-				else if($decoded[$last1]["position"]==9)$decoded[$note]["position"]=8;
+				if($decoded[$last1]["position"]==$min)$decoded[$note]["position"]=$min+1;
+				else if($decoded[$last1]["position"]==$max)$decoded[$note]["position"]=$max-1;
 				else if($decoded[$last1]["position"]==4&&($singlelast==10||$equalnext==1||$longnote==1||$num==2))$decoded[$note]["position"]=3;//干掉_45 _65
 				else if($decoded[$last1]["position"]==6&&($singlelast==10||$equalnext==1||$longnote==1||$num==2))$decoded[$note]["position"]=7;//双手原则优先
 				else if($num==2)$decoded[$note]["position"]=2*(rand(0,1))-1+$decoded[$last1]["position"];//第二个note随机取滑向
@@ -209,14 +211,27 @@ function generateRandomLive($note) {
 				}
 			}
 			else{
+				if($toput[3]+$toput[4]+$toput[6]+$toput[7]+$toput[5]+$toput[2]+$toput[8]+$toput[1]+$toput[9]==0){
+					for($i=$min;$i<=$max;$i++){
+						if($latest[$i]<$start[$note])$toput[$i]=1;
+					}
+				}
 				if($equalnext==1||$longnote==1)$toput[5]=0;
+				for($i=$min;$i<=$max;$i++){
+					$toput1[$i]=$toput[$i];
+				}
 				if($singlelast>=1){
 					$toput[5]=0;
-					if($last<=4)$toput[1]=$toput[2]=$toput[3]=$toput[4]=0;
+					if($last<=4)$toput[3]=$toput[4]=$toput[2]=$toput[1]=0;
 					if($last>=6)$toput[6]=$toput[7]=$toput[8]=$toput[9]=0;
 				}
+				if($toput[3]+$toput[4]+$toput[6]+$toput[7]+$toput[5]+$toput[2]+$toput[8]+$toput[1]+$toput[9]==0){
+					for($i=$min;$i<=$max;$i++){
+						$toput[$i]=$toput1[$i];
+					}
+				}
 				for($j=0;$j==0;){
-					$i=rand(1,9);
+					$i=rand($min,$max);
 					if($toput[$i]==1){
 						$j++;
 						$decoded[$note]["position"]=$i;
@@ -225,29 +240,34 @@ function generateRandomLive($note) {
 			}
 		}
 		else{
+			if($toput[3]+$toput[4]+$toput[6]+$toput[7]+$toput[5]+$toput[2]+$toput[8]+$toput[1]+$toput[9]==0){
+				for($i=$min;$i<=$max;$i++){
+					if($latest[$i]<$start[$note])$toput[$i]=1;
+				}
+			}
 			if($equalnext==1||$longnote==1)$toput[5]=0;
-			for($i=1;$i<=9;$i++){
+			for($i=$min;$i<=$max;$i++){
 				$toput1[$i]=$toput[$i];
 			}
 			if($singlelast>=1){
 				$toput[5]=0;
-				if($last<=4)$toput[1]=$toput[2]=$toput[3]=$toput[4]=0;
+				if($last<=4)$toput[3]=$toput[4]=$toput[2]=$toput[1]=0;
 				if($last>=6)$toput[6]=$toput[7]=$toput[8]=$toput[9]=0;
 			}
-			if($toput[1]+$toput[2]+$toput[3]+$toput[4]+$toput[6]+$toput[7]+$toput[8]+$toput[9]+$toput[5]==0){
-				for($i=1;$i<=9;$i++){
+			if($toput[3]+$toput[4]+$toput[6]+$toput[7]+$toput[5]+$toput[2]+$toput[8]+$toput[1]+$toput[9]==0){
+				for($i=$min;$i<=$max;$i++){
 					$toput[$i]=$toput1[$i];
 				}
 			}
 			for($j=0;$j==0;){
-				$i=rand(1,9);
+				$i=rand($min,$max);
 				if($toput[$i]==1){
 					$j++;
 					$decoded[$note]["position"]=$i;
 				}
 			}
 		}
-		for($i=1;$i<=9;$i++){
+		for($i=$min;$i<=$max;$i++){
 			$toput[$i]=0;
 		}
 		$latest[$decoded[$note]["position"]]=$end[$note];
@@ -261,8 +281,7 @@ function generateRandomLive($note) {
 	return $decoded;
 }
 
-//generateRandomLiveOld 生成旧随机谱面，外部访问无法调用
-function generateRandomLiveOld($note) {
+function generateRandomLiveOld($note,$key) {
 	$timing=[];
 	foreach($note as $v)
 		$timing[]=$v['timing_sec'];
@@ -270,7 +289,16 @@ function generateRandomLiveOld($note) {
 	$holding=false;
 	$holdend=0;
 	$lasttime=0;
+	$min=(11-$key)/2;
+	$max=(9+$key)/2;
+	$holdingg=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
 	foreach($note as $k=>&$v) {
+		if($v['position']<$min)$v['position']+=2;
+		else if($v['position']>$max)$v['position']-=2;
+		if($v['timing_sec']<$holdingg[$v['position']]+0.01){
+			if($v['position']<5)$v['position']+=2;
+			else $v['position']-=2;
+		}
 		if($v['timing_sec']>$holdend+0.1)
 			$holding=false;
 		if(!$holding && $v['effect']%10==3) {
@@ -290,37 +318,65 @@ function generateRandomLiveOld($note) {
 		elseif($v['effect'] >= 10) {
 			//滑键，什么都不做
 		}
-		else $v['position']=rand(1,9); //单点
+		else $v['position']=rand($min,$max); //单点
 		$lasttime=$v['timing_sec'];
+		if($v['effect']%10==3) //长条
+			$holdingg[$v['position']]=$v['timing_sec']+$v['effect_value'];
+		else
+			$holdingg[$v['position']]=$v['timing_sec'];
 	}
 	return $note;
 }
 
-function generateRandomLiveLimitless($note) {
+function generateLive($note,$key) {
 	$timing=[];
 	foreach($note as $v)
 		$timing[]=$v['timing_sec'];
 	array_multisort($timing,SORT_ASC,$note);
-		
-	$holding=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
-		
-	foreach($note as $k=>&$v){
-		$v['effect']%=10;//去除划键，防止箭头乱飞
-		while(true){
-			$v['position']=rand(1,9);
-			if($v['timing_sec']>$holding[$v['position']]+0.05)
-				break;
+	$holding=false;
+	$holdend=0;
+	$lasttime=0;
+	$min=(11-$key)/2;
+	$max=(9+$key)/2;
+	$holdingg=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
+	foreach($note as $k=>&$v) {
+		if($v['position']<$min)$v['position']+=2;
+		else if($v['position']>$max)$v['position']-=2;
+		if($v['timing_sec']<$holdingg[$v['position']]+0.01){
+			if($v['position']<5)$v['position']+=2;
+			else $v['position']-=2;
 		}
 		if($v['effect']%10==3) //长条
-			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
+			$holdingg[$v['position']]=$v['timing_sec']+$v['effect_value'];
 		else
-			$holding[$v['position']]=$v['timing_sec'];
+			$holdingg[$v['position']]=$v['timing_sec'];
 	}
 	return $note;
 }
 
-function beatmap_timing_cmp($u, $v) {
-	return $u['timing_sec'] - $v['timing_sec'];
+function generateRandomLiveLimitless($note,$key) {
+	$timing=[];
+	foreach($note as $v)
+		$timing[]=$v['timing_sec'];
+	array_multisort($timing,SORT_ASC,$note);
+	$min=(11-$key)/2;
+	$max=(9+$key)/2;
+    
+  $holding=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
+    
+	foreach($note as $k=>&$v){
+	$v['effect']%=10;//去除划键，防止箭头乱飞
+    while(true){
+      $v['position']=rand($min,$max);
+      if($v['timing_sec']>$holding[$v['position']]+0.05)
+        break;
+    }
+    if($v['effect']%10==3) //长条
+			$holding[$v['position']]=$v['timing_sec']+$v['effect_value'];
+    else
+      $holding[$v['position']]=$v['timing_sec'];
+  }
+	return $note;
 }
 
 //calcScore 计算分数

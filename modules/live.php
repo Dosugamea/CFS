@@ -1,7 +1,5 @@
 <?php
 require_once('includes/live.php');
-require_once('includes/live5K.php');
-require_once('includes/live7K.php');
 require_once('includes/unit.php');
 
 //live/liveStatus 歌曲信息以及最高分
@@ -273,12 +271,12 @@ function live_play($post) {
 		$live_info['sub_guest_bonus'] = [];
 		$energy_use += $energy_list[(int)$live_settings['difficulty']];
 
-		$part1=['','FiveKey','SevenKey'];
+		$part1=[9,5,7];
 		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless'];
 		$p1=$params['extend_mods_key'];
 		$p2=$random[$k2]%10;
 		if($random[$k2]>0)
-			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2].$part1[$p1], $live_info['notes_list']);
+			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2], $live_info['notes_list'],$part1[$p1]);
 
 		/*
 		//使用上面的方法代替
