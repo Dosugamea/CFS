@@ -177,11 +177,12 @@ a{color: #000000;}
                 box-shadow: 0 .125em .125em #000000;
             }
           </style>
-          <script type="text/javascript" src="range.js"></script>
+          
           <div class="summary">
             <form method="get" action="/webview.php/mods/index">
               <input type="hidden" value="extend_mods_speed" name="switch_param" />
-              -8% <input type="range" name="param" min="-8" max="8" value="<?=$params['extend_mods_speed']?>" step="1" class="range"> +8%<br />
+              -50% <input type="range" id="speed_range" name="param" min="-50" max="50" value="<?=$params['extend_mods_speed']?>" step="1" class="range"> +50%
+              <div>当前 <div style="display:inline" id="speed_value"><?=$params['extend_mods_speed']?></div>% <b>(+-8% 以外将不会计入排行)</b></div>
               <input type="submit" value="提交" />
             </form>
           </div>
@@ -224,6 +225,10 @@ a{color: #000000;}
 </script>
 <script type="text/javascript">
                 $(document).ready(function(){ 
+                  $("#speed_range").change(function(){
+                    $('#speed_value').html($("#speed_range").val());
+                  });
+
                   $(".numkeyboard").ioskeyboard({
                     keyboardRadix:80,
                     keyboardRadixMin:30,

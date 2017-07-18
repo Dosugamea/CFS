@@ -323,8 +323,6 @@ function live_play($post) {
 			}
 		}
 		if (isset($params['extend_mods_speed']) && $params['extend_mods_speed']) {
-			if($params['extend_mods_speed']>8||$params['extend_mods_speed']<-8)
-				$params['extend_mods_speed']=0;
 			foreach ($live_info['notes_list'] as &$set) {
 				$set['speed'] = 1/(1+$params['extend_mods_speed']/100);
 			}
@@ -464,10 +462,14 @@ function live_reward($post) {
 	
 	//验证是不是unranked
 	if(!isset($post['ScoreMatch'])) {
-		$unranked = isset($params['extend_mods_hantei_count']);
+		$unranked = isset($params['extend_mods_hantei_count']) && $params['extend_mods_hantei_count'] != 0;
 	} else {
 		$unranked = false; //live/play已经限制了
 	}
+	if(isset($params['extend_mods_speed']))
+		if(abs($params['extend_mods_speed'])>8)
+			$unranked = true;
+			
 	if (!$params['card_switch']) {
 		$test_unranked = $mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
 		$unranked = ($test_unranked > 2);
