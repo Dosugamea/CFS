@@ -1,7 +1,7 @@
 <?php
 require_once('includes/live.php');
-require_once('includes/live5k.php');
-require_once('includes/live7k.php');
+require_once('includes/live5K.php');
+require_once('includes/live7K.php');
 require_once('includes/unit.php');
 
 //live/liveStatus 歌曲信息以及最高分
