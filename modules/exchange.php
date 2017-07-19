@@ -27,8 +27,10 @@ function exchange_itemInfo() {
 			"amount"=>$e['item'][1],
 			"option"=>null,
 			"title"=>$e['title'],
+			//保留以支持5.1以前的客户端
 			"rarity"=>$e['rarity'],
 			"cost_value"=>$e['cost_value'],
+			"cost_list"=>["rarity"=>$e['rarity'],"cost_value"=>$e['cost_value']],//5.1
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
