@@ -137,7 +137,11 @@ if (isset($params) && isset($restrict_ver) && !$params['allow_test_func'] && $_S
 if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 	if (($_SERVER['HTTP_OS'] == 'Android' && $update_for_android == true) || ($_SERVER['HTTP_OS'] == 'iOS' && $update_for_ios == true)) {
 		if(floor((float)$_SERVER['HTTP_CLIENT_VERSION']) < floor((float)$server_ver)){
-			header("Server-Version: ".((float)$_SERVER['HTTP_CLIENT_VERSION']+0.1));}
+			$version_array = explode(".", $_SERVER['HTTP_CLIENT_VERSION']);
+			$version_len = count($version_array);
+			$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
+			header("Server-Version: ".implode(".",$version_array));
+		}
 		else
 			header("Server-Version: ".$server_ver);
 	} else {
