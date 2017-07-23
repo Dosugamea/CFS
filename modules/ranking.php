@@ -21,9 +21,19 @@ function ranking_live($post) {
     AND random_switch='.($params['random_switch']+$params['extend_mods_key']*10).'
     ORDER BY hi_score DESC LIMIT 0,10
   ) a,(SELECT @id:=0) id');
+  $notes=$mysql->query("SELECT notes_list FROM notes_setting WHERE notes_setting_asset=".$notes_setting['notes_setting_asset'])->fetch(PDO::FETCH_ASSOC)['notes_list'];
+	$score_max=calcScore(60500,json_decode($notes,true));
   while ($item = $rank->fetch()) {
     $ret2['rank'] = (int)$item['rank'];
     $ret2['score'] = (int)$item['hi_score'];
+    if($ret['score']>$score_max){
+      $mysql->query("DELETE FROM live_ranking 
+      WHERE user_id=".$item['user_id']."
+      notes_setting_asset=".$notes_setting['notes_setting_asset']." 
+      AND card_switch=".$params['card_switch']." 
+      AND random_switch=".($params['random_switch']+$params['extend_mods_key']*10));
+      continue;
+    }
     $ret2['user_data']['user_id'] = (int)$item['user_id'];
     $user_list[] = $item['user_id'];
     $ret2['user_data']['name'] = $item['name'];
