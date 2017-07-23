@@ -137,4 +137,8 @@ function festival_gameover() {
   $ret['after_user_info'] = runAction('user','userInfo')['user'];
   return $ret;
 }
+
+function festival_top() {
+  return json_decode('{"event_status":{"total_event_point":0,"event_rank":0}}',true);
+}
 ?>
