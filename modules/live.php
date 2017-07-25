@@ -17,7 +17,7 @@ function live_liveStatus() {
 			case 'event_marathon_live_m': 
 				$table = 'marathon.' . $table;
 				$exclude_setting = $live->query('select live_setting_id from normal_live_m union select live_setting_id from special_live_m')->fetchAll(PDO::FETCH_COLUMN);
-				$extra_limit = ' AND random_flag = 0 AND special_setting=0';
+				$extra_limit = ' AND random_flag = 0';
 				break;
 			default: trigger_error('getLiveList:错误的表');
 		}
