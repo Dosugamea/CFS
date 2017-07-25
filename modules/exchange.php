@@ -30,7 +30,8 @@ function exchange_itemInfo() {
 			//保留以支持5.1以前的客户端
 			"rarity"=>$e['rarity'],
 			"cost_value"=>$e['cost_value'],
-			"cost_list"=>["rarity"=>$e['rarity'],"cost_value"=>$e['cost_value']],//5.1
+			"cost_list"=>[["rarity"=>$e['rarity'],"cost_value"=>$e['cost_value']]],//5.1
+			"rank_max_flag"=>false,
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
