@@ -138,7 +138,7 @@ function duty_matching($post) {
     //"deck_bonus_list":[{"deck_id":1,"event_team_duty_base_point":5}]
 }
 
-function getMyRoom() {
+function getMyDutyRoom() {
 	global $uid, $mysql;
 	return $mysql->query('SELECT room_id,pos_id,deck_id FROM tmp_duty_user_room WHERE user_id=?', $uid)->fetch();
 }
@@ -154,7 +154,7 @@ function duty_startWait($post) {
             SET deck_id=? 
             WHERE user_id=?',
             $post['deck_id'],$uid);
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
 
@@ -211,7 +211,7 @@ function duty_startWait($post) {
 function duty_liveStart($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
 
     $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>0, 'ScoreMatch' => true]);
@@ -245,7 +245,7 @@ function duty_liveEnd($post) {
     //"event_id":102,"good_cnt":0,"love_cnt":77,"room_id":279599
     //TODO TODO TODO
     global $uid, $mysql, $params;
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     $mysql->query('DELETE FROM tmp_duty_result
         WHERE user_id=?',
         $uid);
@@ -272,7 +272,7 @@ function duty_liveEnd($post) {
 function duty_endRoom($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
     $mysql->query('UPDATE tmp_duty_room 
         SET timestamp=?
@@ -307,6 +307,8 @@ function duty_endRoom($post) {
 
         $ret['matching_user'][]=$user_info;
     }
+    $ret['live_list'][0]['live_difficulty_id']=(int)$room['live_difficulty_id'];
+    $ret['live_list'][0]['is_random']=false;
 
     $ret['event_team_duty']['mission_id']=1;
     $ret['event_team_duty']['mission_type']=1;
@@ -358,7 +360,7 @@ function getRank($score,$live_id){
 function duty_endWait($post){
     //event_id":102,"chat_id":"0-0",room_id":279599
     global $uid, $mysql, $params;
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
 
     //计算已结束数量
@@ -400,7 +402,7 @@ function duty_endWait($post){
 //死亡
 function duty_gameover($post) {
 	global $uid, $mysql, $params;
-    $info=getMyRoom();
+    $info=getMyDutyRoom();
     $mysql->query('UPDATE tmp_duty_room 
         SET ended_flag_?=1,timestamp=?
         WHERE duty_event_room_id=?', 
