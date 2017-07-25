@@ -55,7 +55,6 @@ function exchange_itemInfo() {
 function exchange_usePoint($post) {
 	require('config/modules_exchange.php');
 	global $uid, $mysql, $params;
-	$amount=$post['amount'];
 	if (!$params['card_switch']) {
 		return retError(4204);
 	}
@@ -81,6 +80,19 @@ function exchange_usePoint($post) {
 	if ($v['max_item_count'] > 0 && $cnt >= $v['max_item_count']) {
 		return retError(4201);
 	}
+
+	foreach($exchangeInfo['cost_list'] as $exInfo){
+		if($exInfo['rarity']==$post['rarity']){
+			$exchangeInfo['rarity']=$exInfo['rarity'];
+			$exchangeInfo['cost_value']=$exInfo['cost_value'];
+		}
+	}
+	if (!isset($exchangeInfo['rarity'])) {
+		return retError(4204);
+	}
+	$amount=$post['amount'];
+	
+
 	$new_seal = -1;
 	$cost_list = [2=>'seal1', 3=>'seal2', 4=>'seal4', 5=>'seal3'];
 	$new_seal = (int)$params[$cost_list[$exchangeInfo['rarity']]] - $exchangeInfo['cost_value'] * $amount;
