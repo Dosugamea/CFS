@@ -122,7 +122,7 @@ function exchange_usePoint($post) {
 			case 's_ticket': $params['item5'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>5,'item_category_id'=>5];break;
 			default: trigger_error('exchange: 无法识别的物品种类：'.$exchangeInfo['item'][0]);break;
 		}
-		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]]*$amount);
+		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]*$amount]);
 	}
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 	return $ret;
