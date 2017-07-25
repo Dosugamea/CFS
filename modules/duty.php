@@ -2,6 +2,7 @@
 //duty.php 协力相关
 //获得当前协力活动信息
 function duty_dutyInfo(){
+    global $params;
     if($params['card_switch']==0)
         return [];
     return json_decode(
