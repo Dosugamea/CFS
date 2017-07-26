@@ -8,6 +8,7 @@
 !resources
 !webview
 !upgrade_scripts
+!custom
 !*.php
 !*.sql
 *.DS_Store

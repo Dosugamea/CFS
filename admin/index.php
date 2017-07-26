@@ -20,8 +20,11 @@ include_once("includes/check_admin.php");
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2">
+			<td>
 				<div class="index-icon"><a href="custom/index.php">自制谱功能</a></div>
+			</td>
+			<td>
+				<div class="index-icon"><a href="updateCode.php">部署master代码</a></div>
 			</td>
 		</tr>
 	</table>

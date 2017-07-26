@@ -139,7 +139,7 @@ function unit_deckInfo() {
 function unit_deck($post) {
 	global $uid, $mysql, $params;
 	if ($params['card_switch'] == 0) {
-		return array();
+		trigger_error('unit_deck:关卡模式下禁止编辑队伍');
 	}
 	foreach ($post['unit_deck_list'] as &$v3) {
 		$v3['main_flag'] = (bool) $v3['main_flag'];

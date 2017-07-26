@@ -236,6 +236,7 @@ function getDeckAttribute($deck,$post){
 		$card_info=GetUnitDetail($member['unit_owning_user_id'],true);
 		$deck_info[0]+=$card_info['hp'];
 
+		$info[0]=0;
 		$info[1]=$card_info['smile'];
 		$info[2]=$card_info['cute'];
 		$info[3]=$card_info['cool'];
@@ -291,10 +292,8 @@ function getDeckAttribute($deck,$post){
 			$info[$i]+=$bonus[$i];
 				
 		$bonus=[0,0,0,0];
-		if(!empty($center_skill))
-			$bonus[$center_skill['target']]+=(int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
-		if(!empty($party_skill))
-			$bonus[$party_skill['target']]+=(int)ceil($info[$party_skill['source']] * $party_skill['effect'] /100);
+		$bonus[$center_skill['target']]+=(int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
+		$bonus[$party_skill['target']]+=(int)ceil($info[$party_skill['source']] * $party_skill['effect'] /100);
 				
 		$unitdb = getUnitDb();
 		$unit_type_id = $unitdb->query('SELECT unit_type_id FROM unit_m WHERE unit_id = '.$info['unit_id'])->fetch()[0];

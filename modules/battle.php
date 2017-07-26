@@ -358,4 +358,8 @@ function battle_gameover($post) {
 	return $ret;
 }
 
+function battle_top() {
+  return json_decode('{"event_status":{"total_event_point":0,"event_rank":0},"has_history":false}',true);
+}
+
 ?>

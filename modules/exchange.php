@@ -27,8 +27,8 @@ function exchange_itemInfo() {
 			"amount"=>$e['item'][1],
 			"option"=>null,
 			"title"=>$e['title'],
-			"rarity"=>$e['rarity'],
-			"cost_value"=>$e['cost_value'],
+			"cost_list"=>$e['cost_list'],
+			"rank_max_flag"=>$e['rank_max_flag'],
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
@@ -80,9 +80,22 @@ function exchange_usePoint($post) {
 	if ($v['max_item_count'] > 0 && $cnt >= $v['max_item_count']) {
 		return retError(4201);
 	}
+
+	foreach($exchangeInfo['cost_list'] as $exInfo){
+		if($exInfo['rarity']==$post['rarity']){
+			$exchangeInfo['rarity']=$exInfo['rarity'];
+			$exchangeInfo['cost_value']=$exInfo['cost_value'];
+		}
+	}
+	if (!isset($exchangeInfo['rarity'])) {
+		return retError(4204);
+	}
+	$amount=$post['amount'];
+	
+
 	$new_seal = -1;
 	$cost_list = [2=>'seal1', 3=>'seal2', 4=>'seal4', 5=>'seal3'];
-	$new_seal = (int)$params[$cost_list[$exchangeInfo['rarity']]] - $exchangeInfo['cost_value'];
+	$new_seal = (int)$params[$cost_list[$exchangeInfo['rarity']]] - $exchangeInfo['cost_value'] * $amount;
 	if ($new_seal < 0) {
 		return retError(4202);
 	}
@@ -90,7 +103,7 @@ function exchange_usePoint($post) {
 	$mysql->query('insert into exchange_log values(?,?,1) on duplicate key update got_item_count=got_item_count+1',[$uid, $exchangeInfo['exchange_item_id']]);
 	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
 	if (is_numeric($exchangeInfo['item'][0])) {
-		$mysql->query("INSERT INTO incentive_list (user_id,incentive_item_id,amount,is_card,incentive_message) VALUES(".$uid.",".$exchangeInfo['item'][0].",".$exchangeInfo['item'][1].",1,\"貼紙商店兌換\")");
+		$mysql->query("INSERT INTO incentive_list (user_id,incentive_item_id,amount,is_card,incentive_message) VALUES(".$uid.",".$exchangeInfo['item'][0].",".$exchangeInfo['item'][1]*$amount.",1,\"貼紙商店兌換\")");
 		$ret['exchange_reward'] = [];
 		$ret['exchange_reward'][] = [
 			'add_type' => 1001,
@@ -100,7 +113,7 @@ function exchange_usePoint($post) {
 			'new_unit_flag' => true
 		];
 	}else{
-		$cnt = $exchangeInfo['item'][1];
+		$cnt = $exchangeInfo['item'][1]*$amount;
 		switch($exchangeInfo['item'][0]) {
 			case 'ticket': $params['item1'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>1,'item_category_id'=>1];break;
 			case 'social': $params['social_point'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3002,'item_id'=>2,'item_category_id'=>2];break;
@@ -109,7 +122,7 @@ function exchange_usePoint($post) {
 			case 's_ticket': $params['item5'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>5,'item_category_id'=>5];break;
 			default: trigger_error('exchange: 无法识别的物品种类：'.$exchangeInfo['item'][0]);break;
 		}
-		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]]);
+		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]*$amount]);
 	}
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 	return $ret;

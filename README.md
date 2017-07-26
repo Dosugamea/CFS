@@ -19,6 +19,11 @@ The project, developed by the enthusiasts of personal behavior, does not contain
 * php7-mcrypt
 * Node.js up to 7
 * Python
+* 7zip(in Path)
+* MiraiNoHana(in Path) `https://github.com/MikuAuahDark/MiraiNoHana`
+* HonokaMiku(in Path) `https://github.com/MikuAuahDark/HonokaMiku`
+* Itsudemo(in Path) `https://github.com/MikuAuahDark/Itsudemo`
+* ffmpeg
 
 # Installation
 
