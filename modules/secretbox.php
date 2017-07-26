@@ -311,6 +311,8 @@ function checkScoutAvaliable($type, $item_id, $amount, $member=0){
 				$free_gacha = $mysql->query("SELECT free_gacha_muse FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
 			else
 				$free_gacha = $mysql->query("SELECT free_gacha_aqours FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
+			if(!$free_gacha)
+				$mysql->query("INSERT INTO secretbox (user_id) VALUES (?)", [$uid]);
 			$ret = date("Y-m-d", strtotime($free_gacha)) != date("Y-m-d", time());
 			break;
 		case 3002:
