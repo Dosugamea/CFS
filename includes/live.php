@@ -393,7 +393,7 @@ function calcScore($base, $map) {
 	}
 	foreach($map as $v2) {
 
-		foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ($p['effect_value']);
+		foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ((int)$p['effect_value']+0.032);
 		usort($v2['live_info']['notes_list'], 'beatmap_timing_cmp');
 
 
@@ -417,4 +417,43 @@ function calcScore($base, $map) {
 }
 function beatmap_timing_cmp($u, $v) {
 	return $u['timing_sec'] - $v['timing_sec'];
+}
+
+//变轨
+function generateRandomLiveLimited($note,$key) {
+	$timing=[];
+	foreach($note as $v)
+		$timing[]=$v['timing_sec'];
+	array_multisort($timing,SORT_ASC,$note);
+	$holding=false;
+	$holdend=0;
+	$lasttime=0;
+	$min=(11-$key)/2;
+	$max=(9+$key)/2;
+	for($i=$min;$i<=$max;$i++){
+		$r[i]=0;
+	}
+	for($i=$min;$i<=$max;$i++){
+		$j=rand($min,$max);
+		if($r[$j]==0)$r[$j]=$i;
+		else $i--;
+	}
+	$holdingg=[0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1];
+		foreach($note as $k=>&$v) {
+		if($v['position']<$min)$v['position']+=2;
+		else if($v['position']>$max)$v['position']-=2;
+		if($v['timing_sec']<$holdingg[$v['position']]+0.01){
+			if($v['position']<5)$v['position']+=2;
+			else $v['position']-=2;
+		}
+		if($v['effect']%10==3) //长条
+			$holdingg[$v['position']]=$v['timing_sec']+$v['effect_value'];
+		else
+			$holdingg[$v['position']]=$v['timing_sec'];
+	}
+	foreach($note as $k=>&$v) {
+		$v['effect']%=10;//去除划键，防止箭头乱飞
+		$v['position']=$r[$v['position']];
+	}
+	return $note;
 }

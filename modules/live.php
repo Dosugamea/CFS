@@ -272,7 +272,7 @@ function live_play($post) {
 		$energy_use += $energy_list[(int)$live_settings['difficulty']];
 
 		$part1=[9,5,7];
-		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless'];
+		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless','RandomLiveLimited'];
 		$p1=$params['extend_mods_key'];
 		$p2=$random[$k2]%10;
 		if($random[$k2]>0)
