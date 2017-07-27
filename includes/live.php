@@ -431,7 +431,7 @@ function generateRandomLiveLimited($note,$key) {
 	$min=(11-$key)/2;
 	$max=(9+$key)/2;
 	for($i=$min;$i<=$max;$i++){
-		$r[i]=0;
+		$r[$i]=0;
 	}
 	for($i=$min;$i<=$max;$i++){
 		$j=rand($min,$max);
