@@ -27,7 +27,7 @@ function ranking_live($post) {
     $ret2['rank'] = (int)$item['rank'];
     $ret2['score'] = (int)$item['hi_score'];
     if($params['card_switch']==0 && $ret2['score']>$score_max){
-      $mysql->query("DELETE FROM live_ranking 
+      $mysql->query("UPDATE live_ranking SET cheat = 1
       WHERE user_id=".$item['user_id']."
       AND notes_setting_asset='".$notes_setting['notes_setting_asset']."'
       AND card_switch=".$params['card_switch']." 
