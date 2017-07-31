@@ -558,7 +558,7 @@ function live_reward($post) {
 				$hi_combo_count = $post['max_combo'];
 				if ($ret['hi_score'] != 0) {
 					$mysql->exec("INSERT INTO live_ranking VALUES ($uid, '{$map_info['notes_setting_asset']}', {$params['card_switch']},$random, {$ret['hi_score']}, $hi_combo_count, 1,".
-					             "{$post['perfect_cnt']}, {$post['great_cnt']}, {$post['good_cnt']}, {$post['bad_cnt']}, {$post['miss_cnt']}, {$post['max_combo']} )");
+					             "{$post['perfect_cnt']}, {$post['great_cnt']}, {$post['good_cnt']}, {$post['bad_cnt']}, {$post['miss_cnt']}, {$post['max_combo']} ,0)");
 				}
 				$clear_cnt = 1;
 			}
