@@ -256,12 +256,14 @@ function live_play($post) {
 	$map_count = 0;
 	$energy_use = 0;
 	foreach($live_id_list as $k2 => $v2) {
-		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
+		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category', 'ac_flag', 'swing_flag');
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
 			$post['do_not_use_multiply'] = true; //4.0计分修正
 		}
 		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$live_settings['notes_setting_asset'].'"')->fetch(PDO::FETCH_ASSOC);
 		$live_info['live_difficulty_id'] = (int)$v2;
+		$live_info['ac_flag'] = $live_settings['ac_flag'];
+		$live_info['swing_flag'] = $live_settings['swing_flag'];
 		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
 		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
 		$live_info['dangerous'] = false;
