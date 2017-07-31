@@ -196,6 +196,7 @@ CREATE TABLE `live_ranking` (
 	`mx_bad_cnt` INT(11) NOT NULL DEFAULT '0',
 	`mx_miss_cnt` INT(11) NOT NULL DEFAULT '0',
 	`mx_max_combo` INT(11) NOT NULL DEFAULT '0',
+	`cheat` INT(11) NOT NULL DEFAULT '0',
 	UNIQUE INDEX `user_id` (`user_id`, `notes_setting_asset`, `card_switch`, `random_switch`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
