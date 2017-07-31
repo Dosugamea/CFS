@@ -239,6 +239,7 @@ global $uid, $mysql, $params;
 function live_play($post) {
 	global $mysql, $uid, $params;
 	include_once("includes/energy.php");
+	$livedb = getLiveDb();
 	if(isset($post['festival'])) { //读取festival曲目列表
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
 		foreach($festival_lives as $v) {
@@ -260,10 +261,11 @@ function live_play($post) {
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
 			$post['do_not_use_multiply'] = true; //4.0计分修正
 		}
+		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
 		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$live_settings['notes_setting_asset'].'"')->fetch(PDO::FETCH_ASSOC);
 		$live_info['live_difficulty_id'] = (int)$v2;
-		$live_info['ac_flag'] = $live_settings['ac_flag'];
-		$live_info['swing_flag'] = $live_settings['swing_flag'];
+		$live_info['ac_flag'] = $extra_flag? $extra_flag['ac_flag'] : 0;
+		$live_info['swing_flag'] = $extra_flag? $extra_flag['swing_flag']: 0;
 		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
 		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
 		$live_info['dangerous'] = false;
