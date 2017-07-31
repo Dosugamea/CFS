@@ -257,7 +257,7 @@ function live_play($post) {
 	$map_count = 0;
 	$energy_use = 0;
 	foreach($live_id_list as $k2 => $v2) {
-		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category, ac_flag, swing_flag');
+		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
 			$post['do_not_use_multiply'] = true; //4.0计分修正
 		}
