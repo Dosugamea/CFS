@@ -58,10 +58,8 @@ function live_liveStatus() {
 					return $e['live_difficulty_id'] == $id;
 				})))
 			];
-			if ($params['random_switch']) {
+			if ($params['random_switch'])
 				$ret['is_random'] = ($params['random_switch'] > 0);
-				$ret['use_quad_point'] = ($params['random_switch'] == 2);
-			}
 			return $ret;
 		};
 		$live_detail_list = array_map($generate_live_list, $live_detail_list);
@@ -132,9 +130,7 @@ function live_schedule() {
 			'live_difficulty_id' => (int)$v['live_difficulty_id'],
 			'start_date' => date('Y').'-01-01 00:00:00',
 			'end_date' => (date('Y')+1).'-12-31 23:59:59',
-			'dangerous' => (int)$difficulty[$v['live_setting_id']] >= 11,
-			'is_random' => ($params['random_switch'] > 0),
-			'use_quad_point' => false
+			'is_random' => ($params['random_switch'] > 0)
 		];
 	}, $live_list);
 	return $ret;
@@ -466,7 +462,7 @@ function live_reward($post) {
 		//读取谱面和显示边框
 		$livedb = getLiveDb();
 		$note_list = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$map_info['notes_setting_asset'].'"')->fetchColumn();
-		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
+		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$post['live_difficulty_id']])->fetch(PDO::FETCH_ASSOC);
 		
 		$ret = json_decode('{
 			"live_info": [{
