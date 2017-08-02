@@ -134,7 +134,7 @@ function live_schedule() {
 			'end_date' => (date('Y')+1).'-12-31 23:59:59',
 			'dangerous' => (int)$difficulty[$v['live_setting_id']] >= 11,
 			'is_random' => ($params['random_switch'] > 0),
-			'use_quad_point' => $params['random_switch'] == 2
+			'use_quad_point' => false
 		];
 	}, $live_list);
 	return $ret;
@@ -473,7 +473,7 @@ function live_reward($post) {
 					"live_difficulty_id": '.$post['live_difficulty_id'].',
 					"ac_flag": '.($extra_flag ? $extra_flag['ac_flag'] : 0).',
 					"swing_flag": '.($extra_flag ? $extra_flag['swing_flag'] : 0).',
-					"dangerous": '.(($map_info['difficulty'] > 11) ? 'true' : 'false').',
+					"dangerous": '.(($map_info['difficulty'] >= 11) ? 'true' : 'false').',
 					"use_quad_point": false,
 					"is_random": '.($random % 10 > 0).'
 			}]}',true);
@@ -548,18 +548,18 @@ function live_reward($post) {
 		//消耗LP数对应的EXP数
 		$exp_list=[
 			1=>[
-				1=>[4=>9,5=>12,10=>12],
-				2=>[6=>14,7=>17,8=>20,9=>23,10=>26,15=>26],
-				3=>[9=>25,10=>29,12=>35,14=>42,15=>46,25=>46],
-				4=>[25=>83],
-				5=>[25=>83],
-				6=>[25=>83],
+				1=>12,
+				2=>26,
+				3=>46,
+				4=>83,
+				5=>83,
+				6=>83,
 			],
 			2=>[
-				1=>[15=>12],
-				2=>[30=>26],
-				3=>[45=>46],
-				4=>[75=>83]
+				1=>12,
+				2=>26,
+				3=>46,
+				4=>83
 			]
 		];
 		//各rank对应的金币数
@@ -567,7 +567,7 @@ function live_reward($post) {
 						3=>[null,3750,3000,2000,1000,500],4=>[null,4500,3600,2400,1200,600],5=>[null,4500,3600,2400,1200,600],6=>[null,4500,3600,2400,1200,600]];
 		//获取本次获得的EXP和金币
 		$factor = (float)$mysql->query('SELECT factor FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
-		$ret['base_reward_info']['player_exp'] = floor($factor * $exp_list[$map_info['capital_type']][$map_info['difficulty']][$map_info['capital_value']]);
+		$ret['base_reward_info']['player_exp'] = floor($factor * $exp_list[$map_info['capital_type']][$map_info['difficulty']]);
 		$ret['base_reward_info']['game_coin'] = floor($factor * $coin_list[$map_info['difficulty']][$ret['rank']]);
 		$ret['base_reward_info']['game_coin_reward_box_flag'] = false;
 		$ret['base_reward_info']['social_point'] = 0;
