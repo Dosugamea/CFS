@@ -264,8 +264,8 @@ function live_play($post) {
 		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
 		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$live_settings['notes_setting_asset'].'"')->fetch(PDO::FETCH_ASSOC);
 		$live_info['live_difficulty_id'] = (int)$v2;
-		$live_info['ac_flag'] = $extra_flag? $extra_flag['ac_flag'] : 0;
-		$live_info['swing_flag'] = $extra_flag? $extra_flag['swing_flag']: 0;
+		$live_info['ac_flag'] = $extra_flag ? $extra_flag['ac_flag'] : 0;
+		$live_info['swing_flag'] = $extra_flag ? $extra_flag['swing_flag']: 0;
 		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
 		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
 		$live_info['dangerous'] = false;
@@ -281,35 +281,6 @@ function live_play($post) {
 		$p2=$random[$k2]%10;
 		if($random[$k2]>0)
 			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2], $live_info['notes_list'],$part1[$p1]);
-
-		/*
-		//使用上面的方法代替
-		switch($random[$k2]){
-			case 1://新随机算法
-				$live_info['notes_list'] = generateRandomLive($live_info['notes_list']);break;
-			case 2://旧随机
-				$live_info['notes_list'] = generateRandomLiveOld($live_info['notes_list']);break;
-			case 3://无限制随机
-				$live_info['notes_list'] = generateRandomLiveLimitless($live_info['notes_list']);break;
-
-			case 10://5K
-				$live_info['notes_list'] = generateLiveFiveKey($live_info['notes_list']);break;
-			case 11://新随机算法 5K
-				$live_info['notes_list'] = generateRandomLiveFiveKey($live_info['notes_list']);break;
-			case 12://旧随机 5K
-				$live_info['notes_list'] = generateRandomLiveOldFiveKey($live_info['notes_list']);break;
-			case 13://无限制随机 5K
-				$live_info['notes_list'] = generateRandomLiveLimitlessFiveKey($live_info['notes_list']);break;
-
-			case 20://7K
-				$live_info['notes_list'] = generateLiveSevenKey($live_info['notes_list']);break;
-			case 21://新随机算法 7K
-				$live_info['notes_list'] = generateRandomLiveSevenKey($live_info['notes_list']);break;
-			case 22://旧随机 7K
-				$live_info['notes_list'] = generateRandomLiveOldSevenKey($live_info['notes_list']);break;
-			case 23://无限制随机 7K
-				$live_info['notes_list'] = generateRandomLiveLimitlessSevenKey($live_info['notes_list']);break;
-		}*/
 
 		if (isset($params['extend_mods_vanish']) && $params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
@@ -494,13 +465,16 @@ function live_reward($post) {
 		}
 		//读取谱面和显示边框
 		$note_list = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$map_info['notes_setting_asset'].'"')->fetchColumn();
+		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
 		
 		$ret = json_decode('{
 			"live_info": [{
 					"live_difficulty_id": '.$post['live_difficulty_id'].',
+					"ac_flag": '.($extra_flag ? $extra_flag['ac_flag'] : 0).',
+					"swing_flag": '.($extra_flag ? $extra_flag['swing_flag'] : 0).',
 					"dangerous": '.(($map_info['difficulty'] > 11) ? 'true' : 'false').',
 					"use_quad_point": false,
-					"is_random": '.($random%10>0 ? 'true' : 'false').'
+					"is_random": '.($random % 10 > 0).'
 			}]}',true);
 		
 		/* 更新最高分、计算评价 */
