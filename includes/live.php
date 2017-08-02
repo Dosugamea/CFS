@@ -393,7 +393,19 @@ function calcScore($base, $map) {
 	}
 	foreach($map as $v2) {
 
-		foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ((int)$p['effect_value']+0.032);
+		foreach($v2['live_info']['notes_list'] as $k => &$p) $p['timing_sec'] += ($p['effect'] % 10 == 3) * ((int)$p['effect_value']);
+
+		foreach($v2['live_info']['notes_list'] as $k => &$p){//note延迟或提早结算，使权重大的note后结算，时间以1速下的判定为准
+			if($p['effect']==3)
+				$p['timing_sec'] += 0.072;//长条延迟72ms
+			elseif($p['effect']<=10)
+				$p['timing_sec'] -= 0.072;//普通提早72ms
+			elseif($p['effect']==13)
+				$p['timing_sec'] -= 0.179;//滑长提早179ms
+			else
+				$p['timing_sec'] -= 0.180;//滑键提早180ms
+		}
+
 		usort($v2['live_info']['notes_list'], 'beatmap_timing_cmp');
 
 
