@@ -52,6 +52,8 @@ function secretBox_all() {
 				//挨个处理cost
 				$all_cost = [];
 				foreach($secret_box_cost as $l){
+					if($cost_detail['type']==4 && $params['card_switch'])
+						continue;
 					$cost_detail = [];
 					$cost_detail['priority'] = (int)$l['priority'];
 					$l['cost_type'] = (int)$l['cost_type'];
@@ -187,6 +189,8 @@ function secretBox_all() {
 				//挨个处理cost
 				$all_cost = [];
 				foreach($secret_box_cost as $l){
+					if($cost_detail['type']==4 && $params['card_switch'])
+						continue;
 					$cost_detail = [];
 					$cost_detail['priority'] = (int)$l['priority'];
 					$cost_detail['type'] = (int)$l['cost_type'];
