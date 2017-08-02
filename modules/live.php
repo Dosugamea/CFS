@@ -464,6 +464,7 @@ function live_reward($post) {
 			$map_info['capital_value'] = $values[$map_info['difficulty']];
 		}
 		//读取谱面和显示边框
+		$livedb = getLiveDb();
 		$note_list = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$map_info['notes_setting_asset'].'"')->fetchColumn();
 		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
 		

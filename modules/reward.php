@@ -98,11 +98,11 @@ function reward_open($post) {
 			$res['item_category_id'] = $res['incentive_item_id'];
 			switch($res['incentive_item_id']){
 				case 2:
-					$res['add_type'] = 3002;
+					$res['add_type'] = 3002;break;
 				case 3:
-					$res['add_type'] = 3000;
+					$res['add_type'] = 3000;break;
 				case 4:
-					$res['add_type'] = 3001;
+					$res['add_type'] = 3001;break;
 				default:
 					$res['add_type'] = 1000;
 			}
