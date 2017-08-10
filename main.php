@@ -151,7 +151,7 @@ if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 }
 
 //扩展下载
-/*if (isset($uid)) {
+if (isset($uid)) {
 	$res = $mysql->query('
 		SELECT extend_download.* FROM extend_download_queue
 		LEFT JOIN extend_download
@@ -160,9 +160,12 @@ if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 		AND extend_download_queue.user_id='.$uid
 	)->fetch();
 	if (!empty($res)) {
-		header("Server-Version: {$_SERVER['HTTP_CLIENT_VERSION']}.$server_ver");
+		$version_array = explode(".", $_SERVER['HTTP_CLIENT_VERSION']);
+		$version_len = count($version_array);
+		$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
+		header("Server-Version: ".implode(".",$version_array));
 	}
-}*/
+}
 //维护
 if ($maintenance && isset($uid) && array_search($uid, $bypass_maintenance) === false) {
 	header('Maintenance: 1');

@@ -270,6 +270,18 @@ function download_update($post) {
 		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 		$ret = json_decode($ret);
 	}
+	$extend = $mysql->query('
+		SELECT extend_download.* FROM extend_download_queue
+		LEFT JOIN extend_download
+		ON extend_download.ID=extend_download_queue.download_id
+		WHERE downloaded_version < version OR downloaded_version=0
+		AND extend_download_queue.user_id='.$uid
+	)->fetchAll(PDO::FETCH_ASSOC);
+	foreach($extend as $i){
+		$i['size'] = (int)$i['size'];
+		$ret[] = $i;
+	}
+	$mysql->query("DELETE FROM extend_download_queue WHERE user_id = ".$uid);
 	return $ret;
 }
 
