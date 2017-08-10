@@ -464,15 +464,9 @@ function live_reward($post) {
 		$note_list = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$map_info['notes_setting_asset'].'"')->fetchColumn();
 		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$post['live_difficulty_id']])->fetch(PDO::FETCH_ASSOC);
 		
-		$ret = json_decode('{
-			"live_info": [{
-					"live_difficulty_id": '.$post['live_difficulty_id'].',
-					"ac_flag": '.($extra_flag ? $extra_flag['ac_flag'] : 0).',
-					"swing_flag": '.($extra_flag ? $extra_flag['swing_flag'] : 0).',
-					"dangerous": '.(($map_info['difficulty'] >= 11) ? 'true' : 'false').',
-					"use_quad_point": false,
-					"is_random": '.($random % 10 > 0).'
-			}]}',true);
+		$ret = [];
+		$ret['live_info'] = [];
+		$ret['live_info'][] = ["live_difficulty_id"=>(int)$post['live_difficulty_id'], "is_random"=>(bool)$params['random_switch'], "ac_flag" => $extra_flag ? $extra_flag['ac_flag'] : 0, "swing_flag" => $extra_flag ? $extra_flag['swing_flag'] : 0];
 		
 		/* 更新最高分、计算评价 */
 		
@@ -888,7 +882,6 @@ function live_reward($post) {
 						$unitid_list[] = $v3['unit_owning_user_id'];
 						$love_list[] = $v3['love'];
                         if ((int)$v3['rank'] == 2) {
-							echo $v3['unit_id'].'\n';
 							$v3['is_love_max'] = true;
 							$new_love_max []= $v3['unit_id'];
 						}
@@ -1006,6 +999,7 @@ function live_reward($post) {
 		}
 	}while($score > 0);
 	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score_)." WHERE user_id = ".$uid);
+	$ret['limited_effort_box'] = [];
 	
 	//每日奖励
 	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
@@ -1029,6 +1023,7 @@ function live_reward($post) {
 	$ret['after_user_info']=$ret['after_user_info']['user'];
 	$ret['after_user_info']['energy_max']=100+(int)floor($newlevel/2);
 	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
+	$ret['can_send_friend_request'] = false;
 	return $ret;
 }
 

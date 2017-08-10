@@ -148,7 +148,9 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				unset($ret['center_skill']);
 			}
 			if(empty($ret['removable_skill']))
-				$ret['removable_skill']="[]";
+				$ret['removable_skill']=[];
+			else
+				$ret['removable_skill'] = json_decode($ret['removable_skill'], true);
 			unset($ret['user_id']);
 			foreach ($ret as &$v3) {
 				if (is_numeric($v3)) {
@@ -244,7 +246,7 @@ function getDeckAttribute($deck,$post){
 		$info['unit_id']=$card_info['unit_id'];
 
 		$info['skill']=[];
-		foreach(json_decode($card_info['removable_skill']) as $skill){
+		foreach($card_info['removable_skill'] as $skill){
 			if($skill<=24)
 				$info['skill'][]=(int)$skill;
 			elseif($skill<=30)
