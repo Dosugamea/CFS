@@ -466,7 +466,7 @@ function live_reward($post) {
 		
 		$ret = [];
 		$ret['live_info'] = [];
-		$ret['live_info'][] = ["live_difficulty_id"=>(int)$post['live_difficulty_id'], "is_random"=>(bool)$params['random_switch'], "ac_flag" => $extra_flag ? $extra_flag['ac_flag'] : 0, "swing_flag" => $extra_flag ? $extra_flag['swing_flag'] : 0];
+		$ret['live_info'][] = ["live_difficulty_id"=>(int)$post['live_difficulty_id'], "is_random"=>($random % 10 > 0), "ac_flag" => $extra_flag ? $extra_flag['ac_flag'] : 0, "swing_flag" => $extra_flag ? $extra_flag['swing_flag'] : 0];
 		
 		/* 更新最高分、计算评价 */
 		
