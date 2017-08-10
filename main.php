@@ -5,6 +5,7 @@ date_default_timezone_set("Asia/Tokyo");
 require 'includes/errorHandler.php';
 //error_reporting(E_ERROR||E_WARNING); 
 require 'includes/errorUtil.php';
+include_once('includes/RSA.php');
 
 /* 连接数据库 */
 require 'includes/db.php';
@@ -204,8 +205,12 @@ if (!isset($action[2])) {
 if(isset($post['commandNum']) && isset($post['module'])){
 	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",[$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
 	if($cached_history){
-		print(gzdecode($cached_history['response']));
-		$log = false;
+		$ret = gzdecode($cached_history['response']);
+		$XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
+		header("X-Message-Sign: ".$XMS);
+		header('Content-Type: application/json');
+		print($ret);
+		die();
 	}else{
 		$log = true;
 	}
@@ -256,7 +261,7 @@ function retError($statusCode) {
 
 $mysql->query('commit');
 //header('Server-Version: '.$server_ver);
-include_once('includes/RSA.php');
+
 $XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
 header("X-Message-Sign: ".$XMS);
 header('Content-Type: application/json');

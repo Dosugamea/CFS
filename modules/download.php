@@ -14,7 +14,7 @@ function download_additional($post) {
 	pl_assert($ret, "找不到下载：ID：{$post['package_id']} 种类：{$post['package_type']} 系统：{$post['os']}");
 	return $ret;
 	*/
-	include 'includes/post.php';
+	include_once 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
 	$token = $tokenanduid['authorize_token'];
@@ -79,7 +79,7 @@ function download_batch($post) {
 		return array_search($e['package_id'], $post['excluded_package_ids']) === false;
 	}));
 	return $ret;*/
-	include 'includes/post.php';
+	include_once 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
 	if($tokenanduid == "Maintenance"){
@@ -142,7 +142,7 @@ function download_batch($post) {
 function download_event($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
 	include 'config/modules_download.php';
-	include 'includes/post.php';
+	include_once 'includes/post.php';
 	include 'config/maintenance.php';
 	$tokenanduid = login();
 	if($tokenanduid == "Maintenance"){

@@ -39,7 +39,7 @@ function login(){
 	}
 	$HMACKey = implode("",$HMACKey);
 	//RSA加密密钥
-	include 'includes/RSA.php';
+	include_once 'includes/RSA.php';
 	$encrypted_AES_token_client = RSAencrypt($AES_token_client);
 	//auth_data生成
 	$device_data = '{
