@@ -32,6 +32,7 @@ function ranking_live($post) {
       AND notes_setting_asset='".$notes_setting['notes_setting_asset']."'
       AND card_switch=".$params['card_switch']." 
       AND random_switch=".($params['random_switch']+$params['extend_mods_key']*10));
+
       $LOGFILE = fopen("IllegalScore.log","a");
       fwrite($LOGFILE,date("Y-m-d H:i:s"));
       fwrite($LOGFILE," ".$item['user_id']);
@@ -39,7 +40,8 @@ function ranking_live($post) {
       fwrite($LOGFILE," ".$ret2['score']);
       fwrite($LOGFILE,"/".$score_max);
       fclose($LOGFILE);
-      continue;
+
+      $item['name']="CHEATED (".$score_max." MAX)";
     }
     $ret2['user_data']['user_id'] = (int)$item['user_id'];
     $user_list[] = $item['user_id'];

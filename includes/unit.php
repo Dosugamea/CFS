@@ -267,6 +267,8 @@ function getDeckAttribute($deck,$post){
 			$party_center_unit = GetUnitDetail($party['center_unit'],true);
 			$party_skill_id = $party_center_unit['center_skill'];
 		}
+	}else{
+		$party_skill_id=null;
 	}
 	$center_skill=getCenterSkillInfo($center_skill_id);
 	$party_skill=getCenterSkillInfo($party_skill_id);
