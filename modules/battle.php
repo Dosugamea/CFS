@@ -35,7 +35,7 @@ function battle_battleInfo() {
 				"capital_value": 25
 		}]
 	}]', true);
-	$ret['event_id'] = $battle['event_id'];
+	$ret[0]['event_id'] = $battle['event_id'];
 	//$ret[0]['event_point'] = getEventPoint(97);
 	//$ret[0]['total_event_point'] = getEventPoint(97);
 	return $ret;

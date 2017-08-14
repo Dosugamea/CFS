@@ -4,7 +4,7 @@
 //banner/bannerList 获取banner列表 不返回的话不影响使用，但教程会卡在第8步
 function banner_bannerList() {
 	$ret = json_decode('{
-		"time_limit": "'.Date('Y').'-12-31 23:59:59",
+		"time_limit": "'.Date('Y-m-d').' 23:59:59",
 		"member_category_list": [{
 			"member_category": 1,
 			"banner_list": []
