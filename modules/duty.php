@@ -34,22 +34,109 @@ function duty_dutyInfo(){
 				"difficulty": 5,
 				"capital_type": 1,
 				"capital_value": 25
-			}, {
-				difficulty": 6,
-				"capital_type": 1,
-				"capital_value": 25
 			}]
 		}', true);
 }
 
 //获得全体协作任务
 function duty_allUserMission(){
-    return json_decode('{"has_joined":false,"all_user_mission_list":[]}',true);
+    return json_decode('{
+		"has_joined": true,
+		"all_user_mission_list": [
+			{
+				"all_user_mission_id": 1,
+				"all_user_mission_type": 1,
+				"start_date": "2017-08-20 16:00:00",
+				"end_date": "2017-08-21 14:59:59",
+				"accomplished_value": 2785039489460,
+				"current_flag": true,
+				"goal_list": [
+					{
+						"goal_value": 10000000000000,
+						"mission_rank": 7,
+						"achieved": true,
+						"reward": {
+							"item_id": 2,
+							"add_type": 3006,
+							"amount": 1,
+							"item_category_id": 0
+						},
+						"now_achieved": false,
+						"is_added": false
+					},{
+						"goal_value": 10000000000000,
+						"mission_rank": 6,
+						"achieved": true,
+						"reward": {
+							"item_id": 2,
+							"add_type": 3006,
+							"amount": 1,
+							"item_category_id": 0
+						},
+						"now_achieved": false,
+						"is_added": false
+					},{
+						"goal_value": 1000000000000,
+						"mission_rank": 1,
+						"achieved": true,
+						"reward": {
+							"item_id": 2,
+							"add_type": 3006,
+							"amount": 1,
+							"item_category_id": 0
+						},
+						"now_achieved": false,
+						"is_added": false
+					},
+					{
+						"goal_value": 700000000000,
+						"mission_rank": 2,
+						"achieved": true,
+						"reward": {
+							"item_id": 89,
+							"add_type": 1001,
+							"amount": 1,
+							"rank_max_flag": false,
+							"item_category_id": 0
+						},
+						"now_achieved": false,
+						"is_added": false
+					},
+					{
+						"goal_value": 500000000000,
+						"mission_rank": 3,
+						"achieved": true,
+						"reward": {
+							"item_id": 2,
+							"add_type": 3002,
+							"amount": 500,
+							"item_category_id": 2
+						},
+						"now_achieved": false,
+						"is_added": false
+					},
+					{
+						"goal_value": 300000000000,
+						"mission_rank": 4,
+						"achieved": true,
+						"reward": {
+							"item_id": 3,
+							"add_type": 3000,
+							"amount": 5000,
+							"item_category_id": 3
+						},
+						"now_achieved": false,
+						"is_added": false
+					}
+				]
+			}
+		]
+	}',true);
 }
 
 //获得当前分数与排名
 function duty_top() {
-    return json_decode('{"event_status":{"total_event_point":0,"event_rank":0},"all_user_mission_rank":0,"has_history":false}',true);
+    return json_decode('{"event_status":{"total_event_point":0,"event_rank":false},"all_user_mission_rank":7,"has_history":false}',true);
 }
 
 //进入匹配
@@ -60,7 +147,7 @@ function duty_matching($post) {
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
         WHERE difficulty=? AND card_switch=? AND full_flag=0',
-        $post['difficulty'],$params['card_switch']);
+        [$post['difficulty'],$params['card_switch']]);
 
     if($room->rowCount()>0){
         $room=$room->fetch(PDO::FETCH_ASSOC);
@@ -79,7 +166,7 @@ function duty_matching($post) {
         $mysql->query('UPDATE tmp_duty_room 
             SET timestamp=?,player?=?? 
             WHERE duty_event_room_id=?',
-            time(),$num,$uid,$extra_query,$room['duty_event_room_id']);
+            [time(),$num,$uid,$extra_query,$room['duty_event_room_id']]);
 
     }else{
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
@@ -87,29 +174,31 @@ function duty_matching($post) {
         $maps=$duty_lifficulty_ids[$post['difficulty']];
         $map=$maps[rand(0,count($maps)-1)];
         $live=getLiveDb();
-        $selected_live = $live->query('SELECT live_difficulty_id 
+        $selected_live_setting = $live->query('SELECT live_setting_id 
             FROM live_setting_m 
-            WHERE notes_setting_asset="?"',$map)->fetchColumn();
-
-        $room=$mysql->query('SELECT * FROM tmp_duty_room ORDER BY duty_event_room_id DESC');
-        $room_id=$room->rowCount()==0?1:((int)$room->fetchColumn()+1);
+            WHERE notes_setting_asset = ?',[$map])->fetchColumn();
+		$selected_live = $live->query('SELECT live_difficulty_id 
+            FROM special_live_m 
+            WHERE live_setting_id = ?',[$map])->fetchColumn();
+		
+        $room_id = (int)$mysql->query('SELECT max(`duty_event_room_id`) FROM tmp_duty_room)') + 1;
 
         $mysql->query('INSERT INTO tmp_duty_room 
             (duty_event_room_id, difficulty, live_difficulty_id, player1, timestamp, card_switch) 
             VALUES (?,?,?,?,?,?)',
-            $room_id,$post['difficulty'],$selected_live,$uid,time(),$params['card_switch']);
+            [$room_id,$post['difficulty'],$selected_live,$uid,time(),$params['card_switch']]);
         
-        $num=1;
-        $room['duty_event_room_id']=$room_id;
-        $room['live_difficulty_id']=$selected_live;
+        $num = 1;
+        $room['duty_event_room_id'] = $room_id;
+        $room['live_difficulty_id'] = $selected_live;
     }
     //第三步 - 统一返回数据
     $mysql->query('DELETE FROM tmp_duty_user_room 
         WHERE user_id=?',
-        $uid);
+        [$uid]);
     $mysql->query('INSERT INTO tmp_duty_user_room 
         (user_id,room_id,pos_id) VALUES (?,?,?)',
-        $uid,$room['duty_event_room_id'],$num);
+        [$uid,$room['duty_event_room_id'],$num]);
     $energy=getCurrentEnergy();
         
     $ret['event_id']=(int)$post['event_id'];
@@ -142,7 +231,7 @@ function duty_matching($post) {
 
 function getMyDutyRoom() {
 	global $uid, $mysql;
-	return $mysql->query('SELECT room_id,pos_id,deck_id FROM tmp_duty_user_room WHERE user_id=?', $uid)->fetch();
+	return $mysql->query('SELECT room_id,pos_id,deck_id FROM tmp_duty_user_room WHERE user_id=?', [$uid])->fetch();
 }
 
 //等待期间多次查询，获取他人准备信息
@@ -155,10 +244,10 @@ function duty_startWait($post) {
     $mysql->query('UPDATE tmp_duty_user_room 
             SET deck_id=? 
             WHERE user_id=?',
-            $post['deck_id'],$uid);
+            [$post['deck_id'],$uid]);
     $info=getMyDutyRoom();
     
-    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
+    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
 
     //计算玩家数
     $sum0=4;
@@ -179,7 +268,7 @@ function duty_startWait($post) {
     $mysql->query('UPDATE tmp_duty_room 
         SET player_ready_?=1,event_chat_id_?="?",start_flag=?
         WHERE duty_event_room_id=?', 
-        $info['pos_id'],$info['pos_id'],$post['chat_id'],$start_flag,$info['room_id']);
+        [$info['pos_id'],$info['pos_id'],$post['chat_id'],$start_flag,$info['room_id']]);
 
     $ret['event_id']=$post['event_id'];
     $ret['polling_interval']=3;
@@ -214,7 +303,7 @@ function duty_liveStart($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
     $info=getMyDutyRoom();
-    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
+    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
 
     $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>0, 'ScoreMatch' => true]);
 
@@ -250,7 +339,7 @@ function duty_liveEnd($post) {
     $info=getMyDutyRoom();
     $mysql->query('DELETE FROM tmp_duty_result
         WHERE user_id=?',
-        $uid);
+        [$uid]);
 
     $post['ScoreMatch'] = true;
     $reward = runAction('live','reward',$post);//进行歌曲结算
@@ -262,11 +351,11 @@ function duty_liveEnd($post) {
 
     $mysql->query('INSERT INTO tmp_duty_result
         (user_id,duty_event_room_id,result,reward) VALUES (?,?,?,?)',
-        $uid,$info['room_id'],json_encode($result),json_encode($reward));
+        [$uid,$info['room_id'],json_encode($result),json_encode($reward)]);
     $mysql->query('UPDATE tmp_duty_room 
         SET ended_flag_?=1,timestamp=?
         WHERE duty_event_room_id=?', 
-        $info['pos_id'],time(),$info['room_id']);
+        [$info['pos_id'],time(),$info['room_id']]);
     return [];
 }
 
@@ -275,13 +364,13 @@ function duty_endRoom($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
     $info=getMyDutyRoom();
-    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
+    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
     $mysql->query('UPDATE tmp_duty_room 
         SET timestamp=?
         WHERE duty_event_room_id=?', 
-        time(),$info['room_id']);
+        [time(),$info['room_id']]);
     $results = $mysql->query('SELECT user_id, result, reward 
-        FROM tmp_duty_result WHERE duty_event_room_id=?',$info['room_id']);
+        FROM tmp_duty_result WHERE duty_event_room_id=?', [$info['room_id']]);
     
     $score_sum=0;
 
@@ -363,7 +452,7 @@ function duty_endWait($post){
     //event_id":102,"chat_id":"0-0",room_id":279599
     global $uid, $mysql, $params;
     $info=getMyDutyRoom();
-    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', $info['room_id'])->fetch();
+    $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
 
     //计算已结束数量
     $sum=0;
@@ -373,7 +462,7 @@ function duty_endWait($post){
     $mysql->query('UPDATE tmp_duty_room 
         SET event_chat_id_?="?"
         WHERE duty_event_room_id=?', 
-        $info['pos_id'],$post['chat_id'],$info['room_id']);
+        [$info['pos_id'],$post['chat_id'],$info['room_id']]);
 
     $ret['event_id']=$post['event_id'];
     $ret['polling_interval']=3;
@@ -408,7 +497,7 @@ function duty_gameover($post) {
     $mysql->query('UPDATE tmp_duty_room 
         SET ended_flag_?=1,timestamp=?
         WHERE duty_event_room_id=?', 
-        $info['pos_id'],time(),$info['room_id']);
+        [$info['pos_id'],time(),$info['room_id']]);
 	$ret = json_decode('{
 		"event_info": {
 		    "event_id": 102,
