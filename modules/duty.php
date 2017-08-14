@@ -147,6 +147,7 @@ function duty_top() {
 function duty_matching($post) {
     //"difficulty":4,"event_id":102
     require_once 'includes/energy.php';
+	require_once 'includes/live.php';
     global $uid, $mysql, $params;
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
@@ -174,6 +175,7 @@ function duty_matching($post) {
 
     }else{
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
+		$room = [];
         require_once 'config/modules_duty.php';
         $maps=$duty_lifficulty_ids[$post['difficulty']];
         $map=$maps[rand(0,count($maps)-1)];
@@ -182,11 +184,14 @@ function duty_matching($post) {
             FROM live_setting_m 
             WHERE notes_setting_asset = ?',[$map])->fetchColumn();
 		$selected_live = $live->query('SELECT live_difficulty_id 
-            FROM special_live_m 
-            WHERE live_setting_id = ?',[$map])->fetchColumn();
+            FROM normal_live_m 
+            WHERE live_setting_id = ?',[$selected_live_setting])->fetchColumn();
 		
-        $room_id = (int)$mysql->query('SELECT max(`duty_event_room_id`) FROM tmp_duty_room)') + 1;
-
+		if(!$selected_live)
+			trigger_error("找不到对应的live id:".$map);
+		
+        $room_id = (int)$mysql->query('SELECT MAX(duty_event_room_id) FROM tmp_duty_room')->fetchColumn() + 1;
+		
         $mysql->query('INSERT INTO tmp_duty_room 
             (duty_event_room_id, difficulty, live_difficulty_id, player1, timestamp, card_switch) 
             VALUES (?,?,?,?,?,?)',
