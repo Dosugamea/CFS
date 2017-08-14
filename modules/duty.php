@@ -34,6 +34,10 @@ function duty_dutyInfo(){
 				"difficulty": 5,
 				"capital_type": 1,
 				"capital_value": 25
+			}, {
+				"difficulty": 6,
+				"capital_type": 1,
+				"capital_value": 25
 			}]
 		}', true);
 }
