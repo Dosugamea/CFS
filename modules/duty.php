@@ -5,10 +5,11 @@ function duty_dutyInfo(){
     global $params;
     if($params['card_switch']==0)
         return [];
+	include("config/event.php");
     return json_decode(
         '{
             "base_info":{
-			    "event_id": 102,
+			    "event_id": '.$duty['event_id'].',
 				"asset_bgm_id": 201,
 				"event_point": 0,
 				"total_event_point": 0

@@ -2,14 +2,15 @@
 //festival.php FESTIVAL活动相关功能
 //festival/festivalInfo 返回festival相关信息
 function festival_festivalInfo() {
-        return json_decode('{"base_info": {
-            "event_id": 91,
-            "asset_bgm_id": 4,
-            "event_point": 0,
-            "total_event_point": 0,
-            "whole_event_point": 0,
-            "max_skill_activation_rate": 30
-        }}');
+	include("config/event.php");
+	return json_decode('{"base_info": {
+		"event_id": '.$festival['event_id'].',
+		"asset_bgm_id": 4,
+		"event_point": 0,
+		"total_event_point": 0,
+		"whole_event_point": 0,
+		"max_skill_activation_rate": 30
+	}}', true);
 }
 
 function festival_deckList($post) {

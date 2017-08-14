@@ -83,31 +83,69 @@ function live_eventList() {
 //live/schedule 获取活动曲列表
 function live_schedule() {
 	global $mysql, $max_live_difficulty_id, $params;
-	$ret['event_list']=json_decode('[{
-		"event_id": 97,
-		"event_category_id": 2,
-		"name": "SCORE MATCH",
-		"open_date": "'.date('Y').'-01-01 00:00:00",
-		"start_date": "'.date('Y').'-01-01 00:00:00",
-		"end_date": "'.(date('Y')+1).'-12-31 23:59:59",
-		"close_date": "'.(date('Y')+1).'-12-31 23:59:59",
-		"banner_asset_name": "assets\/image\/event\/banner\/e_bt_03.png",
-		"banner_se_asset_name": "assets\/image\/event\/banner\/e_bt_03se.png",
-		"result_banner_asset_name": "assets\/image\/event\/banner\/e_bt_03_re.png",
-		"description": "\u30b9\u30b3\u30a2\u30de\u30c3\u30c1\u3067\u7af6\u3046\u30a4\u30d9\u30f3\u30c8\u3067\u3059\uff01"
-	}, {
-		"event_id": 91,
-		"event_category_id": 3,
-		"event_name": "\u30e1\u30c9\u30ec\u30fc\u30d5\u30a7\u30b9",
-		"open_date": "'.date('Y').'-01-01 00:00:00",
-		"start_date": "'.date('Y').'-01-01 00:00:00",
-		"end_date": "'.(date('Y')+1).'-12-31 23:59:59",
-		"close_date": "'.(date('Y')+1).'-12-31 23:59:59",
-		"banner_asset_name": "assets\/image\/event\/banner\/e_fs_04.png",
-		"banner_se_asset_name": "assets\/image\/event\/banner\/e_fs_04se.png",
-		"result_banner_asset_name": "assets\/image\/event\/banner\/e_fs_04_re.png",
-		"description": "\u30d5\u30a7\u30b9\u3092\u6210\u529f\u3055\u305b\u3001\u30a4\u30d9\u30f3\u30c8\u30dd\u30a4\u30f3\u30c8\u3092\u305f\u304f\u3055\u3093\u96c6\u3081\u308b\u3068\u30d7\u30ec\u30bc\u30f3\u30c8\u304c\u3082\u3089\u3048\u308b\u30a4\u30d9\u30f3\u30c8\u3067\u3059\uff01"
-	}]');
+	include("config/event.php");
+	$ret['event_list'] = [];
+	if(strtotime($marathon['start_date']) < time() && strtotime($marathon['end_date']) > time()){
+		$ret['event_list'][] = [
+			"event_id"                 => $marathon['event_id'],
+			"event_category_id"        => 1,
+			"name"                     => $marathon['name'],
+			"open_date"                => $marathon['start_date'],
+			"start_date"               => $marathon['start_date'],
+			"end_date"                 => $marathon['end_date'],
+			"close_date"               => $marathon['end_date'],
+			"banner_asset_name"        => $marathon['asset_path'],
+			"banner_se_asset_name"     => $marathon['asset_path_se'],
+			"result_banner_asset_name" => $marathon['result_path'],
+			"description"              => $marathon['description']
+		];
+	}
+	if(strtotime($battle['start_date']) < time() && strtotime($battle['end_date']) > time()){
+		$ret['event_list'][] = [
+			"event_id"                 => $battle['event_id'],
+			"event_category_id"        => 2,
+			"name"                     => $battle['name'],
+			"open_date"                => $battle['start_date'],
+			"start_date"               => $battle['start_date'],
+			"end_date"                 => $battle['end_date'],
+			"close_date"               => $battle['end_date'],
+			"banner_asset_name"        => $battle['asset_path'],
+			"banner_se_asset_name"     => $battle['asset_path_se'],
+			"result_banner_asset_name" => $battle['result_path'],
+			"description"              => $battle['description']
+		];
+	}
+	if(strtotime($festival['start_date']) < time() && strtotime($festival['end_date']) > time()){
+		$ret['event_list'][] = [
+			"event_id"                 => $festival['event_id'],
+			"event_category_id"        => 3,
+			"name"                     => $festival['name'],
+			"open_date"                => $festival['start_date'],
+			"start_date"               => $festival['start_date'],
+			"end_date"                 => $festival['end_date'],
+			"close_date"               => $festival['end_date'],
+			"banner_asset_name"        => $festival['asset_path'],
+			"banner_se_asset_name"     => $festival['asset_path_se'],
+			"result_banner_asset_name" => $festival['result_path'],
+			"description"              => $festival['description']
+		];
+	}
+	if(strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
+		$ret['event_list'][] = [
+			"event_id"                 => $duty['event_id'],
+			"event_category_id"        => 6,
+			"name"                     => $duty['name'],
+			"open_date"                => $duty['start_date'],
+			"start_date"               => $duty['start_date'],
+			"end_date"                 => $duty['end_date'],
+			"close_date"               => $duty['end_date'],
+			"banner_asset_name"        => $duty['asset_path'],
+			"banner_se_asset_name"     => $duty['asset_path_se'],
+			"result_banner_asset_name" => $duty['result_path'],
+			"description"              => $duty['description']
+		];
+	}
+	
 	$ret['limited_bonus_list']=[];
 	
 	$live = getLiveDb();

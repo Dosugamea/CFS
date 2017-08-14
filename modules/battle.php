@@ -3,37 +3,39 @@
 require_once('includes/extend_avatar.php');
 //battle/battleInfo 登录时请求的SCORE MATCH信息（若返回空，SM活动页面为空白）
 function battle_battleInfo() {
-	$ret =  json_decode('[{
-						"event_id": 97,
-						"point_name": "PT",
-						"event_point": 0,
-						"total_event_point": 0,
-						"event_battle_difficulty_m": [{
-								"difficulty": 1,
-								"capital_type": 1,
-								"capital_value": 5
-						}, {
-								"difficulty": 2,
-								"capital_type": 1,
-								"capital_value": 10
-						}, {
-								"difficulty": 3,
-								"capital_type": 1,
-								"capital_value": 15
-						}, {
-								"difficulty": 4,
-								"capital_type": 1,
-								"capital_value": 25
-						}, {
-								"difficulty": 5,
-								"capital_type": 1,
-								"capital_value": 25
-						}, {
-								"difficulty": 6,
-								"capital_type": 1,
-								"capital_value": 25
-						}]
-				}]', true);
+	include("config/event.php");
+	$ret = json_decode('[{
+		"event_id": 0,
+		"point_name": "PT",
+		"event_point": 0,
+		"total_event_point": 0,
+		"event_battle_difficulty_m": [{
+				"difficulty": 1,
+				"capital_type": 1,
+				"capital_value": 5
+		}, {
+				"difficulty": 2,
+				"capital_type": 1,
+				"capital_value": 10
+		}, {
+				"difficulty": 3,
+				"capital_type": 1,
+				"capital_value": 15
+		}, {
+				"difficulty": 4,
+				"capital_type": 1,
+				"capital_value": 25
+		}, {
+				"difficulty": 5,
+				"capital_type": 1,
+				"capital_value": 25
+		}, {
+				"difficulty": 6,
+				"capital_type": 1,
+				"capital_value": 25
+		}]
+	}]', true);
+	$ret['event_id'] = $battle['event_id'];
 	//$ret[0]['event_point'] = getEventPoint(97);
 	//$ret[0]['total_event_point'] = getEventPoint(97);
 	return $ret;
