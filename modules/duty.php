@@ -406,7 +406,7 @@ function duty_endRoom($post) {
         $user_info['result']['time_up']=false;
         $user_info['result']['score']=(int)$result_['score'];
         $user_info['result']['max_combo']=(int)$result_['max_combo'];
-        $user_info['result']['is_full_combo']=(int)$result_['is_full_combo'];
+        $user_info['result']['is_full_combo']=(bool)$result_['is_full_combo'];
         $user_info['result']['mission_value']=(int)$result_['score'];
         $user_info['result']['all_user_mission_type']=1;
         $user_info['result']['all_user_mission_value']=(int)$result_['score'];
@@ -485,7 +485,8 @@ function duty_endWait($post){
     $ret['player_num']=4;
     $ret['end_wait_time']=30-(time()-(int)$room['timestamp']);
     $ret['end_flag']=$sum>=4;
-    $ret['capacity']=4;
+    $ret['capacity']=4
+	;
     $ret['room_id']=$post['room_id'];
 
 
@@ -509,14 +510,15 @@ function duty_endWait($post){
 //死亡
 function duty_gameover($post) {
 	global $uid, $mysql, $params;
+	include("config/event.php");
     $info=getMyDutyRoom();
     $mysql->query('UPDATE tmp_duty_room 
-        SET ended_flag_?=1,timestamp=?
+        SET ended_flag_'.$info['pos_id'].'=1,timestamp=?
         WHERE duty_event_room_id=?', 
-        [$info['pos_id'],time(),$info['room_id']]);
+        [time(),$info['room_id']]);
 	$ret = json_decode('{
 		"event_info": {
-		    "event_id": 102,
+		    "event_id": '.$duty['event_id'].',
 				"event_point_info": {
 					"before_event_point": 0,
 				    "before_total_event_point": 0,
