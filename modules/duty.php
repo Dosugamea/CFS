@@ -177,18 +177,21 @@ function duty_matching($post) {
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
 		$room = [];
         require_once 'config/modules_duty.php';
-        $maps=$duty_lifficulty_ids[$post['difficulty']];
-        $map=$maps[rand(0,count($maps)-1)];
-        $live=getLiveDb();
+        $maps = $duty_lifficulty_ids[$post['difficulty']];
+        $map = $maps[rand(0,count($maps)-1)];
+        $live = getLiveDb();
         $selected_live_setting = $live->query('SELECT live_setting_id 
             FROM live_setting_m 
             WHERE notes_setting_asset = ?',[$map])->fetchColumn();
-		$selected_live = $live->query('SELECT live_difficulty_id 
-            FROM normal_live_m 
-            WHERE live_setting_id = ?',[$selected_live_setting])->fetchColumn();
-		
+		foreach(["normal_live_m", "special_live_m"] as $i){
+			$selected_live = $live->query('SELECT live_difficulty_id 
+				FROM '.$i.' 
+				WHERE live_setting_id = ?',[$selected_live_setting])->fetchColumn();
+			if($selected_live)
+				break;
+		}
 		if(!$selected_live)
-			trigger_error("找不到对应的live id:".$map);
+			trigger_error("找不到对应的live_difficulty_id:".$map);
 		
         $room_id = (int)$mysql->query('SELECT MAX(duty_event_room_id) FROM tmp_duty_room')->fetchColumn() + 1;
 		
