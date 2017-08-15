@@ -10,7 +10,7 @@
 //Hard：第22回SM EX
 //Expert：第22回SM TECHNICAL
 //Technical：全部日替曲EX（跳绳除外）
-$score_match_live_lifficulty_ids=[
+$duty_live_lifficulty_ids=[
   1=>[['Live_0804.json', 0], ['Live_0182.json', 0], ['Live_s0389.json', 0], ['Live_0590.json', 0], ['Live_0649.json', 0], ['Live_0873.json', 0], ['Live_0562.json', 0], ['Live_0719.json', 0], ['Live_0359.json', 0], ['Live_0538.json', 0], ['Live_s0372.json', 0], ['Live_0304.json', 0], ['Live_0867.json', 0], ['Live_0754.json', 0], ['Live_0850.json', 0], ['Live_s0393.json', 0]],
   2=>[['Live_0805.json', 0], ['Live_0183.json', 0], ['Live_s0390.json', 0], ['Live_0591.json', 0], ['Live_0650.json', 0], ['Live_0874.json', 0], ['Live_0563.json', 0], ['Live_0720.json', 0], ['Live_0360.json', 0], ['Live_0539.json', 0], ['Live_s0373.json', 0], ['Live_0305.json', 0], ['Live_0868.json', 0], ['Live_0755.json', 0], ['Live_0851.json', 0], ['Live_s0394.json', 0]],
   3=>[['Live_0806.json', 0], ['Live_0349.json', 0], ['Live_0752.json', 0], ['Live_0810.json', 0], ['Live_0709.json', 0], ['Live_0510.json', 0], ['Live_0690.json', 0], ['Live_0439.json', 0], ['Live_0601.json', 0], ['Live_s0402.json', 0]],

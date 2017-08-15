@@ -208,7 +208,7 @@ function duty_matching($post) {
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
         $room = [];
         require_once 'config/modules_duty.php';
-		$maps = $duty_lifficulty_ids[$post['difficulty']];
+		$maps = $duty_live_lifficulty_ids[$post['difficulty']];
 		if($maps==null || count($maps)==0){//检测歌单是否为空
 			$maps = [];
         	$mapss = $live->query('SELECT notes_setting_asset 
