@@ -459,7 +459,7 @@ function duty_endRoom($post) {
 		$score_avg = $score_sum / count($result);
 		for($i = 1;$i <= 4; $i++){
 			if($room['player'.$i] < 0){
-				$score_bot = $score_avg * rand(70, 130) * 0.01;
+				$score_bot = ceil($score_avg * rand(70, 120) * 0.01);
 				$result_bot = [];
 				$result_bot['rank'] = 4;
 				$result_bot['score'] = $score_bot;
@@ -514,10 +514,13 @@ function duty_endRoom($post) {
 		foreach($ret['matching_user'] as &$j)
 			if($i == $j['result']['score'])
 				$j['result']['rank'] = $k + 1;
-	foreach($ret['matching_user'] as $j)
-		if(isset($j['user_info']) && $uid == $j['user_info']['user_id'])
-			$my_rank = $j['result']['rank'];
-				
+	foreach($ret['matching_user'] as $l){
+		if(isset($l['user_info']) && $uid == $l['user_info']['user_id']){
+			$my_rank = $l['result']['rank'];
+			$my_score = $l['result']['score'];
+		}
+	}
+	
     $ret['live_list'][0]['live_difficulty_id']=(int)$room['live_difficulty_id'];
     $ret['live_list'][0]['is_random']=false;
 
@@ -659,6 +662,12 @@ function duty_endRoom($post) {
 		$reward['event_info']['next_event_reward_info']['rewards'] = [$next_item];
 	}
     
+	//更新歌榜分数
+	$hi_score = $mysql->query("SELECT score_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $duty['event_id']])->fetchColumn();
+	if($my_score > $hi_score){
+		$mysql->query("UPDATE event_point SET score_point = ? WHERE user_id = ? AND event_id = ?", [$my_score, $uid, $duty['event_id']]);
+	}
+	
     return array_merge($ret, $reward);
     //"event_id":102,"room_id":279599,....,
     //"event_team_duty":{},"matching_user":[]
