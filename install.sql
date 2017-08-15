@@ -497,7 +497,9 @@ CREATE TABLE `tmp_duty_room` (
   `ended_flag_3` tinyint(1) NOT NULL DEFAULT '0',
   `ended_flag_4` tinyint(1) NOT NULL DEFAULT '0',
   `timestamp` int(11) NOT NULL,
-  `card_switch` tinyint(1) NOT NULL
+  `card_switch` tinyint(1) NOT NULL,
+  `random` TINYINT(1) NOT NULL DEFAULT '0',
+  `mission_id` TINYINT(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 表的结构 `tmp_duty_user_room`
