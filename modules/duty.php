@@ -207,14 +207,21 @@ function duty_matching($post) {
     }else{
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
         $room = [];
-        //require_once 'config/modules_duty.php';//Config?不存在的
-        $maps = [];
-        $mapss = $live->query('SELECT notes_setting_asset 
-            FROM live_setting_m 
-            WHERE difficulty = '.$post['difficulty'].')->fetchAll();
-        foreach($mapss as $map0)
-            $maps []= $map0[0];
-        $map = $maps[rand(0,count($maps)-1)];
+        require_once 'config/modules_duty.php';
+		$maps = $duty_lifficulty_ids[$post['difficulty']];
+		if($maps==null || count($maps)==0){//检测歌单是否为空
+			$maps = [];
+        	$mapss = $live->query('SELECT notes_setting_asset 
+            	FROM live_setting_m 
+            	WHERE difficulty = '.$post['difficulty'])->fetchAll();
+        	foreach($mapss as $map0){
+				$map0[1] = ($post['difficulty']==5)?1:0;
+				$maps []= $map0;
+			}
+		}
+		$map = $maps[rand(0,count($maps)-1)];
+		$random = $map[1];
+		$map = $map[0];
         $live = getLiveDb();
         $selected_live_setting = $live->query('SELECT live_setting_id 
             FROM live_setting_m 
@@ -232,9 +239,9 @@ function duty_matching($post) {
         $room_id = (int)$mysql->query('SELECT MAX(duty_event_room_id) FROM tmp_duty_room')->fetchColumn() + 1;
 		
         $mysql->query('INSERT INTO tmp_duty_room 
-            (duty_event_room_id, difficulty, live_difficulty_id, player1, timestamp, card_switch) 
-            VALUES (?,?,?,?,?,?)',
-            [$room_id,$post['difficulty'],$selected_live,$uid,time(),$params['card_switch']]);
+            (duty_event_room_id, difficulty, live_difficulty_id, player1, timestamp, card_switch, random, mission_id) 
+            VALUES (?,?,?,?,?,?,?,?)',
+            [$room_id,$post['difficulty'],$selected_live,$uid,time(),$params['card_switch'],$random,1]);
         
         $num = 1;
         $room['duty_event_room_id'] = $room_id;
@@ -376,8 +383,7 @@ function duty_liveStart($post) {
     $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
     
-    $random=($room['difficulty']==5)?1:0;
-    $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>$random, 'ScoreMatch' => true]);
+    $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>$room['random'], 'ScoreMatch' => true]);
 
     $ret['event_team_duty']['duty_bonus_type']=2030;
     $ret['event_team_duty']['event_team_duty_bonus_value']=0;
