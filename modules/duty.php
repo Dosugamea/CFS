@@ -293,17 +293,36 @@ function duty_startWait($post) {
 
     for($i=1;$i<=4;$i++){
         $user_id=$room['player'.$i];
-        if($user_id<=0)
+        if($user_id == 0)
             break;
+		if($user_id < 0){
+			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $i).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":0}}', true);
+			$mysql->query("UPDATE tmp_duty_room SET ended_flag_".$i." = 1");
+			continue;
+		}
         $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
         $user_info['event_status']['total_event_point']=0;
         $user_info['event_status']['event_rank']=0;
-        $user_info['chat_id']=$room['event_chat_id_'.$i];
+        $user_info['chat_id'] = $room['event_chat_id_'.$i];
         $user_info['room_user_status']['event_team_duty_base_point']=0;
         $user_info['room_user_status']['has_selected_deck']=$room['player_ready_'.$i]==1;
 
         $ret['matching_user'][]=$user_info;
     }
+	
+	if((time() - (int)$room['timestamp']) > 60 && $ret['start_flag'] != 1){ //超过60s自动匹配bot
+		while($sum0 < 4){
+			$sum0 += 1;
+			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $sum0).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":0}}', true);
+			$mysql->query("UPDATE tmp_duty_room 
+				SET player_ready_".$sum0." = 1, event_chat_id_".$sum0." = '0-0', player".$sum0." = ?, full_flag = 1
+				WHERE duty_event_room_id = ?", 
+				[0 - $sum0,$info['room_id']]);
+		}
+		$ret['start_flag'] = 1;
+		$ret['player_num'] = 4;
+	}
+	
 
     return $ret;
     //"event_id":102,"polling_interval":2,"player_num":4,"start_wait_time":5,"start_flag":true,"capacity":4,"room_id":279599
@@ -324,8 +343,13 @@ function duty_liveStart($post) {
 
     for($i=1;$i<=4;$i++){
         $user_id=$room['player'.$i];
-        if($user_id<=0)
-            break;
+		if($user_id == 0){
+			break;
+		}
+        if($user_id < 0){
+			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $i).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":0}}', true);
+			continue;
+		}
         $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
         $user_info['event_status']['total_event_point']=0;
         $user_info['event_status']['event_rank']=0;
@@ -386,7 +410,32 @@ function duty_endRoom($post) {
     $results = $mysql->query('SELECT user_id, result, reward 
         FROM tmp_duty_result WHERE duty_event_room_id=?', [$info['room_id']]);
     
+	//为机器人填补分数
+	if($results->rowCount() != 4){
+		$result = $results->fetchAll(PDO::FETCH_ASSOC);
+		$score_sum = 0;
+		foreach($result as $j){
+			$result_ = json_decode($j['result'], true);
+			$score_sum += $result_['score'];
+		}
+		$score_avg = $score_sum / count($result);
+		for($i = 1;$i <= 4; $i++){
+			if($room['player'.$i] < 0){
+				$score_bot = $score_avg * rand(70, 130) * 0.01;
+				$result_bot = [];
+				$result_bot['rank'] = 4;
+				$result_bot['score'] = $score_bot;
+				$result_bot['max_combo'] = 1;
+				$result_bot['is_full_combo'] = (bool)rand(0,1);
+				$mysql->query("INSERT INTO tmp_duty_result VALUES(?,?,?,?)", [(0 - $i), $room['duty_event_room_id'], json_encode($result_bot), "{}"]);
+			}
+		}
+		$results = $mysql->query('SELECT user_id, result, reward 
+			FROM tmp_duty_result WHERE duty_event_room_id=?', [$info['room_id']]);
+	}
+	
     $score_sum=0;
+	$score_storage = [];
 
     while($result = $results->fetch(PDO::FETCH_ASSOC)){
         if ($result['user_id'] == $uid) {
@@ -394,8 +443,16 @@ function duty_endRoom($post) {
 		}
 		$result_ = json_decode($result['result'], true);
         $score_sum += (int)$result_['score'];
-
-        $user_info=runAction('profile','profileInfo',['user_id'=>$result['user_id']]);
+		if($result['user_id'] < 0){
+			$user_info = [];
+			$user_info['npc_info']['npc_id'] = (int)$result['user_id'];
+			$user_info['npc_info']['name'] = "NPC";
+			$user_info['npc_info']['level'] = 100;
+			$user_info['center_unit_info'] = json_decode('{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false}', true);
+			$user_info['setting_award_id'] = 1;
+		}else{
+			$user_info = runAction('profile','profileInfo',['user_id'=>$result['user_id']]);
+		}
         $user_info['event_status']['total_event_point']=0;
         $user_info['event_status']['event_rank']=0;
         $user_info['room_user_status']['event_team_duty_base_point']=0;
@@ -410,9 +467,16 @@ function duty_endRoom($post) {
         $user_info['result']['mission_value']=(int)$result_['score'];
         $user_info['result']['all_user_mission_type']=1;
         $user_info['result']['all_user_mission_value']=(int)$result_['score'];
-
+		
         $ret['matching_user'][]=$user_info;
+		$score_storage [] = (int)$result_['score'];
     }
+	rsort($score_storage);
+	foreach($score_storage as $k => $i)
+		foreach($ret['matching_user'] as &$j)
+			if($i == $j['result']['score'])
+				$j['result']['rank'] = $k + 1;
+				
     $ret['live_list'][0]['live_difficulty_id']=(int)$room['live_difficulty_id'];
     $ret['live_list'][0]['is_random']=false;
 
@@ -427,9 +491,10 @@ function duty_endRoom($post) {
 
     $ret['event_id']=$post['event_id'];
     $ret['room_id']=$post['room_id'];
-
+	
+	include("config/event.php");
     $reward['event_info'] = json_decode('{
-			"event_id": 102,
+			"event_id": '.$duty['event_id'].',
 			"event_point_info": {
 				"before_event_point": 0,
 				"before_total_event_point": 0,
@@ -485,15 +550,19 @@ function duty_endWait($post){
     $ret['player_num']=4;
     $ret['end_wait_time']=30-(time()-(int)$room['timestamp']);
     $ret['end_flag']=$sum>=4;
-    $ret['capacity']=4
-	;
+    $ret['capacity']=4;
     $ret['room_id']=$post['room_id'];
 
 
     for($i=1;$i<=4;$i++){
         $user_id=$room['player'.$i];
-        if($user_id<=0)
+        if($user_id == 0)
             break;
+		if($user_id < 0){
+			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $i).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":0}}', true);
+			$mysql->query("UPDATE tmp_duty_room SET ended_flag_".$i." = 1");
+			continue;
+		}
         $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
         $user_info['event_status']['total_event_point']=0;
         $user_info['event_status']['event_rank']=0;
