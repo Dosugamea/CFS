@@ -680,6 +680,16 @@ function duty_endRoom($post) {
 		$mysql->query("UPDATE event_point SET score_point = ? WHERE user_id = ? AND event_id = ?", [$my_score, $uid, $duty['event_id']]);
 	}
 	
+	//更新显示的分数和排名
+	unset($l);
+	foreach($ret['matching_user'] as &$l){
+		if(isset($l['user_info']) && $uid == $l['user_info']['user_id']){
+			$points = getUserEventStatus($l['user_info']['user_id'], 
+			$l['event_status']['total_event_point'] = $points['event_point'];
+			$l['event_status']['event_rank'] = $points['rank'];
+		}
+	}
+	
     return array_merge($ret, $reward);
     //"event_id":102,"room_id":279599,....,
     //"event_team_duty":{},"matching_user":[]
