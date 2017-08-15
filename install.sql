@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS `event_point` (
   `user_id` int(11) NOT NULL,
   `event_id` int(2) NOT NULL,
   `event_point` int(11) NOT NULL DEFAULT '0',
-  `extra_point` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`user_id`,`event_id`)
+  `score_point` int(11) NOT NULL DEFAULT '0',
+  UNIQUE INDEX `UNIQUE` (`user_id`, `event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
