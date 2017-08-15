@@ -2,14 +2,19 @@
 //duty.php 协力相关
 //获得当前协力活动信息
 function duty_dutyInfo(){
-    global $params;
+    global $params, $mysql, $uid;
     if($params['card_switch']==0)
         return [];
     include("config/event.php");
-    return json_decode(
+	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $duty['event_id']])->fetchColumn();
+	if(!$event_point){
+		$mysql->query("INSERT IGNORE INTO event_point VALUES(?,?,?,?)",[$uid, $duty['event_id'], 0, 0]);
+		$event_point = 0;
+	}
+    $ret = json_decode(
         '{
             "base_info":{
-                "event_id": '.$duty['event_id'].',
+                "event_id": 0,
                 "asset_bgm_id": 201,
                 "event_point": 0,
                 "total_event_point": 0
@@ -40,6 +45,10 @@ function duty_dutyInfo(){
                 "capital_value": 25
             }]
         }', true);
+	$ret['base_info']['event_id'] = $duty['event_id'];
+	$ret['base_info']['event_point'] = $event_point;
+	$ret['base_info']['total_event_point'] = $event_point;
+	return $ret;
 }
 
 //获得全体协作任务
@@ -138,9 +147,31 @@ function duty_allUserMission(){
 	}',true);
 }
 
+//获取活动pt和排名
+function getUserEventStatus($uid, $event_id){
+	global $mysql;
+	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $event_id])->fetchColumn();
+	$rank = $mysql->query("SELECT rowNo FROM 
+		(Select user_id, event_id, (@rowNum:=@rowNum+1) as rowNo
+		From event_point,
+		(Select (@rowNum :=0) ) b
+		WHERE event_id = ?
+		Order by event_point.event_point Desc) as unused
+		WHERE user_id = ? AND event_id = ?",[$event_id, $uid, $event_id])->fetchColumn();
+	return ["event_point" => $event_point, "rank" => (int)$rank];
+}
+
 //获得当前分数与排名
 function duty_top() {
-    return json_decode('{"event_status":{"total_event_point":0,"event_rank":false},"all_user_mission_rank":7,"has_history":false}',true);
+	global $uid, $mysql;
+	include("config/event.php");
+	$event_status = getUserEventStatus($uid, $duty['event_id']);
+	$ret = [];
+	$ret['event_status']['total_event_point'] = $event_status['event_point'];
+	$ret['event_status']['event_rank'] = $event_status['event_point'] ? $event_status['rank'] : false;
+	$ret['all_user_mission_rank'] = 7;//全体任务完成进度
+	$ret['has_history'] = false;//打嗝历史，以后再加
+    return $ret;
 }
 
 //进入匹配
@@ -250,6 +281,7 @@ function getMyDutyRoom() {
 function duty_startWait($post) {
     //event_id":102,"chat_id":"0-0","deck_id":2,room_id":279599
     global $uid, $mysql, $params;
+	include("config/event.php");
     if($post['deck_id']<=0)
         return [];
 
@@ -301,8 +333,10 @@ function duty_startWait($post) {
 			continue;
 		}
         $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
-        $user_info['event_status']['total_event_point']=0;
-        $user_info['event_status']['event_rank']=0;
+        $user_event = getUserEventStatus($user_id, $duty['event_id']);
+		
+        $user_info['event_status']['total_event_point'] = $user_event['event_point'];
+        $user_info['event_status']['event_rank'] = $user_event['rank'];
         $user_info['chat_id'] = $room['event_chat_id_'.$i];
         $user_info['room_user_status']['event_team_duty_base_point']=0;
         $user_info['room_user_status']['has_selected_deck']=$room['player_ready_'.$i]==1;
@@ -333,6 +367,7 @@ function duty_startWait($post) {
 function duty_liveStart($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
+	include("config/event.php");
     $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
 
@@ -350,9 +385,11 @@ function duty_liveStart($post) {
 			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $i).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":0}}', true);
 			continue;
 		}
-        $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
-        $user_info['event_status']['total_event_point']=0;
-        $user_info['event_status']['event_rank']=0;
+		$user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
+        $user_event = getUserEventStatus($user_id, $duty['event_id']);
+		
+        $user_info['event_status']['total_event_point'] = $user_event['event_point'];
+        $user_info['event_status']['event_rank'] = $user_event['rank'];
         $user_info['chat_id']=$room['event_chat_id_'.$i];
         $user_info['room_user_status']['event_team_duty_base_point']=0;
         $user_info['room_user_status']['has_selected_deck']=true;
@@ -401,6 +438,7 @@ function duty_endRoom($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
 	include_once("includes/live.php");
+	include_once("includes/unit.php");
     $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
     $mysql->query('UPDATE tmp_duty_room 
@@ -468,7 +506,7 @@ function duty_endRoom($post) {
         $user_info['result']['all_user_mission_type']=1;
         $user_info['result']['all_user_mission_value']=(int)$result_['score'];
 		
-        $ret['matching_user'][]=$user_info;
+        $ret['matching_user'][] = $user_info;
 		$score_storage [] = (int)$result_['score'];
     }
 	rsort($score_storage);
@@ -476,40 +514,150 @@ function duty_endRoom($post) {
 		foreach($ret['matching_user'] as &$j)
 			if($i == $j['result']['score'])
 				$j['result']['rank'] = $k + 1;
+	foreach($ret['matching_user'] as $j)
+		if(isset($j['user_info']) && $uid == $j['user_info']['user_id'])
+			$my_rank = $j['result']['rank'];
 				
     $ret['live_list'][0]['live_difficulty_id']=(int)$room['live_difficulty_id'];
     $ret['live_list'][0]['is_random']=false;
 
-    $ret['event_team_duty']['mission_id']=1;
-    $ret['event_team_duty']['mission_type']=1;
-    $ret['event_team_duty']['mission_value']=1;
-    $ret['event_team_duty']['mission_rate']=120;
-    $ret['event_team_duty']['mission_goal']=(int)(getRankInfo((int)$room['live_difficulty_id'])[4]['rank_min']*4*1.2);
-    $ret['event_team_duty']['mission_result_value']=$score_sum;
-    $ret['event_team_duty']['mission_rank']=getRank($score_sum,$room['live_difficulty_id']);
-    $ret['event_team_duty']['mission_reward']=[];
+    $ret['event_team_duty']['mission_id'] = 1;
+    $ret['event_team_duty']['mission_type'] = 1;
+    $ret['event_team_duty']['mission_value'] = 1;
+    $ret['event_team_duty']['mission_rate'] = 120;
+    $ret['event_team_duty']['mission_goal'] = (int)(getRankInfo((int)$room['live_difficulty_id'])[4]['rank_min']*4*1.2);
+    $ret['event_team_duty']['mission_result_value'] = $score_sum;
+    $ret['event_team_duty']['mission_rank'] = getRank($score_sum,$room['live_difficulty_id']);
+    $ret['event_team_duty']['mission_reward'] = [];
 
-    $ret['event_id']=$post['event_id'];
-    $ret['room_id']=$post['room_id'];
+    $ret['event_id'] = $post['event_id'];
+    $ret['room_id'] = $post['room_id'];
 	
+	//计算获得的活动pt
+	$base_reward = [null, 39, 89, 153, 301, 301, 301];
 	include("config/event.php");
-    $reward['event_info'] = json_decode('{
-			"event_id": '.$duty['event_id'].',
-			"event_point_info": {
-				"before_event_point": 0,
-				"before_total_event_point": 0,
-			    "after_event_point": 0,
-				"after_total_event_point": 0,
-                "base_event_point": 0,
-				"added_event_point": 0,
-				"score_rank_rate": 1,
-				"combo_rank_rate": 1,
-                "team_rank_rate": 1,
-                "mission_rank_rate": 1
-			},
-			"event_reward_info": [],
-			"next_event_reward_info": []
-			}');
+	$reward['event_info']['event_id'] = $duty['event_id'];
+	$reward['event_info']['event_point_info'] = [];
+	$before_event = getUserEventStatus($uid, $duty['event_id']);
+	$reward['event_info']['event_point_info']['before_event_point'] = $before_event['event_point'];
+	$reward['event_info']['event_point_info']['before_total_event_point'] = $before_event['event_point'];
+	$reward['event_info']['event_point_info']['after_event_point'] = $before_event['event_point'];
+	$reward['event_info']['event_point_info']['after_total_event_point'] = $before_event['event_point'];
+	$reward['event_info']['event_point_info']['base_event_point'] = $base_reward[$room['difficulty']];
+	$reward['event_info']['event_point_info']['added_event_point'] = $base_reward[$room['difficulty']];
+	switch($reward['rank']){
+		case 1:
+			$reward['event_info']['event_point_info']['score_rank_rate'] = 1.2;break;
+		case 2:
+			$reward['event_info']['event_point_info']['score_rank_rate'] = 1.15;break;
+		case 3:
+			$reward['event_info']['event_point_info']['score_rank_rate'] = 1.1;break;
+		case 4:
+			$reward['event_info']['event_point_info']['score_rank_rate'] = 1.05;break;
+		default:
+			$reward['event_info']['event_point_info']['score_rank_rate'] = 1;break;
+	}
+	switch($reward['combo_rank']){
+		case 1:
+			$reward['event_info']['event_point_info']['combo_rank_rate'] = 1.08;break;
+		case 2:
+			$reward['event_info']['event_point_info']['combo_rank_rate'] = 1.06;break;
+		case 3:
+			$reward['event_info']['event_point_info']['combo_rank_rate'] = 1.04;break;
+		case 4:
+			$reward['event_info']['event_point_info']['combo_rank_rate'] = 1.02;break;
+		default:
+			$reward['event_info']['event_point_info']['combo_rank_rate'] = 1;break;
+	}
+	switch($ret['event_team_duty']['mission_rank']){
+		case 1:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.25;break;
+		case 2:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.15;break;
+		case 3:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.1;break;
+		case 4:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.05;break;
+		case 6:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.35;break;
+		case 7:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1.45;break;
+		default:
+			$reward['event_info']['event_point_info']['mission_rank_rate'] = 1;break;
+	}
+	switch($my_rank){
+		case 1:
+			$reward['event_info']['event_point_info']['team_rank_rate'] = 1.08;break;
+		case 2:
+			$reward['event_info']['event_point_info']['team_rank_rate'] = 1.05;break;
+		case 3:
+			$reward['event_info']['event_point_info']['team_rank_rate'] = 1.02;break;
+		default:
+			$reward['event_info']['event_point_info']['team_rank_rate'] = 1;break;
+	}
+	$reward['event_info']['event_point_info']['added_event_point'] = round($reward['event_info']['event_point_info']['added_event_point'] * $reward['event_info']['event_point_info']['score_rank_rate'] * $reward['event_info']['event_point_info']['combo_rank_rate'] * $reward['event_info']['event_point_info']['mission_rank_rate'] * $reward['event_info']['event_point_info']['team_rank_rate']);
+	$reward['event_info']['event_point_info']['after_event_point'] += $reward['event_info']['event_point_info']['added_event_point'];
+	$reward['event_info']['event_point_info']['after_total_event_point'] = $reward['event_info']['event_point_info']['after_event_point'];
+	$mysql->query("UPDATE event_point SET event_point = event_point + ? WHERE user_id = ? AND event_id = ?", [$reward['event_info']['event_point_info']['added_event_point'], $uid, $duty['event_id']]);
+	
+	$event_reward_info = [];
+	$eventdb = getEventDb();
+	$point_count = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count >= ? AND point_count <= ?",[$duty['event_id'], $reward['event_info']['event_point_info']['before_event_point'], $reward['event_info']['event_point_info']['after_event_point']])->fetchAll(PDO::FETCH_ASSOC);
+	$items_reward = [];
+	foreach($point_count as $i){
+		$item_reward = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$i['event_point_count_id']])->fetch(PDO::FETCH_ASSOC);
+		if(!$item_reward)
+			trigger_error("找不到对应的奖励物品：".$i['event_point_count_reward_id']);
+		$item_reward['reward_box_flag'] = false;
+		$item_reward['required_event_point'] = $i['point_count'];
+		//处理获得的物品
+		switch($item_reward['add_type']){
+			case 1001:
+				addUnit($item_reward['item_id'], $item_reward['amount']);break;
+			case 3000:
+				$params['item3'] += $item_reward['amount'];break;
+			case 3001:
+				$params['item4'] += $item_reward['amount'];break;
+			case 3002:
+				$params['item2'] += $item_reward['amount'];break;
+			case 1000:
+				$params['item'.$item_reward['item_id']] += $item_reward['amount'];break;
+			case 3006://贴纸
+				switch($item_reward['item_id']){
+					case 2:
+						$params['seal1'] += $res['amount'];break;
+					case 3:
+						$params['seal2'] += $res['amount'];break;
+					case 4:
+						$params['seal4'] += $res['amount'];break;
+					case 5:
+						$params['seal3'] += $res['amount'];break;
+					default:
+						trigger_error("没有这样的技能宝石：".$res['item_id']);
+				}break;
+			case 5100://称号
+				$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $item_reward['item_id']]);break;
+			case 5500://技能宝石
+				$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $res['item_id']])->fetch(PDO::FETCH_ASSOC);
+				if($skill_check)
+					$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$res['amount'], $uid, $res['item_id']]);
+				else
+					$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount) VALUES (?, ?, ?)", [$uid, $res['item_id'], $res['amount']]);
+				break;
+			default:
+				trigger_error("获得了不支持的物品：".$item_reward['add_type']);
+		}
+		$items_reward[] = $item_reward;
+	}
+	$reward['event_info']['event_reward_info'] = $items_reward;
+	
+	$reward['event_info']['next_event_reward_info'] = [];
+	$next_reward = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count > ?",[$duty['event_id'], $reward['event_info']['event_point_info']['after_event_point']])->fetch(PDO::FETCH_ASSOC);
+	if($next_reward){
+		$next_item = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$next_reward['event_point_count_id']])->fetch(PDO::FETCH_ASSOC);
+		$reward['event_info']['next_event_reward_info']['event_point'] = $next_reward['point_count'];
+		$reward['event_info']['next_event_reward_info']['rewards'] = [$next_item];
+	}
     
     return array_merge($ret, $reward);
     //"event_id":102,"room_id":279599,....,
@@ -532,7 +680,8 @@ function getRank($score,$live_id){
 function duty_endWait($post){
     //event_id":102,"chat_id":"0-0",room_id":279599
     global $uid, $mysql, $params;
-    $info=getMyDutyRoom();
+	include("config/event.php");
+    $info = getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch(PDO::FETCH_ASSOC);
 
     //计算已结束数量
@@ -563,9 +712,11 @@ function duty_endWait($post){
 			$mysql->query("UPDATE tmp_duty_room SET ended_flag_".$i." = 1");
 			continue;
 		}
-        $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
-        $user_info['event_status']['total_event_point']=0;
-        $user_info['event_status']['event_rank']=0;
+       		$user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
+        $user_event = getUserEventStatus($user_id, $duty['event_id']);
+		
+        $user_info['event_status']['total_event_point'] = $user_event['event_point'];
+        $user_info['event_status']['event_rank'] = $user_event['rank'];
         $user_info['chat_id']=$room['event_chat_id_'.$i];
         $user_info['room_user_status']['event_team_duty_base_point']=0;
         $user_info['room_user_status']['has_selected_deck']=true;
@@ -585,28 +736,85 @@ function duty_gameover($post) {
         SET ended_flag_'.$info['pos_id'].'=1,timestamp=?
         WHERE duty_event_room_id=?', 
         [time(),$info['room_id']]);
-	$ret = json_decode('{
-		"event_info": {
-		    "event_id": '.$duty['event_id'].',
-				"event_point_info": {
-					"before_event_point": 0,
-				    "before_total_event_point": 0,
-			        "after_event_point": 0,
-				    "after_total_event_point": 0,
-                    "base_event_point": 0,
-				    "added_event_point": 0,
-				    "score_rank_rate": 1,
-				    "combo_rank_rate": 1,
-                    "team_rank_rate": 1,
-                    "mission_rank_rate": 1
-				},
-				"event_reward_info": [],
-				"next_event_reward_info": [],
-				"extra_reward_info": []
-		},
-		"live_difficulty_id": '.$post['live_difficulty_id'].',
-		"live_difficulty_id_list": ['.$post['live_difficulty_id'].']
-}', true);
-	$ret['after_user_info'] = runAction('user','userInfo')['user'];
+		
+	$base_reward = [null, 39, 89, 153, 301, 301, 301];
+	$ret = [];
+	$ret['event_info']['event_id'] = $duty['event_id'];
+	$ret['event_info']['event_point_info'] = [];
+	$before_event = getUserEventStatus($uid, $event_id);
+	$ret['event_info']['event_point_info']['before_event_point'] = $before_event['event_point'];
+	$ret['event_info']['event_point_info']['before_total_event_point'] = $before_event['event_point'];
+	$ret['event_info']['event_point_info']['after_event_point'] = $before_event['event_point'] + ceil($base_reward[$info['difficulty']]/3);
+	$ret['event_info']['event_point_info']['after_total_event_point'] = $before_event['event_point'] + ceil($base_reward[$info['difficulty']]/3);
+	$ret['event_info']['event_point_info']['base_event_point'] = ceil($base_reward[$info['difficulty']]/3);
+	$ret['event_info']['event_point_info']['added_event_point'] = ceil($base_reward[$info['difficulty']]/3);
+	$ret['event_info']['event_point_info']['score_rank_rate'] = 1;
+	$ret['event_info']['event_point_info']['combo_rank_rate'] = 1;
+	$ret['event_info']['event_point_info']['team_rank_rate'] = 1;
+	$ret['event_info']['event_point_info']['mission_rank_rate'] = 1;
+	
+	$event_reward_info = [];
+	$eventdb = getEventDb();
+	$point_count = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count >= ? AND point_count <= ?",[$duty['event_id'], $ret['event_info']['event_point_info']['before_event_point'], $ret['event_info']['event_point_info']['after_event_point']])->fetchAll(PDO::FETCH_ASSOC);
+	$items_reward = [];
+	foreach($point_count as $i){
+		$item_reward = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$i['event_point_count_reward_id']])->fetch(PDO::FETCH_ASSOC);
+		if(!$item_reward)
+			trigger_error("找不到对应的奖励物品：".$i['event_point_count_reward_id']);
+		$item_reward['reward_box_flag'] = false;
+		$item_reward['required_event_point'] = $i['point_count'];
+		//处理获得的物品
+		switch($item_reward['add_type']){
+			case 1001:
+				addUnit($item_reward['item_id'], $item_reward['amount']);break;
+			case 3000:
+				$params['item3'] += $item_reward['amount'];break;
+			case 3001:
+				$params['item4'] += $item_reward['amount'];break;
+			case 3002:
+				$params['item2'] += $item_reward['amount'];break;
+			case 1000:
+				$params['item'.$item_reward['item_id']] += $item_reward['amount'];break;
+			case 3006://贴纸
+				switch($item_reward['item_id']){
+					case 2:
+						$params['seal1'] += $res['amount'];break;
+					case 3:
+						$params['seal2'] += $res['amount'];break;
+					case 4:
+						$params['seal4'] += $res['amount'];break;
+					case 5:
+						$params['seal3'] += $res['amount'];break;
+					default:
+						trigger_error("没有这样的技能宝石：".$res['item_id']);
+				}break;
+			case 5100://称号
+				$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $item_reward['item_id']]);break;
+			case 5500://技能宝石
+				$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $res['item_id']])->fetch(PDO::FETCH_ASSOC);
+				if($skill_check)
+					$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$res['amount'], $uid, $res['item_id']]);
+				else
+					$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount) VALUES (?, ?, ?)", [$uid, $res['item_id'], $res['amount']]);
+				break;
+			default:
+				trigger_error("获得了不支持的物品：".$item_reward['add_type']);
+		}
+		$items_reward[] = $item_reward;
+	}
+	$ret['event_info']['event_reward_info'] = $items_reward;
+	
+	$ret['event_info']['next_event_reward_info'] = [];
+	$next_reward = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count > ?",[$duty['event_id'], $ret['event_info']['event_point_info']['after_event_point']])->fetch(PDO::FETCH_ASSOC);
+	if($next_reward){
+		$next_item = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$next_reward_id])->fetch(PDO::FETCH_ASSOC);
+		$ret['event_info']['next_event_reward_info']['event_point'] = $next_reward['point_count'];
+		$ret['event_info']['next_event_reward_info']['rewards'] = [$next_item];
+	}
+	$ret['extra_reward_info'] = [];
+	
+	$ret['live_difficulty_id'] = $post['live_difficulty_id'];
+	$ret['live_difficulty_id_list'] = [$post['live_difficulty_id']];
+	
 	return $ret;
 }
