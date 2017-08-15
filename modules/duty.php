@@ -209,6 +209,7 @@ function duty_matching($post) {
         $room = [];
         require_once 'config/modules_duty.php';
 		$maps = $duty_live_lifficulty_ids[$post['difficulty']];
+		$live = getLiveDb();
 		if($maps==null || count($maps)==0){//检测歌单是否为空
 			$maps = [];
         	$mapss = $live->query('SELECT notes_setting_asset 
@@ -222,7 +223,6 @@ function duty_matching($post) {
 		$map = $maps[rand(0,count($maps)-1)];
 		$random = $map[1];
 		$map = $map[0];
-        $live = getLiveDb();
         $selected_live_setting = $live->query('SELECT live_setting_id 
             FROM live_setting_m 
             WHERE notes_setting_asset = ?',[$map])->fetchColumn();
