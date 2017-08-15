@@ -434,7 +434,7 @@ function live_reward($post) {
 	include_once("includes/energy.php");
 	$live = getLiveDb();
 	//验证访问合法性，有人反映有问题，不验了
-	if (isset($post['ScoreMatch']) || isset($post['festival'])) {
+	/*if (isset($post['ScoreMatch']) || isset($post['festival'])) {
 		if (!isset($post['seed']) || !isset($post['key'])) {
 			throw403('NO_SEED_OR_KEY');
 		}
@@ -464,7 +464,7 @@ function live_reward($post) {
 		if (isset($post['ScoreMatch'])) {
 			$calcClearKeys($post['live_difficulty_id'], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
 		}
-	}
+	}*/
 	
 	//客户端提交的分数
 	$score = $post['score_smile'] + $post['score_cute'] + $post['score_cool'];
