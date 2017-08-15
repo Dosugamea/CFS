@@ -5,41 +5,41 @@ function duty_dutyInfo(){
     global $params;
     if($params['card_switch']==0)
         return [];
-	include("config/event.php");
+    include("config/event.php");
     return json_decode(
         '{
             "base_info":{
-			    "event_id": '.$duty['event_id'].',
-				"asset_bgm_id": 201,
-				"event_point": 0,
-				"total_event_point": 0
+                "event_id": '.$duty['event_id'].',
+                "asset_bgm_id": 201,
+                "event_point": 0,
+                "total_event_point": 0
             },
-			"difficulty_list": [{
-				"difficulty": 1,
-				"capital_type": 1,
-				"capital_value": 5
-			}, {
-				"difficulty": 2,
-				"capital_type": 1,
-				"capital_value": 10
-			}, {
-				"difficulty": 3,
-				"capital_type": 1,
-				"capital_value": 15
-			}, {
-				"difficulty": 4,
-				"capital_type": 1,
-				"capital_value": 25
-			}, {
-				"difficulty": 5,
-				"capital_type": 1,
-				"capital_value": 25
-			}, {
-				"difficulty": 6,
-				"capital_type": 1,
-				"capital_value": 25
-			}]
-		}', true);
+            "difficulty_list": [{
+                "difficulty": 1,
+                "capital_type": 1,
+                "capital_value": 5
+            }, {
+                "difficulty": 2,
+                "capital_type": 1,
+                "capital_value": 10
+            }, {
+                "difficulty": 3,
+                "capital_type": 1,
+                "capital_value": 15
+            }, {
+                "difficulty": 4,
+                "capital_type": 1,
+                "capital_value": 25
+            }, {
+                "difficulty": 5,
+                "capital_type": 1,
+                "capital_value": 25
+            }, {
+                "difficulty": 6,
+                "capital_type": 1,
+                "capital_value": 25
+            }]
+        }', true);
 }
 
 //获得全体协作任务
@@ -521,11 +521,11 @@ function getRank($score,$live_id){
     $rate=(float)$score/$s_score;
     if($rate>=1.5)  return 7;
     if($rate>=1.25) return 6;
-    if($rate>=1)    return 5;
-    if($rate>=0.7)  return 4;
+    if($rate>=1)    return 1;
+    if($rate>=0.7)  return 2;
     if($rate>=0.5)  return 3;
-    if($rate>=0.3)  return 2;
-                    return 1; 
+    if($rate>=0.3)  return 4;
+                    return 5; 
 }
 
 //结束后多次查询他人信息以显示
