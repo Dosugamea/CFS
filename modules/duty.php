@@ -178,7 +178,7 @@ function duty_top() {
 function duty_matching($post) {
     //"difficulty":4,"event_id":102
     require_once 'includes/energy.php';
-	require_once 'includes/live.php';
+    require_once 'includes/live.php';
     global $uid, $mysql, $params;
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
@@ -206,9 +206,14 @@ function duty_matching($post) {
 
     }else{
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
-		$room = [];
-        require_once 'config/modules_duty.php';
-        $maps = $duty_lifficulty_ids[$post['difficulty']];
+        $room = [];
+        //require_once 'config/modules_duty.php';//Config?不存在的
+        $maps = [];
+        $mapss = $live->query('SELECT notes_setting_asset 
+            FROM live_setting_m 
+            WHERE difficulty = '.$post['difficulty'].')->fetchAll();
+        foreach($mapss as $map0)
+            $maps []= $map0[0];
         $map = $maps[rand(0,count($maps)-1)];
         $live = getLiveDb();
         $selected_live_setting = $live->query('SELECT live_setting_id 
@@ -370,8 +375,9 @@ function duty_liveStart($post) {
 	include("config/event.php");
     $info=getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
-
-    $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>0, 'ScoreMatch' => true]);
+    
+    $random=($room['difficulty']==5)?1:0;
+    $ret=runAction('live','play',['live_difficulty_id'=>$room['live_difficulty_id'],'unit_deck_id'=>$info['deck_id'],'random_switch'=>$random, 'ScoreMatch' => true]);
 
     $ret['event_team_duty']['duty_bonus_type']=2030;
     $ret['event_team_duty']['event_team_duty_bonus_value']=0;
