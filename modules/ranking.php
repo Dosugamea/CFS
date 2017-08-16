@@ -122,18 +122,52 @@ function ranking_player($post) {
 }
 
 function ranking_eventPlayer($post) {
+	global $mysql;
+	include_once("includes/unit.php");
 	$ret = [];
-	$ret['total_cnt'] = 0;
-	$ret['page'] = 0;
+	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
+	$ret['page'] = $post['page'];
+	$result = $mysql->query("SELECT * FROM event_point WHERE user_id NOT IN (SELECT user_id FROM (SELECT user_id FROM event_point WHERE event_id = ? ORDER BY event_point DESC LIMIT ".($post['page'] * 20 + $post['buff']).") AS A) AND event_id = ? ORDER BY event_point DESC LIMIT ".($post['page'] * 20 + 20),[$post['event_id'], $post['event_id']])->fetchAll(PDO::FETCH_ASSOC);
 	$ret['items'] = [];
+	foreach($result as $k=>$i){
+		$item = [];
+		$item['rank'] = $ret['page']*20 + $k + 1;
+		$item['score'] = (int)$i['event_point'];
+		$item['user_data'] = $mysql->query("SELECT user_id, name, level, award FROM users WHERE user_id = ?", [$i['user_id']])->fetch(PDO::FETCH_ASSOC);
+		$item['user_data']['user_id'] = (int)$item['user_data']['user_id'];
+		$item['user_data']['level'] = (int)$item['user_data']['level'];
+		$center = (int)$mysql->query("SELECT center_unit FROM user_deck WHERE user_id = ?", [$i['user_id']])->fetchColumn();
+		$item['center_unit_info'] = GetUnitDetail($center, true);
+		$item['setting_award_id'] = (int)$item['user_data']['award'];
+		unset($item['user_data']['award']);
+		$ret['items'][] = $item;
+	}
+	
 	return $ret;
 }
 
 function ranking_eventLive($post) {
+	global $mysql;
+	include_once("includes/unit.php");
 	$ret = [];
-	$ret['total_cnt'] = 0;
-	$ret['page'] = 0;
+	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
+	$ret['page'] = $post['page'];
+	$result = $mysql->query("SELECT * FROM event_point WHERE user_id NOT IN (SELECT user_id FROM (SELECT user_id FROM event_point WHERE event_id = ? ORDER BY score_point DESC LIMIT ".($post['page'] * 20 + $post['buff']).") AS A) AND event_id = ? ORDER BY score_point DESC LIMIT ".($post['page'] * 20 + 20),[$post['event_id'], $post['event_id']])->fetchAll(PDO::FETCH_ASSOC);
 	$ret['items'] = [];
+	foreach($result as $k=>$i){
+		$item = [];
+		$item['rank'] = $ret['page']*20 + $k + 1;
+		$item['score'] = (int)$i['score_point'];
+		$item['user_data'] = $mysql->query("SELECT user_id, name, level, award FROM users WHERE user_id = ?", [$i['user_id']])->fetch(PDO::FETCH_ASSOC);
+		$item['user_data']['user_id'] = (int)$item['user_data']['user_id'];
+		$item['user_data']['level'] = (int)$item['user_data']['level'];
+		$center = (int)$mysql->query("SELECT center_unit FROM user_deck WHERE user_id = ?", [$i['user_id']])->fetchColumn();
+		$item['center_unit_info'] = GetUnitDetail($center, true);
+		$item['setting_award_id'] = (int)$item['user_data']['award'];
+		unset($item['user_data']['award']);
+		$ret['items'][] = $item;
+	}
+	
 	return $ret;
 }
 
