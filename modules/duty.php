@@ -248,7 +248,7 @@ function duty_matching($post) {
 		}else{
 			$mission_id = 6;
 		}
-		$mission_id = 5;
+		//$mission_id = 5;
         $room_id = (int)$mysql->query('SELECT MAX(duty_event_room_id) FROM tmp_duty_room')->fetchColumn() + 1;
 		
         $mysql->query('INSERT INTO tmp_duty_room 
