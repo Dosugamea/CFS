@@ -616,10 +616,10 @@ function duty_endRoom($post) {
 	$great_sum = 0;
 	$good_sum = 0;
 	
-	$score_storage = [];
-	$perfect_storage = [];
-	$great_storage = [];
-	$good_storage = [];
+	$storage['score'] = [];
+	$storage['perfect'] = [];
+	$storage['great'] = [];
+	$storage['good'] = [];
 
     while($result = $results->fetch(PDO::FETCH_ASSOC)){
         if ($result['user_id'] == $uid) {
@@ -676,42 +676,39 @@ function duty_endRoom($post) {
 				trigger_error("不支持的任务类型：".$room['mission_id']);
 		}
         $ret['matching_user'][] = $user_info;
-		$score_storage [] = (int)$result_['score'];
-		$perfect_storage [] = (int)$result_['perfect_cnt'];
-		$great_storage [] = (int)$result_['great_cnt'];
-		$good_storage [] = (int)$result_['good_cnt'];
-    }
-	rsort($score_storage);
-	rsort($perfect_storage);
-	rsort($great_storage);
-	rsort($good_storage);
+		$storage['score'] [] = (int)$result_['score'];
+		$storage['perfect'] [] = (int)$result_['perfect_cnt'];
+		$storage['great'] [] = (int)$result_['great_cnt'];
+		$storage['good'] [] = (int)$result_['good_cnt'];
+	}
+	
+	$target="score";
+	$target_="score";
 	switch((int)$room['mission_id']){
 		case 1:
-			foreach($score_storage as $k => $i)
-				foreach($ret['matching_user'] as &$j)
-					if($i == $j['result']['score'])
-						$j['result']['rank'] = $k + 1;
+			$target="score";
+			$target_="score";
 			break;
 		case 4:
-			foreach($perfect_storage as $k => $i)
-				foreach($ret['matching_user'] as &$j)
-					if($i == $j['result']['perfect_cnt'])
-						$j['result']['rank'] = $k + 1;
+			$target="perfect";
+			$target_="perfect_cnt";
 			break;
 		case 5:
-			foreach($great_storage as $k => $i)
-				foreach($ret['matching_user'] as &$j)
-					if($i == $j['result']['great_cnt'])
-						$j['result']['rank'] = $k + 1;
+			$target="great";
+			$target_="great_cnt";
 			break;
 		case 6:
-			foreach($good_storage as $k => $i)
-				foreach($ret['matching_user'] as &$j)
-					if($i == $j['result']['good_cnt'])
-						$j['result']['rank'] = $k + 1;
+			$target="good";
+			$target_="good_cnt";
 			break;
-		
 	}
+
+	rsort($storage[$target]);
+	foreach($storage[$target] as $k => $i)
+		foreach($ret['matching_user'] as &$j)
+			if($j['result']['rank']>0 && $i == $j['result'][$target_])
+				$j['result']['rank'] = $k + 1;
+
 	foreach($ret['matching_user'] as $l){
 		if(isset($l['user_info']) && $uid == $l['user_info']['user_id']){
 			$my_rank = $l['result']['rank'];

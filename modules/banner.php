@@ -3,6 +3,7 @@
 
 //banner/bannerList 获取banner列表 不返回的话不影响使用，但教程会卡在第8步
 function banner_bannerList() {
+	global $params;
 	$ret = json_decode('{
 		"time_limit": "'.Date('Y-m-d').' 23:59:59",
 		"member_category_list": [{
@@ -41,7 +42,8 @@ function banner_bannerList() {
 			"master_is_active_event" => true
 		];
 	}
-	if(strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
+	if($params['card_switch']==1 && 
+		strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
 		$ret['member_category_list'][0]['banner_list'][] = [
 			"banner_type"            => 0,
 			"target_id"              => $duty['event_id'],
