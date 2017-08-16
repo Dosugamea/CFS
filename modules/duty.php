@@ -996,7 +996,7 @@ function duty_gameover($post) {
 	$ret = [];
 	$ret['event_info']['event_id'] = $duty['event_id'];
 	$ret['event_info']['event_point_info'] = [];
-	$before_event = getUserEventStatus($uid, $event_id);
+	$before_event = getUserEventStatus($uid, $duty['event_id']);
 	$ret['event_info']['event_point_info']['before_event_point'] = $before_event['event_point'];
 	$ret['event_info']['event_point_info']['before_total_event_point'] = $before_event['event_point'];
 	$ret['event_info']['event_point_info']['after_event_point'] = $before_event['event_point'] + ceil($base_reward[$info['difficulty']]/3);
