@@ -897,7 +897,7 @@ function duty_endRoom($post) {
 	//更新显示的分数和排名
 	unset($l);
 	foreach($ret['matching_user'] as &$l){
-		if(isset($l['user_info']) && $uid == $l['user_info']['user_id']){
+		if(isset($l['user_info'])){
 			$points = getUserEventStatus($l['user_info']['user_id'], $duty['event_id']);
 			$l['event_status']['total_event_point'] = $points['event_point'];
 			$l['event_status']['event_rank'] = $points['rank'];
