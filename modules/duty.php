@@ -406,11 +406,12 @@ function duty_startWait($post) {
     $ret['capacity']=4;
     $ret['room_id']=$post['room_id'];
 
-
+	unset($i);
     for($i=1;$i<=4;$i++){
-        $user_id=$room['player'.$i];
-        if($user_id == 0)
+        $user_id = (int)$room['player'.$i];
+        if($user_id == 0){
             break;
+		}
 		if($user_id < 0){
 			$ret['matching_user'][] = json_decode('{"npc_info":{"npc_id":'.(0 - $i).',"name":"NPC","level":100},"event_status":{"total_event_point":0,"event_rank":0},"center_unit_info":{"unit_owning_user_id": 9819,"unit_id": 49,"rank": 1,"exp": 0,"love": 10,"unit_skill_exp": 0,"removable_skill": [],"removable_skill_count": 1,"favorite_flag": false,"display_rank": 1,"insert_date": "2017-07-21 00:52:41","is_support_member": false,"level": 1,"unit_skill_level": 1,"skill_level": 1,"max_hp": 4,"max_level": 40,"max_love": 100,"max_rank": 2,"is_level_max": false,"is_love_max": false,"is_rank_max": false,"is_skill_level_max": false,"next_exp": 14,"rarity": 2,"unit_removable_skill_capacity": 1,"is_removable_skill_capacity_max": false},"setting_award_id":1,"chat_id":"0-0","room_user_status":{"has_selected_deck":true,"event_team_duty_base_point":8}}', true);
 			$mysql->query("UPDATE tmp_duty_room SET ended_flag_".$i." = 1");
@@ -427,9 +428,9 @@ function duty_startWait($post) {
 		if($user_info['room_user_status']['has_selected_deck']){
 			$deck_id = (int)$mysql->query("SELECT deck_id FROM tmp_duty_user_room WHERE user_id = ? AND room_id = ?",[$user_id, $ret['room_id']])->fetchColumn();
 			$duty_mic = calculateMic($user_id);
-			foreach($duty_mic as $i){
-				if($i['deck_id'] == $deck_id)
-					$user_info['room_user_status']['event_team_duty_base_point'] = $i['event_team_duty_base_point'];
+			foreach($duty_mic as $j){
+				if($j['deck_id'] == $deck_id)
+					$user_info['room_user_status']['event_team_duty_base_point'] = $j['event_team_duty_base_point'];
 			}
 		}else{
 			$user_info['room_user_status']['event_team_duty_base_point'] = 0;
@@ -987,6 +988,7 @@ function duty_gameover($post) {
 	global $uid, $mysql, $params;
 	include("config/event.php");
     $info=getMyDutyRoom();
+	$room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch(PDO::FETCH_ASSOC);
     $mysql->query('UPDATE tmp_duty_room 
         SET ended_flag_'.$info['pos_id'].'=1,timestamp=?
         WHERE duty_event_room_id=?', 
@@ -999,10 +1001,10 @@ function duty_gameover($post) {
 	$before_event = getUserEventStatus($uid, $duty['event_id']);
 	$ret['event_info']['event_point_info']['before_event_point'] = $before_event['event_point'];
 	$ret['event_info']['event_point_info']['before_total_event_point'] = $before_event['event_point'];
-	$ret['event_info']['event_point_info']['after_event_point'] = $before_event['event_point'] + ceil($base_reward[$info['difficulty']]/3);
-	$ret['event_info']['event_point_info']['after_total_event_point'] = $before_event['event_point'] + ceil($base_reward[$info['difficulty']]/3);
-	$ret['event_info']['event_point_info']['base_event_point'] = ceil($base_reward[$info['difficulty']]/3);
-	$ret['event_info']['event_point_info']['added_event_point'] = ceil($base_reward[$info['difficulty']]/3);
+	$ret['event_info']['event_point_info']['after_event_point'] = $before_event['event_point'] + ceil($base_reward[$room['difficulty']]/3);
+	$ret['event_info']['event_point_info']['after_total_event_point'] = $before_event['event_point'] + ceil($base_reward[$room['difficulty']]/3);
+	$ret['event_info']['event_point_info']['base_event_point'] = ceil($base_reward[$room['difficulty']]/3);
+	$ret['event_info']['event_point_info']['added_event_point'] = ceil($base_reward[$room['difficulty']]/3);
 	$ret['event_info']['event_point_info']['score_rank_rate'] = 1;
 	$ret['event_info']['event_point_info']['combo_rank_rate'] = 1;
 	$ret['event_info']['event_point_info']['team_rank_rate'] = 1;
@@ -1062,14 +1064,14 @@ function duty_gameover($post) {
 	$ret['event_info']['next_event_reward_info'] = [];
 	$next_reward = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count > ?",[$duty['event_id'], $ret['event_info']['event_point_info']['after_event_point']])->fetch(PDO::FETCH_ASSOC);
 	if($next_reward){
-		$next_item = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$next_reward_id])->fetch(PDO::FETCH_ASSOC);
+		$next_item = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$next_reward['event_point_count_id']])->fetch(PDO::FETCH_ASSOC);
 		$ret['event_info']['next_event_reward_info']['event_point'] = $next_reward['point_count'];
 		$ret['event_info']['next_event_reward_info']['rewards'] = [$next_item];
 	}
 	$ret['extra_reward_info'] = [];
 	
-	$ret['live_difficulty_id'] = $post['live_difficulty_id'];
-	$ret['live_difficulty_id_list'] = [$post['live_difficulty_id']];
+	$ret['live_difficulty_id'] = (int)$room['live_difficulty_id'];
+	$ret['live_difficulty_id_list'] = [(int)$room['live_difficulty_id']];
 	
 	return $ret;
 }
