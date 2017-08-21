@@ -635,8 +635,8 @@ function live_reward($post) {
 			$live_id_list[]=$v['live_difficulty_id'];
 		}
 		
-		//验证访问合法性
-		$calcClearKeys($live_id_list[0], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
+		//验证访问合法性，有人反映有问题，不验了 + 1
+		//$calcClearKeys($live_id_list[0], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
 		
 		$live_settings = [];
 		foreach($live_id_list as $k => $v) {
