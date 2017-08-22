@@ -42,6 +42,15 @@ function banner_bannerList() {
 			"master_is_active_event" => true
 		];
 	}
+	if(strtotime($challenge['start_date']) < time() && strtotime($challenge['end_date']) > time()){
+		$ret['member_category_list'][0]['banner_list'][] = [
+			"banner_type"            => 0,
+			"target_id"              => $challenge['event_id'],
+			"asset_path"             => $challenge['asset_path'],
+			"asset_path_se"          => $challenge['asset_path_se'],
+			"master_is_active_event" => true
+		];
+	}
 	if($params['card_switch']==1 && 
 		strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
 		$ret['member_category_list'][0]['banner_list'][] = [

@@ -130,6 +130,21 @@ function live_schedule() {
 			"description"              => $festival['description']
 		];
 	}
+	if(strtotime($challenge['start_date']) < time() && strtotime($challenge['end_date']) > time()){
+		$ret['event_list'][] = [
+			"event_id"                 => $challenge['event_id'],
+			"event_category_id"        => 4,
+			"name"                     => $challenge['name'],
+			"open_date"                => $challenge['start_date'],
+			"start_date"               => $challenge['start_date'],
+			"end_date"                 => $challenge['end_date'],
+			"close_date"               => $challenge['end_date'],
+			"banner_asset_name"        => $challenge['asset_path'],
+			"banner_se_asset_name"     => $challenge['asset_path_se'],
+			"result_banner_asset_name" => $challenge['result_path'],
+			"description"              => $challenge['description']
+		];
+	}
 	if(strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
 		$ret['event_list'][] = [
 			"event_id"                 => $duty['event_id'],
@@ -636,7 +651,7 @@ function live_reward($post) {
 		}
 		
 		//验证访问合法性
-		$calcClearKeys($live_id_list[0], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
+		//$calcClearKeys($live_id_list[0], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
 		
 		$live_settings = [];
 		foreach($live_id_list as $k => $v) {
@@ -859,7 +874,7 @@ function live_reward($post) {
 		$ret['reward_unit_list']['live_rank'] = [];
 		$ret['reward_unit_list']['live_combo'] = [];
 	}
-	if ($params['card_switch']) { //暂时关掉
+	if ($params['card_switch'] && !isset($post['no_card'])) { //post的nocard是为了CF活动准备。
         $miss_rate=floor($post['miss_cnt']*10 / $map_info['s_rank_combo'])*10;
 		$scout($clear_card[$map_info['difficulty']],'live_clear',$miss_rate);
 		if ($ret['rank'] < 5) {
@@ -1056,14 +1071,16 @@ function live_reward($post) {
 	
 	//写入奖励并返回新的用户信息
 	global $user;
-	$user['level'] = $newlevel;
-	$user['exp'] = $newexp;
+	if(!isset($post['no_card'])){
+		$user['level'] = $newlevel;
+		$user['exp'] = $newexp;
+		$params['coin'] = $newcoin;
+	}
 	$params['social_point'] = $newsocial;
-	$params['coin'] = $newcoin;
 	$params['loveca'] = $newloveca;
-	$ret['after_user_info']=runAction('user','userInfo');
-	$ret['after_user_info']=$ret['after_user_info']['user'];
-	$ret['after_user_info']['energy_max']=100+(int)floor($newlevel/2);
+	$ret['after_user_info'] = runAction('user','userInfo');
+	$ret['after_user_info'] = $ret['after_user_info']['user'];
+	$ret['after_user_info']['energy_max'] = 100+(int)floor($newlevel/2);
 	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
 	$ret['can_send_friend_request'] = false;
 	return $ret;
