@@ -183,8 +183,8 @@ function duty_matching($post) {
     global $uid, $mysql, $params;
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
-        WHERE difficulty=? AND card_switch=? AND full_flag=0',
-        [$post['difficulty'],$params['card_switch']]);
+        WHERE difficulty=? AND card_switch=? AND full_flag=0 AND timestamp>=?',
+        [$post['difficulty'],$params['card_switch'],time()-60]);
 	
     if($room->rowCount()>0){
         $room=$room->fetch(PDO::FETCH_ASSOC);
@@ -198,7 +198,7 @@ function duty_matching($post) {
         if(!isset($num)||empty($num))//1-4全满
             trigger_error('duty_matching: 正在尝试加入一个已满的房间'.$id);
         $extra_query='';
-        if($num==4)//第四个玩家写入full_flag
+        if($num==4)//第四个玩家写入full_flag(←其实player4==full_flag)
             $extra_query=',full_flag=1';
         $mysql->query('UPDATE tmp_duty_room 
             SET timestamp=?,player'.$num.'=? '.$extra_query.' 
@@ -246,7 +246,7 @@ function duty_matching($post) {
 		}else if($rand_room <= 95){
 			$mission_id = 5;
 		}else{
-			$mission_id = 6;
+			$mission_id = 5;//暂时移除Good局
 		}
 		//$mission_id = 5;
         $room_id = (int)$mysql->query('SELECT MAX(duty_event_room_id) FROM tmp_duty_room')->fetchColumn() + 1;
@@ -479,10 +479,8 @@ function duty_liveStart($post) {
 	}
 	
 	$user_count = count($user);
-	while($user_count < 4){
-		$total_mic += 8; //机器人填火
-		$user_count ++;
-	}
+	$total_mic += 8*(4-$user_count);//机器人填火
+	$user_count = 4;
 	
 	switch((int)$room['mission_id']){
 		case 1:
@@ -707,7 +705,7 @@ function duty_endRoom($post) {
 	rsort($storage[$target]);
 	foreach($storage[$target] as $k => $i)
 		foreach($ret['matching_user'] as &$j)
-			if($j['result']['rank']>0 && $i == $j['result'][$target_])
+			if($j['result']['rank']<=0 && $i == $j['result'][$target_])
 				$j['result']['rank'] = $k + 1;
 
 	foreach($ret['matching_user'] as $l){
@@ -978,7 +976,33 @@ function duty_endWait($post){
         $user_info['room_user_status']['has_selected_deck']=true;
 
         $ret['matching_user'][]=$user_info;
-    }
+	}
+	
+	if((time() - (int)$room['timestamp']) > 60 && $ret['end_flag'] == false){ //超过60s自动强制结算
+		for($i=1;$i<=4;$i++){
+			if((int)$room['ended_flag_'.$i]==1)
+				continue;
+
+			$user_id=$room['player'.$i];
+			$result['rank'] = 0;
+			$result['score']=0;
+			$result['max_combo'] = 0;
+			$result['perfect_cnt'] = 0;
+			$result['great_cnt'] = 0;
+			$result['good_cnt'] = 0;
+			$result['bad_cnt'] = 0;
+			$result['miss_cnt'] = 0;
+			$result['is_full_combo'] = false;
+	
+			$mysql->query('INSERT INTO tmp_duty_result
+				(user_id,duty_event_room_id,result,reward) VALUES (?,?,?,?)',
+				[$user_id,$info['room_id'],json_encode($result),"{}"]);
+			$mysql->query('UPDATE tmp_duty_room 
+				SET ended_flag_'.$i.'=1,timestamp=?
+				WHERE duty_event_room_id=?', 
+				[time(),$info['room_id']]);
+		}
+	}
 
     return $ret;
 }
