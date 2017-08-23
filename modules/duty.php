@@ -1089,13 +1089,16 @@ function duty_gameover($post) {
 	$next_reward = $eventdb->query("SELECT * FROM event_point_count_m WHERE event_id = ? AND point_count > ?",[$duty['event_id'], $ret['event_info']['event_point_info']['after_event_point']])->fetch(PDO::FETCH_ASSOC);
 	if($next_reward){
 		$next_item = $eventdb->query("SELECT item_id, add_type, amount, item_category_id FROM event_point_count_reward_m WHERE event_point_count_reward_id = ?",[$next_reward['event_point_count_id']])->fetch(PDO::FETCH_ASSOC);
-		$ret['event_info']['next_event_reward_info']['event_point'] = $next_reward['point_count'];
+		$ret['event_info']['next_event_reward_info']['event_point'] = (int)$next_reward['point_count'];
 		$ret['event_info']['next_event_reward_info']['rewards'] = [$next_item];
 	}
 	$ret['extra_reward_info'] = [];
 	
 	$ret['live_difficulty_id'] = (int)$room['live_difficulty_id'];
 	$ret['live_difficulty_id_list'] = [(int)$room['live_difficulty_id']];
+
+	$ret['after_user_info']=runAction('user','userInfo');
+	$ret['after_user_info']=$ret['after_user_info']['user'];
 	
 	return $ret;
 }
