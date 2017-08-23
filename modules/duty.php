@@ -602,6 +602,7 @@ function duty_endRoom($post) {
 				$result_bot['perfect_cnt'] = rand(floor($combo * 0.9), floor($combo * 0.99));
 				$result_bot['great_cnt'] = rand(floor($combo * 0.6), floor($combo * 0.65));
 				$result_bot['good_cnt'] = rand(floor($combo * 0.6), floor($combo * 0.65));
+				$result_bot['miss_cnt'] = 1;
 				$result_bot['is_full_combo'] = false;
 				$mysql->query("INSERT INTO tmp_duty_result VALUES(?,?,?,?)", [(0 - $i), $room['duty_event_room_id'], json_encode($result_bot), "{}"]);
 			}
@@ -615,6 +616,7 @@ function duty_endRoom($post) {
 	$great_sum = 0;
 	$good_sum = 0;
 	
+	$storage=[];
 	$storage['score'] = [];
 	$storage['perfect'] = [];
 	$storage['great'] = [];
@@ -644,9 +646,9 @@ function duty_endRoom($post) {
         $user_info['room_user_status']['event_team_duty_base_point']=0;
         $user_info['room_user_status']['has_selected_deck']=true;
 
-        $user_info['result']['rank']=$result_['rank'];
+        //$user_info['result']['rank']=$result_['rank'];
         $user_info['result']['status']=5;
-        $user_info['result']['time_up']=false;
+        $user_info['result']['time_up']=(($result_['miss_cnt']==0&&$result_['max_combo']==0)?true:false);
         $user_info['result']['score']=(int)$result_['score'];
         $user_info['result']['perfect_cnt']=(int)$result_['perfect_cnt'];
         $user_info['result']['great_cnt']=(int)$result_['great_cnt'];
@@ -702,11 +704,12 @@ function duty_endRoom($post) {
 			break;
 	}
 
-	rsort($storage[$target]);
-	foreach($storage[$target] as $k => $i)
+	$st=$storage[$target];
+	rsort($st);
+	foreach($st as $k => $i)
 		foreach($ret['matching_user'] as &$j)
-			if($j['result']['rank']<=0 && $i == $j['result'][$target_])
-				$j['result']['rank'] = $k + 1;
+			if(!isset($j['result']['rank']) && $i == $j['result'][$target_])
+				$j['result']['rank'] = ($j['result']['time_up'] ? 4 : ($k + 1));
 
 	foreach($ret['matching_user'] as $l){
 		if(isset($l['user_info']) && $uid == $l['user_info']['user_id']){
