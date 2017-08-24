@@ -12,6 +12,7 @@ function challenge_challengeInfo(){
 		$event_point = 0;
 	}
 	$mysql->query("INSERT IGNORE INTO tmp_challenge_live (user_id) VALUES (?)", [$uid]);
+	$mysql->query("INSERT IGNORE INTO tmp_challenge_reward (user_id, rarity, amount) VALUES (?, 1, 0), (?, 2, 0), (?, 3, 0)", [$uid, $uid, $uid]);
     $ret = json_decode(
         '{
             "base_info":{
@@ -30,8 +31,8 @@ function challenge_challengeInfo(){
 	$ret['base_info']['event_id'] = $challenge['event_id'];
 	$ret['base_info']['event_point'] = $event_point;
 	$ret['base_info']['total_event_point'] = $event_point;
-	$challenge_status = $mysql->query("SELECT event_point FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetchColumn();
-	if((int)$challenge_status != 0)
+	$challenge_status = $mysql->query("SELECT live_difficulty_id FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetchColumn();
+	if($challenge_status != null)
 		$ret['challenge_status']['should_proceed'] = true;
 	return $ret;
 }
@@ -77,17 +78,11 @@ function challenge_status() {
 	$ret['challenge_info']['accumulated_reward_info']['player_exp'] = (int)$info['exp'];
 	$ret['challenge_info']['accumulated_reward_info']['game_coin'] = (int)$info['coin'];
 	$ret['challenge_info']['accumulated_reward_info']['event_point'] = (int)$info['event_point'];
-	$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'] = json_decode('[
-		{
-			"rarity": 3,
-			"amount": 6
-		},{
-			"rarity": 2,
-			"amount": 0
-		},{
-			"rarity": 1,
-			"amount": 0
-		}]', true);
+	$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'] = [];
+	$rewards = $mysql->query("SELECT * FROM tmp_challenge_reward WHERE user_id = ?", [$uid])->fetchAll(PDO::FETCH_ASSOC);
+	foreach($rewards as $i){
+		$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'][] = ["rarity" => (int)$i['rarity'], "amount" => (int)$i['amount']];
+	}
 	
 	return $ret;
 }
@@ -143,8 +138,10 @@ function challenge_init($post) {
 	
 	$bonus_units = $challengedb->query("SELECT * FROM event_challenge_bonus_unit_m")->fetchAll(PDO::FETCH_ASSOC);
 	$bonus_unit_sum = rand(1,3);
+	$bonus_unit_sum = 3;
 	for($i = 0; $i < $bonus_unit_sum; $i++){
-		$bonus_unit = $bonus_units[rand(0,count($bonus_units))];
+		srand((float) microtime() * 10000000);
+		$bonus_unit = $bonus_units[array_rand($bonus_units)];
 		$ret['challenge_info']['slot_info'][] = ["unit_id" => (int)$bonus_unit['unit_id'], "bonus_type" => (int)$bonus_unit['bonus_type'], "bonus_param" => (int)$bonus_unit['bonus_param'] >= 100 ? ((int)$bonus_unit['bonus_param'])/100 : (int)$bonus_unit['bonus_param']];
 	}
 	
@@ -152,21 +149,73 @@ function challenge_init($post) {
 	$unitdb = getUnitDb();
 	$member_tags = [];
 	$mission = [];
-	/*if($bonus_unit_sum == 3){
+	if($bonus_unit_sum == 3){
+		$slot_unit = [];
 		foreach($ret['challenge_info']['slot_info'] as $i){
-			$member_tag = $unitdb->query("SELECT * FROM unit_type_member_tag_m WHERE unit_id = ?", [$i['unit_id']])->fetchAll(PDO::FETCH_ASSOC);
+			$unit_type = $unitdb->query("SELECT unit_type_id FROM unit_m WHERE unit_id = ?", [$i['unit_id']])->fetchColumn();
+			$member_tag = $unitdb->query("SELECT member_tag_id FROM unit_type_member_tag_m WHERE unit_type_id = ?", [$unit_type])->fetchAll(PDO::FETCH_ASSOC);
+			foreach($member_tag as &$j)
+				$j = (int)$j['member_tag_id'];
+			unset($j);
 			$member_tags[] = $member_tag;
+			$slot_unit[] = $i['unit_id'];
 		}
-		foreach(["1","2","3","6","7","8"] as $i){
+		foreach([1,2,3,6,7,8] as $i){
 			if(in_array($i, $member_tags[0]) && in_array($i, $member_tags[1]) && in_array($i, $member_tags[2])){
-				$mission[] = (int)$i;
+				$mission[] = $i;
 			}
 		}
 		foreach($mission as $i){
 			switch($i){
 				case 1:
-					$ret['challenge_info']['mission_info'][] = ["type"=>
-	}*/
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3050, "bonus_param" => "20", "asset_name" => "assets/image/event/mission/ms_m_type_01.png"];break;
+				case 2:
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3010, "bonus_param" => "1.2", "asset_name" => "assets/image/event/mission/ms_m_type_02.png"];break;
+				case 3:
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3030, "bonus_param" => "1.2", "asset_name" => "assets/image/event/mission/ms_m_type_03.png"];break;
+				case 6:
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3030, "bonus_param" => "1.3", "asset_name" => "assets/image/event/mission/ms_m_type_04.png"];break;
+				case 7:
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3050, "bonus_param" => "30", "asset_name" => "assets/image/event/mission/ms_m_type_05.png"];break;
+				case 8:
+					$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3010, "bonus_param" => "1.3", "asset_name" => "assets/image/event/mission/ms_m_type_06.png"];break;
+				default:
+					trigger_error("找不到对应的mission：".$i);
+			}
+		}
+		$in_list = 0;
+		foreach($slot_unit as $i){
+			if(in_array($i, [588, 589, 590, 591, 592, 599, 600, 601, 602])) //电玩
+				$in_list ++;
+		}
+		if($in_list == 3)
+			$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3030, "bonus_param" => "1.1", "asset_name" => "assets/image/event/mission/ms_m_group_01.png"];
+		
+		$in_list = 0;
+		foreach($slot_unit as $i){
+			if(in_array($i, [374, 375, 376, 377, 378, 394, 395, 396, 397])) //旗袍
+				$in_list ++;
+		}
+		if($in_list == 3)
+			$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3050, "bonus_param" => "10", "asset_name" => "assets/image/event/mission/ms_m_group_02.png"];
+		
+		$in_list = 0;
+		foreach($slot_unit as $i){
+			if(in_array($i, [278, 279, 280, 281, 282, 295, 296, 297, 298])) //打工
+				$in_list ++;
+		}
+		if($in_list == 3)
+			$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3010, "bonus_param" => "1.1", "asset_name" => "assets/image/event/mission/ms_m_group_03.png"];
+		
+		$in_list = 0;
+		foreach($slot_unit as $i){
+			if(in_array($i, [161, 162, 163, 164, 165, 169, 170, 171, 172])) //啦啦队
+				$in_list ++;
+		}
+		if($in_list == 3)
+			$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3060, "bonus_param" => "3", "asset_name" => "assets/image/event/mission/ms_m_group_04.png"];
+		
+	}
 	$lp_list = [false,5,10,15,25];
 	$ret['challenge_info']['use_lp'] = $lp_list[(int)$post['course_id']];
 	$use_item = json_decode($mysql->query("SELECT use_item FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetchColumn(), true);
@@ -175,17 +224,10 @@ function challenge_init($post) {
 	$ret['challenge_info']['accumulated_reward_info']['player_exp'] = 0;
 	$ret['challenge_info']['accumulated_reward_info']['game_coin'] = 0;
 	$ret['challenge_info']['accumulated_reward_info']['event_point'] = 0;
-	$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'] = json_decode('[
-		{
-			"rarity": 3,
-			"amount": 0
-		},{
-			"rarity": 2,
-			"amount": 0
-		},{
-			"rarity": 1,
-			"amount": 0
-		}]', true);
+	$rewards = $mysql->query("SELECT * FROM tmp_challenge_reward WHERE user_id = ?", [$uid])->fetchAll(PDO::FETCH_ASSOC);
+	foreach($rewards as $i){
+		$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'][] = ["rarity" => (int)$i['rarity'], "amount" => (int)$i['amount']];
+	}
 	
 	$mysql->query("UPDATE tmp_challenge_live SET course_id = ?, round = 1, live_difficulty_id = ?, bonus = ?, mission = ?, random = ?, event_point = 0, exp = 0, coin = 0 WHERE user_id = ?",[$post['course_id'], $selected_live, json_encode($ret['challenge_info']['slot_info']), json_encode($ret['challenge_info']['mission_info']), $random, $uid]);
 	return $ret;
@@ -193,16 +235,51 @@ function challenge_init($post) {
 
 //开始live
 function challenge_proceed($post) {
-	global $mysql, $uid;
+	global $mysql, $uid, $params;
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
 	$ret = runAction('live','play',['live_difficulty_id' => $info['live_difficulty_id'],'unit_deck_id' => $post['unit_deck_id'],'random_switch' => $info['random'], 'ScoreMatch' => true]);
 	$mysql->query("UPDATE tmp_challenge_live SET is_start = 1, use_item = ? WHERE user_id = ?", [json_encode($post['event_challenge_item_ids']), $uid]);
+	$slot = json_decode($info['bonus'], true);
+	$bonus = [];
+	$before_user_info = runAction('user','userInfo')['user'];
+	foreach($slot as $i)
+		if($i['bonus_type'] == 2030)
+			$bonus[] = ["bonus_type" => $i['bonus_type'], "bonus_param" => $i['bonus_param']];
+		
+	foreach($post['event_challenge_item_ids'] as $i){
+		switch($i){
+			case 1:
+				$params['item3'] -= 15000;
+				break;
+			case 2:
+				$params['item3'] -= 5000;
+				break;
+			case 3:
+				$params['item3'] -= 12500;
+				$bonus[] = ["bonus_type" => 2020, "bonus_param" => "1.1"];
+				break;
+			case 4:
+				$params['item3'] -= 12500;
+				$bonus[] = ["bonus_type" => 2010, "bonus_param" => "1.1"];
+				break;
+			case 5:
+				$params['item3'] -= 25000;
+				$bonus[] = ["bonus_type" => 2030, "bonus_param" => "5"];
+				break;
+			case 6:
+				$params['item3'] -= 50000;
+				break;
+			default:
+				trigger_error("您使用了未知的物品：".$i);
+		}
+	}
+	
 	foreach($ret['live_list'] as &$i){
-		$i['bonus_list'] = [];
+		$i['bonus_list'] = $bonus;
 	}
 	$ret['live_se_id'] = 1;
-	$ret['before_user_info'] = runAction('user','userInfo')['user'];
-	$ret['after_user_info'] = $ret['before_user_info'];
+	$ret['before_user_info'] = $before_user_info;
+	$ret['after_user_info'] = runAction('user','userInfo')['user'];
 	$ret['available_live_resume'] = false;
 	return $ret;
 }
@@ -259,12 +336,71 @@ function challenge_checkpoint($post) {
 			$ret['challenge_result']['reward_info']['event_point'] *= 1.02;break;
 	}
 	$ret['challenge_result']['reward_info']['event_point'] = floor($ret['challenge_result']['reward_info']['event_point']);
+	
+	$generate_reward = function($rank){
+		if($rank == 1)
+			return [3];
+		else if($rank == 2)
+			return [rand(1,3)];
+		else if($rank == 3)
+			return [rand(1,2)];
+		else if($rank == 4)
+			return [3];
+		else
+			return [];
+	};
+	
+	
+	$slot = json_decode($info['bonus'], true);
+	$bonus = [];
+	foreach($slot as $i)
+		$bonus[] = ["bonus_type" => $i['bonus_type'], "bonus_param" => $i['bonus_param']];
+		
+	$reward_up = false;
+	foreach(json_decode($info['use_item'], true) as $i){
+		switch($i){
+			case 1:
+				$ret['challenge_result']['reward_info']['player_exp'] = floor($reward['base_reward_info']['player_exp'] * 1.1);
+				$bonus[] = ["bonus_type" => 3010, "bonus_param" => "1.1"];
+				break;
+			case 2:
+				$ret['challenge_result']['reward_info']['event_point'] = floor($ret['challenge_result']['reward_info']['event_point'] * 1.1);
+				$bonus[] = ["bonus_type" => 3030, "bonus_param" => "1.1"];
+				break;
+			case 3:
+				$bonus[] = ["bonus_type" => 2020, "bonus_param" => "1.1"];
+				break;
+			case 4:
+				$bonus[] = ["bonus_type" => 2010, "bonus_param" => "1.1"];
+				break;
+			case 5:
+				$bonus[] = ["bonus_type" => 2030, "bonus_param" => "5"];
+				break;
+			case 6:
+				$reward_up = true;
+				break;
+			default:
+				trigger_error("您使用了未知的物品：".$i);
+		}
+	}
+	
 	$ret['challenge_result']['reward_info']['reward_rarity_list'] = [];
-	$ret['challenge_result']['reward_info']['reward_rarity_list']['live_clear'] = [3];
-	$ret['challenge_result']['reward_info']['reward_rarity_list']['live_score'] = [3];
-	$ret['challenge_result']['reward_info']['reward_rarity_list']['live_combo'] = [3];
-	$ret['challenge_result']['reward_info']['reward_rarity_list']['bonuses'] = [];
-	$ret['challenge_result']['bonus_list'] = [];//TODO:加成列表
+	if($reward_up){
+		$ret['challenge_result']['reward_info']['reward_rarity_list']['live_clear'] = [rand(2,3)];
+		$ret['challenge_result']['reward_info']['reward_rarity_list']['bonuses'] = [rand(1,3)];
+	}else{
+		$ret['challenge_result']['reward_info']['reward_rarity_list']['live_clear'] = [rand(1,3)];
+		$ret['challenge_result']['reward_info']['reward_rarity_list']['bonuses'] = [];
+	}
+	$ret['challenge_result']['reward_info']['reward_rarity_list']['live_score'] = $generate_reward($ret['challenge_result']['rank']);
+	$ret['challenge_result']['reward_info']['reward_rarity_list']['live_combo'] = $generate_reward($ret['challenge_result']['combo_rank']);
+	
+	//奖励写入数据库
+	foreach($ret['challenge_result']['reward_info']['reward_rarity_list'] as $i)
+		foreach($i as $j)
+			$mysql->query("UPDATE tmp_challenge_reward SET amount = amount + 1 WHERE user_id = ? AND rarity = ?", [$uid, $j]);
+	
+	$ret['challenge_result']['bonus_list'] = $bonus;
 	$ret['unlocked_subscenario_ids'] = [];
 	$ret['effort_point'] = $reward['effort_point'];
 	$ret['limited_effort_box'] = [];
@@ -319,6 +455,7 @@ function challenge_checkpoint($post) {
 		
 		$bonus_units = $challengedb->query("SELECT * FROM event_challenge_bonus_unit_m")->fetchAll(PDO::FETCH_ASSOC);
 		$bonus_unit_sum = rand(1,3);
+		$bonus_unit_sum = 3;
 		for($i = 0; $i < $bonus_unit_sum; $i++){
 			$bonus_unit = $bonus_units[rand(0,count($bonus_units))];
 			$ret['challenge_info']['slot_info'][] = ["unit_id" => (int)$bonus_unit['unit_id'], "bonus_type" => (int)$bonus_unit['bonus_type'], "bonus_param" => (int)$bonus_unit['bonus_param'] >= 100 ? ((int)$bonus_unit['bonus_param'])/100 : (int)$bonus_unit['bonus_param']];
@@ -328,30 +465,91 @@ function challenge_checkpoint($post) {
 		$unitdb = getUnitDb();
 		$member_tags = [];
 		$mission = [];
+		if($bonus_unit_sum == 3){
+			$slot_unit = [];
+			foreach($ret['challenge_info']['slot_info'] as $i){
+				$unit_type = $unitdb->query("SELECT unit_type_id FROM unit_m WHERE unit_id = ?", [$i['unit_id']])->fetchColumn();
+				$member_tag = $unitdb->query("SELECT member_tag_id FROM unit_type_member_tag_m WHERE unit_type_id = ?", [$unit_type])->fetchAll(PDO::FETCH_ASSOC);
+				foreach($member_tag as &$j)
+					$j = (int)$j['member_tag_id'];
+				unset($j);
+				$member_tags[] = $member_tag;
+				$slot_unit[] = $i['unit_id'];
+			}
+			foreach([1,2,3,6,7,8] as $i){
+				if(in_array($i, $member_tags[0]) && in_array($i, $member_tags[1]) && in_array($i, $member_tags[2])){
+					$mission[] = $i;
+				}
+			}
+			foreach($mission as $i){
+				switch($i){
+					case 1:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3050, "bonus_param" => "20", "asset_name" => "assets/image/event/mission/ms_m_type_01.png"];break;
+					case 2:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3010, "bonus_param" => "1.2", "asset_name" => "assets/image/event/mission/ms_m_type_02.png"];break;
+					case 3:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3030, "bonus_param" => "1.2", "asset_name" => "assets/image/event/mission/ms_m_type_03.png"];break;
+					case 6:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3030, "bonus_param" => "1.3", "asset_name" => "assets/image/event/mission/ms_m_type_04.png"];break;
+					case 7:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3050, "bonus_param" => "30", "asset_name" => "assets/image/event/mission/ms_m_type_05.png"];break;
+					case 8:
+						$ret['challenge_info']['mission_info'][] = ["type" => 4000, "param" => "100", "bonus_type" => 3010, "bonus_param" => "1.3", "asset_name" => "assets/image/event/mission/ms_m_type_06.png"];break;
+					default:
+						trigger_error("找不到对应的mission：".$i);
+				}
+			}
+			$in_list = 0;
+			foreach($slot_unit as $i){
+				if(in_array($i, [588, 589, 590, 591, 592, 599, 600, 601, 602])) //电玩
+					$in_list ++;
+			}
+			if($in_list == 3)
+				$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3030, "bonus_param" => "1.1", "asset_name" => "assets/image/event/mission/ms_m_group_01.png"];
+			
+			$in_list = 0;
+			foreach($slot_unit as $i){
+				if(in_array($i, [374, 375, 376, 377, 378, 394, 395, 396, 397])) //旗袍
+					$in_list ++;
+			}
+			if($in_list == 3)
+				$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3050, "bonus_param" => "10", "asset_name" => "assets/image/event/mission/ms_m_group_02.png"];
+			
+			$in_list = 0;
+			foreach($slot_unit as $i){
+				if(in_array($i, [278, 279, 280, 281, 282, 295, 296, 297, 298])) //打工
+					$in_list ++;
+			}
+			if($in_list == 3)
+				$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3010, "bonus_param" => "1.1", "asset_name" => "assets/image/event/mission/ms_m_group_03.png"];
+			
+			$in_list = 0;
+			foreach($slot_unit as $i){
+				if(in_array($i, [161, 162, 163, 164, 165, 169, 170, 171, 172])) //啦啦队
+					$in_list ++;
+			}
+			if($in_list == 3)
+				$ret['challenge_info']['mission_info'][] = ["type" => 1000, "param" => "1", "bonus_type" => 3060, "bonus_param" => "3", "asset_name" => "assets/image/event/mission/ms_m_group_04.png"];
+			
+		}
 		
 		$lp_list = [false,5,10,15,25];
 		$ret['challenge_info']['use_lp'] = $lp_list[(int)$info['course_id']];
-		$use_item = json_decode($info['use_item']);
+		$use_item = json_decode($info['use_item'], true);
 		$ret['challenge_info']['event_challenge_previous_item_ids'] = $use_item;
 		$ret['challenge_info']['accumulated_reward_info'] = [];
 		$ret['challenge_info']['accumulated_reward_info']['player_exp'] = (int)$info['event_point'] + $ret['challenge_result']['reward_info']['event_point'];
 		$ret['challenge_info']['accumulated_reward_info']['game_coin'] = (int)$info['coin'] + $ret['challenge_result']['reward_info']['game_coin'];
 		$ret['challenge_info']['accumulated_reward_info']['event_point'] = (int)$info['coin'] + $ret['challenge_result']['reward_info']['player_exp'];
-		$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'] = json_decode('[
-			{
-				"rarity": 3,
-				"amount": 3
-			},{
-				"rarity": 2,
-				"amount": 0
-			},{
-				"rarity": 1,
-				"amount": 0
-			}]', true);
+		$rewards = $mysql->query("SELECT * FROM tmp_challenge_reward WHERE user_id = ?", [$uid])->fetchAll(PDO::FETCH_ASSOC);
+		foreach($rewards as $i){
+			$ret['challenge_info']['accumulated_reward_info']['reward_rarity_list'][] = ["rarity" => (int)$i['rarity'], "amount" => (int)$i['amount']];
+		}
+		$mysql->query("UPDATE tmp_challenge_live SET event_point = ?, exp = ?, coin = ?, is_start = 0, bonus = ?, round = ?, live_difficulty_id = ?, random = ? WHERE user_id = ?",[$ret['challenge_info']['accumulated_reward_info']['event_point'], $ret['challenge_info']['accumulated_reward_info']['player_exp'], $ret['challenge_info']['accumulated_reward_info']['game_coin'], json_encode($ret['challenge_info']['slot_info']), $ret['challenge_info']['round'], $selected_live, $random, $uid]);
 	}
 	$ret['daily_reward_info'] = $reward['daily_reward_info'];
 	//更新房间信息
-	$mysql->query("UPDATE tmp_challenge_live SET event_point = ?, exp = ?, coin = ?, is_start = 0, bonus = ?, round = ?, live_difficulty_id = ?, random = ? WHERE user_id = ?",[$ret['challenge_info']['accumulated_reward_info']['event_point'], $ret['challenge_info']['accumulated_reward_info']['player_exp'], $ret['challenge_info']['accumulated_reward_info']['game_coin'], json_encode($ret['challenge_info']['slot_info']), $ret['challenge_info']['round'], $selected_live, $random, $uid]);
+	
 		
 	return $ret;
 }
@@ -403,7 +601,12 @@ function challenge_finalize($post) {
 	$ret['event_info']['event_reward_info'] = [];//TODO
 	$ret['event_info']['next_event_reward_info'] = ["event_point" => 100000, "rewards" => []];
 	
-	$mysql->query("UPDATE tmp_challenge_live SET event_point = 0, exp = 0, coin = 0, bonus = '[]', round = 1 WHERE user_id = ?", [$uid]);
+	$mysql->query("UPDATE tmp_challenge_live SET event_point = 0, exp = 0, coin = 0, bonus = '[]', round = 1, live_difficulty_id = NULL WHERE user_id = ?", [$uid]);
 	$mysql->query("UPDATE event_point SET event_point = ? WHERE user_id = ? AND event_id = ?", [$ret['event_info']['event_point_info']['after_total_event_point'], $uid, $challenge['event_id']]);
 	return $ret;
+}
+
+//live失败
+function challenge_gameover($post) {
+	return [];
 }
