@@ -250,7 +250,7 @@ if(!isset($ret['status_code'])){
 
 /*写入日志*/
 if($log)
-	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], time(), $post['module'], $post['action'], gzencode(json_encode($post)), gzencode(json_encode($ret))]);
+	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], date("Y-m-d H:i:s", time()), $post['module'], $post['action'], gzencode(json_encode($post)), gzencode(json_encode($ret))]);
 
 $ret = json_encode($ret);
 function retError($statusCode) {
