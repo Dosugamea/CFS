@@ -1,7 +1,7 @@
 <?php
 //programmed.php 私服客户端专用功能
 function programmed_getCustomLiveList($post = []) {
-	global $params, $uid;
+	global $params;
 	if (!isset($post['api_ver'])) {
 		$post['api_ver'] = 0;
 	}
@@ -19,7 +19,10 @@ function programmed_getCustomLiveList($post = []) {
 	}, $mysql->query('select * from programmed_live')->fetchAll());
 	if ($params['allow_test_func'] == 0) {
 		$list = array_filter($list, function ($v) {
-			if (isset($v['live']['developer_only'])) {
+			global $uid;
+			if (isset($v['live']['developer_only']) && !isset($v['live']['upload_user'])) {
+				return false;
+			}else if(isset($v['live']['upload_user']) && $v['live']['upload_user'] != $uid){
 				return false;
 			}
 			return true;
