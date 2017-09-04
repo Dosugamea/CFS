@@ -14,4 +14,10 @@ function handover_renew() {
 	$ret['expire_date'] = "不支持發行繼承碼！";
 	return $ret;
 }
+
+//更新防止崩溃 返回空
+function handover_kidStatus() {
+	$ret['has_klab_id'] = true;
+	return $ret;
+}
 ?>
