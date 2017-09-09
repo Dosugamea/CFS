@@ -25,10 +25,9 @@ function exchange_itemInfo() {
 		$item = [
 			"exchange_item_id"=>$e['exchange_item_id'],
 			"amount"=>$e['item'][1],
-			"option"=>null,
 			"title"=>$e['title'],
 			"cost_list"=>$e['cost_list'],
-			"rank_max_flag"=>$e['rank_max_flag'],
+			"is_rank_max"=>$e['rank_max_flag'],
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
