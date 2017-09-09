@@ -74,7 +74,7 @@ function login(){
 			'Accept-Encoding: deflate',
 			'API-Model: straightforward',
 			'Debug: 1',
-			"Bundle-Version: $bundle_ver",
+			"Bundle-Version: $official_bundle_ver",
 			"Client-Version: $server_ver",
 			'OS-Version: Nexus 5 google hammerhead 4.4.4',
 			'OS: Android',
