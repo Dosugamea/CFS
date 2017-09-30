@@ -39,7 +39,6 @@ function login(){
 	}
 	$HMACKey = implode("",$HMACKey);
 	//RSA加密密钥
-	include_once 'includes/RSA.php';
 	$encrypted_AES_token_client = RSAencrypt($AES_token_client);
 	//auth_data生成
 	$device_data = '{
@@ -58,7 +57,6 @@ function login(){
 		"signature":"ba5803d889a34bd5a974b7d43d688799c645a70f4aa86628198ccfe0e1df804dcc5b4a158920603a6f5e2a709c494aa49ae09e198c56b4a116bf7a1f6c21c2e8",
 		"SuspiciousElement":[]
 	}';
-	include 'includes/AES.php';
 	include 'config/modules_download.php';
 	$auth_data = json_encode(["1"=>$login_key,"2"=>$login_passwd,"3"=>base64_encode($device_data)]);
 	$auth_data_enc = AESencrypt($auth_data, substr($AES_token_client,0,16), $iv);
