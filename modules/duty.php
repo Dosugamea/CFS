@@ -147,20 +147,6 @@ function duty_allUserMission(){
 	}',true);
 }
 
-//获取活动pt和排名
-function getUserEventStatus($uid, $event_id){
-	global $mysql;
-	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $event_id])->fetchColumn();
-	$rank = $mysql->query("SELECT rowNo FROM 
-		(Select user_id, event_id, (@rowNum:=@rowNum+1) as rowNo
-		From event_point,
-		(Select (@rowNum :=0) ) b
-		WHERE event_id = ?
-		Order by event_point.event_point Desc) as unused
-		WHERE user_id = ? AND event_id = ?",[$event_id, $uid, $event_id])->fetchColumn();
-	return ["event_point" => $event_point, "rank" => (int)$rank];
-}
-
 //获得当前分数与排名
 function duty_top() {
 	global $uid, $mysql;
@@ -177,9 +163,6 @@ function duty_top() {
 //进入匹配
 function duty_matching($post) {
     //"difficulty":4,"event_id":102
-    require_once 'includes/energy.php';
-    require_once 'includes/live.php';
-    require_once 'includes/unit.php';
     global $uid, $mysql, $params;
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
@@ -317,7 +300,6 @@ function getMyDutyRoom() {
 //算麦克风数目
 function calculateMic($user_id){
 	global $mysql;
-	include_once("includes/unit.php");
 	$ret = [];
     $deck = json_decode($mysql->query("SELECT json FROM user_deck WHERE user_id = ?",[$user_id])->fetchColumn(), true);
 	foreach($deck as $i){
@@ -571,8 +553,6 @@ function duty_liveEnd($post) {
 function duty_endRoom($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
-	include_once("includes/live.php");
-	include_once("includes/unit.php");
     $info = getMyDutyRoom();
     $room = $mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
     $mysql->query('UPDATE tmp_duty_room 
@@ -910,7 +890,6 @@ function duty_endRoom($post) {
     //"event_team_duty":{},"matching_user":[]
 }
 function getRank($score,$live_id){
-	include_once("includes/live.php");
     $s_score=(float)(getRankInfo((int)$live_id)[4]['rank_min']*4*1.2);
     $rate=(float)$score/$s_score;
     if($rate>=1.5)  return 7;

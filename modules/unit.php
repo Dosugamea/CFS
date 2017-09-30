@@ -1,6 +1,4 @@
 <?php
-require_once('includes/unit.php');
-require_once('includes/exchange.php');
 //unit/unitAll 获取卡片列表
 function unit_unitAll() {
 	global $uid, $mysql, $params;
@@ -46,23 +44,34 @@ function unit_supporterAll() {
 function unit_removableSkillInfo() {
 	global $uid, $mysql;
 	$ret = ['owning_info' => [], 'equipment_info' => []];
+	$count = [];
 	$skill_info = $mysql->query('SELECT * FROM removable_skill WHERE user_id = '.$uid)->fetchAll();
-	foreach($skill_info as $i){
-		$owning_detail = [];
-		$owning_detail['unit_removable_skill_id'] = (int)$i['skill_id'];
-		$owning_detail['total_amount'] = (int)$i['amount'];
-		$owning_detail['equipped_amount'] = (int)$i['equipped'];
-		$owning_detail['insert_date'] = $i['insert_date'];
-		$ret['owning_info'][] = $owning_detail;
-	}
 	$unit_info = $mysql->query("SELECT unit_owning_user_id, removable_skill FROM unit_list WHERE user_id = ".$uid." AND (removable_skill != '[]' OR removable_skill IS NOT NULL)")->fetchAll();
 	foreach($unit_info as $i){
 		$detail = [];
 		$unit_skill_detail = json_decode($i['removable_skill']);
-		foreach($unit_skill_detail as $j)
+		foreach($unit_skill_detail as $j){
 			$detail[] = ["unit_removable_skill_id" => $j];
+			if(!isset($count[$j]))
+				$count[$j] = 1;
+			else
+				$count[$j] += 1;
+		}
 		$ret['equipment_info'][$i['unit_owning_user_id']] = ["unit_owning_user_id" => (int)$i['unit_owning_user_id'], "detail" => $detail];
 	}
+	
+	foreach($skill_info as $i){
+		$owning_detail = [];
+		$owning_detail['unit_removable_skill_id'] = (int)$i['skill_id'];
+		$owning_detail['total_amount'] = (int)$i['amount'];
+		if(isset($count[(int)$i['skill_id']]))
+			$owning_detail['equipped_amount'] = $count[(int)$i['skill_id']];
+		else
+			$owning_detail['equipped_amount'] = 0;
+		$owning_detail['insert_date'] = $i['insert_date'];
+		$ret['owning_info'][] = $owning_detail;
+	}
+	
 	return $ret;
 }
 

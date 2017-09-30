@@ -110,4 +110,8 @@ function getSecretBoxDb () {
 function getEventDb () {
   return makedb('eventdb', 'event_db', false);
 }
+
+function getChallengeDb () {
+  return makedb('challengedb', 'challenge_db', false);
+}
 ?>

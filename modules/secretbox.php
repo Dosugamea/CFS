@@ -1,6 +1,4 @@
 <?php
-require_once('includes/unit.php');
-
 function secretBox_all() {
 	global $uid, $mysql, $params;
 	$ret = [];
@@ -341,7 +339,6 @@ function secretbox_pon($post) {
 		throw403("INVALID_DATA");
 	
 	global $uid, $mysql, $params;
-	include_once("includes/unit.php");
 	$secretboxdb = getSecretBoxDb();
 	$secret_box_info = $secretboxdb->query("SELECT * FROM secret_box_m WHERE secret_box_id = ".$post['secret_box_id'])->fetch(PDO::FETCH_ASSOC);
 	

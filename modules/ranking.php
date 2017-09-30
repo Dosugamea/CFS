@@ -1,8 +1,5 @@
 <?php
 //ranking.php 排名相关module
-require_once('includes/live.php');
-require_once('includes/unit.php');
-require_once('includes/extend_avatar.php');
 //ranking/live 曲目排名
 function ranking_live($post) {
   global $mysql, $params;
@@ -123,7 +120,6 @@ function ranking_player($post) {
 
 function ranking_eventPlayer($post) {
 	global $mysql;
-	include_once("includes/unit.php");
 	$ret = [];
 	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
 	$ret['page'] = $post['page'];
@@ -148,7 +144,6 @@ function ranking_eventPlayer($post) {
 
 function ranking_eventLive($post) {
 	global $mysql;
-	include_once("includes/unit.php");
 	$ret = [];
 	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
 	$ret['page'] = $post['page'];

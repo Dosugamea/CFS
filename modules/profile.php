@@ -1,7 +1,5 @@
 <?php
 //profile.php 显示用户信息
-require_once('includes/unit.php');
-require_once('includes/extend_avatar.php');
 //profile/liveCnt 返回用户clear各难度谱面的数目
 function profile_liveCnt($post) {
 	global $mysql;
