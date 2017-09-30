@@ -1,14 +1,17 @@
 <?php 
 date_default_timezone_set("Asia/Tokyo");
 
-/* 错误处理 */
-require 'includes/errorHandler.php';
-//error_reporting(E_ERROR||E_WARNING); 
-require 'includes/errorUtil.php';
-include_once('includes/RSA.php');
+/* include所有includes目录下的文件 */
+$includes = opendir("includes");
+$include_ = [];
+while($include = readdir($includes))
+	$include_[] = $include;
+$includes = array_slice($include_, 2);
+foreach($includes as $include){
+	require("includes/".$include);
+}
 
 /* 连接数据库 */
-require 'includes/db.php';
 $mysql->query('start transaction');
 $rolled_back = false;
 function rollback() {

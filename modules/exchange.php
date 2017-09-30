@@ -1,7 +1,4 @@
 <?php
-require_once('includes/exchange.php');
-require_once('includes/unit.php');
-
 function exchange_owningPoint() {
 	require('config/modules_exchange.php');
 	$ret['exchange_point_list'] = addExchangePoint(false);

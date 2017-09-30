@@ -1,6 +1,4 @@
 <?php
-require_once('includes/unit.php');
-require_once('includes/exchange.php');
 //unit/unitAll 获取卡片列表
 function unit_unitAll() {
 	global $uid, $mysql, $params;

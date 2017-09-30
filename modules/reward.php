@@ -1,6 +1,5 @@
 <?php
 //reward.php 礼物
-require_once 'includes/unit.php';
 //处理客户端发送的category和filter
 function getfilter($category, $filter) {
 	$ret = '';
@@ -76,7 +75,6 @@ function reward_rewardHistory($post) {
 //reward/open //开一个礼物
 function reward_open($post) {
 	global $params, $mysql, $uid;
-	include_once("includes/unit.php");
 	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE incentive_id='.$post['incentive_id'].' and opened_date=0')->fetch(PDO::FETCH_ASSOC);
 	if (empty($res)) {
 		return [];

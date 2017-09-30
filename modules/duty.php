@@ -1,6 +1,5 @@
 <?php
 //duty.php 协力相关
-include("includes/event.php");
 //获得当前协力活动信息
 function duty_dutyInfo(){
     global $params, $mysql, $uid;
@@ -164,9 +163,6 @@ function duty_top() {
 //进入匹配
 function duty_matching($post) {
     //"difficulty":4,"event_id":102
-    require_once 'includes/energy.php';
-    require_once 'includes/live.php';
-    require_once 'includes/unit.php';
     global $uid, $mysql, $params;
     //第一步 - 查询数据库是否有同一难度(且开卡状态相同)的房间，如果有则加入
     $room = $mysql->query('SELECT * FROM tmp_duty_room
@@ -304,7 +300,6 @@ function getMyDutyRoom() {
 //算麦克风数目
 function calculateMic($user_id){
 	global $mysql;
-	include_once("includes/unit.php");
 	$ret = [];
     $deck = json_decode($mysql->query("SELECT json FROM user_deck WHERE user_id = ?",[$user_id])->fetchColumn(), true);
 	foreach($deck as $i){
@@ -558,8 +553,6 @@ function duty_liveEnd($post) {
 function duty_endRoom($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
-	include_once("includes/live.php");
-	include_once("includes/unit.php");
     $info = getMyDutyRoom();
     $room = $mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch();
     $mysql->query('UPDATE tmp_duty_room 
@@ -897,7 +890,6 @@ function duty_endRoom($post) {
     //"event_team_duty":{},"matching_user":[]
 }
 function getRank($score,$live_id){
-	include_once("includes/live.php");
     $s_score=(float)(getRankInfo((int)$live_id)[4]['rank_min']*4*1.2);
     $rate=(float)$score/$s_score;
     if($rate>=1.5)  return 7;

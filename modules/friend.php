@@ -1,10 +1,7 @@
 <?php
-require_once('includes/unit.php');
-require_once('includes/extend_avatar.php');
 //好友列表
 function friend_list($post) {
 	global $uid, $mysql;
-	include_once("includes/unit.php");
 	//if($post['module'] != "friend" && $post['action'] != "list")
 		//throw403("WRONG-MODULE&ACTION");
 	if($post['type'] == 0)

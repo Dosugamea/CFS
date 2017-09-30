@@ -1,6 +1,5 @@
 <?php
 //battle.php SCORE MATCH相关功能
-require_once('includes/extend_avatar.php');
 //battle/battleInfo 登录时请求的SCORE MATCH信息（若返回空，SM活动页面为空白）
 function battle_battleInfo() {
 	include("config/event.php");
@@ -100,7 +99,6 @@ function GetRoomData($id, $ready_only=true){
 		$common_ret['matching_user'][] = ['user_info'=>$userdata, 'event_status' => $eventdata, 'setting_award_id' => (int)$user_info['award'], 'chat'=>$chat];
 	}
 	array_multisort($sort, $common_ret['matching_user'], $center_units);
-	require_once 'includes/unit.php';
 	$unit_detail = GetUnitDetail($center_units);
 	loadExtendAvatar($user_list);
 	foreach($common_ret['matching_user'] as $k => &$v) {

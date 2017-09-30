@@ -39,7 +39,6 @@ function challenge_challengeInfo(){
 
 //获得当前分数与排名
 function challenge_top() {
-	include("includes/event.php");
 	include("config/event.php");
 	include("config/modules_challenge.php");
 	global $uid, $mysql;
@@ -52,7 +51,6 @@ function challenge_top() {
 
 //没打完一局的时候读取活动状态
 function challenge_status() {
-	include("includes/event.php");
 	include("config/event.php");
 	include("config/modules_challenge.php");
 	global $uid, $mysql;
@@ -89,7 +87,6 @@ function challenge_status() {
 
 //进入一局CF
 function challenge_init($post) {
-	include("includes/event.php");
 	include("config/event.php");
 	include("config/modules_challenge.php");
 	global $uid, $mysql;
@@ -286,7 +283,6 @@ function challenge_proceed($post) {
 
 //结束live，创建记录点
 function challenge_checkpoint($post) {
-	include("includes/event.php");
 	include("config/event.php");
 	include("config/modules_challenge.php");
 	global $mysql, $uid;
@@ -557,7 +553,6 @@ function challenge_checkpoint($post) {
 //完成live，获取奖励
 function challenge_finalize($post) {
 	global $mysql, $uid, $user, $params;
-	include("includes/energy.php");
 	include("config/event.php");
 	$ret = [];
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
