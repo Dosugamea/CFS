@@ -50,6 +50,7 @@ function profile_cardRanking($post) {
 //profile/profileInfo 返回详细信息
 function profile_profileInfo($post) {
 	global $mysql, $params, $uid;
+	include_once("includes/energy.php");
 	$ret2 = $mysql->query('SELECT user_id,name,level,award,background,9999 as unit_max,999 as friend_max,user_id as invite_code,introduction FROM users WHERE user_id='.$post['user_id'])->fetch(PDO::FETCH_ASSOC);
 	if (empty($ret2)) {
 		return [];
@@ -59,6 +60,9 @@ function profile_profileInfo($post) {
 	}
 	$time = $mysql->query('SELECT elapsed_time_from_login FROM users WHERE user_id='.$post['user_id'])->fetchColumn();
 	$ret['user_info'] = $ret2;
+	$ret['user_info']['cost_max'] = 100;
+	$ret['user_info']['unit_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM unit_list WHERE user_id = ?",[$uid])->fetchColumn();
+	$ret['user_info']['energy_max'] = getCurrentEnergy()['energy_max']; //TODO
 	$elapsed_time = " ".strtotime("now")-strtotime($time);
 	if($elapsed_time >= 86400)
 		$time = " ".floor($elapsed_time / 86400)."天前";
@@ -69,12 +73,14 @@ function profile_profileInfo($post) {
 	else
 		$time = " ".$elapsed_time."秒前";
 	$ret['user_info']['elapsed_time_from_login'] = $time;
-	$center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn());
+	$center = GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id='.$post['user_id'])->fetchColumn(), true);
 	$ret['center_unit_info'] = $center;
+	$ret['center_unit_info']['setting_award_id'] = $ret['user_info']['award'];
 	$ret['navi_unit_info'] = $center;
 	loadExtendAvatar([$post['user_id']]);
 	setExtendAvatarForce($post['user_id'], $ret['navi_unit_info']);
 	setExtendAvatar($post['user_id'], $ret['center_unit_info']);
+	$ret['navi_unit_info']['unit_owning_user_id'] = 10;
 	$ret['is_alliance'] = false;
 	//处理好友状态
 	$friend = $mysql->query("SELECT * FROM friend WHERE applicant IN(".$uid.", ".$post['user_id'].") AND applicated IN(".$uid.", ".$post['user_id'].")")->fetch(PDO::FETCH_ASSOC);

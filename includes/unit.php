@@ -137,12 +137,17 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 			$ret['center_skill'] = $card['default_leader_skill_id'];
 			$ret['rarity'] = (int) $card['rarity'];
 			$ret['display_rank'] = min($ret['rank'], $ret['display_rank']);
+			$ret['attribute'] = (int)$card['attribute_id'];
 			if ($return_attr_value) {
 				$ret['hp'] = $card['hp_max'] - $level['hp_diff'];
 				$ret['attribute'] = $card['attribute_id'];
 				$ret['smile'] = $card['smile_max'] - $level['smile_diff'];
 				$ret['cute'] = $card['pure_max'] - $level['pure_diff'];
 				$ret['cool'] = $card['cool_max'] - $level['cool_diff'];
+				$ret['total_smile'] = $ret['smile'];
+				$ret['total_cute'] = $ret['cute'];
+				$ret['total_cool'] = $ret['cool'];
+				$ret['total_hp'] = $ret['hp'];
 				
 			} else {
 				unset($ret['center_skill']);
@@ -151,6 +156,7 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				$ret['removable_skill']=[];
 			else
 				$ret['removable_skill'] = json_decode($ret['removable_skill'], true);
+			$ret['removable_skill_ids'] = $ret['removable_skill'];
 			unset($ret['user_id']);
 			foreach ($ret as &$v3) {
 				if (is_numeric($v3)) {
