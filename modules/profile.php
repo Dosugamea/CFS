@@ -48,7 +48,6 @@ function profile_cardRanking($post) {
 //profile/profileInfo 返回详细信息
 function profile_profileInfo($post) {
 	global $mysql, $params, $uid;
-	include_once("includes/energy.php");
 	$ret2 = $mysql->query('SELECT user_id,name,level,award,background,9999 as unit_max,999 as friend_max,user_id as invite_code,introduction FROM users WHERE user_id='.$post['user_id'])->fetch(PDO::FETCH_ASSOC);
 	if (empty($ret2)) {
 		return [];
