@@ -1,7 +1,4 @@
 <?php
-require_once('includes/live.php');
-require_once('includes/unit.php');
-
 //live/liveStatus 歌曲信息以及最高分
 function live_liveStatus() {
 	$getLiveList = function ($table) {
@@ -287,7 +284,6 @@ global $uid, $mysql, $params;
 //live/play 获取游戏谱面
 function live_play($post) {
 	global $mysql, $uid, $params;
-	include_once("includes/energy.php");
 	$livedb = getLiveDb();
 	if(isset($post['festival'])) { //读取festival曲目列表
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
@@ -446,7 +442,6 @@ function live_play($post) {
 //live/reward 获取奖励
 function live_reward($post) {
 	global $uid, $mysql, $params;
-	include_once("includes/energy.php");
 	$live = getLiveDb();
 	//验证访问合法性，有人反映有问题，不验了
 	/*if (isset($post['ScoreMatch']) || isset($post['festival'])) {
@@ -1005,7 +1000,6 @@ function live_reward($post) {
 	
 	$score = floor($score * $factor);
 	$score_still = $score;
-	include("includes/SIS.php");
 	do{
 		$rewards = [];
 		$is_full = $score > $capacity_list[(int)$box_now['box_id']] - (int)$box_now['point'];
