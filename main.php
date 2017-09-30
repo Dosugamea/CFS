@@ -6,7 +6,13 @@ $includes = opendir("includes");
 $include_ = [];
 while($include = readdir($includes))
 	$include_[] = $include;
-$includes = array_slice($include_, 2);
+if($key = array_search('.',$include_)){//删除两个名叫.和..的项
+	unset($include_[$key]);
+}
+if($key = array_search('..',$include_)){
+	unset($include_[$key]);
+}
+$includes = $include_;
 foreach($includes as $include){
 	require("includes/".$include);
 }
