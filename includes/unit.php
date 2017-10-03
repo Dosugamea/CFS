@@ -137,17 +137,12 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 			$ret['center_skill'] = $card['default_leader_skill_id'];
 			$ret['rarity'] = (int) $card['rarity'];
 			$ret['display_rank'] = min($ret['rank'], $ret['display_rank']);
-			$ret['attribute'] = (int)$card['attribute_id'];
 			if ($return_attr_value) {
 				$ret['hp'] = $card['hp_max'] - $level['hp_diff'];
 				$ret['attribute'] = $card['attribute_id'];
 				$ret['smile'] = $card['smile_max'] - $level['smile_diff'];
 				$ret['cute'] = $card['pure_max'] - $level['pure_diff'];
 				$ret['cool'] = $card['cool_max'] - $level['cool_diff'];
-				$ret['total_smile'] = $ret['smile'];
-				$ret['total_cute'] = $ret['cute'];
-				$ret['total_cool'] = $ret['cool'];
-				$ret['total_hp'] = $ret['hp'];
 				
 			} else {
 				unset($ret['center_skill']);
@@ -156,7 +151,6 @@ function GetUnitDetail($unit_owning_user_id, $return_attr_value = false, $preloa
 				$ret['removable_skill']=[];
 			else
 				$ret['removable_skill'] = json_decode($ret['removable_skill'], true);
-			$ret['removable_skill_ids'] = $ret['removable_skill'];
 			unset($ret['user_id']);
 			foreach ($ret as &$v3) {
 				if (is_numeric($v3)) {
@@ -234,35 +228,38 @@ function getCenterSkillInfo($center_skill_id){
 
 function getDeckAttribute($deck,$post){
 	global $mysql;
-	$deck_info=[0,0,0,0];
-	$member_info=[];
-	$school_skill=[];//记录全体百分比加成
+	$deck_info = [0,0,0,0];
+	$member_info = [];
+	$school_skill = [];//记录全体百分比加成
+	$member_detail  =  [];//记录每个成员的数值(v5.3,2017.10.3)
 
 	//第一步 获得基础属性、可换技能以及C位技能
 	foreach($deck['unit_deck_detail'] as $member){
-		$position=$member['position'];
-		$card_info=GetUnitDetail($member['unit_owning_user_id'],true);
-		$deck_info[0]+=$card_info['hp'];
+		$position = (int)$member['position'];
+		$card_info = GetUnitDetail($member['unit_owning_user_id'],true);
+		$deck_info[0] += $card_info['hp'];
 
-		$info[0]=0;
-		$info[1]=$card_info['smile'];
-		$info[2]=$card_info['cute'];
-		$info[3]=$card_info['cool'];
-		$info[$card_info['attribute']]+=$card_info['love'];
-		$info['unit_id']=$card_info['unit_id'];
+		$info[0] = 0;
+		$info[1] = $card_info['smile'];
+		$info[2] = $card_info['cute'];
+		$info[3] = $card_info['cool'];
+		$info[$card_info['attribute']] += $card_info['love'];
+		$info['unit_id'] = $card_info['unit_id'];
+		
+		$member_detail[$position - 1] = ["smile" => $info[1], "cute" => $info[2], "cool" => $info[3]];
 
-		$info['skill']=[];
+		$info['skill'] = [];
 		foreach($card_info['removable_skill'] as $skill){
-			if($skill<=24)
-				$info['skill'][]=(int)$skill;
-			elseif($skill<=30)
-				$school_skill[]=(int)$skill;
+			if($skill <= 24)
+				$info['skill'][] = (int)$skill;
+			elseif($skill <= 30)
+				$school_skill[] = (int)$skill;
 		}
 
-		$member_info[$position]=$info;
+		$member_info[$position] = $info;
 
-		if($position==5)
-			$center_skill_id=$card_info['center_skill'];
+		if($position == 5)
+			$center_skill_id = $card_info['center_skill'];
 	}
 	$default_center_skill = [0 => 0, -1 => 1, -2 =>4, -3 => 7];
 	if (!isset($post['ScoreMatch'])) {
@@ -274,36 +271,41 @@ function getDeckAttribute($deck,$post){
 			$party_skill_id = $party_center_unit['center_skill'];
 		}
 	}else{
-		$party_skill_id=null;
+		$party_skill_id = null;
 	}
-	$center_skill=getCenterSkillInfo($center_skill_id);
-	$party_skill=getCenterSkillInfo($party_skill_id);
+	$center_skill = getCenterSkillInfo($center_skill_id);
+	$party_skill = getCenterSkillInfo($party_skill_id);
 
 	//第二步 计算可换技能加成 + 第三步 计算Center及好友应援加成
+	$count = 0;
 	foreach($member_info as $info){
-		$bonus=[0,0,0,0];
-		$skills=array_merge($info['skill'],$school_skill);
+		$bonus = [0,0,0,0];
+		$skills = array_merge($info['skill'],$school_skill);
 		foreach($skills as $skill){
-			$skill2=($skill-1)%3+1;
-			if($skill<=3)
-				$bonus[$skill]+=200;
-			elseif($skill<=6)
-				$bonus[$skill2]+=450;
-			elseif($skill<=15)
-				$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.10);
-			elseif($skill<=24)
-				$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.16);
-			elseif($skill<=27)
-				$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.018);
+			$skill2 = ($skill-1)%3+1;
+			if($skill <= 3)
+				$bonus[$skill] += 200;
+			elseif($skill <= 6)
+				$bonus[$skill2] += 450;
+			elseif($skill <= 15)
+				$bonus[$skill2] += (int)ceil($info[$skill2] * 0.10);
+			elseif($skill <= 24)
+				$bonus[$skill2] += (int)ceil($info[$skill2] * 0.16);
+			elseif($skill <= 27)
+				$bonus[$skill2] += (int)ceil($info[$skill2] * 0.018);
 			else
-				$bonus[$skill2]+=(int)ceil($info[$skill2] * 0.024);
+				$bonus[$skill2] += (int)ceil($info[$skill2] * 0.024);
 		}
 		for($i=1;$i<=3;$i++)
-			$info[$i]+=$bonus[$i];
-				
+			$info[$i] += $bonus[$i];
+		
+		$member_detail[$count]["smile"] += $bonus[1];
+		$member_detail[$count]["cute"] += $bonus[2];
+		$member_detail[$count]["cool"] += $bonus[3];
+		
 		$bonus=[0,0,0,0];
-		$bonus[$center_skill['target']]+=(int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
-		$bonus[$party_skill['target']]+=(int)ceil($info[$party_skill['source']] * $party_skill['effect'] /100);
+		$bonus[$center_skill['target']] += (int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
+		$bonus[$party_skill['target']] += (int)ceil($info[$party_skill['source']] * $party_skill['effect'] /100);
 				
 		$unitdb = getUnitDb();
 		$unit_type_id = $unitdb->query('SELECT unit_type_id FROM unit_m WHERE unit_id = '.$info['unit_id'])->fetch()[0];
@@ -316,15 +318,22 @@ function getDeckAttribute($deck,$post){
 		}
 
 		for($i=1;$i<=3;$i++)
-			$deck_info[$i]+=($info[$i]+$bonus[$i]);
+			$deck_info[$i] += ($info[$i]+$bonus[$i]);
+		
+		$member_detail[$count]["smile"] += $bonus[1];
+		$member_detail[$count]["cute"] += $bonus[2];
+		$member_detail[$count]["cool"] += $bonus[3];
+		
+		$count ++;
 	}
 
 	$deck_ret = [
 		'unit_deck_id' => $deck['unit_deck_id'],
-		'total_smile' => $deck_info[1],
-		'total_cute' => $deck_info[2],
-		'total_cool' => $deck_info[3],
-		'total_hp' => $deck_info[0]
+		'total_smile'  => $deck_info[1],
+		'total_cute'   => $deck_info[2],
+		'total_cool'   => $deck_info[3],
+		'total_hp'     => $deck_info[0],
+		"unit_list"    => $member_detail
 	];
 	return $deck_ret;
 }
