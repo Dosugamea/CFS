@@ -105,17 +105,24 @@ function secretBox_all() {
 				$secret_box_detail['name'] = $k['name'];
 				$secret_box_detail['title_asset'] = $k['title_asset'];
 				$secret_box_detail['description'] = $k['description'];
-				$secret_box_detail['start_date'] = $k['start_date'];
-				$secret_box_detail['end_date'] = $k['end_date'];
+				$secret_box_detail['start_date'] = date("Y-m-d H:i:s", strtotime($k['start_date']));
+				$secret_box_detail['end_date'] = date("Y-m-d H:i:s", strtotime($k['end_date']));
 				$secret_box_detail['add_gauge'] = (int)$k['add_gauge'];
 				$secret_box_detail['pon_count'] = 0; //这是抽卡总数，以单抽记，目前直接0
 				$secret_box_detail['pon_upper_limit'] = (int)$k['upper_limit'];
 				$secret_box_detail['display_type'] = (int)$k['display_type'];
 				$secret_box_detail['all_cost'] = $all_cost;
 				$secret_box_detail['step'] = Null;
+				$secret_box_detail['end_step'] = Null;
+				$secret_box_detail['show_step'] = Null;
 				$secret_box_detail['term_count'] = Null;
 				$secret_box_detail['step_up_bonus_asset_path'] = Null;
 				$secret_box_detail['step_up_bonus_bonus_item_list'] = Null;
+				$secret_box_detail['knapsack_select_unit_list'] = Null;
+				$secret_box_detail['knapsack_selected_unit_list'] = Null;
+				$secret_box_detail['is_knapsack_reset'] = Null;
+				$secret_box_detail['is_knapsack_select'] = Null;
+				$secret_box_detail['knapsack_rest_count'] = Null;
 				
 				$secret_box []= $secret_box_detail;
 			}
@@ -250,9 +257,16 @@ function secretBox_all() {
 				$secret_box_detail['display_type'] = (int)$k['display_type'];
 				$secret_box_detail['all_cost'] = $all_cost;
 				$secret_box_detail['step'] = Null;
+				$secret_box_detail['end_step'] = Null;
+				$secret_box_detail['show_step'] = Null;
 				$secret_box_detail['term_count'] = Null;
 				$secret_box_detail['step_up_bonus_asset_path'] = Null;
 				$secret_box_detail['step_up_bonus_bonus_item_list'] = Null;
+				$secret_box_detail['knapsack_select_unit_list'] = Null;
+				$secret_box_detail['knapsack_selected_unit_list'] = Null;
+				$secret_box_detail['is_knapsack_reset'] = Null;
+				$secret_box_detail['is_knapsack_select'] = Null;
+				$secret_box_detail['knapsack_rest_count'] = Null;
 				
 				$secret_box []= $secret_box_detail;
 			}
