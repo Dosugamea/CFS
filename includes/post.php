@@ -64,7 +64,7 @@ class poster{
 		$this->login_key = $login_key;
 		$this->login_passwd = $login_passwd;
 		$this->common_headers[] = "User-ID: ".$this->cache['uid'];
-		if(time() - $this->cache['time'] > 86400){ //每24小时刷新token
+		if(time() - $this->cache['time'] > 43200){ //每12小时刷新token
 			$this->login();
 			$this->cache['sessionKey'] = base64_encode($this->sessionKey);
 			rewind($cache_file);
