@@ -82,7 +82,6 @@ function reward_open($post) {
 	$ret['opened_num'] = 1;
 	//$ret['order'] = $post['order'];
 	$ret['success'] = [];
-	$ret['fail'] = [];
 	$ret['bushimo_reward_info'] = [];
 	$ret['unit_support_list'] = [];
 	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
@@ -152,7 +151,8 @@ function reward_open($post) {
 		$res['item_category_id'] = 0;
 		$res['reward_box_flag'] = false;
 		$res['add_type'] = 1001;
-		$res = array_merge($res, $unit_detail);
+		unset($res['item_id']);
+		$res = array_merge($res, $unit_detail[0]);
 		unset($res['incentive_item_id'], $res['is_card'], $res['insert_date']);
 		$ret['success'][] = $res;
 	}
