@@ -178,7 +178,7 @@ if (isset($uid)) {
 	}
 }
 //维护
-if ($maintenance && isset($uid) && array_search($uid, $bypass_maintenance) === false) {
+if ($maintenance && isset($uid) && !isset($bypass_maintenance[$uid])) {
 	header('Maintenance: 1');
 	die();
 }
