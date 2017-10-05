@@ -82,6 +82,7 @@ function reward_open($post) {
 	$ret['opened_num'] = 1;
 	//$ret['order'] = $post['order'];
 	$ret['success'] = [];
+	$ret['fail'] = [];
 	$ret['bushimo_reward_info'] = [];
 	$ret['unit_support_list'] = [];
 	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
