@@ -326,14 +326,14 @@ function getDeckAttribute($deck,$post){
 		
 		$count ++;
 	}
-
+	
 	$deck_ret = [
 		'unit_deck_id' => $deck['unit_deck_id'],
 		'total_smile'  => $deck_info[1],
 		'total_cute'   => $deck_info[2],
 		'total_cool'   => $deck_info[3],
 		'total_hp'     => $deck_info[0],
-		"unit_list"    => $member_detail
+		"unit_list"    => array_values($member_detail)
 	];
 	return $deck_ret;
 }
