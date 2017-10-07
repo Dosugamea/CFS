@@ -14,7 +14,7 @@ function banner_bannerList() {
 			"banner_list": []
 		}]
 	}', true);
-	include("config/event.php");
+	include("../config/event.php");
 	if(strtotime($marathon['start_date']) < time() && strtotime($marathon['end_date']) > time()){
 		$ret['member_category_list'][0]['banner_list'][] = [
 			"banner_type"            => 0,

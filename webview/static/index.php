@@ -10,7 +10,7 @@
   <script src="/resources/things/perfect-scrollbar.min.js"></script>
   <script src="/resources/things/button.js"></script>
 <?php 
-require "info.php"
+require "../info.php"
 ?>
 <?php 
 if($_GET['id']==11||$_GET['id']==12) {

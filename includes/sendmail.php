@@ -6,13 +6,8 @@
 function sendMail($to,$title,$content){
 
 	//引入PHPMailer的核心文件 使用require_once包含避免出现PHPMailer类重复定义的警告
-	if(strstr(getcwd(), "webview")){
-		require_once("../../PHPMailer/class.phpmailer.php"); 
-		require_once("../../PHPMailer/class.smtp.php");
-	}else{
-		require_once("PHPMailer/class.phpmailer.php"); 
-		require_once("PHPMailer/class.smtp.php");
-	}
+	require_once(dirname(__FILE__)."/../PHPMailer/class.phpmailer.php"); 
+	require_once(dirname(__FILE__)."/../PHPMailer/class.smtp.php");
 	//实例化PHPMailer核心类
 	$mail = new PHPMailer(true);
 

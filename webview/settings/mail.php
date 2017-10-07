@@ -271,7 +271,7 @@ if(!$check){
 }
 
 $mail = $mysql->query('SELECT mail FROM users WHERE user_id='.$uid)->fetchColumn();
-include_once("includes/sendmail.php");
+include_once("../includes/sendmail.php");
 if(isset($_GET['submit']) && $_GET['submit']=='绑定') {
 	$check = $mysql->query('SELECT mail FROM users WHERE mail = ?', [$_GET['mail']])->fetchColumn();
 	if($check){

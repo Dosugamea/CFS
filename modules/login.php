@@ -24,7 +24,7 @@ function login_authkey($post) {
 	die();*/
 	
 	//生成随机AES key
-	$chars='ABDEFGHJKLMNPQRSTVWXYabdefghijkmnpqrstvwxy23456789#%*';
+	$chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890#%*';
 	mt_srand((double)microtime()*1000000*getmypid());
 	$AES_token_server='';   
 	while(strlen($AES_token_server) < 32){
@@ -40,7 +40,7 @@ function login_authkey($post) {
 	$ret['server_timestamp'] = time();
 	global $mysql;
 	$mysql->query('insert into tmp_authorize(token, sessionKey) values (?,?)', [$ret['authorize_token'],base64_encode($sessionKey)]);
-	header('version_up: 0');
+	//header('version_up: 0');
 	header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());
 	return $ret;
 }
@@ -127,7 +127,7 @@ function login_v1($post) {
 
 //login/unitList 返回首次登录的队伍信息
 function login_unitList() {
-	require 'config/reg.php';
+	require '../config/reg.php';
 	$i = 1;
 	foreach($default_deck as $v) {
 		$tmp['unit_initial_set_id'] = $i;
@@ -142,7 +142,7 @@ function login_unitList() {
 //login/unitSelect 选择首次登录的队伍
 function login_unitSelect($post) {
 	global $uid, $mysql, $max_unit_id;
-	require 'config/reg.php';
+	require '../config/reg.php';
 	$unit = getUnitDb();
 	$selected = login_unitList();
 	$selected = $selected['unit_initial_set'][$post['unit_initial_set_id']-1];

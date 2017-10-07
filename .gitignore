@@ -6,6 +6,7 @@
 !includes
 !admin
 !resources
+!web
 !webview
 !upgrade_scripts
 !custom

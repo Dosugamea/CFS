@@ -1,6 +1,6 @@
 <?php
 function award_awardInfo() {
-	include_once("config/modules_award.php");
+	include_once("../config/modules_award.php");
 	global $user, $mysql, $uid;
 	if ($user['award'] == 0) {
 		$user['award'] = 1;
@@ -25,7 +25,7 @@ function award_awardInfo() {
 }
 
 function award_set($post) {
-	include_once("config/modules_award.php");
+	include_once("../config/modules_award.php");
 	global $user, $mysql, $uid;
 	if(!is_numeric($post['award_id']))
 		throw403("INVALID_DATA");

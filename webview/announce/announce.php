@@ -102,8 +102,8 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 <script>
   const URL_BASE = '/webview.php';
   const DISP_FAULTY = 0;
-  const USER_ID = 279412;
-  const AUTHORIZE_DATA = 'consumerKey=lovelive_test&token=6NmJHLIcvs5SLhTMDLyeaz5G827U44PSYJH0BItNlINP9miZUINSFwVYy9RLRoeJyly9Po4UpDy1shXgE6YdCA0&version=1.1&timeStamp=1484453451&nonce=WV0';
+  const USER_ID = 0;
+  const AUTHORIZE_DATA = '';
 
   updateButtons();
   Button.initialize(document.getElementById('load-next'), loadNext);

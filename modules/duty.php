@@ -5,7 +5,7 @@ function duty_dutyInfo(){
     global $params, $mysql, $uid;
     if($params['card_switch']==0)
         return [];
-    include("config/event.php");
+    include("../config/event.php");
 	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $duty['event_id']])->fetchColumn();
 	if(!$event_point){
 		$mysql->query("INSERT IGNORE INTO event_point VALUES(?,?,?,?)",[$uid, $duty['event_id'], 0, 0]);
@@ -150,7 +150,7 @@ function duty_allUserMission(){
 //获得当前分数与排名
 function duty_top() {
 	global $uid, $mysql;
-	include("config/event.php");
+	include("../config/event.php");
 	$event_status = getUserEventStatus($uid, $duty['event_id']);
 	$ret = [];
 	$ret['event_status']['total_event_point'] = $event_status['event_point'];
@@ -191,7 +191,7 @@ function duty_matching($post) {
     }else{
     //第二步 - 无符合的房间，随机出目标歌曲，创建房间
         $room = [];
-        require_once 'config/modules_duty.php';
+        require_once '../config/modules_duty.php';
 		$maps = $duty_live_lifficulty_ids[$post['difficulty']];
 		$live = getLiveDb();
 		if($maps==null || count($maps)==0){//检测歌单是否为空
@@ -347,7 +347,7 @@ function calculateMic($user_id){
 function duty_startWait($post) {
     //event_id":102,"chat_id":"0-0","deck_id":2,room_id":279599
     global $uid, $mysql, $params;
-	include("config/event.php");
+	include("../config/event.php");
     if($post['deck_id']<=0)
         return [];
 
@@ -444,7 +444,7 @@ function duty_startWait($post) {
 function duty_liveStart($post) {
     //event_id":102,"room_id":279599
     global $uid, $mysql, $params;
-	include("config/event.php");
+	include("../config/event.php");
     $info = getMyDutyRoom();
     $room = $mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id = ?', [$info['room_id']])->fetch();
     $user = $mysql->query('SELECT * FROM tmp_duty_user_room WHERE room_id = ?', [$info['room_id']])->fetchAll(PDO::FETCH_ASSOC);
@@ -742,7 +742,7 @@ function duty_endRoom($post) {
 	
 	//计算获得的活动pt
 	$base_reward = [null, 39, 89, 153, 301, 301, 301];
-	include("config/event.php");
+	include("../config/event.php");
 	$reward['event_info']['event_id'] = $duty['event_id'];
 	$reward['event_info']['event_point_info'] = [];
 	$before_event = getUserEventStatus($uid, $duty['event_id']);
@@ -916,7 +916,7 @@ function getRankNote($score,$s_score){
 function duty_endWait($post){
     //event_id":102,"chat_id":"0-0",room_id":279599
     global $uid, $mysql, $params;
-	include("config/event.php");
+	include("../config/event.php");
     $info = getMyDutyRoom();
     $room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch(PDO::FETCH_ASSOC);
 
@@ -992,7 +992,7 @@ function duty_endWait($post){
 //死亡
 function duty_gameover($post) {
 	global $uid, $mysql, $params;
-	include("config/event.php");
+	include("../config/event.php");
     $info=getMyDutyRoom();
 	$room=$mysql->query('SELECT * FROM tmp_duty_room WHERE duty_event_room_id=?', [$info['room_id']])->fetch(PDO::FETCH_ASSOC);
     $mysql->query('UPDATE tmp_duty_room 

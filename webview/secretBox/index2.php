@@ -28,14 +28,14 @@
       <div class="summary">
         <!--<del>此功能尚未完成，需要亲亲抱抱么么才能继续淦</del></br>-->
         <pre><?php
-        require 'includes/errorUtil.php'; 
+        require '../includes/errorUtil.php'; 
         if(!isset($_SERVER["QUERY_STRING"])||empty($_SERVER["QUERY_STRING"])){
           header('HTTP/1.1 403 Forbidden');
           echo '<h1>出现了一些问题，请尝试关闭页面重新打开 (Query String不存在)</h1>';
           die();
         }
         
-        require 'modules/secretbox.php';
+        require '../modules/secretbox.php';
         function get_text($rule,$index,$total){
           if(empty($rule)||$rule<=0)
             return "";

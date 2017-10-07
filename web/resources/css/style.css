@@ -1,0 +1,38 @@
+/* ALL */	
+a:link,a:visited{text-decoration:none;}
+body{
+	width: 100% !important;
+	font-family:"Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Hiragino Kaku Gothic Pro", Meiryo, "Malgun Gothic", sans-serif;}
+p{font-size: 3vw;}
+
+/* Welcome */
+.Welcome-BG{
+	background-image: url(/resources/top.jpg);
+	background-size: cover;
+	background-repeat: no-repeat; 
+	background-color: transparent;
+	width: 100%;
+	height: 100%;
+	z-index: -2;
+	left: 0px;
+	top: 0px;
+	position: fixed;
+}
+a:link,a:visited{text-decoration:none;}
+.Welcome-N1{
+	width: 100%; height: 100%;background-color: #ffffff;opacity: 0.8;
+	position: fixed; z-index:-1;top:0px;left: 0px;
+}
+.main-icon{
+	width: 100%;
+	border: 2px solid #ffffff;
+	box-shadow:0 0 2px #66ccff, 0 0 8px #66ccff, 0 0 16px #66ccff, 0 0 32px #66ccff;
+	border-radius: 15px;background-color:#FF1493;
+}
+.Welcome-N2{z-index: 9999;}
+.shadow{text-shadow:0 0 2px #66ccff, 0 0 8px #66ccff, 0 0 16px #66ccff, 0 0 32px #66ccff}
+.Welcome-Header{margin:0 auto;text-align: center;color:deeppink;}
+.Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;text-align: center;}
+/*.Welcome-Icon tr td{width: 40%;border: 2px solid #ffffff;box-shadow:0 0 2px #66ccff, 0 0 8px #66ccff, 0 0 16px #66ccff, 0 0 32px #66ccff;border-radius: 15px;background-color:#FF1493;}*/
+
+

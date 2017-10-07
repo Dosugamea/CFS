@@ -1,5 +1,5 @@
 <?php
-require 'config/maintenance.php';
+require '../config/maintenance.php';
 
 if (isset($_SESSION['server']['HTTP_USER_ID'])) {
   $uid = $_SESSION['server']['HTTP_USER_ID'];

@@ -3,7 +3,7 @@
 // nlbonus/execute 执行特殊登录奖励
 function nlbonus_execute () {
 	global $uid, $mysql, $param;
-	require 'config/modules_nlbonus.php';
+	require '../config/modules_nlbonus.php';
 	$sheets = [];
 	foreach($nlbonus as $v) {
 		if (strtotime(date("Y-m-d H:i:s")) > strtotime($v['end']) || strtotime(date("Y-m-d H:i:s")) < strtotime($v['start'])) {

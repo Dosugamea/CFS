@@ -4,7 +4,7 @@
 //download/additional 下载附加内容
 function download_additional($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
-	include 'config/modules_download.php';
+	include '../config/modules_download.php';
 	/*
 	pl_assert(($_SERVER['HTTP_OS'] == 'Android' && $additional_for_android) || ($_SERVER['HTTP_OS'] == 'iOS' && $additional_for_ios), '暂不提供您区系统的客户端的数据包下载！');
 	$ret = $mysql->query(
@@ -14,7 +14,7 @@ function download_additional($post) {
 	pl_assert($ret, "找不到下载：ID：{$post['package_id']} 种类：{$post['package_type']} 系统：{$post['os']}");
 	return $ret;
 	*/
-	include 'config/maintenance.php';
+	include '../config/maintenance.php';
 	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
@@ -33,7 +33,7 @@ function download_additional($post) {
 
 function download_batch($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
-	include 'config/modules_download.php';
+	include '../config/modules_download.php';
 	//虹原的旧代码先注释掉啦=w=
 	/*pl_assert(($_SERVER['HTTP_OS'] == 'Android' && $additional_for_android) || ($_SERVER['HTTP_OS'] == 'iOS' && $additional_for_ios), '暂不提供您区系统的客户端的数据包下载！');
 	$ret = $mysql->query(
@@ -44,7 +44,7 @@ function download_batch($post) {
 		return array_search($e['package_id'], $post['excluded_package_ids']) === false;
 	}));
 	return $ret;*/
-	include 'config/maintenance.php';
+	include '../config/maintenance.php';
 	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";
@@ -68,8 +68,8 @@ function download_batch($post) {
 
 function download_event($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
-	include 'config/modules_download.php';
-	include 'config/maintenance.php';
+	include '../config/modules_download.php';
+	include '../config/maintenance.php';
 	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."4";
@@ -102,7 +102,7 @@ function download_getUrl($post) {
 //download/update 下载更新
 function download_update($post) {
 	global $uid, $mysql;
-	include 'config/modules_download.php';
+	include '../config/modules_download.php';
 	
 	$post['timeStamp'] = time();
 	$post['commandNum'] = $login_key.".".time()."."."3";

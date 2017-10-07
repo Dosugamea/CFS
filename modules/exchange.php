@@ -1,12 +1,12 @@
 <?php
 function exchange_owningPoint() {
-	require('config/modules_exchange.php');
+	require('../config/modules_exchange.php');
 	$ret['exchange_point_list'] = addExchangePoint(false);
 	return $ret;
 }
 
 function exchange_itemInfo() {
-	require('config/modules_exchange.php');
+	require('../config/modules_exchange.php');
 	global $uid, $mysql, $params;
 	if (!$params['card_switch']) {
 		return ['exchange_item_info' => [], 'exchange_point_list' => []];
@@ -22,9 +22,10 @@ function exchange_itemInfo() {
 		$item = [
 			"exchange_item_id"=>$e['exchange_item_id'],
 			"amount"=>$e['item'][1],
+			"option"=>null,
 			"title"=>$e['title'],
 			"cost_list"=>$e['cost_list'],
-			"is_rank_max"=>$e['rank_max_flag'],
+			"rank_max_flag"=>$e['rank_max_flag'],
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
@@ -49,7 +50,7 @@ function exchange_itemInfo() {
 }
 
 function exchange_usePoint($post) {
-	require('config/modules_exchange.php');
+	require('../config/modules_exchange.php');
 	global $uid, $mysql, $params;
 	if (!$params['card_switch']) {
 		return retError(4204);

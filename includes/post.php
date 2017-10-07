@@ -27,7 +27,7 @@ class poster{
 	
 	public function __construct(){
 		global $official_bundle_ver, $server_ver;
-		include("config/modules_download.php");
+		include("../config/modules_download.php");
 		$time = time();
 		$this->common_headers = [
 			'Accept: */*',
@@ -46,11 +46,11 @@ class poster{
 			'Expect:',
 			'X-Message-Code: '
 		];
-		if(is_file("auth.cache") && filesize("auth.cache") > 0){
-			$cache_file = fopen("auth.cache", "r+");
-			$cache_file_ = fread($cache_file, filesize("auth.cache"));
+		if(is_file("../auth.cache") && filesize("../auth.cache") > 0){
+			$cache_file = fopen("../auth.cache", "r+");
+			$cache_file_ = fread($cache_file, filesize("../auth.cache"));
 		}else{
-			$cache_file = fopen("auth.cache", "w");
+			$cache_file = fopen("../auth.cache", "w");
 		}
 		
 		if(!isset($cache_file_) || !$cache_file_){
@@ -101,7 +101,7 @@ class poster{
 	private function login(){
 		unset($this->common_headers[15]);
 		$time = time();
-		include 'config/maintenance.php';
+		include '../config/maintenance.php';
 		//生成随机AES密钥
 		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890/*-+!@#$%^&*()_=';
 		mt_srand((double)microtime() * 1000000 * getmypid());

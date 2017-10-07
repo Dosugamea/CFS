@@ -3,7 +3,7 @@ if(!is_numeric($_GET['secret_box_id'])){
 	print("非法访问！");
 	die();
 }
-include_once("includes/db.php");
+include_once("../includes/db.php");
 $db = getSecretboxDb();
 $unit = getUnitDb();
 $name = $db->query("SELECT name FROM secret_box_m WHERE secret_box_id = ".$_GET['secret_box_id'])->fetchColumn();

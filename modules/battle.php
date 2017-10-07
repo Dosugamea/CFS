@@ -2,7 +2,7 @@
 //battle.php SCORE MATCH相关功能
 //battle/battleInfo 登录时请求的SCORE MATCH信息（若返回空，SM活动页面为空白）
 function battle_battleInfo() {
-	include("config/event.php");
+	include("../config/event.php");
 	$ret = json_decode('[{
 		"event_id": 0,
 		"point_name": "PT",
@@ -115,7 +115,7 @@ function GetRoomData($id, $ready_only=true){
 }
 
 function battle_matching($post) {
-	require 'config/modules_battle.php';
+	require '../config/modules_battle.php';
 	global $uid, $mysql, $params;
 	$live = getLiveDb();
 	while (1) {

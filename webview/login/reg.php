@@ -12,7 +12,7 @@
 <script src="/resources/things/button.js"></script>
 
 <?php
-require 'config/reg.php';
+require '../config/reg.php';
 if(!$allow_reg) {
 	echo '<h1>注册已关闭！</h1>';
 	die();
@@ -33,7 +33,7 @@ if (!$username) {
 	die();
 }
 
-require 'config/maintenance.php';
+require '../config/maintenance.php';
 
 $id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
 $id[] = 0;
@@ -46,7 +46,7 @@ function genpassv2($_pass, $id) {
 	return substr($pass, hexdec(substr(md5($_pass), ord($_pass[0]) % 30, 2)), 32);
 }
 
-include_once("includes/unit.php");
+include_once("../includes/unit.php");
 if(isset($_POST['submit'])) {
 	if (!is_numeric($_POST['id'])) {
 		echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
@@ -83,7 +83,7 @@ if(isset($_POST['submit'])) {
 			
 			$uid = $_POST['id'];
 			if($all_card_by_default) {
-				$card_list=$unit->query('select unit_id from unit_m where unit_id<=? and unit_number>0', [$max_unit_id])->fetchAll();
+				$card_list=$unit->query('select unit_id from unit_m where unit_id <= ? and unit_number > 0', [$max_unit_id])->fetchAll();
 				//$query='INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ';
 				foreach($card_list as $v){
 					addUnit($v[0]);

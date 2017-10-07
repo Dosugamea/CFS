@@ -1,4 +1,4 @@
-<?php require('config/maintenance.php'); ?>
+<?php require('../config/maintenance.php'); ?>
 <!doctype html>
 <html>
 <head>
@@ -32,7 +32,7 @@ if(strUA.indexOf("iphone") >= 0) {
 <p>
 您在使用内部开发客户端，但您的ID未经过授权。<br />
 <br />
-若您确定您有权使用此版本客户端，请联系PLS开发者申请授权，并带上以下信息：<br />
+若您确定您有权使用此版本客户端，请联系CFS开发者申请授权，并带上以下信息：<br />
 您的ID：<?=$_SESSION['server']['HTTP_USER_ID'] ?><br />
 <br />
 若您不处于开发群内，而是通过其他人（朋友等）得到此客户端，请立刻停止使用。谢谢合作。

@@ -80,7 +80,7 @@ function live_eventList() {
 //live/schedule 获取活动曲列表
 function live_schedule() {
 	global $mysql, $max_live_difficulty_id, $params;
-	include("config/event.php");
+	include("../config/event.php");
 	$ret['event_list'] = [];
 	if(strtotime($marathon['start_date']) < time() && strtotime($marathon['end_date']) > time()){
 		$ret['event_list'][] = [

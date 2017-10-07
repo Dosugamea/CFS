@@ -1,4 +1,4 @@
-<?php require('config/maintenance.php'); ?>
+<?php require('../config/maintenance.php'); ?>
 <head>
 	<meta charset="utf-8">
 	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">

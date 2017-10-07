@@ -2,7 +2,7 @@
 //festival.php FESTIVAL活动相关功能
 //festival/festivalInfo 返回festival相关信息
 function festival_festivalInfo() {
-	include("config/event.php");
+	include("../config/event.php");
 	return json_decode('{"base_info": {
 		"event_id": '.$festival['event_id'].',
 		"asset_bgm_id": 4,
@@ -14,7 +14,7 @@ function festival_festivalInfo() {
 }
 
 function festival_deckList($post) {
-  require 'config/modules_festival.php';
+  require '../config/modules_festival.php';
   global $uid, $mysql;
   $ret = runAction('live','deckList',['ScoreMatch'=>true]);
   $live_list = [];

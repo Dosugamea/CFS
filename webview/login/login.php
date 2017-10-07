@@ -17,7 +17,7 @@
 </style>
 
 <?php
-require 'config/reg.php';
+require '../config/reg.php';
 
 if($enable_ssl && $_SERVER['HTTPS']!='on') {
   header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);

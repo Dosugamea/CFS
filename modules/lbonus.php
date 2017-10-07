@@ -3,7 +3,7 @@
 //lbonus/execute 执行登录奖励
 function lbonus_execute() {
 	global $uid, $mysql, $perm;
-	require 'config/modules_lbonus.php';
+	require '../config/modules_lbonus.php';
 	$data = $mysql->query("SELECT day FROM login_bonus WHERE user_id = ".$uid." AND year = ".(int)date('Y')." AND month = ".(int)date('m'))->fetchAll(PDO::FETCH_NUM);
 	$login_query = [];
 	if(!empty($data)){

@@ -3,8 +3,8 @@
 
 //获得当前CF活动信息
 function challenge_challengeInfo(){
-	include("config/event.php");
-	include("config/modules_challenge.php");
+	include("../config/event.php");
+	include("../config/modules_challenge.php");
     global $params, $mysql, $uid;
 	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $challenge['event_id']])->fetchColumn();
 	if(!$event_point){
@@ -39,8 +39,8 @@ function challenge_challengeInfo(){
 
 //获得当前分数与排名
 function challenge_top() {
-	include("config/event.php");
-	include("config/modules_challenge.php");
+	include("../config/event.php");
+	include("../config/modules_challenge.php");
 	global $uid, $mysql;
 	$event_status = getUserEventStatus($uid, $challenge['event_id']);
 	$ret = [];
@@ -51,8 +51,8 @@ function challenge_top() {
 
 //没打完一局的时候读取活动状态
 function challenge_status() {
-	include("config/event.php");
-	include("config/modules_challenge.php");
+	include("../config/event.php");
+	include("../config/modules_challenge.php");
 	global $uid, $mysql;
 	$ret = [];
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
@@ -87,8 +87,8 @@ function challenge_status() {
 
 //进入一局CF
 function challenge_init($post) {
-	include("config/event.php");
-	include("config/modules_challenge.php");
+	include("../config/event.php");
+	include("../config/modules_challenge.php");
 	global $uid, $mysql;
 	$ret = [];
 	
@@ -283,8 +283,8 @@ function challenge_proceed($post) {
 
 //结束live，创建记录点
 function challenge_checkpoint($post) {
-	include("config/event.php");
-	include("config/modules_challenge.php");
+	include("../config/event.php");
+	include("../config/modules_challenge.php");
 	global $mysql, $uid;
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
 	$post['ScoreMatch'] = true;
@@ -553,7 +553,7 @@ function challenge_checkpoint($post) {
 //完成live，获取奖励
 function challenge_finalize($post) {
 	global $mysql, $uid, $user, $params;
-	include("config/event.php");
+	include("../config/event.php");
 	$ret = [];
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
 	$ret['base_reward_info']['player_exp'] = (int)$info['exp'];

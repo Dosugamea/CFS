@@ -1,4 +1,4 @@
-<?php require('config/reg.php'); ?>
+<?php require('../config/reg.php'); ?>
 
 <!doctype html>
 <html>

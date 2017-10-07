@@ -4,7 +4,7 @@
 //tos/tosCheck 返回所有用户协议的接受情况
 function tos_tosCheck() {
 	global $mysql, $uid;
-	include "config/tos.php";
+	include "../config/tos.php";
 	$ret['tos_id'] = $tos_id;
 	$agreed_tos = $mysql->query('SELECT * FROM tos WHERE user_id='.$uid)->fetch();
 	if($agreed_tos == false || $agreed_tos['tos_id'] != $tos_id){
@@ -19,7 +19,7 @@ function tos_tosCheck() {
 //tos/tosAgree 同意用户协议
 function tos_tosAgree() {
 	global $mysql, $uid;
-	include "config/tos.php";
+	include "../config/tos.php";
 	$agreed_tos = $mysql->query('SELECT * FROM tos WHERE user_id='.$uid)->fetch();
 	if($agreed_tos == false){
 		$mysql->query('INSERT INTO tos VALUES (?,?)',[$uid,$tos_id]);
