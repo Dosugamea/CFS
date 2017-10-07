@@ -59,8 +59,9 @@ function getRewardList($post, $history) {
 			$r['item_category_id'] = $r['incentive_item_id'];
 		}
 		$r['remaining_time'] = '无限期';
+		if($history)
+			$r['insert_date'] = $r['opened_date'];
 		unset($r[$unset], $r['user_id'], $r['is_card']);
-		unset($r[0],$r[1],$r[2],$r[3],$r[4],$r[5],$r[6],$r[7]);
 		$ret[$array_name][] = $r;
 	}
 	return $ret;
