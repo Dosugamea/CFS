@@ -142,21 +142,22 @@ function reward_open($post) {
 		}
 		$ret['success'][] = $res;
 	} else {
-		$support_list = getSupportUnitList();
-		if(in_array($res['incentive_item_id'],$support_list)){
-			$unit_detail = addUnit($res['incentive_item_id'],$res['amount'],true);
-			$res['is_support_member'] = true;
-		}else{
-			$unit_detail = addUnit($res['incentive_item_id'],$res['amount'],true);
-			$res['is_support_member'] = false;	
+		for($i = 0;$i < $res['amount']; $i++){
+			$support_list = getSupportUnitList();
+			if(in_array($res['incentive_item_id'],$support_list)){
+				$unit_detail = addUnit($res['incentive_item_id'], 1, true);
+				$res['is_support_member'] = true;
+			}else{
+				$unit_detail = addUnit($res['incentive_item_id'], 1, true);
+				$res['is_support_member'] = false;	
+			}
+			$res['item_category_id'] = 0;
+			$res['reward_box_flag'] = false;
+			$res['add_type'] = 1001;
+			$res_ = array_merge($res, $unit_detail[0]);
+			unset($res_['incentive_item_id'], $res_['is_card'], $res_['insert_date'], $res_['item_id']);
+			$ret['success'][] = $res_;
 		}
-		$res['item_category_id'] = 0;
-		$res['reward_box_flag'] = false;
-		$res['add_type'] = 1001;
-		unset($res['item_id']);
-		$res = array_merge($res, $unit_detail[0]);
-		unset($res['incentive_item_id'], $res['is_card'], $res['insert_date']);
-		$ret['success'][] = $res;
 	}
 	include_once("modules/unit.php");
 	$ret['unit_support_list'] = unit_supporterAll()['unit_support_list'];
@@ -235,20 +236,22 @@ function reward_openAll($post) {
 			}
 			$ret['reward_item_list'][] = $r;
 		} else {
-			$support_list = getSupportUnitList();
-			if(in_array($r['incentive_item_id'],$support_list)){
-				$unit_detail = addUnit($r['incentive_item_id'],$r['amount'],true)[0];
-				$r['is_support_member'] = true;
-			}else{
-				$unit_detail = addUnit($r['incentive_item_id'],$r['amount'],true)[0];
-				$r['is_support_member'] = false;
+			for($i = 0;$i < $r['amount']; $i++){
+				$support_list = getSupportUnitList();
+				if(in_array($r['incentive_item_id'],$support_list)){
+					$unit_detail = addUnit($r['incentive_item_id'], 1, true)[0];
+					$r['is_support_member'] = true;
+				}else{
+					$unit_detail = addUnit($r['incentive_item_id'], 1, true)[0];
+					$r['is_support_member'] = false;
+				}
+				$r['item_category_id'] = 0;
+				$r['reward_box_flag'] = false;
+				$r['add_type'] = 1001;
+				$r_ = array_merge($r, $unit_detail);
+				unset($r_['incentive_item_id'], $r_['is_card'], $r_['insert_date']);
+				$ret['reward_item_list'][] = $r_;
 			}
-			$r['item_category_id'] = 0;
-			$r['reward_box_flag'] = false;
-			$r['add_type'] = 1001;
-			$r = array_merge($r, $unit_detail);
-			unset($r['incentive_item_id'], $r['is_card'], $r['insert_date']);
-			$ret['reward_item_list'][] = $r;
 		}
 		$ret['opened_num']++;
 		$mysql->exec('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id='.$r['incentive_id']);
