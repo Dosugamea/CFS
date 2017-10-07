@@ -158,6 +158,7 @@ CREATE TABLE IF NOT EXISTS `incentive_list` (
   `amount` int(11) NOT NULL,
   `is_card` tinyint(1) NOT NULL,
   `incentive_message` text NOT NULL,
+  `extra_info` TEXT NULL DEFAULT NULL,
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `opened_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`incentive_id`)
