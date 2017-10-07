@@ -32,11 +32,13 @@ function getRewardList($post, $history) {
 	}
 	global $uid, $mysql;
 	$filter = getfilter($post['category'], $post['filter']);
-	if(isset($post['order']) && $post['order'])
+	if($history)
+		$filter .= " ORDER BY opened_date DESC";
+	else if(isset($post['order']) && $post['order'])
 		$filter .= " ORDER BY incentive_id ASC";
 	else
 		$filter .= " ORDER BY incentive_id DESC";
-	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter)->fetchAll();
+	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['item_count'] = count($res);
 	$ret[$array_name] = [];
 	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
