@@ -12,13 +12,34 @@ function login_startWithoutInvite() {
 
 //login/authkey 获取一个认证token
 function login_authkey($post) {
+	global $mysql;
 	sscanf($_SERVER['HTTP_AUTHORIZE'], 'consumerKey=lovelive_test&timeStamp=%d&version=1.1&nonce=%d', $timestamp, $nonce);
 	if($nonce != 1) {
 		throw403('HTTP_AUTHORIZE_INVALID_AUTHKEY');
 	}
-	$AES_token_client = RSAdecrypt($post['dummy_token']);
+	@$AES_token_client = RSAdecrypt($post['dummy_token']);
+	if($AES_token_client == Null){
+		throw403('INVALID_DUMMY_TOKEN');
+	}
 	//解密auth_data
-	$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
+	@$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
+	if($auth_data == Null){
+		throw403('INVALID_AUTH_DATA_A');
+	}
+	$auth_data = json_decode(preg_replace('/[^[:print:]]/', '', $auth_data), true);//正则匹配不可显示的padding并删除
+	if(!isset($auth_data['1']) || !isset($auth_data['2']) || !isset($auth_data['3'])){
+		throw403('INVALID_AUTH_DATA_B');
+	}
+	if(!isset($_SERVER['HTTP_OS_VERSION'])){
+		throw403('INVALID_DEVICE');
+	}
+	$enc = login_v2(["login_key" => $auth_data['1'], "login_passwd" => $auth_data['2']]);
+	if($enc[0] !== false){
+		$uid = $enc[0];
+	}else{
+		$uid = 0;
+	}
+	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip) VALUES(?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], $auth_data['3'], $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR']]);
 	/*var_dump($auth_data);
 	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
 	die();*/
@@ -38,7 +59,6 @@ function login_authkey($post) {
 	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['review_version'] = "";
 	$ret['server_timestamp'] = time();
-	global $mysql;
 	$mysql->query('insert into tmp_authorize(token, sessionKey) values (?,?)', [$ret['authorize_token'],base64_encode($sessionKey)]);
 	//header('version_up: 0');
 	header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());

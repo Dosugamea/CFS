@@ -22,6 +22,16 @@ CREATE TABLE IF NOT EXISTS `album` (
   UNIQUE KEY `user_id` (`user_id`,`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `auth_log` (
+	`user_id` INT(11) NOT NULL DEFAULT '0',
+	`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`login_key` TEXT NULL DEFAULT NULL,
+	`login_passwd` TEXT NULL DEFAULT NULL,
+	`device_data` TEXT NULL DEFAULT NULL,
+	`hdr_device` TEXT NULL DEFAULT NULL,
+	`ip` TEXT NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.award 结构
 CREATE TABLE IF NOT EXISTS `award` (
