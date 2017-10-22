@@ -84,12 +84,12 @@ function login_login($post) {
 	$raw_login_key = base64_decode($post['login_key']);
 	$iv = substr($raw_login_key,0,16);
 	$login_key = AESdecrypt(substr($raw_login_key,16), substr($sessionKey,0,16), $iv);
-	$post['login_key'] = $login_key;
+	$post['login_key'] = preg_replace('/[^[:print:]]/', '', $login_key);//正则匹配去除padding
 	
 	$raw_login_passwd = base64_decode($post['login_passwd']);
 	$iv = substr($raw_login_passwd,0,16);
 	$login_passwd = AESdecrypt(substr($raw_login_passwd,16), substr($sessionKey,0,16), $iv);
-	$post['login_passwd'] = $login_passwd;
+	$post['login_passwd'] = preg_replace('/[^[:print:]]/', '', $login_passwd);//正则匹配去除padding
 	
 	$login_result = login_v2($post);
 	$id = $login_result[0];
