@@ -39,7 +39,7 @@ function login_authkey($post) {
 	}else{
 		$uid = 0;
 	}
-	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip) VALUES(?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], $auth_data['3'], $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR']]);
+	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip) VALUES(?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], base64_decode($auth_data['3']), $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR']]);
 	/*var_dump($auth_data);
 	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
 	die();*/
