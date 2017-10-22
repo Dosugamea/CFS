@@ -13,3 +13,4 @@
 !*.php
 !*.sql
 *.DS_Store
+web/git.php
