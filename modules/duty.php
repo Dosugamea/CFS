@@ -519,11 +519,9 @@ function duty_liveStart($post) {
 function duty_liveEnd($post) {
     //"event_id":102,"good_cnt":0,"love_cnt":77,"room_id":279599
     //TODO TODO TODO
+	//上面这是TODO啥玩意啊？--双草酸酯
     global $uid, $mysql, $params;
     $info=getMyDutyRoom();
-    /*$mysql->query('DELETE FROM tmp_duty_result
-        WHERE user_id=?',
-        [$uid]);*/
 
     $post['ScoreMatch'] = true;
 	$post['live_difficulty_id'] = (int)$mysql->query("SELECT live_difficulty_id FROM tmp_duty_room WHERE duty_event_room_id = ?", [$post['room_id']])->fetchColumn();
