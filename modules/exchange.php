@@ -25,7 +25,7 @@ function exchange_itemInfo() {
 			"option"=>null,
 			"title"=>$e['title'],
 			"cost_list"=>$e['cost_list'],
-			"rank_max_flag"=>$e['is_rank_max'],
+			"is_rank_max"=>$e['rank_max_flag'],
 			"got_item_count"=>0,
 			"term_count"=>0
 		];
