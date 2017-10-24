@@ -11,7 +11,7 @@ include_once("includes/check_admin.php");
 	<input type="submit" value="获取">
 </form>
 <?php
-include("../includes/db.php");
+include("../../includes/db.php");
 $mysql->query('start transaction');
 if(!isset($_POST['module']))
 	die();
