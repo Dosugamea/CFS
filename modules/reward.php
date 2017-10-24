@@ -252,6 +252,7 @@ function reward_openAll($post) {
 				$r['reward_box_flag'] = false;
 				$r['add_type'] = 1001;
 				$r_ = array_merge($r, $unit_detail);
+				$r_['amount'] = 1;
 				unset($r_['incentive_item_id'], $r_['is_card'], $r_['insert_date']);
 				$ret['reward_item_list'][] = $r_;
 			}
