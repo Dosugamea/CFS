@@ -239,7 +239,8 @@ function reward_openAll($post) {
 			}
 			$ret['reward_item_list'][] = $r;
 		} else {
-			for($i = 0;$i < $r['amount']; $i++){
+			$amount = $r['amount'];
+			for($i = 0;$i < $amount; $i++){
 				$support_list = getSupportUnitList();
 				if(in_array($r['incentive_item_id'],$support_list)){
 					$unit_detail = addUnit($r['incentive_item_id'], 1, true)[0];
