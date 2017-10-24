@@ -29,7 +29,7 @@ include_once("includes/check_admin.php");
 		</tr>
 		<tr>
 			<td>
-				<div class="index-icon"><a href="custom/index.php">获取日志</a></div>
+				<div class="index-icon"><a href="fetch_log.php">获取日志</a></div>
 			</td>
 		</tr>
 	</table>
