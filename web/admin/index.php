@@ -27,6 +27,11 @@ include_once("includes/check_admin.php");
 				<div class="index-icon"><a href="updateCode.php">部署master代码</a></div>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<div class="index-icon"><a href="custom/index.php">获取日志</a></div>
+			</td>
+		</tr>
 	</table>
 </body>
 </html>
