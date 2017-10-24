@@ -30,7 +30,7 @@ function login_authkey($post) {
 	if(!isset($auth_data['1']) || !isset($auth_data['2']) || !isset($auth_data['3'])){
 		throw403('INVALID_AUTH_DATA_B');
 	}
-	if(!isset($_SERVER['HTTP_OS_VERSION'])){
+	if(!isset($_SERVER['HTTP_OS_VERSION']) || !isset($_SERVER['HTTP_CLIENT_VERSION']) || !isset($_SERVER['HTTP_BUNDLE_VERSION'])){
 		throw403('INVALID_DEVICE');
 	}
 	$enc = login_v2(["login_key" => $auth_data['1'], "login_passwd" => $auth_data['2']]);
@@ -39,7 +39,7 @@ function login_authkey($post) {
 	}else{
 		$uid = 0;
 	}
-	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip) VALUES(?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], base64_decode($auth_data['3']), $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR']]);
+	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip, client_version, bundle_version) VALUES(?,?,?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], base64_decode($auth_data['3']), $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_CLIENT_VERSION'], $_SERVER['HTTP_BUNDLE_VERSION']]);
 	/*var_dump($auth_data);
 	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
 	die();*/
