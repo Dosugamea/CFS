@@ -4,6 +4,10 @@
 $maintenance=false;
 //此数组中的UID无视维护状态
 $bypass_maintenance[]=1;
+//定时维护，该项设置优先于上述是否启用维护开关。
+//举个例子：设置了2000-1-1 00:00:00~2000-1-2 00:00:00维护，即使上面maintenance开关是false，也会进入维护状态。
+$maintenance_start = "2017-10-1 00:00:00";
+$maintenance_end = "2017-10-1 00:00:01";
 //维护信息
 $maintenance_info='现在正在进行维护。<br /><br />
 服务停止时间<br />

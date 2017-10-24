@@ -181,7 +181,7 @@ if (isset($uid)) {
 	}
 }
 //维护
-if ($maintenance && isset($uid) && !isset($bypass_maintenance[$uid])) {
+if (((strtotime($maintenance_start) < time() && strtotime($maintenance_end) > time()) || $maintenance) && isset($uid) && !isset($bypass_maintenance[$uid])) {
 	header('Maintenance: 1');
 	die();
 }
