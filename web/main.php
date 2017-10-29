@@ -73,6 +73,16 @@ if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live
 	throw403('X-MESSAGE-CODE-WRONG');
 }
 
+if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] == hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
+	$LOGFILE = fopen("../NewXMCWrong.log","a");
+    fwrite($LOGFILE,date("Y-m-d H:i:s"));
+    fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']);
+    fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
+    fwrite($LOGFILE," ".$_SERVER['HTTP_X_MESSAGE_CODE']);
+    fwrite($LOGFILE,"\n");
+    fclose($LOGFILE);
+}
+
 if (isset($_SERVER['HTTP_USER_ID']) && $_SERVER['HTTP_USER_ID'] == -1) {
 	header('Maintenance: 1');
 	die();
