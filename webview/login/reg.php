@@ -88,6 +88,8 @@ if(isset($_POST['submit'])) {
 				foreach($card_list as $v){
 					addUnit($v[0]);
 				}
+				//防止劝退
+				$mysql->query("UPDATE unit_list SET favorite_flag = 1 WHERE user_id = ?", [$_POST['id']]);
 			//$query.='('.$_POST['id'].', '.$v[0].'),';
 				//$query=substr($query, 0,strlen($query)-1);
 				//$mysql->exec($query);
