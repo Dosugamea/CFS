@@ -38,7 +38,7 @@ function genpassv2($_pass, $id) {
 	return substr($pass, hexdec(substr(md5($_pass), ord($_pass[0]) % 30, 2)), 32);
 }
 
-include_once("../../includes/unit.php");
+include_once("../../../includes/unit.php");
 if(isset($_POST['submit'])) {
 	if (!is_numeric($_POST['id'])) {
 		echo '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
