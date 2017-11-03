@@ -31,6 +31,9 @@ include_once("includes/check_admin.php");
 			<td>
 				<div class="index-icon"><a href="fetch_log.php">获取日志</a></div>
 			</td>
+			<td>
+				<div class="index-icon"><a href="secretbox_update.php">招募列表更新</a></div>
+			</td>
 		</tr>
 	</table>
 </body>
