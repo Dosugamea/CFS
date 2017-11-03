@@ -74,7 +74,11 @@ if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live
 }
 
 if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] == hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
-	$LOGFILE = fopen("../NewXMCWrong.log","a");
+	if(!file_exists("../NewXMCWrong.log")){
+		$LOGFILE = fopen("../NewXMCWrong.log","w");
+	}else{
+		$LOGFILE = fopen("../NewXMCWrong.log","a");
+	}
     fwrite($LOGFILE,date("Y-m-d H:i:s"));
     fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']);
     fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
