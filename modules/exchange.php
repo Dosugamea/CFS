@@ -35,7 +35,7 @@ function exchange_itemInfo() {
 			case 'coin':     $item['item_id']=3;$item['item_category_id']=3;$item['add_type']=3000;break;
 			case 'loveca':   $item['item_id']=4;$item['item_category_id']=4;$item['add_type']=3001;break;
 			case 's_ticket': $item['item_id']=5;$item['item_category_id']=5;$item['add_type']=1000;break;
-			case 'item':     $item['item_id']=$e['item'][2];$item['item_category_id']=5;$item['add_type']=1000;break;
+			case 'item':     $item['item_id']=$e['item'][2];$item['item_category_id']=$e['item'][2];$item['add_type']=1000;break;
 			default: $item['item_id']=$e['item'][0];$item['item_category_id']=0;$item['add_type']=1001;break;
 		}
 		if (isset($history[$e['exchange_item_id']])) {
@@ -118,7 +118,7 @@ function exchange_usePoint($post) {
 			case 'coin':     $params['coin'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3000,'item_id'=>3,'item_category_id'=>3];break;
 			case 'loveca':   $params['loveca'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3001,'item_id'=>4,'item_category_id'=>4];break;
 			case 's_ticket': $params['item5'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>5,'item_category_id'=>5];break;
-			case 'item':     $params['item'.$exchangeInfo['item'][2]] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>$exchangeInfo['item'][2],'item_category_id'=>5];break;
+			case 'item':     $params['item'.$exchangeInfo['item'][2]] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>$exchangeInfo['item'][2],'item_category_id'=>$exchangeInfo['item'][2]];break;
 			default: trigger_error('exchange: 无法识别的物品种类：'.$exchangeInfo['item'][0]);break;
 		}
 		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]*$amount]);
