@@ -45,42 +45,11 @@ function user_changeName($post) {
 //user/showAllItem 返回单抽券和辅助券的数目
 function user_showAllItem() {
 	global $params;
-	return json_decode('{
-		"items": [{
-				"item_id": 1,
-				"amount": '.$params['item1'].'
-		}, {
-				"item_id": 5,
-				"amount": '.$params['item5'].'
-		}, {
-				"item_id": 6,
-				"amount": '.$params['item6'].'
-		}, {
-				"item_id": 7,
-				"amount": '.$params['item7'].'
-		}, {
-				"item_id": 8,
-				"amount": '.$params['item8'].'
-		}, {
-				"item_id": 9,
-				"amount": '.$params['item9'].'
-		}, {
-				"item_id": 10,
-				"amount": '.$params['item10'].'
-		}, {
-				"item_id": 11,
-				"amount": '.$params['item11'].'
-		}, {
-				"item_id": 12,
-				"amount": '.$params['item12'].'
-		}, {
-				"item_id": 13,
-				"amount": '.$params['item13'].'
-		}, {
-				"item_id": 14,
-				"amount": '.$params['item14'].'
-		}]
-}', true);
+	$ret['items'] = [];
+	for($i = 1; $i <= 15; $i ++){
+		$ret['items'][] = ["item_id" => $i, "amount" => $params['item'.$i]];
+	}
+	return $ret;
 }
 
 function user_getNavi() {
