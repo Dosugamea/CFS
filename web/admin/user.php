@@ -30,7 +30,7 @@ include_once("includes/check_admin.php");
 						<td>UR 贴纸</td>
 					</tr>
 					<?php
-						require "../config/database.php";
+						require "../../config/database.php";
 						$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
 						$users = $pdo -> query("select * from users")->fetchAll(PDO::FETCH_ASSOC); 
 						foreach($users as $i){
