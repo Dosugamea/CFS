@@ -177,13 +177,31 @@ a{color: #000000;}
                 box-shadow: 0 .125em .125em #000000;
             }
           </style>
+          <script type="text/javascript">
+          	$(function(){
+			    var t = $("#speed_range");
+			    $("#plus").click(function(){       
+			        t.val(parseInt(t.val())+1)
+			    })
+			    $("#minus").click(function(){
+			        t.val(parseInt(t.val())-1)
+			    })
+			})
+          </script>
           
           <div class="summary">
             <form method="get" action="/webview.php/mods/index">
               <input type="hidden" value="extend_mods_speed" name="switch_param" />
-              -50% <input type="range" id="speed_range" name="param" min="-50" max="50" value="<?=$params['extend_mods_speed']?>" step="1" class="range"> +50%
-              <div>当前 <div style="display:inline" id="speed_value"><?=$params['extend_mods_speed']?></div>% <b>(+-8% 以外将不会计入排行)</b></div>
+              <input type="button" value=" - " id="minus">
+              <input type="range" id="speed_range" name="param" min="-50" max="50" value="<?=$params['extend_mods_speed']?>" step="1" class="range">
+              <input type="button" value=" + " id="plus">
+              <div>当前 <div style="display:inline" id="speed_value"><?=$params['extend_mods_speed']?></div>% <b>(+-8% 以外将不会计入排行,最多+-50%)</b></div>
               <input type="submit" value="提交" />
+            </form>
+            <form method="get" action="/webview.php/mods/index">
+            	<input type="hidden" value="extend_mods_speed" name="switch_param" />
+            	<input type="range" name="param" value="0" style="display: none;">
+            	<input type="submit" value="重置">
             </form>
           </div>
           <div class="clearfix"></div>
