@@ -56,7 +56,7 @@
 			（特别的，在公开场合公开了群号的QQ群属于公开场合）<br />
 			2、若私下传播，则必须确保【所有看到消息的人也遵守前面一条】</p><br>
 			<p>Usage agreement:<br>
-			1, is strictly prohibited in public (like Twitter) publishing any messages associated with the PL, screenshots and videos<br>
+			1, is strictly prohibited in public (like Twitter) publishing any messages associated with the PCF, screenshots and videos<br>
 			2,Private communications, you must make sure that "all who saw the message also to comply with the previous"</p>
           </div>
           <div class="clearfix"></div>

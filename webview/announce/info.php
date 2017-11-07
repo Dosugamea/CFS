@@ -58,7 +58,7 @@ require "../info.php"
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">版本信息</h2>
-          <div class="summary">Programmed Live! Server <span style="color: red;">*<?=$pls_version?>* </span><?=$pls_version_date?> <br />
+          <div class="summary">Custom Festival! Server <span style="color: red;">*<?=$pls_version?>* </span><?=$pls_version_date?> <br />
             客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
           <div class="clearfix"></div>
         </div>
