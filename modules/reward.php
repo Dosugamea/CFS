@@ -11,9 +11,9 @@ function getfilter($category, $filter) {
 	if (is_array($filter)) {
 		$filter = $filter[0];
 	}
-	if($filter > 4) {
+	if($filter > 5) {
 		$ret .= ' and incentive_item_id='.$add_type_to_item_id[$filter];
-	} else if ($filter != 0 && $filter <= 4) {
+	} else if ($filter != 0) {
 		$unit = getUnitDb();
 		$unit_id_list = $unit->query('SELECT unit_id FROM unit_m WHERE rarity='.$filter)->fetchAll(PDO::FETCH_COLUMN, 0);
 		$ret .= ' and incentive_item_id in ('.implode(', ', $unit_id_list).')';

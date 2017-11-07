@@ -19,7 +19,7 @@ batchInsert($r, 2, 2);
 
 $sr = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 3 AND unit_type_id IN (1,2,3,4,5,6,7,8,9) AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
 
-$event_db = new PDO("sqlite:db/event_common.db_");
+$event_db = new PDO("sqlite:../../db/event_common.db_");
 $event_point_sr_ = $event_db->query("SELECT item_id FROM event_point_count_reward_m WHERE add_type = 1001")->fetchAll(PDO::FETCH_ASSOC);
 $event_rank_sr_ = $event_db->query("SELECT item_id FROM event_point_ranking_reward_m WHERE add_type = 1001")->fetchAll(PDO::FETCH_ASSOC);
 $event_point_sr = [];

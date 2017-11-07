@@ -21,6 +21,9 @@ function login_authkey($post) {
 	if($AES_token_client == Null){
 		throw403('INVALID_DUMMY_TOKEN');
 	}
+	/*$f = fopen("AES_CLIENT.log", "w");
+	fwrite($f, bin2hex($AES_token_client));
+	fclose($f);*/
 	//解密auth_data
 	@$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
 	if($auth_data == Null){
@@ -33,6 +36,21 @@ function login_authkey($post) {
 	if(!isset($_SERVER['HTTP_OS_VERSION']) || !isset($_SERVER['HTTP_CLIENT_VERSION']) || !isset($_SERVER['HTTP_BUNDLE_VERSION'])){
 		throw403('INVALID_DEVICE');
 	}
+	
+	//检查X-Message-Code
+	include("../config/modules_login.php");
+	for($i=0;$i < strlen($base_key);$i++){
+		$xor_pad[$i] = ($base_key[$i] ^ $application_key[$i % strlen($application_key)]);
+	}
+	$xor_pad = implode("", $xor_pad);
+	for($i=0;$i < strlen($xor_pad);$i++){
+		$sessionKey[$i] = ($xor_pad[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
+	}
+	$sessionKey = implode("", $sessionKey);
+	if(!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || hash_hmac("sha1", $_POST['request_data'], $sessionKey) != $_SERVER['HTTP_X_MESSAGE_CODE']){
+		throw400("X-MESSAGE-CODE-WRONG");
+	}
+	
 	$enc = login_v2(["login_key" => $auth_data['1'], "login_passwd" => $auth_data['2']]);
 	if($enc[0] !== false){
 		$uid = $enc[0];
@@ -54,7 +72,10 @@ function login_authkey($post) {
 	for($i=0;$i < strlen($AES_token_server);$i++){
 		$sessionKey[$i] = ($AES_token_server[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
 	}
-	$sessionKey = implode("",$sessionKey);
+	/*$f = fopen("AES_SERVER.log", "w");
+	fwrite($f, bin2hex($AES_token_server));
+	fclose($f);*/
+	//$sessionKey = implode("",$sessionKey);
 	$ret['authorize_token'] = sha1(rand(10000000, 99999999));
 	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['review_version'] = "";
