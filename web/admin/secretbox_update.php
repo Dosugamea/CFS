@@ -239,7 +239,7 @@ batchInsert($r_grade1, 74, 2);
 batchInsert($ssr_grade1, 74, 5);
 batchInsert($ur_grade1, 74, 4);
 
-/*Printemps*/
+/*AZALEA*/
 $secretbox->query("DELETE FROM secret_box_unit_m WHERE secret_box_id = 75");
 $r_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 2 AND unit_type_id IN (103,104,107) AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
 $sr_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 3 AND unit_type_id IN (103,104,107) AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
@@ -253,7 +253,7 @@ batchInsert($r_grade1, 75, 2);
 batchInsert($ssr_grade1, 75, 5);
 batchInsert($ur_grade1, 75, 4);
 
-/*bibi*/
+/*Guilty Kiss*/
 $secretbox->query("DELETE FROM secret_box_unit_m WHERE secret_box_id = 76");
 $r_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 2 AND unit_type_id IN (102,106,108) AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
 $sr_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 3 AND unit_type_id IN (102,106,108) AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
@@ -266,5 +266,19 @@ $ur_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 4 AND unit_
 batchInsert($r_grade1, 76, 2);
 batchInsert($ssr_grade1, 76, 5);
 batchInsert($ur_grade1, 76, 4);
+
+/*凛限stepup*/
+$secretbox->query("DELETE FROM secret_box_unit_m WHERE secret_box_id = 49");
+$r_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 2 AND unit_type_id = 5 AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
+$sr_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 3 AND unit_type_id = 5 AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
+foreach($sr_grade1 as $i){
+	$weight = in_array((int)$i['unit_id'], $event_card) ? 1 : 5;
+	$secretbox->query("INSERT INTO secret_box_unit_m (secret_box_id, unit_group_id, unit_id, weight, start_date) VALUES(49, 3, ".$i['unit_id'].", ".$weight.", '".date("Y-m-d H:i:s", time())."')");
+}
+$ssr_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 5 AND unit_type_id = 5 AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
+$ur_grade1 = $unit->query("SELECT unit_id FROM unit_m WHERE rarity = 4 AND unit_type_id = 5 AND smile_max != 1 AND release_tag IS NULL AND normal_icon_asset not like \"%rankup%\" and rank_max_icon_asset not like \"%normal%\"")->fetchAll(PDO::FETCH_ASSOC);
+batchInsert($r_grade1, 49, 2);
+batchInsert($ssr_grade1, 49, 5);
+batchInsert($ur_grade1, 49, 4);
 
 print("Complete");
