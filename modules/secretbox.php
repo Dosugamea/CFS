@@ -100,7 +100,23 @@ function generateTab($member_category){
 					$skip_page = true;
 					continue;
 				}
-				$secret_box_cost = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ".$k['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+				$step_up_info = Null;
+				$secret_box_cost = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ?", [$k['secret_box_id']])->fetchAll(PDO::FETCH_ASSOC);
+				if($secret_box_cost == false){
+					//当cost不存在时查找该招募是否为step up
+					$step_up_info = $secretboxdb->query("SELECT * FROM secret_box_step_up_base_m WHERE secret_box_id = ?", [$k['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+					if($step_up_info == false){
+						trigger_error("secretbox: ".$k['secret_box_id']." 没有消耗信息");
+					}
+					$now_step = (int)$mysql->query("SELECT step FROM secretbox_stepup WHERE user_id = ? AND secretbox_id = ?", [$uid, $k['secret_box_id']])->fetchColumn();
+					if($now_step == 0){
+						$now_step = $step_up_info['default_start_step'];
+					}else if($now_step > $step_up_info['default_end_step']){
+						$skip_page = true;
+						continue;
+					}
+					$secret_box_cost = $secretboxdb->query("SELECT * FROM secret_box_step_up_cost_m WHERE secret_box_id = ? AND step = ?", [$k['secret_box_id'], $now_step])->fetchAll(PDO::FETCH_ASSOC);
+				}
 				//挨个处理cost
 				$all_cost = [];
 				foreach($secret_box_cost as $l){
@@ -119,7 +135,7 @@ function generateTab($member_category){
 						case 1: //心
 							$cost_detail['type'] = 3001;break;
 						default:
-							trigger_error("cost_type: ".$cost_detail['type']." 无法识别的消耗类型");
+							trigger_error("cost_type: ".$l['cost_type']." 无法识别的消耗类型");
 					}
 					$cost_detail['item_id'] = empty($l['item_id'])? Null : (int)$l['item_id'];
 					$cost_detail['amount'] = (int)$l['amount'];
@@ -173,12 +189,26 @@ function generateTab($member_category){
 				}
 				$secret_box_detail['display_type'] = (int)$k['display_type'];
 				$secret_box_detail['all_cost'] = $all_cost;
-				$secret_box_detail['step'] = Null;
-				$secret_box_detail['end_step'] = Null;
-				$secret_box_detail['show_step'] = Null;
-				$secret_box_detail['term_count'] = Null;
-				$secret_box_detail['step_up_bonus_asset_path'] = Null;
-				$secret_box_detail['step_up_bonus_bonus_item_list'] = Null;
+				//处理step up
+				if($step_up_info){
+					$step_up_setting = $secretboxdb->query("SELECT * FROM secret_box_step_up_step_setting_m WHERE secret_box_id = ? AND step = ?", [$k['secret_box_id'], $now_step])->fetch(PDO::FETCH_ASSOC);
+					if(!$step_up_setting){
+						trigger_error("secretbox ".$k['secret_box_id']." :找不到stepup设置");
+					}
+					$secret_box_detail['step'] = $now_step;
+					$secret_box_detail['end_step'] = $step_up_info['default_end_step'];
+					$secret_box_detail['show_step'] = $now_step;
+					$secret_box_detail['term_count'] = 0; //循环周期，当前不支持
+					$secret_box_detail['step_up_bonus_asset_path'] = $step_up_setting['step_up_bonus_asset_path'];
+					$secret_box_detail['step_up_bonus_bonus_item_list'] = []; //stepup获得物品奖励，当前不支持
+				}else{
+					$secret_box_detail['step'] = Null;
+					$secret_box_detail['end_step'] = Null;
+					$secret_box_detail['show_step'] = Null;
+					$secret_box_detail['term_count'] = Null;
+					$secret_box_detail['step_up_bonus_asset_path'] = Null;
+					$secret_box_detail['step_up_bonus_bonus_item_list'] = Null;
+				}
 				$secret_box_detail['knapsack_select_unit_list'] = Null;
 				$secret_box_detail['knapsack_selected_unit_list'] = Null;
 				$secret_box_detail['is_knapsack_reset'] = Null;
@@ -244,6 +274,22 @@ function secretbox_pon($post) {
 	
 	//检查cost是否合法
 	$all_cost_ = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ".$post['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+	$step_up_info = Null;
+	if($all_cost_ == false){
+		//当cost不存在时查找该招募是否为step up
+		$step_up_info = $secretboxdb->query("SELECT * FROM secret_box_step_up_base_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+		if($step_up_info == false){
+			trigger_error("secretbox: ".$post['secret_box_id']." 没有消耗信息");
+		}
+		$now_step = (int)$mysql->query("SELECT step FROM secretbox_stepup WHERE user_id = ? AND secretbox_id = ?", [$uid, $post['secret_box_id']])->fetchColumn();
+		if($now_step == 0){
+			$now_step = $step_up_info['default_start_step'];
+		}else if($now_step > $step_up_info['default_end_step']){
+			$ret = retError(1509); // ERROR_CODE_SECRET_BOX_UPPER_LIMIT
+			return $ret;
+		}
+		$all_cost_ = $secretboxdb->query("SELECT * FROM secret_box_step_up_cost_m WHERE secret_box_id = ? AND step = ?", [$post['secret_box_id'], $now_step])->fetchAll(PDO::FETCH_ASSOC);
+	}
 	$all_cost = [];
 	foreach($all_cost_ as $i){
 		$cost_detail = [];
@@ -447,6 +493,19 @@ function secretbox_pon($post) {
 	}else{
 		$ret['secret_box_info']['pon_count'] += 1;
 	}
+	//处理step up
+	if($step_up_info){
+		$step_up_setting = $secretboxdb->query("SELECT * FROM secret_box_step_up_step_setting_m WHERE secret_box_id = ? AND step = ?", [$post['secret_box_id'], $now_step])->fetch(PDO::FETCH_ASSOC);
+		if(!$step_up_setting){
+			trigger_error("secretbox ".$post['secret_box_id']." :找不到stepup设置");
+		}
+		$ret['secret_box_info']['step'] = $now_step;
+		$ret['secret_box_info']['end_step'] = $step_up_info['default_end_step'];
+		$ret['secret_box_info']['show_step'] = $now_step;
+		$ret['secret_box_info']['term_count'] = 0; //循环周期，当前不支持
+		$ret['secret_box_info']['step_up_bonus_asset_path'] = $step_up_setting['step_up_bonus_asset_path'];
+		$ret['secret_box_info']['step_up_bonus_bonus_item_list'] = []; //stepup获得物品奖励，当前不支持
+	}
 	//更新数据库的招募次数
 	if($mysql->query("SELECT count FROM secretbox_count WHERE user_id = ? AND secretbox_id = ?", [$uid, $ret['secret_box_info']['secret_box_id']])->fetchColumn() === false){
 		$mysql->query("INSERT INTO secretbox_count (`user_id`, `secretbox_id`, `count`) VALUES (?, ?, ?)", [$uid, $ret['secret_box_info']['secret_box_id'], $ret['secret_box_info']['pon_count']]);
@@ -457,12 +516,21 @@ function secretbox_pon($post) {
 	$ret['secret_box_info']['display_type'] = (int)$secret_box_info['display_type'];
 	$ret['secret_box_info']['all_cost'] = $all_cost;
 	
+	//更新step
+	if($step_up_info){
+		if($mysql->query("SELECT * FROM secretbox_stepup WHERE user_id = ? AND secretbox_id = ?", [$uid, $secret_box_info['secret_box_id']])->fetch()){
+			$mysql->query("UPDATE secretbox_stepup SET step = step + 1, last_scout = CURRENT_TIMESTAMP WHERE user_id = ? AND secretbox_id = ?", [$uid, $secret_box_info['secret_box_id']]);
+		}else{
+			$mysql->query("INSERT INTO secretbox_stepup (user_id, secretbox_id, step) VALUES(?, ?, ?)", [$uid, $secret_box_info['secret_box_id'], $now_step + 1]);
+		}
+	}
+	
 	/*开始抽牌*/
 	$got_units = [];
 	$unit_count = $post['action'] == "multi" ? ((int)$secret_box_info['multi_additional'] ? 11 : 10) : 1;
 	for($j = 0; $j < $unit_count; $j++){
 		if($post['action'] == "multi" && $j == $unit_count - 1){//查看是否需要保底
-			$fix_rarity = $secretboxdb->query("SELECT * FROM secret_box_fix_rarity_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetch(PDO::FETCH_ASSOC);
+			$fix_rarity = $secretboxdb->query("SELECT * FROM secret_box_fix_rarity_m WHERE secret_box_id = ?", [$secret_box_info['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
 			if(!empty($fix_rarity) && strtotime($fix_rarity['start_date']) < time() && strtotime($fix_rarity['end_date']) > time()){
 				$fix_count = 0;
 				foreach($got_units as $k){//查找低于保底下限的卡数目
