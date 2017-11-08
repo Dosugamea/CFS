@@ -52,7 +52,7 @@ include_once("../includes/check_admin.php");
 	</div>
 	<div class="window">
 		<form action="calcScore.php" method="post">
-			<textarea type="text" name="maps" placeholder="请再此处输入SIF格式谱面" style="width: 430px;height: 200px;"></textarea>
+			<textarea type="text" name="maps" placeholder="请在此处输入SIF格式谱面" style="width: 430px;height: 200px;"></textarea>
 			<input type="submit" value="提交">
 		</form>
 	</div>
