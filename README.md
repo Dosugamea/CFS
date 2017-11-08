@@ -3,9 +3,9 @@
 	
 Try our public server at `prod.customfe.su`
 
-**REQUIRE LLSIF Japanese 5.0.2 Client, with public key modified** (We will never provide or tell the method how to make one).
+**REQUIRE LLSIF Japanese latest Client, with public key modified** (We will never provide or tell the method how to make one).
 
-We only supported the JP client which above the 5.0.2
+We only supported the latest JP client
 
 # Agreement
 
@@ -15,15 +15,8 @@ The project, developed by the enthusiasts of personal behavior, does not contain
 
 * PHP 7.0 stable
 * Maria DB 10.6 or higher / Mysql 5.7 or higher , both must including with InnoDB and MyISAM
-* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module , exec , system
-* php7-mcrypt
-* Node.js up to 7
-* Python
-* 7zip(in Path)
-* MiraiNoHana(in Path) `https://github.com/MikuAuahDark/MiraiNoHana`
-* HonokaMiku(in Path) `https://github.com/MikuAuahDark/HonokaMiku`
-* Itsudemo(in Path) `https://github.com/MikuAuahDark/Itsudemo`
-* ffmpeg
+* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module 
+* Enable exec function for git pull
 
 # Installation
 
