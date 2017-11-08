@@ -39,7 +39,7 @@ function secretBox_all() {
 	return $ret;
 }
 
-function checkScoutAvaliable($type, $item_id, $amount, $member=0){
+function checkScoutAvaliable($type, $item_id, $amount, $member = 0){
 	global $uid, $params, $mysql;
 	switch($type){
 		case 100:
@@ -126,7 +126,7 @@ function generateTab($member_category){
 					$cost_detail['multi_type'] = (int)$l['multi_type'];
 					switch($cost_detail['multi_type']){
 						case 0: //只允许单抽
-							$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount'], 0);
+							$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount'], $member_category - 1);
 							$cost_detail['within_single_limit'] = 1;
 							break;
 						case 1: //允许单抽和十一连
@@ -162,8 +162,15 @@ function generateTab($member_category){
 				$secret_box_detail['start_date'] = date("Y-m-d H:i:s", strtotime($k['start_date']));
 				$secret_box_detail['end_date'] = date("Y-m-d H:i:s", strtotime($k['end_date']));
 				$secret_box_detail['add_gauge'] = (int)$k['add_gauge'];
-				$secret_box_detail['pon_count'] = 0; //这是抽卡总数，以单抽记，目前直接0
+				$secret_box_detail['pon_count'] = (int)$mysql->query("SELECT count FROM secretbox_count WHERE user_id = ? AND secretbox_id = ?", [$uid, $k['secret_box_id']])->fetchColumn();
+				if(!$secret_box_detail['pon_count']){
+					$secret_box_detail['pon_count'] = 0;
+				}
 				$secret_box_detail['pon_upper_limit'] = (int)$k['upper_limit'];
+				if($secret_box_detail['pon_upper_limit'] != 0 && $secret_box_detail['pon_count'] >= $secret_box_detail['pon_upper_limit']){
+					$skip_page = true;
+					continue;
+				}
 				$secret_box_detail['display_type'] = (int)$k['display_type'];
 				$secret_box_detail['all_cost'] = $all_cost;
 				$secret_box_detail['step'] = Null;
@@ -180,8 +187,9 @@ function generateTab($member_category){
 				
 				$secret_box []= $secret_box_detail;
 			}
-			if($skip_page)
+			if($skip_page){
 				continue;
+			}
 			if(empty($secret_box))
 				continue;
 			$page_detail = [];
@@ -426,7 +434,25 @@ function secretbox_pon($post) {
 	$ret['secret_box_info']['start_date'] = date("Y-m-d H:i:s", strtotime($secret_box_info['start_date']));
 	$ret['secret_box_info']['end_date'] = date("Y-m-d H:i:s", strtotime($secret_box_info['end_date']));
 	$ret['secret_box_info']['add_gauge'] = (int)$secret_box_info['add_gauge'];
-	$ret['secret_box_info']['pon_count'] = 0;
+	$ret['secret_box_info']['pon_count'] = (int)$mysql->query("SELECT count FROM secretbox_count WHERE user_id = ? AND secretbox_id = ?", [$uid, $ret['secret_box_info']['secret_box_id']])->fetchColumn();
+	if(!$ret['secret_box_info']['pon_count']){
+		$ret['secret_box_info']['pon_count'] = 0;
+	}
+	if($post['action'] == "multi"){
+		if((int)$secret_box_info['multi_additional'] == 1){
+			$ret['secret_box_info']['pon_count'] += 11;
+		}else{
+			$ret['secret_box_info']['pon_count'] += 10;
+		}
+	}else{
+		$ret['secret_box_info']['pon_count'] += 1;
+	}
+	//更新数据库的招募次数
+	if($mysql->query("SELECT count FROM secretbox_count WHERE user_id = ? AND secretbox_id = ?", [$uid, $ret['secret_box_info']['secret_box_id']])->fetchColumn() === false){
+		$mysql->query("INSERT INTO secretbox_count (`user_id`, `secretbox_id`, `count`) VALUES (?, ?, ?)", [$uid, $ret['secret_box_info']['secret_box_id'], $ret['secret_box_info']['pon_count']]);
+	}else{
+		$mysql->query("UPDATE secretbox_count SET `count` = ?, last_scout = CURRENT_TIMESTAMP WHERE user_id = ? AND secretbox_id = ?", [$ret['secret_box_info']['pon_count'], $uid, $ret['secret_box_info']['secret_box_id']]);
+	}
 	$ret['secret_box_info']['pon_upper_limit'] = (int)$secret_box_info['upper_limit'];
 	$ret['secret_box_info']['display_type'] = (int)$secret_box_info['display_type'];
 	$ret['secret_box_info']['all_cost'] = $all_cost;
