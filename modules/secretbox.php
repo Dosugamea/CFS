@@ -1,4 +1,5 @@
 <?php
+//招募信息
 function secretBox_all() {
 	global $uid, $mysql, $params;
 	$ret = [];
@@ -13,6 +14,59 @@ function secretBox_all() {
 	$secretboxdb = getSecretBoxDb();
 	
 	/*缪斯页面*/
+	$ret['member_category_list'] []= ["member_category" => 1, "tab_list" => generateTab(1)];
+	
+	
+	/*水团页面*/
+	$ret['member_category_list'] []= ["member_category" => 2, "tab_list" => generateTab(2)];
+	
+	if(!$params['card_switch']){
+		foreach($ret['member_category_list'] as &$i){
+			foreach($i['tab_list'] as &$j){
+				foreach($j['page_list'] as &$k){
+					foreach($k['secret_box_list'] as &$l){
+						foreach($l['all_cost'] as &$m){
+							$m['amount'] = 0;
+							if(isset($m['multi_amount'])) $m['multi_amount'] = 0;
+							if(isset($m['is_pay_cost'])) $m['is_pay_cost'] = true;
+							if(isset($m['is_pay_multi_cost'])) $m['is_pay_multi_cost'] = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return $ret;
+}
+
+function checkScoutAvaliable($type, $item_id, $amount, $member=0){
+	global $uid, $params, $mysql;
+	switch($type){
+		case 100:
+			if($member == 0)
+				$free_gacha = $mysql->query("SELECT free_gacha_muse FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
+			else
+				$free_gacha = $mysql->query("SELECT free_gacha_aqours FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
+			if(!$free_gacha)
+				$mysql->query("INSERT INTO secretbox (user_id) VALUES (?)", [$uid]);
+			$ret = date("Y-m-d", strtotime($free_gacha)) != date("Y-m-d", time());
+			break;
+		case 3002:
+			$ret = $params['item2'] >= $amount;break;
+		case 1000:
+			$ret = $params['item'.$item_id] >= $amount;break;
+		case 3001:
+			$ret = $params['item4'] >= $amount;break;
+		default:
+			$ret = false;
+	}
+	return $ret;
+}
+
+function generateTab($member_category){
+	global $uid, $mysql, $params;
+	
+	$secretboxdb = getSecretBoxDb();
 	//选出符合时间的tab
 	$tab_schedule = $secretboxdb->query("SELECT * FROM secret_box_tab_schedule_m")->fetchAll(PDO::FETCH_ASSOC);
 	$tab = [];
@@ -22,7 +76,7 @@ function secretBox_all() {
 		$tab[] = $secretboxdb->query("SELECT * FROM secret_box_tab_m WHERE secret_box_tab_id = ".$i['secret_box_tab_id'])->fetch(PDO::FETCH_ASSOC);
 	}
 	//挨个处理tab
-	$tab_muse = [];
+	$tab_info = [];
 	foreach($tab as $i){
 		//选出符合时间的page
 		$page_schedule = $secretboxdb->query("SELECT * FROM secret_box_page_schedule_m WHERE secret_box_tab_id = ".$i['secret_box_tab_id'])->fetchAll(PDO::FETCH_ASSOC);
@@ -30,7 +84,7 @@ function secretBox_all() {
 		foreach($page_schedule as $j){
 			if(strtotime($j['start_date']) > time() || (!empty($j['end_date']) && strtotime($j['end_date']) < time()))
 				continue;
-			$res = $secretboxdb->query("SELECT * FROM secret_box_page_m WHERE member_category = 1 AND secret_box_page_id = ".$j['secret_box_page_id'])->fetch(PDO::FETCH_ASSOC);
+			$res = $secretboxdb->query("SELECT * FROM secret_box_page_m WHERE member_category = ? AND secret_box_page_id = ?", [$member_category, $j['secret_box_page_id']])->fetch(PDO::FETCH_ASSOC);
 			if(!empty($res))
 				$page[] = $res;
 		}
@@ -152,195 +206,9 @@ function secretBox_all() {
 		$tab_detail['page_list'] = $pages;
 		if(empty($pages))
 			continue;
-		$tab_muse []= $tab_detail;
+		$tab_info []= $tab_detail;
 	}
-	$ret['member_category_list'] []= ["member_category" => 1, "tab_list" => $tab_muse];
-	
-	
-	/*水团页面（其实就是把缪斯界面拷了一份过来）*/
-	$tab_schedule = $secretboxdb->query("SELECT * FROM secret_box_tab_schedule_m")->fetchAll(PDO::FETCH_ASSOC);
-	$tab = [];
-	foreach($tab_schedule as $i){
-		if(strtotime($i['start_date']) > time() || (!empty($i['end_date']) && strtotime($i['end_date']) < time()))
-			continue;
-		$tab[] = $secretboxdb->query("SELECT * FROM secret_box_tab_m WHERE secret_box_tab_id = ".$i['secret_box_tab_id'])->fetch(PDO::FETCH_ASSOC);
-	}
-	//挨个处理tab
-	$tab_aqours = [];
-	foreach($tab as $i){
-		//选出符合时间的page
-		$page_schedule = $secretboxdb->query("SELECT * FROM secret_box_page_schedule_m WHERE secret_box_tab_id = ".$i['secret_box_tab_id'])->fetchAll(PDO::FETCH_ASSOC);
-		$page = [];
-		foreach($page_schedule as $j){
-			if(strtotime($j['start_date']) > time() || (!empty($j['end_date']) && strtotime($j['end_date']) < time()))
-				continue;
-			$res = $secretboxdb->query("SELECT * FROM secret_box_page_m WHERE member_category = 2 AND secret_box_page_id = ".$j['secret_box_page_id'])->fetch(PDO::FETCH_ASSOC);
-			if(!empty($res))
-				$page[] = $res;
-		}
-		//挨个处理page
-		$pages = [];
-		foreach($page as $j){
-			$secret_box_list = $secretboxdb->query("SELECT * FROM secret_box_m WHERE secret_box_page_id = ".$j['secret_box_page_id'])->fetchAll(PDO::FETCH_ASSOC);
-			//挨个处理secretbox
-			$secret_box = [];
-			$skip_page = false;
-			foreach($secret_box_list as $k){
-				if(strtotime($k['start_date']) > time() || strtotime($k['end_date']) < time()){
-					$skip_page = true;
-					continue;
-				}
-				$secret_box_cost = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ".$k['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
-				//挨个处理cost
-				$all_cost = [];
-				foreach($secret_box_cost as $l){
-					$cost_detail = [];
-					$cost_detail['priority'] = (int)$l['priority'];
-					$cost_detail['type'] = (int)$l['cost_type'];
-					if($cost_detail['type']==4 && !$params['card_switch'])
-						continue;
-					switch($cost_detail['type']){
-						case 4: //每日免费
-							$cost_detail['type'] = 100;break;
-						case 3: //友情
-							$cost_detail['type'] = 3002;break;
-						case 2: //道具
-							$cost_detail['type'] = 1000;break;
-						case 1: //心
-							$cost_detail['type'] = 3001;break;
-						default:
-							trigger_error("cost_type: ".$cost_detail['type']." 无法识别的消耗类型");
-					}
-					$cost_detail['item_id'] = empty($l['item_id'])? Null : (int)$l['item_id'];
-					$cost_detail['amount'] = (int)$l['amount'];
-					$cost_detail['multi_type'] = (int)$l['multi_type'];
-					switch($cost_detail['multi_type']){
-						case 0: //只允许单抽
-							$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount'], 1);
-							$cost_detail['within_single_limit'] = 1;
-							break;
-						case 1: //允许单抽和十一连
-							$cost_detail['multi_amount'] = 10 * $cost_detail['amount'];
-							$cost_detail['multi_count'] = (int)$k['multi_additional'] ? 11 : 10;
-							$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount']);
-							$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['multi_amount']);
-							$cost_detail['within_single_limit'] = 1;
-							$cost_detail['within_multi_limit'] = 1;
-							break;
-						case 2: //只允许十一连
-							$cost_detail['multi_amount'] = $cost_detail['amount'];
-							$cost_detail['multi_count'] = (int)$k['multi_additional'] ? 11 : 10;
-							$cost_detail['is_pay_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['amount']);
-							$cost_detail['is_pay_multi_cost'] = checkScoutAvaliable($cost_detail['type'], $cost_detail['item_id'], $cost_detail['multi_amount']);
-							$cost_detail['within_single_limit'] = 1;
-							$cost_detail['within_multi_limit'] = 1;
-							break;
-						case 3:
-							//Unknown
-							break;
-						default:
-							trigger_error("cost_type: ".$cost_detail['multi_type']." 无法识别的十一连类型");
-					}
-					$all_cost []= $cost_detail;
-				}
-				
-				$secret_box_detail = [];
-				$secret_box_detail['secret_box_id'] = (int)$k['secret_box_id'];
-				$secret_box_detail['name'] = $k['name'];
-				$secret_box_detail['title_asset'] = $k['title_asset'];
-				$secret_box_detail['description'] = $k['description'];
-				$secret_box_detail['start_date'] = date("Y-m-d H:i:s", strtotime($k['start_date']));
-				$secret_box_detail['end_date'] = date("Y-m-d H:i:s", strtotime($k['end_date']));
-				$secret_box_detail['add_gauge'] = (int)$k['add_gauge'];
-				$secret_box_detail['pon_count'] = 0; //这是抽卡总数，以单抽记，目前直接0
-				$secret_box_detail['pon_upper_limit'] = (int)$k['upper_limit'];
-				$secret_box_detail['display_type'] = (int)$k['display_type'];
-				$secret_box_detail['all_cost'] = $all_cost;
-				$secret_box_detail['step'] = Null;
-				$secret_box_detail['end_step'] = Null;
-				$secret_box_detail['show_step'] = Null;
-				$secret_box_detail['term_count'] = Null;
-				$secret_box_detail['step_up_bonus_asset_path'] = Null;
-				$secret_box_detail['step_up_bonus_bonus_item_list'] = Null;
-				$secret_box_detail['knapsack_select_unit_list'] = Null;
-				$secret_box_detail['knapsack_selected_unit_list'] = Null;
-				$secret_box_detail['is_knapsack_reset'] = Null;
-				$secret_box_detail['is_knapsack_select'] = Null;
-				$secret_box_detail['knapsack_rest_count'] = Null;
-				
-				$secret_box []= $secret_box_detail;
-			}
-			if($skip_page)
-				continue;
-			if(empty($secret_box))
-				continue;
-			$page_detail = [];
-			$page_detail['secret_box_page_id'] = (int)$j['secret_box_page_id'];
-			$page_detail['page_layout'] = (int)$j['page_layout'];
-			$default_img_info = [];
-			$default_img_info['banner_img_asset'] = $j['banner_img_asset'];
-			$default_img_info['banner_se_img_asset'] = $j['banner_img_se_asset'];
-			$default_img_info['img_asset'] = $j['img_asset'];
-			$default_img_info['url'] = $j['url'];
-			$page_detail['default_img_info'] = $default_img_info;
-			$page_detail['limited_img_info'] = []; //TODO:限定banner
-			$page_detail['effect_list'] = []; //TODO:卡池左侧限定up人物展示
-			$page_detail['secret_box_list'] = $secret_box;
-			
-			$pages []= $page_detail;
-		}
-		$tab_detail = [];
-		$tab_detail['secret_box_tab_id'] = (int)$i['secret_box_tab_id'];
-		$tab_detail['title_img_asset'] = $i['title_img_asset'];
-		$tab_detail['title_img_se_asset'] = $i['title_img_se_asset'];
-		$tab_detail['page_list'] = $pages;
-		if(empty($pages))
-			continue;
-		$tab_aqours []= $tab_detail;
-	}
-	$ret['member_category_list'] []= ["member_category" => 2, "tab_list" => $tab_aqours];
-	
-	if(!$params['card_switch']){
-		foreach($ret['member_category_list'] as &$i){
-			foreach($i['tab_list'] as &$j){
-				foreach($j['page_list'] as &$k){
-					foreach($k['secret_box_list'] as &$l){
-						foreach($l['all_cost'] as &$m){
-							$m['amount'] = 0;
-							if(isset($m['multi_amount'])) $m['multi_amount'] = 0;
-							if(isset($m['is_pay_cost'])) $m['is_pay_cost'] = true;
-							if(isset($m['is_pay_multi_cost'])) $m['is_pay_multi_cost'] = true;
-						}
-					}
-				}
-			}
-		}
-	}
-	return $ret;
-}
-
-function checkScoutAvaliable($type, $item_id, $amount, $member=0){
-	global $uid, $params, $mysql;
-	switch($type){
-		case 100:
-			if($member == 0)
-				$free_gacha = $mysql->query("SELECT free_gacha_muse FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
-			else
-				$free_gacha = $mysql->query("SELECT free_gacha_aqours FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn();
-			if(!$free_gacha)
-				$mysql->query("INSERT INTO secretbox (user_id) VALUES (?)", [$uid]);
-			$ret = date("Y-m-d", strtotime($free_gacha)) != date("Y-m-d", time());
-			break;
-		case 3002:
-			$ret = $params['item2'] >= $amount;break;
-		case 1000:
-			$ret = $params['item'.$item_id] >= $amount;break;
-		case 3001:
-			$ret = $params['item4'] >= $amount;break;
-		default:
-			$ret = false;
-	}
-	return $ret;
+	return $tab_info;
 }
 
 function secretbox_pon($post) {
@@ -524,7 +392,14 @@ function secretbox_pon($post) {
 		}
 		$get_items = [];
 		while($gauge_info['gauge_point'] >= 100){
-			$get_items []= ["owning_item_id" => 0, "item_id" => (int)$gauge_reward_info['item_id'], "add_type" => (int)$gauge_reward_info['add_type'], "amount" => (int)$gauge_reward_info['amount'], "item_category_id" => (int)$gauge_reward_info['item_category_id'], "reward_box_flag" => false];
+			$get_items []= [
+				"owning_item_id" => 0, 
+				"item_id" => (int)$gauge_reward_info['item_id'], 
+				"add_type" => (int)$gauge_reward_info['add_type'], 
+				"amount" => (int)$gauge_reward_info['amount'], 
+				"item_category_id" => (int)$gauge_reward_info['item_category_id'], 
+				"reward_box_flag" => false
+			];
 			$params['item'.$gauge_reward_info['item_id']] += (int)$gauge_reward_info['amount'];
 			$gauge_info['gauge_point'] -= 100;
 		}
