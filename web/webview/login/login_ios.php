@@ -103,7 +103,7 @@ if(isset($_POST['submit'])) {
      
     </form>
     <br><br>
-    <a href="http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Fmails%2FforgetPass.php">忘记密码</a>
+    <a href="http://<?=$_SERVER['SERVER_NAME']?>/webview/mails/forgetPass.php">忘记密码</a>
 
 </div>
 
