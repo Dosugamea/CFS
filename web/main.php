@@ -138,8 +138,8 @@ if (isset($uid)) {
 	}
 	//读取开卡权限
 	$query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.$uid);
-	if($query1->rowCount()!=0)
-	  $params['enable_card_switch']=$query1->fetchColumn();
+	if($query1->rowCount()!=0 && $query1->fetchColumn()==1)
+		$params['enable_card_switch']=1;
 
 	//访问别名
 	$params['social_point'] = &$params['item2'];
