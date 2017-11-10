@@ -136,6 +136,11 @@ if (isset($uid)) {
 			$params[$name] = 0;
 		}
 	}
+	//读取开卡权限
+	$query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.$uid);
+	if($query1->rowCount()!=0)
+	  $params['enable_card_switch']=$query1->fetchColumn();
+
 	//访问别名
 	$params['social_point'] = &$params['item2'];
 	$params['coin'] = &$params['item3'];
@@ -261,6 +266,9 @@ if (!$rolled_back && isset($__user_bak)) {
 	}
 	foreach($params as $k => $v) {
 		if ($k == 'social_point' || $k == 'coin' || $k == 'loveca') { //访问别名
+			continue;
+		}
+		if($k == 'enable_card_switch' ){//开卡权限不写入
 			continue;
 		}
 		if (!isset($__params_bak[$k])) {
