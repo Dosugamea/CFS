@@ -35,6 +35,11 @@ include_once("includes/check_admin.php");
 				<div class="index-icon"><a href="secretbox_update.php">招募列表更新</a></div>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<div class="index-icon"><a href="add_present.php">赠送礼物</a></div>
+			</td>
+		</tr>
 	</table>
 </body>
 </html>
