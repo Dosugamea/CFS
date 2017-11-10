@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
--- 主机:                           127.0.0.1
--- 服务器版本:                        10.1.22-MariaDB - mariadb.org binary distribution
--- 服务器操作系统:                      Win64
+-- 主机:                           REMOVED
+-- 服务器版本:                        10.1.26-MariaDB - Source distribution
+-- 服务器操作系统:                      Linux
 -- HeidiSQL 版本:                  9.4.0.5125
 -- --------------------------------------------------------
 
@@ -22,22 +22,27 @@ CREATE TABLE IF NOT EXISTS `album` (
   UNIQUE KEY `user_id` (`user_id`,`unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `auth_log` (
-	`user_id` INT(11) NOT NULL DEFAULT '0',
-	`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`login_key` TEXT NULL DEFAULT NULL,
-	`login_passwd` TEXT NULL DEFAULT NULL,
-	`device_data` TEXT NULL DEFAULT NULL,
-	`hdr_device` TEXT NULL DEFAULT NULL,
-	`ip` TEXT NULL DEFAULT NULL
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.auth_log 结构
+CREATE TABLE IF NOT EXISTS `auth_log` (
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `login_key` text,
+  `login_passwd` text,
+  `device_data` text,
+  `hdr_device` text,
+  `ip` text,
+  `client_version` text,
+  `bundle_version` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.award 结构
 CREATE TABLE IF NOT EXISTS `award` (
-  `user_id` INT(11) NOT NULL,
-	`award_id` INT(11) NOT NULL,
-	`insert_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `user_id` int(11) NOT NULL,
+  `award_id` int(11) NOT NULL,
+  `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `Index 1` (`user_id`,`award_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -66,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `error_report` (
   `text` text NOT NULL,
   `dele` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.event_point 结构
@@ -75,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `event_point` (
   `event_id` int(2) NOT NULL,
   `event_point` int(11) NOT NULL DEFAULT '0',
   `score_point` int(11) NOT NULL DEFAULT '0',
-  UNIQUE INDEX `UNIQUE` (`user_id`, `event_id`)
+  UNIQUE KEY `UNIQUE` (`user_id`,`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -88,12 +93,6 @@ CREATE TABLE IF NOT EXISTS `exchange_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
--- 导出  表 lovelive.extend_avatar 结构
-CREATE TABLE IF NOT EXISTS `extend_avatar` (
-  `user_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- 数据导出被取消选择。
 -- 导出  表 lovelive.extend_download 结构
 CREATE TABLE IF NOT EXISTS `extend_download` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -102,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `extend_download` (
   `description` text NOT NULL,
   `version` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.extend_download_queue 结构
@@ -112,7 +111,7 @@ CREATE TABLE IF NOT EXISTS `extend_download_queue` (
   `download_id` int(11) NOT NULL,
   `downloaded_version` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.extend_medley 结构
@@ -122,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `extend_medley` (
   `medley_type` tinyint(1) NOT NULL,
   `song_count` int(11) NOT NULL DEFAULT '3',
   PRIMARY KEY (`medley_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.extend_medley_bind 结构
@@ -133,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `extend_medley_bind` (
   `count` tinyint(1) NOT NULL,
   `medley` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.extend_medley_song_30 结构
@@ -144,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `extend_medley_song_30` (
   `random_switch` tinyint(1) NOT NULL,
   `order` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1244 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.friend 结构
@@ -164,15 +163,15 @@ CREATE TABLE IF NOT EXISTS `incentive_list` (
   `incentive_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `incentive_item_id` int(11) NOT NULL,
-  `item_id` INT(11) NULL DEFAULT NULL,
+  `item_id` int(11) DEFAULT NULL,
   `amount` int(11) NOT NULL,
   `is_card` tinyint(1) NOT NULL,
   `incentive_message` text NOT NULL,
-  `extra_info` TEXT NULL DEFAULT NULL,
+  `extra_info` text,
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `opened_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`incentive_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35555 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.live_accomplish 结构
@@ -181,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `live_accomplish` (
   `notes_setting_asset` text NOT NULL,
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `Unique` (`user_id`,`notes_setting_asset`(100))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.live_goal 结构
@@ -193,41 +192,45 @@ CREATE TABLE IF NOT EXISTS `live_goal` (
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.live_ranking 结构
-CREATE TABLE `live_ranking` (
-	`user_id` INT(11) NOT NULL,
-	`notes_setting_asset` VARCHAR(255) NOT NULL,
-	`card_switch` TINYINT(1) NOT NULL DEFAULT '0',
-	`random_switch` TINYINT(2) NOT NULL DEFAULT '0',
-	`hi_score` INT(11) NOT NULL,
-	`hi_combo_count` INT(11) NOT NULL,
-	`clear_cnt` INT(11) NOT NULL,
-	`mx_perfect_cnt` INT(11) NOT NULL DEFAULT '0',
-	`mx_great_cnt` INT(11) NOT NULL DEFAULT '0',
-	`mx_good_cnt` INT(11) NOT NULL DEFAULT '0',
-	`mx_bad_cnt` INT(11) NOT NULL DEFAULT '0',
-	`mx_miss_cnt` INT(11) NOT NULL DEFAULT '0',
-	`mx_max_combo` INT(11) NOT NULL DEFAULT '0',
-	`cheat` INT(11) NOT NULL DEFAULT '0',
-	UNIQUE INDEX `user_id` (`user_id`, `notes_setting_asset`, `card_switch`, `random_switch`)
+CREATE TABLE IF NOT EXISTS `live_ranking` (
+  `user_id` int(11) NOT NULL,
+  `notes_setting_asset` varchar(255) NOT NULL,
+  `card_switch` tinyint(1) NOT NULL DEFAULT '0',
+  `random_switch` tinyint(2) NOT NULL DEFAULT '0',
+  `hi_score` int(11) NOT NULL,
+  `hi_combo_count` int(11) NOT NULL,
+  `clear_cnt` int(11) NOT NULL,
+  `mx_perfect_cnt` int(11) NOT NULL DEFAULT '0',
+  `mx_great_cnt` int(11) NOT NULL DEFAULT '0',
+  `mx_good_cnt` int(11) NOT NULL DEFAULT '0',
+  `mx_bad_cnt` int(11) NOT NULL DEFAULT '0',
+  `mx_miss_cnt` int(11) NOT NULL DEFAULT '0',
+  `mx_max_combo` int(11) NOT NULL DEFAULT '0',
+  `cheat` int(11) NOT NULL DEFAULT '0',
+  UNIQUE KEY `user_id` (`user_id`,`notes_setting_asset`,`card_switch`,`random_switch`),
+  KEY `user_id_2` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
-CREATE TABLE `log` (
-	`command_num` TEXT NOT NULL,
-	`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`module` TEXT NOT NULL,
-	`action` TEXT NOT NULL,
-	`request` BLOB NOT NULL,
-	`response` BLOB NOT NULL,
-	PRIMARY KEY (`command_num`(100))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- 导出  表 lovelive.log 结构
+CREATE TABLE IF NOT EXISTS `log` (
+  `command_num` text NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `module` text NOT NULL,
+  `action` text NOT NULL,
+  `request` blob NOT NULL,
+  `response` blob NOT NULL,
+  PRIMARY KEY (`command_num`(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 数据导出被取消选择。
 -- 导出  表 lovelive.login_bonus 结构
 CREATE TABLE IF NOT EXISTS `login_bonus` (
   `user_id` int(11) NOT NULL,
   `year` int(11) NOT NULL,
-  `month` int(11) NOT NULL,
-  `day` int(11) NOT NULL,
-  `insert_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `month` int(11) NOT NULL DEFAULT '0',
+  `day` int(11) NOT NULL DEFAULT '0',
+  `insert_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -239,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `login_bonus_n` (
   `last_seq` int(11) NOT NULL DEFAULT '0',
   `last_login_date` timestamp NOT NULL DEFAULT '2000-01-01 08:00:00' ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=832 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.mail 结构
@@ -252,7 +255,7 @@ CREATE TABLE IF NOT EXISTS `mail` (
   `replied` tinyint(4) NOT NULL DEFAULT '0',
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`notice_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.notes_setting 结构
@@ -260,6 +263,20 @@ CREATE TABLE IF NOT EXISTS `notes_setting` (
   `notes_setting_asset` varchar(255) NOT NULL,
   `notes_list` mediumtext NOT NULL,
   PRIMARY KEY (`notes_setting_asset`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.notes_setting_gf 结构
+CREATE TABLE IF NOT EXISTS `notes_setting_gf` (
+  `ID` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `artist` varchar(255) NOT NULL,
+  `difficulty` tinyint(4) NOT NULL,
+  `stage_level` tinyint(4) NOT NULL,
+  `attribute` tinyint(4) NOT NULL,
+  `bgm` varchar(255) NOT NULL,
+  `json` mediumtext NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -274,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `os` enum('Android','iOS') NOT NULL,
   PRIMARY KEY (`update_id`),
   KEY `version` (`version`)
-) ENGINE=InnoDB AUTO_INCREMENT=3799 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6394 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.programmed_live 结构
@@ -283,8 +300,9 @@ CREATE TABLE IF NOT EXISTS `programmed_live` (
   `dl` text,
   `live_json` text NOT NULL,
   `notes_setting_asset` varchar(255) NOT NULL,
+  `category` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.removable_skill 结构
@@ -301,18 +319,38 @@ CREATE TABLE IF NOT EXISTS `removable_skill` (
 CREATE TABLE IF NOT EXISTS `secretbox` (
   `user_id` int(11) NOT NULL,
   `last_scout_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `free_gacha_muse` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `free_gacha_aqours` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `free_gacha_muse` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `free_gacha_aqours` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `gauge` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.secretbox_count 结构
+CREATE TABLE IF NOT EXISTS `secretbox_count` (
+  `user_id` int(11) NOT NULL,
+  `secretbox_id` int(11) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT '0',
+  `last_scout` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `Index 1` (`user_id`,`secretbox_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.secretbox_stepup 结构
+CREATE TABLE IF NOT EXISTS `secretbox_stepup` (
+  `user_id` int(11) NOT NULL,
+  `secretbox_id` int(11) NOT NULL,
+  `step` int(11) NOT NULL DEFAULT '1',
+  `last_scout` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `Index 1` (`user_id`,`secretbox_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.tmp_authorize 结构
 CREATE TABLE IF NOT EXISTS `tmp_authorize` (
   `token` varchar(255) NOT NULL,
-  `username` varchar(255) DEFAULT '',
-  `password` varchar(255) DEFAULT '',
+  `username` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL DEFAULT '',
   `sessionKey` varchar(255) NOT NULL,
   PRIMARY KEY (`token`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
@@ -329,30 +367,30 @@ CREATE TABLE IF NOT EXISTS `tmp_battle_result` (
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.tmp_battle_room 结构
 CREATE TABLE IF NOT EXISTS `tmp_battle_room` (
-  `battle_event_room_id` INT(11) NOT NULL,
-  `difficulty` INT(11) NOT NULL,
-  `live_difficulty_id` INT(11) NOT NULL,
-  `player_ready_1` TINYINT(1) NOT NULL DEFAULT '0',
-  `player_ready_2` TINYINT(1) NOT NULL DEFAULT '0',
-  `player_ready_3` TINYINT(1) NOT NULL DEFAULT '0',
-  `player_ready_4` TINYINT(1) NOT NULL DEFAULT '0',
-  `start_flag` TINYINT(1) NOT NULL DEFAULT '0',
-  `player1` INT(11) NOT NULL,
-  `player2` INT(11) NOT NULL DEFAULT '0',
-  `player3` INT(11) NOT NULL DEFAULT '0',
-  `player4` INT(11) NOT NULL DEFAULT '0',
-  `event_chat_id_1` VARCHAR(10) NOT NULL DEFAULT '',
-  `event_chat_id_2` VARCHAR(10) NOT NULL DEFAULT '',
-  `event_chat_id_3` VARCHAR(10) NOT NULL DEFAULT '',
-  `event_chat_id_4` VARCHAR(10) NOT NULL DEFAULT '',
-  `ended_flag_1` TINYINT(1) NOT NULL DEFAULT '0',
-  `ended_flag_2` TINYINT(1) NOT NULL DEFAULT '0',
-  `ended_flag_3` TINYINT(1) NOT NULL DEFAULT '0',
-  `ended_flag_4` TINYINT(1) NOT NULL DEFAULT '0',
-  `timestamp` INT(11) NOT NULL,
-  `card_switch` TINYINT(1) NOT NULL,
-  `random_switch` INT(11) NOT NULL,
-  UNIQUE INDEX `battle_event_room_id` (`battle_event_room_id`)
+  `battle_event_room_id` int(11) NOT NULL,
+  `difficulty` int(11) NOT NULL,
+  `live_difficulty_id` int(11) NOT NULL,
+  `player_ready_1` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_2` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_3` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_4` tinyint(1) NOT NULL DEFAULT '0',
+  `start_flag` tinyint(1) NOT NULL DEFAULT '0',
+  `player1` int(11) NOT NULL,
+  `player2` int(11) NOT NULL DEFAULT '0',
+  `player3` int(11) NOT NULL DEFAULT '0',
+  `player4` int(11) NOT NULL DEFAULT '0',
+  `event_chat_id_1` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_2` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_3` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_4` varchar(10) NOT NULL DEFAULT '',
+  `ended_flag_1` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_2` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_3` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_4` tinyint(1) NOT NULL DEFAULT '0',
+  `timestamp` int(11) NOT NULL,
+  `card_switch` tinyint(1) NOT NULL,
+  `random_switch` int(11) NOT NULL,
+  UNIQUE KEY `battle_event_room_id` (`battle_event_room_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -361,6 +399,82 @@ CREATE TABLE IF NOT EXISTS `tmp_battle_user_room` (
   `user_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   PRIMARY KEY (`user_id`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.tmp_challenge_live 结构
+CREATE TABLE IF NOT EXISTS `tmp_challenge_live` (
+  `user_id` int(11) NOT NULL,
+  `course_id` tinyint(4) DEFAULT NULL,
+  `round` tinyint(4) NOT NULL DEFAULT '1',
+  `live_difficulty_id` int(11) DEFAULT NULL,
+  `random` tinyint(4) NOT NULL DEFAULT '0',
+  `bonus` text,
+  `mission` text,
+  `use_item` text,
+  `is_start` tinyint(4) NOT NULL DEFAULT '0',
+  `event_point` int(11) NOT NULL DEFAULT '0',
+  `exp` int(11) NOT NULL DEFAULT '0',
+  `coin` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.tmp_challenge_reward 结构
+CREATE TABLE IF NOT EXISTS `tmp_challenge_reward` (
+  `user_id` int(11) NOT NULL,
+  `rarity` int(11) NOT NULL,
+  `amount` int(11) NOT NULL DEFAULT '0',
+  UNIQUE KEY `Index 1` (`user_id`,`rarity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.tmp_duty_result 结构
+CREATE TABLE IF NOT EXISTS `tmp_duty_result` (
+  `user_id` int(11) NOT NULL,
+  `duty_event_room_id` int(11) NOT NULL,
+  `result` text NOT NULL,
+  `reward` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.tmp_duty_room 结构
+CREATE TABLE IF NOT EXISTS `tmp_duty_room` (
+  `duty_event_room_id` int(11) NOT NULL,
+  `difficulty` int(11) NOT NULL,
+  `live_difficulty_id` int(11) NOT NULL,
+  `player_ready_1` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_2` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_3` tinyint(1) NOT NULL DEFAULT '0',
+  `player_ready_4` tinyint(1) NOT NULL DEFAULT '0',
+  `start_flag` tinyint(1) NOT NULL DEFAULT '0',
+  `player1` int(11) NOT NULL,
+  `player2` int(11) NOT NULL DEFAULT '0',
+  `player3` int(11) NOT NULL DEFAULT '0',
+  `player4` int(11) NOT NULL DEFAULT '0',
+  `full_flag` tinyint(1) NOT NULL DEFAULT '0',
+  `event_chat_id_1` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_2` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_3` varchar(10) NOT NULL DEFAULT '',
+  `event_chat_id_4` varchar(10) NOT NULL DEFAULT '',
+  `ended_flag_1` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_2` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_3` tinyint(1) NOT NULL DEFAULT '0',
+  `ended_flag_4` tinyint(1) NOT NULL DEFAULT '0',
+  `timestamp` int(11) NOT NULL,
+  `card_switch` tinyint(1) NOT NULL,
+  `random` tinyint(1) NOT NULL DEFAULT '0',
+  `mission_id` tinyint(1) NOT NULL DEFAULT '1',
+  `bonus_value` float NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 数据导出被取消选择。
+-- 导出  表 lovelive.tmp_duty_user_room 结构
+CREATE TABLE IF NOT EXISTS `tmp_duty_user_room` (
+  `user_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `pos_id` int(11) NOT NULL,
+  `deck_id` int(11) NOT NULL
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
@@ -401,12 +515,12 @@ CREATE TABLE IF NOT EXISTS `unit_list` (
   `love` int(11) NOT NULL DEFAULT '0',
   `unit_skill_exp` int(11) NOT NULL DEFAULT '0',
   `removable_skill` text,
-  `removable_skill_count` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `removable_skill_count` tinyint(4) NOT NULL DEFAULT '0',
   `favorite_flag` tinyint(1) NOT NULL DEFAULT '0',
   `display_rank` tinyint(4) NOT NULL DEFAULT '2',
   `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`unit_owning_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3709 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1269050 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.unit_support_list 结构
@@ -439,9 +553,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `over_max_energy` int(11) NOT NULL DEFAULT '0',
   `energy_full_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `daily_reward` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `mail` TEXT NULL DEFAULT NULL,
-  `mail_pending` TEXT NULL DEFAULT NULL,
-  `mail_secret_key` TEXT NULL DEFAULT NULL,
+  `mail` text,
+  `mail_pending` text,
+  `mail_secret_key` text,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -474,52 +588,7 @@ CREATE TABLE IF NOT EXISTS `webview` (
   `detail_id` int(11) NOT NULL DEFAULT '0',
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
--- 表的结构 `tmp_duty_result`
-CREATE TABLE `tmp_duty_result` (
-  `user_id` int(11) NOT NULL,
-  `duty_event_room_id` int(11) NOT NULL,
-  `result` text NOT NULL,
-  `reward` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- 表的结构 `tmp_duty_room`
-CREATE TABLE `tmp_duty_room` (
-  `duty_event_room_id` int(11) NOT NULL,
-  `difficulty` int(11) NOT NULL,
-  `live_difficulty_id` int(11) NOT NULL,
-  `player_ready_1` tinyint(1) NOT NULL DEFAULT '0',
-  `player_ready_2` tinyint(1) NOT NULL DEFAULT '0',
-  `player_ready_3` tinyint(1) NOT NULL DEFAULT '0',
-  `player_ready_4` tinyint(1) NOT NULL DEFAULT '0',
-  `start_flag` tinyint(1) NOT NULL DEFAULT '0',
-  `player1` int(11) NOT NULL,
-  `player2` int(11) NOT NULL DEFAULT '0',
-  `player3` int(11) NOT NULL DEFAULT '0',
-  `player4` int(11) NOT NULL DEFAULT '0',
-  `full_flag` tinyint(1) NOT NULL DEFAULT '0',
-  `event_chat_id_1` varchar(10) NOT NULL DEFAULT '',
-  `event_chat_id_2` varchar(10) NOT NULL DEFAULT '',
-  `event_chat_id_3` varchar(10) NOT NULL DEFAULT '',
-  `event_chat_id_4` varchar(10) NOT NULL DEFAULT '',
-  `ended_flag_1` tinyint(1) NOT NULL DEFAULT '0',
-  `ended_flag_2` tinyint(1) NOT NULL DEFAULT '0',
-  `ended_flag_3` tinyint(1) NOT NULL DEFAULT '0',
-  `ended_flag_4` tinyint(1) NOT NULL DEFAULT '0',
-  `timestamp` int(11) NOT NULL,
-  `card_switch` tinyint(1) NOT NULL,
-  `random` TINYINT(1) NOT NULL DEFAULT '0',
-  `mission_id` TINYINT(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- 表的结构 `tmp_duty_user_room`
-CREATE TABLE `tmp_duty_user_room` (
-  `user_id` int(11) NOT NULL,
-  `room_id` int(11) NOT NULL,
-  `pos_id` int(11) NOT NULL,
-  `deck_id` int(11) NOT NULL
-) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
