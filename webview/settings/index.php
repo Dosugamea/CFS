@@ -59,7 +59,7 @@ a{color: #000000;}
 <div id="body">
 <div id="container">
 <ul id="list">
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">数据包下载节点设置</h2>
           <div class="summary kawai-div">
@@ -77,7 +77,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">自定义组曲</h2>
           <a href="/webview.php/settings/medley"><div class="summary">点击跳转至自定义组曲设置页<br>
@@ -85,7 +85,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">卡片开关</h2>
           <div class="summary">
@@ -105,7 +105,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">头像设置</h2>
           <div class="summary">
@@ -124,7 +124,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">用户</h2>
           <div class="summary">

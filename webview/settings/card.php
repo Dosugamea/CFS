@@ -85,9 +85,9 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
 <div id="body">
 <div id="container">
 <ul id="list">
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
-          <h2 class="text">自定义组曲</h2>
+          <h2 class="text">卡片开关</h2>
           <div class="summary">
             您的UID：<?=$uid?>，已<?=($params['card_switch']?'启':'禁')?>用卡片功能。<br />
             <?php if($params['enable_card_switch']) : ?>
@@ -100,7 +100,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">设置头像</h2>
           <div class="summary">
@@ -115,7 +115,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
           <div class="clearfix"></div>
         </div>
       </li>
-      <li class="entry"">
+      <li class="entry">
         <div class="entry-container">
           <h2 class="text">相关信息</h2>
           <div class="summary">
