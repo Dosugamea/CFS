@@ -11,11 +11,15 @@ include_once("includes/check_admin.php");
 		</select><br>
 	数量：<input type="text" name="amount"> <br>
 	信息：<input type="text" name="description"> <br>
-	额外用户筛选参数（SQL，以WHERE开头）：<input type="text" name="extra"> <br>
+	额外用户筛选参数(SQL,以WHERE开头)：<input type="text" name="extra" value="WHERE "> <br>
 	<input type="submit" value="提交">
 </form>
 <?php
 if(!isset($_POST['item']) || !isset($_POST['amount']) || !isset($_POST['description']) || !isset($_POST['extra'])){
+	die();
+}
+if($_POST['amount']<=0){
+	print("嘤嘤嘤 人家才不要这数量的礼物呢喵");
 	die();
 }
 switch($_POST['item']){
