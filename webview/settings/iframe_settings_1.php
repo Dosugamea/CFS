@@ -23,7 +23,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
 if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_switch']) {
   $query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.(int)$_GET['target']);
   if($query1->rowCount()!=0){
-    echo "用户".$_GET['target'].($query1->fetchColumn()==1?" 已经提交过开卡审核":" 已经开卡")."<br />";
+    echo "用户".$_GET['target'].($query1->fetchColumn()==0?" 已经提交过开卡审核":" 已经开卡")."<br />";
   }else{
     $mysql->prepare('INSERT INTO user_card_switch (user_id, user_from, stat) VALUES (?, ?, 0)')->execute([$_GET['target'],$uid]);
     echo "用户".$_GET['target']." 开卡审核已提交<br />";;

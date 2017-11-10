@@ -35,6 +35,7 @@ include_once("includes/check_admin.php");
 						$users = $pdo -> query("select * from users")->fetchAll(PDO::FETCH_ASSOC); 
 						foreach($users as $i){
 							$card_en = $pdo -> query("SELECT value FROM user_params WHERE param = 'enable_card_switch' AND user_id = ".$i['user_id'])->fetchColumn();
+							$card_en2 = $pdo -> query("SELECT stat FROM user_card_switch WHERE user_id = ".$i['user_id'])->fetchColumn();
 							$lv = $pdo -> query("SELECT level FROM users WHERE user_id = ".$i['user_id'])->fetchColumn();
 							$mail = $pdo -> query("SELECT mail FROM users WHERE user_id = ".$i['user_id'])->fetchColumn();
 							$item4 = $pdo -> query("SELECT value FROM user_params WHERE param = 'item4' AND user_id = ".$i['user_id'])->fetchColumn();
@@ -49,9 +50,9 @@ include_once("includes/check_admin.php");
 						<td><?php print($i['user_id'])?></td>
 						<td>
 							<?php 
-								if($card_en == '1'){
+								if(($card_en + $card_en2) > 0){
 									print('是');
-								}elseif($card_en == '0'){
+								}else{
 									print('否');
 								}
 							?>

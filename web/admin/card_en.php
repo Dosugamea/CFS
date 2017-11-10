@@ -22,10 +22,10 @@ include_once("includes/check_admin.php");
 				<?php
 						require "../../config/database.php";
 						$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
-						$rs = $pdo -> query("select a.*,b.* from user_params as a left join users as b on a.user_id = b.user_id where param = 'enable_card_switch' and value = 1");
-						$rs2 = $pdo -> query("select a.*,b.* from user_card_switch as a left join users as b on a.user_id = b.user_id where stat = 1"); 
+						$rs = $pdo -> query("SELECT a.*,b.* from user_params as a left join users as b on a.user_id = b.user_id where param = 'enable_card_switch' and value = 1") -> fetchAll();
+						$rs2 = $pdo -> query("SELECT a.*,b.* from user_card_switch as a left join users as b on a.user_id = b.user_id where stat = 1 ORDER BY a.user_id") -> fetchAll(); 
 						$rs = array_merge($rs2, $rs);
-						foreach($rs as $v) {
+					foreach($rs as $v) {
 					?>
 					<tr>
 						<td>用户ID:</td>
@@ -54,12 +54,17 @@ include_once("includes/check_admin.php");
 						foreach($rs2 as $v) {
 					?>
 					<tr>
-						<td>用户ID:</td>
-						<td><?=$v['user_id']?></td>
-						<td>用户名:</td>
-						<td><?=$v['name']?></td>
-						<td>担保者ID:</td>
-						<td><?=(isset($v['user_from'])?$v['user_from']:"未知")?></td>
+						<td>用户:</td>
+						<td><?=$v['user_id']?> / <?=$v['name']?></td>
+						<td>担保者:</td>
+						<td><?=$v['user_from']?> / <?php 
+							foreach($rs as $v1) {
+								if($v1['user_id']==$v['user_from']){
+									echo $v1['name'];
+									break;
+								}
+							}
+						?></td>
 						<td><a href="card_en_bg.php?accept=<?=$v['user_id']?>">同意</a></td>
 						<td><a href="card_en_bg.php?reject=<?=$v['user_id']?>">拒绝</a></td>
 					</tr>
@@ -91,7 +96,7 @@ include_once("includes/check_admin.php");
 						<td>封禁信息</td>
 					</tr>
 				<?php
-						require "../config/database.php";
+						require "../../config/database.php";
 						$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
 						$rs = $pdo -> query("select a.*,b.* from banned_user as a left join users as b on a.user = b.user_id"); 
 						foreach($rs as $v) {
