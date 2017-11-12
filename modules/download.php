@@ -60,7 +60,7 @@ function download_batch($post) {
 		if($download_site == "1"){
 			$ret = json_encode($ret);
 			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
-			$ret = json_decode($ret);
+			$ret = json_decode($ret, true);
 		}
 		return removeQueryStrings($ret);
 	}
