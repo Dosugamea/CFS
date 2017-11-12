@@ -142,7 +142,7 @@ function removeQueryStrings($ret){
 			$url = explode("?", $i['url'])[0];
 			$fhash = substr($url, -43, 32);
 			$fullfname = $package_path.$fhash;
-			if(is_file($fullname)){
+			if(is_file($fullfname)){
 				$i['url'] = $url;
 			}
 		}
