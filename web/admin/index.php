@@ -39,6 +39,9 @@ include_once("includes/check_admin.php");
 			<td>
 				<div class="index-icon"><a href="add_present.php">赠送礼物</a></div>
 			</td>
+			<td>
+				<div class="index-icon"><a href="update.php">谱面更新</a></div>
+			</td>
 		</tr>
 	</table>
 </body>

@@ -22,8 +22,10 @@ include_once("includes/check_admin.php");
 				<?php
 						require "../../config/database.php";
 						$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
-						$rs = $pdo -> query("SELECT a.*,b.* from user_params as a left join users as b on a.user_id = b.user_id where param = 'enable_card_switch' and value = 1") -> fetchAll();
-						$rs2 = $pdo -> query("SELECT a.*,b.* from user_card_switch as a left join users as b on a.user_id = b.user_id where stat = 1 ORDER BY a.user_id") -> fetchAll(); 
+						$rs = $pdo -> query("SELECT a.*,b.* from user_params as a left join users as b on a.user_id = b.user_id where param = 'enable_card_switch' and value = 1");
+						$rs = $rs ? $rs -> fetchAll() : [];
+						$rs2 = $pdo -> query("SELECT a.*,b.* from user_card_switch as a left join users as b on a.user_id = b.user_id where stat = 1 ORDER BY a.user_id"); 
+						$rs2 = $rs2 ? $rs2 -> fetchAll() : [];
 						$rs = array_merge($rs2, $rs);
 					foreach($rs as $v) {
 					?>
