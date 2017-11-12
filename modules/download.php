@@ -26,7 +26,7 @@ function download_additional($post) {
 	if($download_site == "1"){
 		$ret = json_encode($ret);
 		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
-		$ret = json_decode($ret);
+		$ret = json_decode($ret, true);
 	}
 	return removeQueryStrings($ret);
 }
@@ -86,7 +86,7 @@ function download_event($post) {
 		if($download_site == "1"){
 			$ret = json_encode($ret);
 			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
-			$ret = json_decode($ret);
+			$ret = json_decode($ret, true);
 		}
 		return removeQueryStrings($ret);
 	}
@@ -114,7 +114,7 @@ function download_update($post) {
 	if($download_site == "1"){
 		$ret = json_encode($ret);
 		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy, $ret));
-		$ret = json_decode($ret);
+		$ret = json_decode($ret, true);
 	}
 	$extend = $mysql->query('
 		SELECT extend_download.* FROM extend_download_queue
