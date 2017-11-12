@@ -132,7 +132,9 @@ function download_update($post) {
 }
 
 function removeQueryStrings($ret){
+	global $uid, $mysql;
 	include '../config/modules_download.php';
+	
 	$download_site = (int)$mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
 	$package_path = $_SERVER['HTTP_OS'] == 'iOS' ? $check_package_ios : $check_package_an;
 	if($reverse_proxy && $download_site == 1){
