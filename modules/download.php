@@ -28,7 +28,7 @@ function download_additional($post) {
 		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 		$ret = json_decode($ret);
 	}
-	return $ret;
+	return removeQueryStrings($ret);
 }
 
 function download_batch($post) {
@@ -62,7 +62,7 @@ function download_batch($post) {
 			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 			$ret = json_decode($ret);
 		}
-		return $ret;
+		return removeQueryStrings($ret);
 	}
 }
 
@@ -88,7 +88,7 @@ function download_event($post) {
 			$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
 			$ret = json_decode($ret);
 		}
-		return $ret;
+		return removeQueryStrings($ret);
 	}
 }
 
@@ -113,7 +113,7 @@ function download_update($post) {
 	$download_site = $mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
 	if($download_site == "1"){
 		$ret = json_encode($ret);
-		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy,$ret));
+		$ret = (str_replace('dnw5grz2619mn.cloudfront.net', $reverse_proxy, $ret));
 		$ret = json_decode($ret);
 	}
 	$extend = $mysql->query('
@@ -128,7 +128,24 @@ function download_update($post) {
 		$ret[] = $i;
 	}
 	$mysql->query("DELETE FROM extend_download_queue WHERE user_id = ".$uid);
-	return $ret;
+	return removeQueryStrings($ret);
 }
 
+function removeQueryStrings($ret){
+	include '../config/modules_download.php';
+	$download_site = (int)$mysql->query('SELECT download_site FROM users WHERE user_id='.$uid)->fetch()[0];
+	$package_path = $_SERVER['HTTP_OS'] == 'iOS' ? $check_package_ios : $check_package_an;
+	if($reverse_proxy && $download_site == 1){
+		foreach($ret as &$i){
+			$url = explode("?", $i['url'])[0];
+			$fhash = substr($url, -43, 32);
+			$fullfname = $package_path.$fhash;
+			if(is_file($fullname)){
+				$i['url'] = $url;
+			}
+		}
+	}
+	
+	return $ret;
+}
 ?>
