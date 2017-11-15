@@ -68,24 +68,32 @@ if ($_SERVER['PATH_INFO'] == '/login/login'){
 	$sessionKey = base64_decode($sessionKey);
 }
 
-require '../config/code.php';
-if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && $_SERVER['PATH_INFO'] != '/ranking/player' && $_SERVER['PATH_INFO'] != '/lbonus/execute' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
-	throw400('X-MESSAGE-CODE-WRONG');
+require("../config/code.php");
+require("../config/modules_login.php");
+
+if(!file_exists("../XMCWrong.log")){
+	$XMCLOG = fopen("../XMCWrong.log","w");
+}else{
+	$XMCLOG = fopen("../XMCWrong.log","a");
 }
 
-if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] == hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
-	if(!file_exists("../NewXMCWrong.log")){
-		$LOGFILE = fopen("../NewXMCWrong.log","w");
-	}else{
-		$LOGFILE = fopen("../NewXMCWrong.log","a");
-	}
-    fwrite($LOGFILE,date("Y-m-d H:i:s"));
-    fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']);
-    fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
-    fwrite($LOGFILE," ".$_SERVER['HTTP_X_MESSAGE_CODE']);
-    fwrite($LOGFILE,"\n");
-    fclose($LOGFILE);
+if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && $_SERVER['PATH_INFO'] != '/ranking/player' && $_SERVER['PATH_INFO'] != '/lbonus/execute' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
+	fwrite($XMCLOG, date("Y-m-d H:i:s"));
+    fwrite($XMCLOG, " ".$_SERVER['HTTP_USER_ID']);
+    fwrite($XMCLOG, " ".$_SERVER['PATH_INFO']);
+    fwrite($XMCLOG, " ".$_SERVER['HTTP_X_MESSAGE_CODE']);
+    fwrite($XMCLOG, "\r\n");
+	throw400('X-MESSAGE-CODE-WRONG');
 }
+//特殊接口
+if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], xor_($base_key, $application_key)))) {
+    fwrite($XMCLOG, date("Y-m-d H:i:s"));
+    fwrite($XMCLOG, " ".$_SERVER['HTTP_USER_ID']);
+    fwrite($XMCLOG, " ".$_SERVER['PATH_INFO']);
+    fwrite($XMCLOG, " ".$_SERVER['HTTP_X_MESSAGE_CODE']);
+    fwrite($XMCLOG, "\r\n");
+}
+fclose($XMCLOG);
 
 if (isset($_SERVER['HTTP_USER_ID']) && $_SERVER['HTTP_USER_ID'] == -1) {
 	header('Maintenance: 1');
