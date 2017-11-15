@@ -67,6 +67,7 @@ class poster{
 		if(time() - $this->cache['time'] > 43200){ //每12小时刷新token
 			$this->login();
 			$this->cache['sessionKey'] = base64_encode($this->sessionKey);
+			ftruncate($cache_file,0);
 			rewind($cache_file);
 			fwrite($cache_file, json_encode($this->cache));
 		}
