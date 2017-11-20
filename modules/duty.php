@@ -54,96 +54,76 @@ function duty_dutyInfo(){
 //获得全体协作任务
 function duty_allUserMission(){
     return json_decode('{
-		"has_joined": true,
 		"all_user_mission_list": [
 			{
-				"all_user_mission_id": 1,
+				"all_user_mission_id": 13,
 				"all_user_mission_type": 1,
-				"start_date": "2017-08-20 16:00:00",
-				"end_date": "2017-08-21 14:59:59",
-				"accomplished_value": 2785039489460,
-				"current_flag": true,
+				"title_num": 1,
+				"title": "目標1",
+				"accomplished_value": 1000000000000,
+				"has_played": true,
 				"goal_list": [
 					{
-						"goal_value": 10000000000000,
-						"mission_rank": 7,
-						"achieved": true,
-						"reward": {
-							"item_id": 2,
-							"add_type": 3006,
-							"amount": 1,
-							"item_category_id": 0
-						},
-						"now_achieved": false,
-						"is_added": false
-					},{
-						"goal_value": 10000000000000,
-						"mission_rank": 6,
-						"achieved": true,
-						"reward": {
-							"item_id": 2,
-							"add_type": 3006,
-							"amount": 1,
-							"item_category_id": 0
-						},
-						"now_achieved": false,
-						"is_added": false
-					},{
 						"goal_value": 1000000000000,
-						"mission_rank": 1,
 						"achieved": true,
 						"reward": {
-							"item_id": 2,
-							"add_type": 3006,
+							"item_id": 4,
+							"add_type": 3001,
 							"amount": 1,
-							"item_category_id": 0
+							"item_category_id": 4
 						},
-						"now_achieved": false,
-						"is_added": false
+						"now_achieved": false
 					},
 					{
-						"goal_value": 700000000000,
-						"mission_rank": 2,
+						"goal_value": 800000000000,
+						"achieved": true,
+						"reward": {
+							"item_id": 382,
+							"add_type": 1001,
+							"amount": 1,
+							"is_rank_max": false,
+							"item_category_id": 0
+						},
+						"now_achieved": false
+					},
+					{
+						"goal_value": 600000000000,
 						"achieved": true,
 						"reward": {
 							"item_id": 89,
 							"add_type": 1001,
 							"amount": 1,
-							"rank_max_flag": false,
+							"is_rank_max": false,
 							"item_category_id": 0
 						},
-						"now_achieved": false,
-						"is_added": false
+						"now_achieved": false
 					},
 					{
-						"goal_value": 500000000000,
-						"mission_rank": 3,
+						"goal_value": 400000000000,
 						"achieved": true,
 						"reward": {
 							"item_id": 2,
 							"add_type": 3002,
-							"amount": 500,
+							"amount": 400,
 							"item_category_id": 2
 						},
-						"now_achieved": false,
-						"is_added": false
+						"now_achieved": false
 					},
 					{
-						"goal_value": 300000000000,
-						"mission_rank": 4,
+						"goal_value": 200000000000,
 						"achieved": true,
 						"reward": {
 							"item_id": 3,
 							"add_type": 3000,
-							"amount": 5000,
+							"amount": 1000,
 							"item_category_id": 3
 						},
-						"now_achieved": false,
-						"is_added": false
+						"now_achieved": false
 					}
 				]
 			}
-		]
+		],
+		"all_user_mission_total": 1000000000000
 	}',true);
 }
 
@@ -155,8 +135,8 @@ function duty_top() {
 	$ret = [];
 	$ret['event_status']['total_event_point'] = $event_status['event_point'];
 	$ret['event_status']['event_rank'] = $event_status['event_point'] ? $event_status['rank'] : false;
-	$ret['all_user_mission_rank'] = 7;//全体任务完成进度
-	$ret['has_history'] = false;//打嗝历史，以后再加
+	$ret['all_user_mission'] = runAction("duty", "allUserMission")['all_user_mission_list'][0];
+	$ret['all_user_mission']['has_history'] = true;
     return $ret;
 }
 
