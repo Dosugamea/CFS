@@ -126,7 +126,16 @@ function ranking_eventPlayer($post) {
 	$ret = [];
 	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
 	$ret['page'] = $post['page'];
-	$result = $mysql->query("SELECT * FROM event_point WHERE user_id NOT IN (SELECT user_id FROM (SELECT user_id FROM event_point WHERE event_id = ? ORDER BY event_point DESC LIMIT ".($post['page'] * 20 + $post['buff']).") AS A) AND event_id = ? ORDER BY event_point DESC LIMIT ".($post['page'] * 20 + 20),[$post['event_id'], $post['event_id']])->fetchAll(PDO::FETCH_ASSOC);
+	$result = $mysql->query("SELECT * FROM event_point 
+		WHERE user_id NOT IN (
+			SELECT user_id FROM (
+				SELECT user_id FROM event_point 
+					WHERE event_id = ? AND event_point != 0
+					ORDER BY event_point 
+					DESC LIMIT ".($post['page'] * 20 + $post['buff']).") AS A) 
+				AND event_id = ? 
+				ORDER BY event_point 
+				DESC LIMIT ".($post['page'] * 20 + 20), [$post['event_id'], $post['event_id']])->fetchAll(PDO::FETCH_ASSOC);
 	$ret['items'] = [];
 	foreach($result as $k=>$i){
 		$item = [];
