@@ -28,7 +28,7 @@ class myPDO extends PDO {
       $result = $ret->execute($parameters);
     }
     if ($result === false) {
-      trigger_error('Prepared query failed');
+      trigger_error('Prepared query failed\n Parameters: '.json_encode($parameters);
     } elseif($ret === false) {
       trigger_error('Query failed');
     } else {
