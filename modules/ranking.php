@@ -3,6 +3,9 @@
 //ranking/live 曲目排名
 function ranking_live($post) {
 	global $mysql, $params;
+	if(!is_numeric($post['live_difficulty_id'])){
+		throw403("INJECTION_DECTECTED");
+	}
 	$notes_setting = getLiveSettings($post['live_difficulty_id'], 'notes_setting_asset');
 	$ret['total_cnt'] = 10;
 	$ret['page'] = 0;
@@ -66,6 +69,9 @@ function ranking_live($post) {
 //ranking/player 玩家排名
 function ranking_player($post) {
 	global $mysql, $params;
+	if(!is_numeric($post['page'])){
+		throw403("INJECTION_DECTECTED");
+	}
 	$ret['rank'] = null;
 	$ret['items'] = [];
 	$count = 20;
@@ -85,7 +91,7 @@ function ranking_player($post) {
 			return $ret;
 		}
 	} else {
-		$begin = $post['page']*$count;
+		$begin = $post['page'] * $count;
 		$ret['page'] = $post['page'];
 	}
 	$rank = $mysql->query('
@@ -97,7 +103,7 @@ function ranking_player($post) {
 			) b
 			LEFT JOIN users ON users.user_id=b.user_id
 			LEFT JOIN user_deck ON user_deck.user_id=b.user_id
-		)a, (SELECT @id:='.($ret['page']*$count).')rank LIMIT '.($ret['page']*$count).','.$count);
+		)a, (SELECT @id:='.($ret['page'] * $count).')rank LIMIT '.($ret['page'] * $count).','.$count);
 	while($item = $rank->fetch()) {
 		$ret2['rank'] = (int)$item['rank'];
 		$ret2['score'] = (int)$item['score'];
@@ -123,6 +129,9 @@ function ranking_player($post) {
 
 function ranking_eventPlayer($post) {
 	global $mysql;
+	if(!is_numeric($post['page']) || !is_numeric($post['buff'])){
+		throw403("INJECTION_DECTECTED");
+	}
 	$ret = [];
 	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ? AND event_point != 0", [$post['event_id']])->fetchColumn();
 	$ret['page'] = $post['page'];
@@ -158,6 +167,9 @@ function ranking_eventPlayer($post) {
 
 function ranking_eventLive($post) {
 	global $mysql;
+	if(!is_numeric($post['page']) || !is_numeric($post['buff'])){
+		throw403("INJECTION_DECTECTED");
+	}
 	$ret = [];
 	$ret['total_cnt'] = (int)$mysql->query("SELECT COUNT(*) FROM event_point WHERE event_id = ?", [$post['event_id']])->fetchColumn();
 	$ret['page'] = $post['page'];
