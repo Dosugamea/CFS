@@ -474,7 +474,7 @@ CREATE TABLE IF NOT EXISTS `tmp_duty_user_room` (
   `user_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   `pos_id` int(11) NOT NULL,
-  `deck_id` int(11) NOT NULL
+  `deck_id` int(11) 
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 
 -- 数据导出被取消选择。
