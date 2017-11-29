@@ -21,7 +21,8 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
 
 //开卡申请算心
 $query2=$mysql->query('SELECT * FROM user_card_switch WHERE user_from='.$uid);
-$loveca_use=floor(10*pow(100/3.0,$query2->rowCount()));
+$loveca=$mysql->query('SELECT item4 FROM user_params WHERE user_id='.$uid)->fetchColumn();
+$loveca_use=floor(10*pow(10/3.0,$query2->rowCount()-1));
 
 //提交开卡申请
 if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_switch']) {
@@ -29,12 +30,14 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
   if($query1->rowCount()!=0){
     echo "用户".$_GET['target'].($query1->fetchColumn()==0?" 已经提交过开卡审核":" 已经开卡")."<br />";
   }else{
-    if($params['loveca']<$loveca_use){
-      echo "Loveca不足，需要".$loveca_use."仅剩".$params['loveca'];
+    
+    if($loveca<$loveca_use){
+      echo "Loveca不足，需要".$loveca_use."仅剩".$loveca;
     }else{
       $mysql->prepare('INSERT INTO user_card_switch (user_id, user_from, stat) VALUES (?, ?, 0)')->execute([$_GET['target'],$uid]);
       echo "用户".$_GET['target']." 开卡审核已提交<br />";
-      $params['loveca']-=$loveca_use;
+      $loveca-=$loveca_use;
+      $mysql->query('UPDATE user_params SET value='.$loveca.' WHERE user_id='.$uid.' and param="item4"');
       $loveca_use=floor($loveca_use*33.333);
   }
   }
@@ -63,7 +66,7 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
 <a href="/webview.php/settings/iframe_settings_1?switch_card=<?=($params['card_switch']?'0':'1')?>"><?=($params['card_switch']?'禁':'启')?>用卡片功能</a><br />
 <span style="color:red;font-weight:bold">注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！</span><br />
 <form method="get" action="/webview.php/settings/iframe_settings_1">
-下一次担保将扣除 <?=$loveca_use?> loveca<br />
+下一次担保将扣除 <?=$loveca_use?> loveca, 当前的loveca为 <?=$loveca?><br />
 请输入申请被担保的用户ID：<input type="text" name="target" autocomplete="off" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submit" value="提交" />
 </form>
 <?php else : ?>
