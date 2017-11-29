@@ -19,14 +19,24 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
   $params['card_switch']=$_GET['switch_card'];
 }
 
+//开卡申请算心
+$query2=$mysql->query('SELECT * FROM user_card_switch WHERE user_from='.$uid);
+$loveca_use=floor(10*pow(100/3.0,$query2->rowCount()));
+
 //提交开卡申请
 if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_switch']) {
   $query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.(int)$_GET['target']);
   if($query1->rowCount()!=0){
     echo "用户".$_GET['target'].($query1->fetchColumn()==0?" 已经提交过开卡审核":" 已经开卡")."<br />";
   }else{
-    $mysql->prepare('INSERT INTO user_card_switch (user_id, user_from, stat) VALUES (?, ?, 0)')->execute([$_GET['target'],$uid]);
-    echo "用户".$_GET['target']." 开卡审核已提交<br />";;
+    if($params['loveca']<$loveca_use){
+      echo "Loveca不足，需要".$loveca_use."仅剩".$params['loveca'];
+    }else{
+      $mysql->prepare('INSERT INTO user_card_switch (user_id, user_from, stat) VALUES (?, ?, 0)')->execute([$_GET['target'],$uid]);
+      echo "用户".$_GET['target']." 开卡审核已提交<br />";
+      $params['loveca']-=$loveca_use;
+      $loveca_use=floor($loveca_use*33.333);
+  }
   }
 }
 ?>
@@ -39,9 +49,8 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
   else
     $result1="未知";
 
-  $query2=$mysql->query('SELECT * FROM user_card_switch WHERE user_from='.$uid);
   $result2="";
-  if($query1->rowCount()!=0)
+  if($query2->rowCount()!=0)
     while($temp2=$query2->fetch())
       $result2.=$temp2['user_id'].($temp2['stat']==1?" ":"(待审) ");
   else
@@ -54,6 +63,7 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
 <a href="/webview.php/settings/iframe_settings_1?switch_card=<?=($params['card_switch']?'0':'1')?>"><?=($params['card_switch']?'禁':'启')?>用卡片功能</a><br />
 <span style="color:red;font-weight:bold">注意：重启游戏后生效。不重启的话任何操作都可能导致客户端崩溃或者“服务器爆炸”！</span><br />
 <form method="get" action="/webview.php/settings/iframe_settings_1">
+下一次担保将扣除 <?=$loveca_use?> loveca<br />
 请输入申请被担保的用户ID：<input type="text" name="target" autocomplete="off" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submit" value="提交" />
 </form>
 <?php else : ?>
