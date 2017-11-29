@@ -22,7 +22,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
 //开卡申请算心
 $query2=$mysql->query('SELECT * FROM user_card_switch WHERE user_from='.$uid);
 $loveca=$mysql->query('SELECT value FROM user_params WHERE param="item4" AND user_id='.$uid)->fetchColumn();
-$loveca_use=floor(10*pow(10/3.0,$query2->rowCount()));
+$loveca_use=floor(10*pow(sqrt(10),$query2->rowCount()));
 
 //提交开卡申请
 if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_switch']) {
@@ -32,13 +32,13 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
   }else{
     
     if($loveca<$loveca_use){
-      echo "Loveca不足，需要".$loveca_use."仅剩".$loveca;
+      echo "Loveca不足，需要 ".$loveca_use." loveca，当前 ".$loveca." loveca";
     }else{
       $mysql->prepare('INSERT INTO user_card_switch (user_id, user_from, stat) VALUES (?, ?, 0)')->execute([$_GET['target'],$uid]);
       echo "用户".$_GET['target']." 开卡审核已提交<br />";
       $loveca-=$loveca_use;
       $mysql->query('UPDATE user_params SET value='.$loveca.' WHERE user_id='.$uid.' and param="item4"');
-      $loveca_use=floor($loveca_use*33.333);
+      $loveca_use=floor($loveca_use*sqrt(10));
   }
   }
 }

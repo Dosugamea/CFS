@@ -5,9 +5,12 @@
 	require "../../config/database.php";
 	$pdo = new PDO("mysql:host=".$mysql_server.";dbname=$mysql_db",$mysql_user,$mysql_pass); 
 
-	//管理强制开卡
+	//管理强制开关卡
 	if (isset($_POST['op']) && ($_POST['op'] != NULL)) {
 	$pdo -> query("UPDATE user_params SET value=".$_POST['op']." WHERE param = 'enable_card_switch' AND user_id =".$_POST['user_id']);
+	if(isset($_POST['op'])==0){//强制关卡
+		$pdo -> query("DELETE FROM user_card_switch WHERE user_id =".$_POST['user_id']);//同时删除新开卡信息
+	}
 	print("更新成功 <a href='javascript:history.go(-1);'>返回上一页</a>");
 	}
 
