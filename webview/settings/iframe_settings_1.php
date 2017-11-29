@@ -21,7 +21,7 @@ if(isset($_GET['switch_card']) && $params['enable_card_switch']) {
 
 //开卡申请算心
 $query2=$mysql->query('SELECT * FROM user_card_switch WHERE user_from='.$uid);
-$loveca=$mysql->query('SELECT item4 FROM user_params WHERE user_id='.$uid)->fetchColumn();
+$loveca=$mysql->query('SELECT value FROM user_params WHERE param="item4" AND user_id='.$uid)->fetchColumn();
 $loveca_use=floor(10*pow(10/3.0,$query2->rowCount()-1));
 
 //提交开卡申请
