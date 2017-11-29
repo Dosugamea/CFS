@@ -31,24 +31,85 @@ function getRewardList($post, $history) {
 		$unset = 'opened_date';
 	}
 	global $uid, $mysql;
+	$unit = getUnitDb();
 	$filter = getfilter($post['category'], $post['filter']);
+	
 	if($history)
 		$filter .= " ORDER BY opened_date DESC";
 	else if(isset($post['order']) && $post['order'])
 		$filter .= " ORDER BY incentive_id ASC";
 	else
 		$filter .= " ORDER BY incentive_id DESC";
+	
 	$res = $mysql->query('SELECT * FROM incentive_list WHERE user_id='.$uid.' AND opened_date'.($history?'!=':'=').'0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['item_count'] = count($res);
 	$ret[$array_name] = [];
 	$correct_add_type = [1000, 3002, 3000, 3001, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000];
+	
 	foreach ($res as $r) {
 		foreach ($r as &$v) {
 			if (is_numeric($v)) $v = (int)$v;
 		}
 		if ($r['is_card']) {
 			$r['add_type'] = 1001;
-			$r['item_category_id'] = $r['incentive_item_id'];
+			$r['item_category_id'] = 0;
+			$r['unit_id'] = $r['incentive_item_id'];
+			unset($r['item_id']);
+			if($r['extra_info']){
+				$extra_info = json_decode($r['extra_info'], true);
+				$r = array_merge($r, $extra_info);
+				unset($r['extra_info']);
+			}
+			$unit_info = $unit->query("SELECT * FROM unit_m WHERE unit_id = ?", [$r['unit_id']])->fetch(PDO::FETCH_ASSOC);
+			
+			if(!isset($r['rank'])){
+				$r['rank'] = 1;
+			}
+			if($r['rank'] == 1){
+				$prefix = "before";
+			}else{
+				$prefix = "after";
+			}
+			
+			$r['max_level'] = (int)$unit_info[$prefix."_level_max"];
+			$r['max_rank'] = (bool)$unit_info["disable_rank_up"] ? 1 : 2;
+			$r['max_love'] = (int)$unit_info[$prefix."_love_max"];
+			$r['is_support_member'] = (bool)$unit_info["disable_rank_up"];
+			
+			if(!isset($r['exp'])){
+				$r['exp'] = 0;
+			}
+			$level_pattern = $unit->query("SELECT * FROM unit_level_up_pattern_m WHERE unit_level_up_pattern_id = ? AND next_exp > ?", [$unit_info['unit_level_up_pattern_id'], $r['exp']])->fetch(PDO::FETCH_ASSOC);
+			if(!$level_pattern){
+				$level_pattern = $unit->query("SELECT * FROM unit_level_up_pattern_m WHERE unit_level_up_pattern_id = ? AND next_exp = 0", [$unit_info['unit_level_up_pattern_id']])->fetch(PDO::FETCH_ASSOC);
+			}
+			
+			$r['next_exp'] = (int)$level_pattern["next_exp"];
+			$r['max_hp'] = (int)$unit_info["hp_max"];
+			$r['level'] = (int)$level_pattern["unit_level"];
+			
+			if(!isset($r['unit_skill_exp'])){
+				$r['unit_skill_exp'] = 0;
+			}
+			$skill = $unit->query("SELECT * FROM unit_skill_m WHERE unit_skill_id = ?", [$unit_info['default_unit_skill_id']])->fetch(PDO::FETCH_ASSOC);
+			$skill_pattern = $unit->query("SELECT * FROM unit_skill_level_up_pattern_m WHERE unit_skill_level_up_pattern_id = ? AND next_exp >= ?", [$skill['unit_skill_level_up_pattern_id'], $r['unit_skill_exp']])->fetch(PDO::FETCH_ASSOC);
+			$r['skill_level'] = (int)$skill_pattern['skill_level'];
+			
+			if(!isset($r['love'])){
+				$r['love'] = 0;
+			}
+			
+			$r['is_rank_max'] = $r['max_rank'] == $r['rank'];
+			$r['is_level_max'] = $r['max_level'] == $r['level'];
+			$r['is_love_max'] = $r['max_love'] == $r['love'];
+			
+			$r['new_unit_flag'] = false;
+			$r['reward_box_flag'] = true;
+			$r['display_rank'] = $r['rank'];
+			if(!isset($r['unit_removable_skill_capacity'])){
+				$r['unit_removable_skill_capacity'] = $unit_info['default_removable_skill_capacity'];
+			}
+			
 		}else if($r['incentive_item_id'] > 1000){
 			$r['add_type'] = $r['incentive_item_id'];
 			$r['item_category_id'] = 0;
