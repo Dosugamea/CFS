@@ -203,18 +203,17 @@ function verify3() {
 <div id="body">
 <div id="container">
 <ul id="list">
-			<li class="entry"">
+			<li class="entry" id="goios" style="display: none;">
 				<div class="entry-container">
-					<h2 class="text">如果您的设备是 iOS</h2>
-					 <a href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>">
+					<h2 class="text">您的设备是iOS？</h2>
 					 <div class="summary" style="color: #000000 !important;">
-					 iOS用户专用注册链接。若您点击下面的文本框后客户端崩溃，请点此进行登录！<br>
-					 iOS use this link to Login,If you client crash when click the text eara under the this box
-					</div></a>
+					 我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内登录<br>
+      				将在 <span id="num"></span> 秒 后跳转到外部浏览器进行注册
+					</div>
 					<div class="clearfix"></div>
 				</div>
 			</li>
-			<li class="entry"">
+			<li class="entry" id="goand" style="display: none;">
 				<div class="entry-container">
 					<h2 class="text">注册</h2>
 					<div class="summary" >
@@ -250,7 +249,7 @@ function verify3() {
 					<div class="clearfix"></div>
 				</div>
 			</li>
-	</ul>
+		</ul>
 	</div>
 </div>
 </div>
@@ -260,5 +259,23 @@ function verify3() {
 		window.location.href='/webview.php/login/welcome';
 	});
 	Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
+	//break devices
+  		var strUA = "";
+        strUA = navigator.userAgent.toLowerCase();
+		if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
+         	var num=5;
+          	function redirect(){
+            	num--;
+            	document.getElementById("num").innerHTML=num;
+	            if(num<0){
+	              document.getElementById("num").innerHTML=0;
+	              location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
+	            }
+            }
+          	setInterval("redirect()", 1000);
+          	document.getElementById("goios").style.display = "block";
+        }else{
+           document.getElementById("goand").style.display = "block";
+        }
 </script>
 </body>

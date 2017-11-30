@@ -37,6 +37,17 @@
       </li>
       <li class="entry"">
         <div class="entry-container">
+          <h2 class="text">服务器地址</h2>
+          <div class="summary">
+              为了更好的服务全球各个地区的用户我们根据实际情况分别搭建了两条不同的线路供大家使用，请大家根据自己所在的地区进行选择，并在启动界面右上方点击"工具"按钮 并修改默认服务器<br>
+              Android客户端: 中国大陆地区 http://pcf.llsif.cn 国际地区用户 http://prod.customfe.su<br>
+              iOS客户端： 中国大陆地区 https://pcf.llsif.cn 国际地区用户 https://prod.customfe.su<br>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </li>
+      <li class="entry"">
+        <div class="entry-container">
           <h2 class="text">关于招募</h2>
           <div class="summary">
               1.PCF实施无心招募的模拟抽卡功能，其卡池与SIF日服同步，您可以自行选择自己喜欢的卡池进行招募，招募几率与SIF日服相同。<br>
