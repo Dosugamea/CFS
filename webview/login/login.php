@@ -78,17 +78,20 @@ if(isset($_POST['submit'])) {
 <div id="body">
 <div id="container">
 <ul id="list">
-    <li class="entry" id="goios" style="display: none;">
-      	<div class="entry-container" >
-      		<h2 class="text">您的设备是iOS？</h2>
-      		<div class="summary" style="color: #000000 !important;"> 
-      			我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内登录<br>
-      			将在 <span id="num"></span> 秒 后跳转到外部浏览器进行登录
-      		</div>
-      		<div class="clearfix"></div>
-      	</div>
-    </li>
-    <li class="entry" id="goand" style="display: none;">
+
+      <script type="text/javascript">
+        var strUA = "";
+        strUA = navigator.userAgent.toLowerCase();
+
+        if(strUA.indexOf("iphone") >= 0) {
+          document.write('<li class="entry""><div class="entry-container"><h2 class="text">您的设备是iOS？</h2><div class="summary" style="color: #000000 !important;">           我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内登录<br>            将在 <span id="num"></span> 秒 后跳转到外部浏览器进行登录</div><div class="clearfix"></div></div></li>');
+        } else if (strUA.indexOf("ipad") >= 0) {
+          document.write('<li class="entry""><div class="entry-container"><h2 class="text">您的设备是iOS？</h2><div class="summary" style="color: #000000 !important;">           我们检测到您的设备为 iOS 系统设备, 由于iOS设备不支持游戏内登录<br>            将在 <span id="num"></span> 秒 后跳转到外部浏览器进行登录</div><div class="clearfix"></div></div></li>');
+        } else {
+            document.write('');
+          }
+      </script>
+     <li class="entry"">
         <div class="entry-container">
           <h2 class="text">用户密码登录</h2>
           <div class="summary" >
@@ -136,23 +139,17 @@ if(isset($_POST['submit'])) {
     window.location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>';
   });
   Ps.initialize(document.getElementById('body'), {suppressScrollX: true});
-  		//break devices
-  		var strUA = "";
-        strUA = navigator.userAgent.toLowerCase();
-		if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
-         	var num=5;
-          	function redirect(){
-            	num--;
-            	document.getElementById("num").innerHTML=num;
-	            if(num<0){
-	              document.getElementById("num").innerHTML=0;
-	              location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
-	            }
-            }
-          	setInterval("redirect()", 1000);
-          	document.getElementById("goios").style.display = "block";
-        }else{
-           document.getElementById("goand").style.display = "block";
-        }
 </script>
+ <script type="text/javascript">
+        var num=5;
+          function redirect(){
+            num--;
+            document.getElementById("num").innerHTML=num;
+            if(num<0){
+              document.getElementById("num").innerHTML=0;
+              location.href="native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>";
+              }
+            }
+          setInterval("redirect()", 1000);
+  </script>
 </body>
