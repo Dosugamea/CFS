@@ -81,14 +81,8 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 
 <?php foreach($announcement as $v) {
   $time=explode(' ', $v['time'])[0];
-  if($v['detail_id'] != 0){
-  	$detail_href = "<a";
-  }
 ?>
-	<a <?	if($v['detail_id'] != 0){
-		  		print('href = "/webview.php/announce/detail/?detail_id='.$v['detail_id'].'"');
-		  	}?>>
-      <li class="entry">
+      <li class="entry" >
         <div class="entry-container">
           <h2 class="text"><?=$v['title']?></h2>
           <div class="summary"> <?=$v['content']?></div>
@@ -97,7 +91,6 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 
         </div>
       </li>
-    </a>
 <?php } ?>
 </ul>
     <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
