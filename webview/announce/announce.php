@@ -81,9 +81,6 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
 
 <?php foreach($announcement as $v) {
   $time=explode(' ', $v['time'])[0];
-  if($v['detail_id'] != 0){
-  	$detail_href = "<a";
-  }
 ?>
 	<a <?	if($v['detail_id'] != 0){
 		  		print('href = "/webview.php/announce/detail/?detail_id='.$v['detail_id'].'"');
