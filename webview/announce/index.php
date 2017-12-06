@@ -63,7 +63,7 @@ require "../version.php";
 if(!isset($_GET['disp_faulty']) || !is_numeric($_GET['disp_faulty'])) {
   $_GET['disp_faulty']=0;
 }
-$announcement=$mysql->query('select * from webview where tab!=0 order by time desc limit 3')->fetchAll();
+$announcement=$mysql->query('select * from webview where tab != 0 order by time desc limit 3')->fetchAll();
 ?>
 <div id="main">
   <div id="container">
