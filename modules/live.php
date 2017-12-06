@@ -650,7 +650,7 @@ function live_reward($post) {
 		
 		$live_settings = [];
 		foreach($live_id_list as $k => $v) {
-			$live_settings[$k] = getLiveSettings($v, 'c_rank_combo, b_rank_combo, a_rank_combo, notes_setting_asset, s_rank_combo, difficulty');
+			$live_settings[$k] = getLiveSettings($v, 'c_rank_combo, b_rank_combo, a_rank_combo, s_rank_combo, notes_setting_asset, difficulty');
 			$live_settings[$k]['capital_type'] = 1;
 			$capital = [null, 5, 10, 15, 25, 25, 25];
 			$live_settings[$k]['capital_value'] = $capital[$live_settings[$k]['difficulty']];
