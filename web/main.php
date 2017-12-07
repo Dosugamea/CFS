@@ -45,7 +45,9 @@ fclose($LOGFILE);
 if(!isset($_SERVER['PATH_INFO'])) {
 	throw403('NO_PATH_INFO');
 }
-
+if(!isset($_SERVER['HTTP_AUTHORIZE'])){
+	throw403('ILLEGAL_ACCESS');
+}
 //检验XMC
 foreach (explode('&', $_SERVER['HTTP_AUTHORIZE']) as $v) {
 	$v = explode('=', $v);
