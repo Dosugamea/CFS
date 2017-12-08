@@ -49,9 +49,15 @@ a{color: #000000;}
 <?php
 $uid=$_SESSION['server']['HTTP_USER_ID'];
 $params = [];
+$params['enable_card_switch']=0;
 foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAll() as $v) {
   $params[$v['param']] = (int)$v['value'];
 }
+
+$query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.$uid);
+if($query1->rowCount()!=0 && $query1->fetchColumn()==1)
+  $params['enable_card_switch']=1;
+
 $unit = getUnitDb();
 
 require '../config/maintenance.php';
