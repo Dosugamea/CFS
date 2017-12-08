@@ -278,9 +278,10 @@ if (!$rolled_back && isset($__user_bak)) {
 		if ($k == 'social_point' || $k == 'coin' || $k == 'loveca') { //访问别名
 			continue;
 		}
+		/*
 		if($k == 'enable_card_switch' ){//开卡权限不写入
 			continue;
-		}
+		}*/
 		if (!isset($__params_bak[$k])) {
 			$mysql->query('insert into user_params values(?, ?, ?)', [$uid, $k, $v]);
 		} else if ($__params_bak[$k] !== $v) {
