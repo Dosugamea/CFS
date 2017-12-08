@@ -2,10 +2,17 @@
 
 //notice/noticeMarquee 应该是主界面滚动显示的通知（比如继承码到期）
 function notice_noticeMarquee() {
-  return json_decode('{
-            "item_count": 0,
-            "marquee_list": []
-        }');
+	include("../config/modules_notice.php");
+	$notice = [];
+	foreach($noticeMarquee as $i){
+		if(strtotime($i['start_date']) < time() && strtotime($i['end_date']) > time()){
+			$notice[] = $i;
+		}
+	}
+	$ret = [];
+	$ret['item_count'] = count($notice);
+	$ret['marquee_list'] = $notice;
+	return $ret;
 }
 //notice/noticeFriendVariety 新着信息 返回空
 function notice_noticeFriendVariety() {
