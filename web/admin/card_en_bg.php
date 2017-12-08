@@ -7,17 +7,18 @@
 
 	//管理强制开关卡
 	if (isset($_POST['op']) && ($_POST['op'] != NULL)) {
-	$pdo -> query("UPDATE user_params SET value=".$_POST['op']." WHERE param = 'enable_card_switch' AND user_id =".$_POST['user_id']);
-	if(isset($_POST['op'])==0){//强制关卡
-		$pdo -> query("DELETE FROM user_card_switch WHERE user_id =".$_POST['user_id']);//同时删除新开卡信息
-	}
-	print("更新成功 <a href='javascript:history.go(-1);'>返回上一页</a>");
+		$pdo -> query("UPDATE user_params SET value=".$_POST['op']." WHERE param = 'enable_card_switch' AND user_id =".$_POST['user_id']);
+		if($_POST['op']==0){//强制关卡
+			$pdo -> query("DELETE FROM user_card_switch WHERE user_id =".$_POST['user_id']);//同时删除新开卡信息
+		}
+		print("更新成功 <a href='javascript:history.go(-1);'>返回上一页</a>");
 	}
 
 	//同意开卡申请
 	if(isset($_GET['accept'])){
+		/*
 		//删除旧开卡信息
-		$pdo -> query("DELETE FROM user_params WHERE param = 'enable_card_switch' AND user_id =".$_GET['accept']);
+		$pdo -> query("DELETE FROM user_params WHERE param = 'enable_card_switch' AND user_id =".$_GET['accept']);*/
 		$pdo -> query("UPDATE user_card_switch SET stat = 1 WHERE user_id =".$_GET['accept']);
 		print("同意成功 <a href='javascript:history.go(-1);'>返回上一页</a>");
 	}
