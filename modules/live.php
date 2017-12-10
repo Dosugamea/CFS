@@ -426,7 +426,7 @@ function live_play($post) {
 			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?)
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=IF (play_count+1 < 6, play_count+1, 5)
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
-		$mysql->query("UPDATE `tmp_live_playing` SET `factor` = ?, `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = ?", [$lp_factor, $post['party_user_id']]);
+		$mysql->query("UPDATE `tmp_live_playing` SET `factor` = ?, `reward_flag` = 0, `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = ?", [$lp_factor, $post['party_user_id']]);
 	} else {
 		$mysql->query("
 			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?)
@@ -475,6 +475,13 @@ function live_reward($post) {
 			$calcClearKeys($post['live_difficulty_id'], $post['score_smile'], $post['score_cute'], $post['score_cool'], $post['max_combo'], $post['love_cnt'], 0, 0);
 		}
 	}*/
+	
+	//防止重放攻击
+	$rewarded = $mysql->query('SELECT reward_flag FROM tmp_live_playing WHERE user_id = ?', [$uid])->fetchColumn();
+	if($rewarded != '0'){
+		$ret = retError(3411); //ERROR_CODE_LIVE_PLAY_DATA_NOT_FOUND
+	}
+	$mysql->query("UPDATE tmp_live_playing SET reward_flag = 1 WHERE user_id = ?", [$uid]);
 	
 	//客户端提交的分数
 	$score = $post['score_smile'] + $post['score_cute'] + $post['score_cool'];
