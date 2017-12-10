@@ -4,8 +4,7 @@ function common_recoveryEnergy() {
 	global $params;
 	$before_sns_coin = $params['item4'];
 	if(!energyRecover()){
-		$ret['error_code'] = 1102;
-		retError(600);
+		$ret = retError(1102);
 		return $ret;
 	}
 	$ret = getCurrentEnergy();
