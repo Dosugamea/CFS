@@ -1,3 +1,7 @@
+<? 
+  header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,11 +21,7 @@
 
 <body>
 <?php
-if(!isset($_GET['disp_faulty']) || !is_numeric($_GET['disp_faulty'])) {
-  $_GET['disp_faulty']=0;
-}
-$announcement=$mysql->query('select * from webview where tab='.($_GET['disp_faulty']+1).' order by `order` desc, time desc')->fetchAll();
-$has_new=$mysql->query('select distinct tab from webview where to_days(time)>to_days(CURRENT_TIMESTAMP)-5')->fetchAll();
+$announcement=$mysql->query('select * from webview where tab = 1 OR tab = 2 order by time desc')->fetchAll();
 ?>
 
   <ul id="tab">
@@ -44,30 +44,6 @@ $has_new=$mysql->query('select distinct tab from webview where to_days(time)>to_
 <div id="main">
   <div id="container">
 
-
-  <SCRIPT type="text/javascript">
-if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
-  document.write('<div class="title_news_all_tab" style="position: fixed; top:0px; width:100%; z-index:20; background-color:white; height: 82px;">');
-} else {
-  document.write('<div class="title_news_all_tab">');
-}
-<?php foreach($has_new as $v) {
-  if($v[0]==0) continue;
-  switch($v[0]) {
-    case 1:$left=280;break;
-    case 2:$left=600;break;
-    case 3:$left=920;
-  }
-?>
-if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
-  document.write('<img src="/resources/new.png" style="position: fixed; top:0px; left:<?=$left?>px; z-index:25; ">');
-} else {
-  document.write('<img src="/resources/new.png" style="position: absolute; top:0px; left:<?=$left?>px; z-index:25; ">');
-}
-<?php } ?>
-
-
-</SCRIPT>
     <ul id="list">
       <SCRIPT type="text/javascript">
 if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
@@ -83,14 +59,14 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
   $time=explode(' ', $v['time'])[0];
 ?>
       <li class="entry" >
-        <div class="entry-container">
+        <div class="entry-container" id="an_<?=$v['ID']?>">
           <h2 class="text"><?=$v['title']?></h2>
           <div class="summary"> <?=$v['content']?></div>
           <div class="start-date"><?=$time?></div>
           <div class="clearfix"></div>
-
         </div>
       </li>
+
 <?php } ?>
 </ul>
     <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
@@ -104,13 +80,18 @@ if(strUA.indexOf("iphone") >= 0 || strUA.indexOf("ipad") >= 0) {
   const DISP_FAULTY = 0;
   const USER_ID = 0;
   const AUTHORIZE_DATA = '';
-
   updateButtons();
+  <?
+    foreach ($announcement as $d){
+      if($d['detail_id'] != 0){
+        print("Button.initialize(document.getElementById('an_{$d['ID']}'), function() {
+    window.location.href='/webview.php/announce/detail/?detail_id={$d['detail_id']}';
+  });");
+      }
+    }
+  ?>
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
 </script>
 </body>
 </html>
-
-<!--<?//=($v['detail_id']?'<BR><BR><SPAN style="color: red;">※点击查看详情</SPAN>':'')?>-->
-<!--<?//=($v['banner_on']?'<h2 class="banner"><img class="banner" src="<?=$banner_url?>"></h2>':'')?>-->
