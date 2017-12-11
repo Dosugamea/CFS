@@ -1,3 +1,7 @@
+<? 
+	header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+?>
+
 <!DOCTYPE html>
 <HTML><HEAD>
 <META content="IE=11.0000" http-equiv="X-UA-Compatible">
@@ -60,23 +64,13 @@ require "../version.php";
   </li>
     </ul>
 <?php
-if(!isset($_GET['disp_faulty']) || !is_numeric($_GET['disp_faulty'])) {
-  $_GET['disp_faulty']=0;
-}
-$announcement=$mysql->query('select * from webview where tab != 0 order by time desc limit 3')->fetchAll();
+	$announcement=$mysql->query('select * from webview where tab != 0 order by time desc limit 3')->fetchAll();
 ?>
 <div id="main">
   <div id="container">
   <ul id="list">
       
 
-<!--<div class="title_news_all_tab bl1">
-<UL id="tabs">
-  <a href="/webview.php/announce/announce"><LI class="fs30 button"><p>News</p></LI></a>
-  <a href="/webview.php/settings/index"><LI class="fs30 button"><p>Setting</p></LI></a>
-  <a href="/webview.php/mods/index"><LI class="fs30 button"><p>Mods</p></LI></a>
-</UL>
-</div>-->
 <table class="Welcome-Icon" cellspacing="20">
   <tr>
     <td>
@@ -106,7 +100,7 @@ $announcement=$mysql->query('select * from webview where tab != 0 order by time 
   $time=explode(' ', $v['time'])[0];
 ?>
   <li class="entry" >
-        <div class="entry-container">
+        <div class="entry-container" id="an_<?=$v['ID']?>">
           <h2 class="text"><?=$v['title']?></h2>
           <div class="summary"> <?=$v['content']?></div>
           <div class="start-date"><?=$time?></div>
@@ -126,8 +120,16 @@ $announcement=$mysql->query('select * from webview where tab != 0 order by time 
   const DISP_FAULTY = 0;
   const USER_ID = 0;
   const AUTHORIZE_DATA = '';
-
   updateButtons();
+    <?
+    foreach ($announcement as $d){
+      if($d['detail_id'] != 0){
+        print("Button.initialize(document.getElementById('an_{$d['ID']}'), function() {
+    window.location.href='/webview.php/announce/detail/?detail_id={$d['detail_id']}';
+  });");
+      }
+    }
+    ?>
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
 </script>
