@@ -81,6 +81,7 @@ if(isset($_GET['target']) && !empty($_GET['target']) && $params['enable_card_swi
     if($loveca<$loveca_use){
       echo "Loveca不足，需要 ".$loveca_use." loveca，当前 ".$loveca." loveca";
     }else{
+    	$target_c = $mysql -> query("SELECT * FROM user_params WHERE user_id = {$_GET['target']} AND param = 'enable_card_switch' LIMIT 1 ")->fetch();
     	if($target_c['value'] == 1){
     		echo "您申请 {$_GET['target']} 用户已经具备卡组权限";
     	}else{
