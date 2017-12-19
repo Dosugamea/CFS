@@ -433,6 +433,7 @@ function live_play($post) {
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=play_count+1
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 	}
+	$mysql->query("UPDATE `tmp_live_playing` SET `reward_flag` = 0 WHERE user_id = ?", [$uid]);
 	if(date("m-d") == '04-01'){
 		$map['live_se_id'] = 99;
 	}
