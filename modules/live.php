@@ -423,13 +423,13 @@ function live_play($post) {
 	}
 	if($params['card_switch'] && $post['party_user_id'] > 0) {
 		$mysql->query("
-			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?)
+			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?,0)
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=IF (play_count+1 < 6, play_count+1, 5)
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 		$mysql->query("UPDATE `tmp_live_playing` SET `factor` = ?, `reward_flag` = 0, `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = ?", [$lp_factor, $post['party_user_id']]);
 	} else {
 		$mysql->query("
-			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?)
+			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?,0)
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=play_count+1
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 	}
