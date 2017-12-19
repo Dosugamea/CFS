@@ -2,7 +2,7 @@
 class poster{
 	private $login_key;
 	private $login_passwd;
-	private $application_key = "d0054c9c253ecde4c7bb3d46c8b3c2a6";
+	private $application_key = "9f79451111bd0399dc7f680d0da6bfd6";
 	private $xor_base = "eit4Ahph4aiX4ohmephuobei6SooX9xo";
 	private $cache;
 	private $sessionKey = "";
