@@ -64,7 +64,7 @@ function login_authkey($post) {
 	
 	//生成随机AES key
 	$chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890#%*';
-	mt_srand((double)microtime()*1000000*getmypid());
+	mt_srand((int)((double)microtime()*1000000*getmypid()));
 	$AES_token_server='';   
 	while(strlen($AES_token_server) < 32){
 		$AES_token_server.=substr($chars,(mt_rand()%strlen($chars)),1);  
