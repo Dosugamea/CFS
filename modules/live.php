@@ -318,8 +318,12 @@ function live_play($post) {
 		$live_info['use_quad_point'] = $random[$k2] == 2;
 		$live_info['guest_bonus'] = [];
 		$live_info['sub_guest_bonus'] = [];
-		$energy_use += $energy_list[(int)$live_settings['difficulty']];
-
+		$live_cost = $livedb->query("SELECT capital_value FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetchColumn();
+		if($live_cost){
+			$energy_use += $live_cost;
+		}else{
+			$energy_use += $energy_list[(int)$live_settings['difficulty']];
+		}
 		$part1=[9,5,7];
 		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless','RandomLiveLimited'];
 		$p1=$params['extend_mods_key'];
