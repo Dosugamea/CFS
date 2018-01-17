@@ -72,26 +72,8 @@ function lbonus_execute() {
 	if(!in_array((int)date('d'), $login_query)){
 		$mysql->query("INSERT INTO login_bonus (user_id, year, month, day) VALUES(".$uid.", ".(int)date('Y').", ".(int)date('m').", ".(int)date('d').")");
 		$calendar_info['get_item'] = $calendar_info['current_month']['days'][(int)date('d')-1]['item'];
-		/*switch($calendar_info['get_item']['add_type']){
-			case 1000: $calendar_info['get_item']['item_category_id'] = 1;break;
-			case 3002: $calendar_info['get_item']['item_category_id'] = 2;break;
-			case 3000: $calendar_info['get_item']['item_category_id'] = 3;break;
-			case 3001: $calendar_info['get_item']['item_category_id'] = 4;break;
-			case 1000: $calendar_info['get_item']['item_category_id'] = 5;break;
-			case 3006: $calendar_info['get_item']['item_category_id'] = 0;break;
-			default: $calendar_info['get_item']['item_category_id'] = 0;break;
-		}*/
 		$calendar_info['get_item']['reward_box_flag'] = true;
-		/*$is_card = isset($calendar_info['get_item']['unit_id']);
-		$incentive_item_id = $is_card? $calendar_info['get_item']['unit_id'] : $calendar_info['get_item']['item_category_id'];*/
-		
 		add_present($calendar_info['get_item']['brief'], $calendar_info['get_item']['amount'], (int)date('m')."月登陆奖励：第".(int)date('d')."天！");
-		
-		/*if($incentive_item_id == 0){
-			$incentive_item_id = 3006;
-			$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$incentive_item_id.", 2, ".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");
-		}else
-			$mysql->exec("INSERT INTO incentive_list (user_id, incentive_item_id, amount, is_card, incentive_message) VALUES (".$uid.",".$incentive_item_id.",".$calendar_info['get_item']['amount'].", ".(int)$is_card.", \"".(int)date('m')."月登録獎励：第".(int)date('d')."天！\")");*/
 	}
 	
 	$ret['calendar_info'] = $calendar_info;
