@@ -8,6 +8,7 @@ function sendMail($to,$title,$content){
 	//引入PHPMailer的核心文件 使用require_once包含避免出现PHPMailer类重复定义的警告
 	require_once(dirname(__FILE__)."/../PHPMailer/class.phpmailer.php"); 
 	require_once(dirname(__FILE__)."/../PHPMailer/class.smtp.php");
+	require_once(dirname(__FILE__)."/../config/mail.php");
 	//实例化PHPMailer核心类
 	$mail = new PHPMailer(true);
 
@@ -21,7 +22,7 @@ function sendMail($to,$title,$content){
 	$mail->SMTPAuth=true;
 
 	//链接qq域名邮箱的服务器地址
-	$mail->Host = 'smtp.qq.com';
+	$mail->Host = $smtp_host;
 
 	//设置使用ssl加密方式登录鉴权
 	$mail->SMTPSecure = 'ssl';
@@ -39,16 +40,16 @@ function sendMail($to,$title,$content){
 	$mail->CharSet = 'UTF-8';
 
 	//设置发件人姓名（昵称） 任意内容，显示在收件人邮件的发件人邮箱地址前的发件人姓名
-	$mail->FromName = 'PLServer';
+	$mail->FromName = $mail_sender;
 
 	//smtp登录的账号 这里填入字符串格式的qq号即可
-	$mail->Username ='noreply@llsif.cn';
+	$mail->Username = $mail_account;
 
 	//smtp登录的密码 使用生成的授权码（就刚才叫你保存的最新的授权码）
-	$mail->Password = 'josqhgucvqmtbfdi';
+	$mail->Password = $mail_password;
 
 	//设置发件人邮箱地址 这里填入上述提到的“发件人邮箱”
-	$mail->From = 'noreply@llsif.cn';
+	$mail->From = $mail_account;
 
 	//邮件正文是否为html编码 注意此处是一个方法 不再是属性 true或false
 	$mail->isHTML(true); 
@@ -79,5 +80,4 @@ function sendMail($to,$title,$content){
 		return false;
 	}
 }
-//sendMail('lijun00326@gmail.com','找回密码','');
 ?>
