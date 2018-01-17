@@ -1,15 +1,14 @@
 <?php
 //present.php，负责往礼物箱插礼物的接口
 //add_present：增加礼物
-function add_present($present, $is_card, $amount, $message, $extra = false){
+function add_present($present, $amount, $message, $extra = false){
 	//$present:礼物内容，int或者string，int时指的是特定卡片，string为下列item
-	//is_card:是否是卡片，bool或者int
-	//amount:数量
-	//message:礼物信息
-	//extra:额外信息。为item的时候通常指item_id，为卡片的时候指卡片信息，
+	//$amount:数量
+	//$message:礼物信息
+	//$extra:额外信息。为item的时候通常指item_id，为卡片的时候指卡片信息，
 	//  包括is_rank_max,exp,skill_exp,unit_removable_skill_capacity
 	global $uid, $mysql;
-	if($is_card){
+	if(is_numeric($present)){
 		if(!$extra){
 			$extra = null;
 		}
@@ -80,13 +79,13 @@ function add_present($present, $is_card, $amount, $message, $extra = false){
 	return $ret;
 }
 
-//get_present_info：获取某样礼物的信息
-function get_present_info($present, $is_card, $extra = false){
+//get_present_info：获取某样物品的信息
+function get_present_info($present, $extra = false){
 	//$present:礼物内容，int或者string，int时指的是特定卡片，string为下列item
 	//extra:额外信息。为item的时候通常指item_id，为卡片的时候指卡片信息，
 	//  包括is_rank_max,exp,skill_exp,unit_removable_skill_capacity
 	global $uid, $mysql;
-	if($is_card){
+	if(is_numeric($present)){
 		if(!$extra){
 			$extra = null;
 		}
