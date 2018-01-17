@@ -173,6 +173,13 @@ CREATE TABLE IF NOT EXISTS `incentive_list` (
   PRIMARY KEY (`incentive_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35555 DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `invitation` (
+	`user_id` INT(11) NOT NULL,
+	`from_user` INT(11) NOT NULL,
+	`time` TIMESTAMP NOT NULL DEFAULT '',
+	PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.live_accomplish 结构
 CREATE TABLE IF NOT EXISTS `live_accomplish` (
