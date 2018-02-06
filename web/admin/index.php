@@ -43,6 +43,11 @@ include_once("includes/check_admin.php");
 				<div class="index-icon"><a href="update.php">谱面更新</a></div>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<div class="index-icon"><a href="check_signature.php">检查签名</a></div>
+			</td>
+		</tr>
 	</table>
 </body>
 </html>
