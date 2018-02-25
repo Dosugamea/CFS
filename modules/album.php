@@ -8,6 +8,7 @@ function album_albumAll() {
   if($params['card_switch']) {
     $album=$mysql->query("SELECT * from album WHERE user_id=$uid");
     while ($row=$album->fetch(PDO::FETCH_ASSOC)) {
+      unset($row['user_id']);
       $row['unit_id']=(int)$row['unit_id'];
       $row['rank_max_flag']=($row['rank_max_flag']==1?true:false);
       $row['love_max_flag']=($row['love_max_flag']==1?true:false);
