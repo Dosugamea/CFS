@@ -91,6 +91,7 @@ function generateTab($member_category){
 		//挨个处理page
 		$pages = [];
 		foreach($page as $j){
+			$is_knapsack = false;
 			$secret_box_list = $secretboxdb->query("SELECT * FROM secret_box_m WHERE secret_box_page_id = ".$j['secret_box_page_id'])->fetchAll(PDO::FETCH_ASSOC);
 			//挨个处理secretbox
 			$secret_box = [];
@@ -211,10 +212,68 @@ function generateTab($member_category){
 				}
 				$secret_box_detail['knapsack_select_unit_list'] = Null;
 				$secret_box_detail['knapsack_selected_unit_list'] = Null;
+				$secret_box_detail['knapsack_select_unit_type_id_list'] = Null;
+				$secret_box_detail['knapsack_selected_unit_type_id_list'] = Null;
 				$secret_box_detail['is_knapsack_reset'] = Null;
 				$secret_box_detail['is_knapsack_select'] = Null;
 				$secret_box_detail['knapsack_rest_count'] = Null;
 				
+				//处理BOX
+				$knapsack_info = $secretboxdb->query("SELECT * FROM secret_box_knapsack_m WHERE secret_box_id = ?", [$k['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+				if($knapsack_info){
+					$is_knapsack = true;
+					//补全MySQL数据（第一次见卡池时）
+					$data_created = $mysql->query("SELECT * FROM secretbox_knapsack WHERE user_id = ? AND secretbox_id = ?", [$uid, $k['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+					if(!$data_created){
+						$mysql->query("INSERT INTO secretbox_knapsack (user_id, secretbox_id) VALUES(?,?)",[$uid, $k['secret_box_id']]);
+					}
+					
+					$secret_box_detail['knapsack_select_unit_list'] = [];
+					$secret_box_detail['knapsack_selected_unit_list'] = [];
+					$secret_box_detail['knapsack_select_unit_type_id_list'] = [];
+					$knapsack_select = json_decode($knapsack_info['knapsack_select_unit_type_id']);
+					foreach($knapsack_select as $ii){
+						$secret_box_detail['knapsack_select_unit_type_id_list'][] = ["unit_type_id" => $ii];
+					}
+					$user_selected_unit_type = (int)$mysql->query("SELECT selected FROM secretbox_knapsack WHERE user_id = ? AND secretbox_id = ?", [$uid, $k['secret_box_id']])->fetchColumn();
+					if($user_selected_unit_type){
+						$secret_box_detail['knapsack_selected_unit_type_id_list'] = [["unit_type_id" => $user_selected_unit_type]];
+					}else{
+						$secret_box_detail['knapsack_selected_unit_type_id_list'] = [];
+					}
+					
+					//判断是否能reset
+					$secret_box_detail['is_knapsack_reset'] = false;
+					$knapsack_user_info = $mysql->query("SELECT * FROM secretbox_knapsack WHERE user_id = ? AND secretbox_id = ?", [$uid, $k['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+					$knapsack_initial_group =  $secretboxdb->query("SELECT * FROM secret_box_knapsack_unit_group_m WHERE knapsack_unit_group_id = ?", [$knapsack_info['knapsack_unit_group_id']])->fetchAll(PDO::FETCH_ASSOC);
+					if($knapsack_user_info['selected']){
+						foreach($knapsack_initial_group as $ii){
+							if($knapsack_user_info['left_'.$ii['unit_group_id'].'_'.$ii['selected']] != $ii['default_count']){
+								$secret_box_detail['is_knapsack_reset'] = true;
+								break;
+							}
+						}
+						if($secret_box_detail['is_knapsack_reset'] == false){
+							$secret_box_detail['is_knapsack_select'] = true;
+						}else{
+							$secret_box_detail['is_knapsack_select'] = false;
+						}
+					}else{
+						$secret_box_detail['is_knapsack_select'] = true;
+					}
+					
+					//计算剩余数量
+					$secret_box_detail['knapsack_rest_count'] = [];
+					foreach([0, 1] as $ii){
+						foreach([2, 3, 4, 5] as $jj){
+							$secret_box_detail['knapsack_rest_count'][] = [
+								"unit_group_id" => $jj,
+								"count" => (int)$knapsack_user_info['left_'.$jj.'_'.$ii],
+								"selected" => (bool)$ii
+							];
+						}
+					}
+				}
 				$secret_box []= $secret_box_detail;
 			}
 			if($skip_page){
@@ -230,8 +289,28 @@ function generateTab($member_category){
 			$default_img_info['banner_se_img_asset'] = $j['banner_img_se_asset'];
 			$default_img_info['img_asset'] = $j['img_asset'];
 			$default_img_info['url'] = $j['url'];
+			if($j['rule_url']){
+				$default_img_info['rule_url'] = $j['rule_url'];
+			}
 			$page_detail['default_img_info'] = $default_img_info;
 			$page_detail['limited_img_info'] = []; //TODO:限定banner
+			if($is_knapsack){
+				$selected_type = $secret_box[0]['knapsack_selected_unit_type_id_list'];
+				if($selected_type != []){
+					$selected_type = $selected_type[0]['unit_type_id'];
+					//查询对应的limited asset
+					$count = 1;
+					foreach($secret_box[0]['knapsack_select_unit_type_id_list'] as $ii){
+						if($ii['unit_type_id'] == $selected_type)
+							break;
+						$count ++;
+					}
+					$page_detail['limited_img_info'][] = $default_img_info;
+					$page_detail['limited_img_info'][0]['start_date'] = "2000-01-01 00:00:00";
+					$page_detail['limited_img_info'][0]['end_date'] = "2000-01-01 00:00:00";
+					$page_detail['limited_img_info'][0]['img_asset'] = "assets/image/secretbox/top/s_con_k_168_".$count."_em.png";
+				}
+			}
 			$page_detail['effect_list'] = []; //TODO:卡池左侧限定up人物展示
 			$page_detail['secret_box_list'] = $secret_box;
 			
@@ -260,7 +339,7 @@ function secretbox_pon($post) {
 	
 	global $uid, $mysql, $params;
 	$secretboxdb = getSecretBoxDb();
-	$secret_box_info = $secretboxdb->query("SELECT * FROM secret_box_m WHERE secret_box_id = ".$post['secret_box_id'])->fetch(PDO::FETCH_ASSOC);
+	$secret_box_info = $secretboxdb->query("SELECT * FROM secret_box_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
 	
 	//检查招募箱是否存在
 	if(empty($secret_box_info)){
@@ -273,7 +352,7 @@ function secretbox_pon($post) {
 	}
 	
 	//检查cost是否合法
-	$all_cost_ = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ".$post['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+	$all_cost_ = $secretboxdb->query("SELECT * FROM secret_box_cost_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetchAll(PDO::FETCH_ASSOC);
 	$step_up_info = Null;
 	if($all_cost_ == false){
 		//当cost不存在时查找该招募是否为step up
@@ -528,26 +607,54 @@ function secretbox_pon($post) {
 	/*开始抽牌*/
 	$got_units = [];
 	$unit_count = $post['action'] == "multi" ? ((int)$secret_box_info['multi_additional'] ? 11 : 10) : 1;
+	$knapsack_info = $secretboxdb->query("SELECT * FROM secret_box_knapsack_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+	$random_pick = function ($array) {
+		$pick = mt_rand(1, array_sum($array));
+		foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
+	};
 	for($j = 0; $j < $unit_count; $j++){
-		if($post['action'] == "multi" && $j == $unit_count - 1){//查看是否需要保底
-			$fix_rarity = $secretboxdb->query("SELECT * FROM secret_box_fix_rarity_m WHERE secret_box_id = ?", [$secret_box_info['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
-			if(!empty($fix_rarity) && strtotime($fix_rarity['start_date']) < time() && strtotime($fix_rarity['end_date']) > time()){
-				$fix_count = 0;
-				foreach($got_units as $k){//查找低于保底下限的卡数目
-					if($k['unit_rarity_id'] < (int)$fix_rarity['unit_group_id']){
-						$fix_count++;
+		if($knapsack_info){ //如果是BOX
+			$user_knapsack_info = $mysql->query("SELECT * FROM secretbox_knapsack WHERE user_id = ? AND secretbox_id = ?", [$uid, $post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+			$knapsack_cards = [];
+			foreach([1, 0] as $ii){
+				foreach([2,3,4,5] as $jj){
+					for($kk = 0; $kk < $user_knapsack_info['left_'.$jj.'_'.$ii]; $kk ++){
+						$knapsack_cards[] = [$jj,$ii];
 					}
 				}
-				if($fix_count == $unit_count - 1){
-					$rarity = (int)$fix_rarity['unit_group_id'];
+			}
+			$knapsack_result = $knapsack_cards[array_rand($knapsack_cards, 1)];
+			$rarity = $knapsack_result[0];
+			$mysql->query("UPDATE secretbox_knapsack SET left_".$knapsack_result[0]."_".$knapsack_result[1]." = left_".$knapsack_result[0]."_".$knapsack_result[1]." - 1 WHERE user_id = ? AND secretbox_id = ?", [$uid, $post['secret_box_id']]);
+			$unit_all_ = $secretboxdb->query("SELECT unit_id, weight FROM secret_box_knapsack_unit_m WHERE secret_box_id = ? AND unit_group_id = ? AND selected = ? AND (select_type = ? OR select_type IS NULL)", [$secret_box_info['secret_box_id'], $rarity, $knapsack_result[1], $user_knapsack_info['selected']])->fetchAll(PDO::FETCH_ASSOC);
+		}else{
+			if($post['action'] == "multi" && $j == $unit_count - 1){//查看是否需要保底
+				$fix_rarity = $secretboxdb->query("SELECT * FROM secret_box_fix_rarity_m WHERE secret_box_id = ?", [$secret_box_info['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+				if(!empty($fix_rarity) && strtotime($fix_rarity['start_date']) < time() && strtotime($fix_rarity['end_date']) > time()){
+					$fix_count = 0;
+					foreach($got_units as $k){//查找低于保底下限的卡数目
+						if($k['unit_rarity_id'] < (int)$fix_rarity['unit_group_id']){
+							$fix_count++;
+						}
+					}
+					if($fix_count == $unit_count - 1){
+						$rarity = (int)$fix_rarity['unit_group_id'];
+					}
+				}else{ //超过保底期限
+					//获取卡池中的社员以及权重
+					$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
+					$unit_group = [];
+					foreach($unit_group_ as $i){
+						$unit_group[$i['unit_group_id']] = (!empty($i['weight_extra']) && $params['card_switch']) ? (int)$i['weight_extra'] : (int)$i['weight'];
+					}
+					if(empty($unit_group))
+						trigger_error("未配置稀有度对应权重！");
+					//抽一张看看稀有度
+					$rarity = (int)$random_pick($unit_group);
 				}
-			}else{ //超过保底期限
+			}else{
 				//获取卡池中的社员以及权重
 				$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
-				$random_pick = function ($array) {
-					$pick = mt_rand(1, array_sum($array));
-					foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
-				};
 				$unit_group = [];
 				foreach($unit_group_ as $i){
 					$unit_group[$i['unit_group_id']] = (!empty($i['weight_extra']) && $params['card_switch']) ? (int)$i['weight_extra'] : (int)$i['weight'];
@@ -557,30 +664,16 @@ function secretbox_pon($post) {
 				//抽一张看看稀有度
 				$rarity = (int)$random_pick($unit_group);
 			}
-		}else{
-			//获取卡池中的社员以及权重
-			$unit_group_ = $secretboxdb->query("SELECT * FROM secret_box_unit_group_m WHERE secret_box_id = ".$secret_box_info['secret_box_id'])->fetchAll(PDO::FETCH_ASSOC);
-			$random_pick = function ($array) {
-				$pick = mt_rand(1, array_sum($array));
-				foreach ($array as $k => $v) if (($pick -= $v) <= 0) return $k;
-			};
-			$unit_group = [];
-			foreach($unit_group_ as $i){
-				$unit_group[$i['unit_group_id']] = (!empty($i['weight_extra']) && $params['card_switch']) ? (int)$i['weight_extra'] : (int)$i['weight'];
-			}
-			if(empty($unit_group))
-				trigger_error("未配置稀有度对应权重！");
-			//抽一张看看稀有度
-			$rarity = (int)$random_pick($unit_group);
+			//取该稀有度的所有卡
+			$unit_all_ = $secretboxdb->query("SELECT unit_id, weight FROM secret_box_unit_m WHERE secret_box_id = ".$secret_box_info['secret_box_id']." AND unit_group_id = ".$rarity)->fetchAll(PDO::FETCH_ASSOC);
 		}
-		//取该稀有度的所有卡
-		$unit_all_ = $secretboxdb->query("SELECT unit_id, weight FROM secret_box_unit_m WHERE secret_box_id = ".$secret_box_info['secret_box_id']." AND unit_group_id = ".$rarity)->fetchAll(PDO::FETCH_ASSOC);
 		$unit_all = [];
 		foreach($unit_all_ as $i){
 			$unit_all[$i['unit_id']] = (int)$i['weight'];
 		}
-		if(empty($unit_all))
+		if(empty($unit_all)){
 			trigger_error("稀有度".$rarity."没有配置社员！");
+		}
 		$unit_id = (int)$random_pick($unit_all);
 		$get_unit_detail = addUnit($unit_id)[0];
 		$get_unit_detail['unit_rarity_id'] = $rarity;
@@ -589,6 +682,9 @@ function secretbox_pon($post) {
 		$get_unit_detail['item_category_id'] = 0;
 		$get_unit_detail['new_unit_flag'] = false;
 		$get_unit_detail['reward_box_flag'] = false;
+		if($rarity == 4){
+			$get_unit_detail['is_hit'] = true;
+		}
 		$got_units [] = $get_unit_detail;
 	}
 	
@@ -610,5 +706,43 @@ function secretbox_pon($post) {
 
 function secretbox_multi($post) {
 	return secretbox_pon($post);
+}
+
+function secretbox_knapsackSelect($post) {
+	global $uid, $mysql;
+	$secretboxdb = getSecretBoxDb();
+	$type = $post['unit_type_ids'][0];
+	$mysql->query("UPDATE secretbox_knapsack SET selected = ? WHERE user_id = ? AND secretbox_id = ?", [$type, $uid, $post['secret_box_id']]);
+	
+	$knapsack_info = $secretboxdb->query("SELECT * FROM secret_box_knapsack_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+	$knapsack_initial_group =  $secretboxdb->query("SELECT * FROM secret_box_knapsack_unit_group_m WHERE knapsack_unit_group_id = ?", [$knapsack_info['knapsack_unit_group_id']])->fetchAll(PDO::FETCH_ASSOC);
+	$knapsack_user_info = [];
+	foreach($knapsack_initial_group as $ii){
+		$knapsack_user_info['left_'.$ii['unit_group_id'].'_'.$ii['selected']] = $ii['default_count'];
+	}
+	
+	foreach($knapsack_user_info as $k => $v){
+		$mysql->query("UPDATE secretbox_knapsack SET ".$k." = ? WHERE user_id = ? AND secretbox_id = ?", [$v, $uid, $post['secret_box_id']]);
+	}
+	
+	return [];
+}
+
+function secretbox_knapsackReset($post) {
+	global $uid, $mysql;
+	$secretboxdb = getSecretBoxDb();
+	
+	$knapsack_info = $secretboxdb->query("SELECT * FROM secret_box_knapsack_m WHERE secret_box_id = ?", [$post['secret_box_id']])->fetch(PDO::FETCH_ASSOC);
+	$knapsack_initial_group =  $secretboxdb->query("SELECT * FROM secret_box_knapsack_unit_group_m WHERE knapsack_unit_group_id = ?", [$knapsack_info['knapsack_unit_group_id']])->fetchAll(PDO::FETCH_ASSOC);
+	$knapsack_user_info = [];
+	foreach($knapsack_initial_group as $ii){
+		$knapsack_user_info['left_'.$ii['unit_group_id'].'_'.$ii['selected']] = $ii['default_count'];
+	}
+	
+	foreach($knapsack_user_info as $k => $v){
+		$mysql->query("UPDATE secretbox_knapsack SET ".$k." = ? WHERE user_id = ? AND secretbox_id = ?", [$v, $uid, $post['secret_box_id']]);
+	}
+	
+	return [];
 }
 ?>
