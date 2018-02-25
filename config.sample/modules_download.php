@@ -9,6 +9,7 @@ $reverse_proxy = "";
 //官方客户端目前的版本
 $official_bundle_ver = "";
 $official_client_ver = "";
+$official_application_key = "";
 
 //检测缓存中是否有所需的包，如果不需要检查可以留空
 //如果检测到缓存里面有，则会去除请求链接中的参数，增加CDN命中率

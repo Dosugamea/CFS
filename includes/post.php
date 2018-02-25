@@ -2,7 +2,7 @@
 class poster{
 	private $login_key;
 	private $login_passwd;
-	private $application_key = "9f79451111bd0399dc7f680d0da6bfd6";
+	private $application_key = "921208e4f58f8351366821584eb450ee";
 	private $xor_base = "eit4Ahph4aiX4ohmephuobei6SooX9xo";
 	private $cache;
 	private $sessionKey = "";
@@ -28,6 +28,7 @@ class poster{
 	public function __construct(){
 		global $official_bundle_ver, $server_ver;
 		include("../config/modules_download.php");
+		$this->application_key = $official_application_key;
 		$time = time();
 		$this->common_headers = [
 			'Accept: */*',
