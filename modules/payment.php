@@ -4,7 +4,7 @@
 //payment/productList 获取商品列表
 function payment_productList() {
   return json_decode('{
-			"sns_product_list":[]
+			"sns_product_list":[],
             "product_list": []
         }');
 }
