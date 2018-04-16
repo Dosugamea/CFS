@@ -437,6 +437,7 @@ function live_play($post) {
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=play_count+1
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 	}
+	$mysql->query("UPDATE `tmp_live_playing` SET `reward_flag` = 0 WHERE user_id = ?", [$uid]);
 	if(date("m-d") == '04-01'){
 		$map['live_se_id'] = 99;
 	}
@@ -484,6 +485,7 @@ function live_reward($post) {
 	$rewarded = $mysql->query('SELECT reward_flag FROM tmp_live_playing WHERE user_id = ?', [$uid])->fetchColumn();
 	if($rewarded != '0'){
 		$ret = retError(3411); //ERROR_CODE_LIVE_PLAY_DATA_NOT_FOUND
+		return $ret;
 	}
 	$mysql->query("UPDATE tmp_live_playing SET reward_flag = 1 WHERE user_id = ?", [$uid]);
 	
@@ -1029,11 +1031,12 @@ function live_reward($post) {
 			}
 		}
 		$ret['effort_point'][] = [
-		"live_effort_point_box_spec_id" => (int)$box_now['box_id'],
-		"capacity"                      => $capacity_list[(int)$box_now['box_id']],
-		"before"                        => (int)$box_now['point'],
-		"after"                         => $is_full?$capacity_list[(int)$box_now['box_id']]:(int)$box_now['point'] + $score,
-		"rewards"                       => $rewards];
+		//"limited_effort_event_id"		=> 1,
+		"live_effort_point_box_spec_id"	=> (int)$box_now['box_id'],
+		"capacity"						=> $capacity_list[(int)$box_now['box_id']],
+		"before"						=> (int)$box_now['point'],
+		"after"							=> $is_full?$capacity_list[(int)$box_now['box_id']]:(int)$box_now['point'] + $score,
+		"rewards"						=> $rewards];
 		$score_ = $score;
 		$score += ((int)$box_now['point'] - $capacity_list[(int)$box_now['box_id']]);
 		if($is_full){
@@ -1061,6 +1064,7 @@ function live_reward($post) {
 		}
 	}while($score > 0);
 	$mysql->query("UPDATE effort_box SET box_id = ".(int)$box_now['box_id']." , point = ".((int)$box_now['point'] + $score_)." WHERE user_id = ".$uid);
+	$ret['is_effort_point_visible'] = true;
 	$ret['limited_effort_box'] = [];
 	
 	//每日奖励
