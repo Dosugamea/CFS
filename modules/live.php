@@ -901,7 +901,7 @@ function live_reward($post) {
 	$love_list = [];
 	//如果卡片被禁用，返回定值
 	if($params['card_switch']==0) {
-		$ret['unit_list']=json_decode('[{"position": 1,"unit_owning_user_id": 2,"unit_id": 41,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1290,"cool": 1670,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2340}, {"position": 2,"unit_owning_user_id": 3,"unit_id": 42,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1230,"cool": 1010,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3160}, {"position": 3,"unit_owning_user_id": 4,"unit_id": 43,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1470,"cool": 1150,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2690}, {"position": 4,"unit_owning_user_id": 5,"unit_id": 44,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1180,"cool": 1630,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2500}, {"position": 5,"unit_owning_user_id": 1,"unit_id": 40,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1110,"cool": 1560,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2640}, {"position": 6,"unit_owning_user_id": 6,"unit_id": 45,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1260,"cool": 1570,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2480}, {"position": 7,"unit_owning_user_id": 7,"unit_id": 46,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1360,"cool": 1000,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3040}, {"position": 8,"unit_owning_user_id": 8,"unit_id": 47,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1020,"cool": 1280,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3100}, {"position": 9,"unit_owning_user_id": 9,"unit_id": 48,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1200,"cool": 1660,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2440}]');
+		$ret['unit_list']=json_decode('[{"position": 1,"unit_owning_user_id": 2,"unit_id": 41,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1290,"cool": 1670,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2340}, {"position": 2,"unit_owning_user_id": 3,"unit_id": 42,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1230,"cool": 1010,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3160}, {"position": 3,"unit_owning_user_id": 4,"unit_id": 43,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1470,"cool": 1150,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2690}, {"position": 4,"unit_owning_user_id": 5,"unit_id": 44,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1180,"cool": 1630,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2500}, {"position": 5,"unit_owning_user_id": 1,"unit_id": 40,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1110,"cool": 1560,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2640}, {"position": 6,"unit_owning_user_id": 6,"unit_id": 45,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1260,"cool": 1570,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2480}, {"position": 7,"unit_owning_user_id": 7,"unit_id": 46,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1360,"cool": 1000,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3040}, {"position": 8,"unit_owning_user_id": 8,"unit_id": 47,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1020,"cool": 1280,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 3100}, {"position": 9,"unit_owning_user_id": 9,"unit_id": 48,"rank": 2,"exp": 0,"love": 0,"before_love": 0,"unit_skill_level": 1,"favorite_flag": false,"insert_date": "2014-10-25 14:29:35","attribute": 2,"smile": 1200,"cool": 1660,"max_hp": 4,"max_level": 60,"max_love": 200,"max_rank": 2,"level": 1,"is_level_max": false,"is_love_max": false,"is_rank_max": true,"is_skill_level_max": false,"next_exp": 14,"hp": 3,"cute": 2440}]', true);
 	} else { //否则执行分配
 		//读取卡组
 		$res = $mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn();
@@ -993,7 +993,7 @@ function live_reward($post) {
 		}
 	}
 	//以下的内容PLS不处理。event_info交由对应模块添加
-	$ret=array_merge($ret,json_decode('{
+	$ret = array_merge($ret,json_decode('{
 				"unlocked_subscenario_ids": [],
 				"event_info": [],
 				"accomplished_achievement_list": [],
@@ -1088,6 +1088,76 @@ function live_reward($post) {
 	$ret['after_user_info']['energy_max'] = 100+(int)floor($newlevel/2);
 	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
 	$ret['can_send_friend_request'] = false;
+	
+	//记录live日志
+	if(!isset($post['precise_score_log'])){
+		$post['precise_score_log'] = [];
+	}
+	$mysql->query("INSERT INTO live_log 
+	(user_id, live_difficulty_id, score, perfect_cnt, great_cnt, good_cnt, bad_cnt, miss_cnt, max_combo, precise_score_log, timeStamp)
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())", 
+	[$uid, $post['live_difficulty_id'], $score_still, $post['perfect_cnt'], $post['great_cnt'], $post['good_cnt'], $post['bad_cnt'], $post['miss_cnt'], $post['max_combo'], json_encode($post['precise_score_log'])]);
+	
+	//记录precise log
+	if($post['precise_score_log'] != []){
+		$current_deck = $ret['unit_list'];
+		foreach($current_deck as &$i){
+			$i['total_status'] = [
+				"hp"	=> 0,
+				"smile"	=> 0,
+				"cute"	=> 0,
+				"cool"	=> 0
+			];
+			$i['si_bonus'] = [
+				"hp"	=> 0,
+				"smile"	=> 0,
+				"cute"	=> 0,
+				"cool"	=> 0
+			];
+		}
+		$log_deck_info = [
+			"live_difficulty_id"	=> $post['live_difficulty_id'],
+			"total_status"			=> [
+				"hp"	=> 0,
+				"smile"	=> 0,
+				"cute"	=> 0,
+				"cool"	=> 0
+			],
+			"center_bonus" 			=> [
+				"hp"	=> 0,
+				"smile"	=> 0,
+				"cute"	=> 0,
+				"cool"	=> 0
+			],
+			"si_bonus"				=> [
+				"hp"	=> 0,
+				"smile"	=> 0,
+				"cute"	=> 0,
+				"cool"	=> 0
+			],
+			"unit_list"				=> $current_deck
+		];
+		$old_log = $mysql->query("SELECT * FROM live_precise_log 
+			WHERE user_id = ? AND live_difficulty_id = ? AND skill = ?", 
+			[$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on']])->fetch(PDO::FETCH_ASSOC);
+		$write_flag = true;
+		if($old_log){
+			if((int)$old_log['perfect_cnt'] < $post['perfect_cnt'] || 
+			((int)$old_log['perfect_cnt'] === $post['perfect_cnt'] && (int)$old_log['great_cnt'] > $post['great_cnt']) ||
+			((int)$old_log['perfect_cnt'] === $post['perfect_cnt'] && (int)$old_log['great_cnt'] === $post['great_cnt'] && (int)$old_log['good_cnt'] > $post['good_cnt'])){
+				$mysql->query("DELETE FROM live_precise_log WHERE user_id = ? AND live_difficulty_id = ? AND skill = ?", [$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on']]);
+				$write_flag = true;
+			}else{
+				$write_flag = false;
+			}
+		}
+		if($write_flag){
+			$mysql->query("INSERT INTO live_precise_log 
+				(user_id, live_difficulty_id, skill, perfect_cnt, great_cnt, good_cnt, precise_list, max_combo, deck_info, timestamp)
+				VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())",
+				[$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on'], $post['perfect_cnt'], $post['great_cnt'], $post['good_cnt'], json_encode($post['precise_score_log']['precise_list']), $post['max_combo'], json_encode($log_deck_info)]);
+		}
+	}
 	return $ret;
 }
 
@@ -1098,3 +1168,12 @@ function live_continue() {
 	return $ret;
 }
 //live/gameover 游戏结束时请求 实际上啥都不做
+function live_gameover() {
+	return [];
+}
+
+//live/preciseScore 精确度分数
+function live_preciseScore($post){
+	return retError(3421);
+}
+
