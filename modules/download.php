@@ -44,7 +44,7 @@ function download_update($post) {
 	}
 	$ver = version_compare($post['install_version'], $post['external_version'], '<') ? $post['install_version'] : $post['external_version'];
 	$ver = explode('.', $ver);
-	$ver = $ver[0] * 1000 + $ver[1];
+	$ver = $ver[0] * 1000 + $ver[1] * 10;
 	$pkg = ['99_1'];
 	foreach ($post['package_list'] as $v) {
 		$pkg[] = $v['package_type'] . '_' . $v['package_id'];
