@@ -1178,6 +1178,33 @@ function live_gameover() {
 
 //live/preciseScore 精确度分数
 function live_preciseScore($post){
-	return retError(3421);
+	global $uid, $mysql;
+	$log = $mysql->query("SELECT * FROM live_precise_log 
+		WHERE user_id = ? AND live_difficulty_id = ?", 
+		[$uid, $post['live_difficulty_id']])->fetchAll(PDO::FETCH_ASSOC);
+	if(!$log){
+		return retError(3421);
+	}
+	
+	$result = [
+		"on"	=> ["has_record" => false],
+		"off"	=> ["has_record" => false]
+	];
+	
+	foreach($log as $i){
+		if($i['skill'] == "0"){
+			$switch = "off";
+		}else{
+			$switch = "on";
+		}
+		
+		$result[$switch]['has_record'] = true;
+		$result[$switch]['random_seed'] = time();
+		$result[$switch]['max_combo'] = (int)$i['max_combo'];
+		$result[$switch]['update_date'] = $i['timestamp'];
+		$result[$switch]['precise_list'] = json_decode($i['precise_list'], true);
+		$result[$switch]['deck_info'] = json_decode($i['deck_info'], true);
+	}
+	return $result;
 }
 
