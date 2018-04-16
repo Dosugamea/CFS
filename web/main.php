@@ -248,7 +248,7 @@ if (!isset($action[2])) {
 if(isset($post['commandNum']) && isset($post['module'])){
 	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",[$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
 	if($cached_history){
-		$ret = gzdecode($cached_history['response']);
+		$ret = $cached_history['response'];
 		$XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
 		header("X-Message-Sign: ".$XMS);
 		header('Content-Type: application/json');
@@ -294,10 +294,11 @@ if (!$rolled_back && isset($__user_bak)) {
 if(!isset($ret['status_code'])){
 	$ret['status_code'] = 200;
 }
-
+/*print(json_encode($post));
+print(json_encode($ret));*/
 /*写入日志*/
 if($log)
-	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], date("Y-m-d H:i:s", time()), $post['module'], $post['action'], gzencode(json_encode($post)), gzencode(json_encode($ret))]);
+	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], date("Y-m-d H:i:s", time()), $post['module'], $post['action'], json_encode($post), json_encode($ret)]);
 
 $ret = json_encode($ret);
 function retError($statusCode) {

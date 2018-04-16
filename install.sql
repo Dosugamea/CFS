@@ -252,8 +252,8 @@ CREATE TABLE IF NOT EXISTS `log` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `module` text NOT NULL,
   `action` text NOT NULL,
-  `request` blob NOT NULL,
-  `response` blob NOT NULL,
+  `request` MEDIUMTEXT NOT NULL,
+  `response` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`command_num`(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS `login_bonus` (
   `month` int(11) NOT NULL DEFAULT '0',
   `day` int(11) NOT NULL DEFAULT '0',
   `insert_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARSET=utf8;
 
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.login_bonus_n 结构
