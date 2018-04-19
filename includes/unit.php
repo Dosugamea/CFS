@@ -246,7 +246,7 @@ function getDeckAttribute($deck,$post){
 		$info[$card_info['attribute']] += $card_info['love'];
 		$info['unit_id'] = $card_info['unit_id'];
 		
-		$member_detail[$position - 1] = ["smile" => $info[1], "cute" => $info[2], "cool" => $info[3]];
+		$member_detail[$position - 1] = ["hp" => $card_info['hp'], "smile" => $info[1], "cute" => $info[2], "cool" => $info[3]];
 
 		$info['skill'] = [];
 		foreach($card_info['removable_skill'] as $skill){
@@ -302,6 +302,11 @@ function getDeckAttribute($deck,$post){
 		$member_detail[$count]["smile"] += $bonus[1];
 		$member_detail[$count]["cute"] += $bonus[2];
 		$member_detail[$count]["cool"] += $bonus[3];
+
+		//记录具体的SIS加成数值（v6.0）
+		$member_detail[$count]["sis_smile"] = $bonus[1];
+		$member_detail[$count]["sis_cute"] = $bonus[2];
+		$member_detail[$count]["sis_cool"] = $bonus[3];
 		
 		$bonus=[0,0,0,0];
 		$bonus[$center_skill['target']] += (int)ceil($info[$center_skill['source']] * $center_skill['effect'] /100);
@@ -323,6 +328,11 @@ function getDeckAttribute($deck,$post){
 		$member_detail[$count]["smile"] += $bonus[1];
 		$member_detail[$count]["cute"] += $bonus[2];
 		$member_detail[$count]["cool"] += $bonus[3];
+
+		//记录具体的center加成数值（v6.0）
+		$member_detail[$count]["cen_smile"] = $bonus[1];
+		$member_detail[$count]["cen_cute"] = $bonus[2];
+		$member_detail[$count]["cen_cool"] = $bonus[3];
 		
 		$count ++;
 	}
