@@ -88,7 +88,8 @@ if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live
 	throw400('X-MESSAGE-CODE-WRONG');
 }
 //特殊接口
-if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], xor_($base_key, $application_key)))) {
+$sp_key = xor_(substr($base_key, 16), substr($application_key, 0, 16)).xor_(substr($base_key, 0, 16), substr($application_key, 16));
+if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sp_key))) {
     fwrite($XMCLOG, date("Y-m-d H:i:s"));
     fwrite($XMCLOG, " ".$_SERVER['HTTP_USER_ID']);
     fwrite($XMCLOG, " ".$_SERVER['PATH_INFO']);
