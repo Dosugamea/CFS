@@ -262,7 +262,7 @@ function getDeckAttribute($deck,$post){
 			$center_skill_id = $card_info['center_skill'];
 	}
 	$default_center_skill = [0 => 0, -1 => 1, -2 =>4, -3 => 7];
-	if (!isset($post['ScoreMatch'])) {
+	if (!isset($post['ScoreMatch']) && isset($post['party_user_id'])) {
 		if ($post['party_user_id'] <= 0)
 			$party_skill_id = $default_center_skill[$post['party_user_id']];
 		else {
