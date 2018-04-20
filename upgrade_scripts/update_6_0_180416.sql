@@ -27,9 +27,13 @@ CREATE TABLE `live_precise_log` (
 	`user_id` INT(11) NOT NULL,
 	`live_difficulty_id` INT(11) NOT NULL,
 	`skill` TINYINT(4) NOT NULL,
+	`perfect_cnt` SMALLINT(6) NOT NULL,
+	`great_cnt` SMALLINT(6) NOT NULL,
+	`good_cnt` SMALLINT(6) NOT NULL,
 	`precise_list` MEDIUMTEXT NOT NULL,
 	`max_combo` MEDIUMTEXT NOT NULL,
 	`deck_info` MEDIUMTEXT NOT NULL,
+	`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE INDEX `Index 1` (`user_id`, `live_difficulty_id`, `skill`)
 )
 COLLATE='utf8_general_ci'
