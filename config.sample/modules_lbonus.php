@@ -12,7 +12,7 @@ s_ticket:辅助券
 数字:以该数字为编号的卡片
 */
 
-//LLSP的默认设置为官服的登录奖励
+//PCF的默认设置为官服的登录奖励
 $login_bonus_list=[
   ['loveca', 3],
   ['coin', 3000],
@@ -45,4 +45,30 @@ $login_bonus_list=[
   ['social', 100],
   ['loveca', 3],
   ['social', 1000]
+];
+
+//通算课题奖励
+$total_login_bonus_list = [
+	1		=> ['ticket', 1],
+	5		=> ['ticket', 1],
+	10		=> ['ticket', 2],
+	20		=> ['ticket', 2],
+	30		=> ['ticket', 2],
+	40		=> ['ticket', 2],
+	50		=> ['ticket', 5],
+	80		=> ['s_ticket', 2],
+	100		=> ['s_ticket', 5],
+	150		=> ['s_ticket', 2],
+	200		=> ['s_ticket', 5],
+	250		=> ['s_ticket', 2],
+	300		=> ['s_ticket', 5],
+	350		=> ['s_ticket', 2],
+	365		=> ['s_ticket', 10],
+	400		=> ['s_ticket', 5],
+	500		=> ['s_ticket', 5],
+	600		=> ['s_ticket', 5],
+	700		=> ['s_ticket', 5],
+	800		=> ['s_ticket', 5],
+	900		=> ['s_ticket', 5],
+	1000	=> ['s_ticket', 20]
 ];

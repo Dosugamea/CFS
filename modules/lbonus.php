@@ -80,6 +80,35 @@ function lbonus_execute() {
 	$sheets = nlbonus_execute();
 	$ret = array_merge($ret, $sheets);
 	
+	//通算课题
+	$total_login_count = (int)$mysql->query("SELECT COUNT(*) FROM login_bonus WHERE user_id = ?", [$uid])->fetchColumn();
+	$to_get_count = 0;
+	$delay_flag = false;
+	
+	foreach($total_login_bonus_list as $k => $v){
+		$current_info = $mysql->query("SELECT * FROM login_bonus_total WHERE user_id = ? AND `count` = ?", [$uid, $k])->fetch(PDO::FETCH_ASSOC);
+		if(!$current_info && $total_login_count >= $k){
+			add_present($v[0], $v[1], "累计登录".$k."天登录奖励！");
+			$mysql->query("INSERT INTO login_bonus_total (user_id, `count`) VALUES(?,?)", [$uid, $k]);
+		}
+		if($total_login_count >= $k){
+			$to_get_count = $k;
+			$delay_flag = false;
+		}elseif(!$delay_flag){
+			$to_get_count = $k;
+			$delay_flag = true;
+		}
+	}
+	
+	$ret['total_login_info'] = [
+		"login_count" => $total_login_count,
+		"remaining_count" => $to_get_count - $total_login_count,
+		"reward" => [get_present_info($total_login_bonus_list[$to_get_count][0])]
+	];
+	$ret['total_login_info']['reward'][0]['amount'] = $total_login_bonus_list[$to_get_count][1];
+	
+	$ret['server_timestamp'] = time();
+	
 	return $ret;
 }
 
