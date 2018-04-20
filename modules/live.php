@@ -1135,9 +1135,9 @@ function live_reward($post) {
 			}else{
 				$i['total_status'] = [
 					"hp"	=> $deck_ii['unit_list'][$nn]['hp'],
-					"smile"	=> $deck_ii['unit_list'][$nn]['smile'],
-					"cute"	=> $deck_ii['unit_list'][$nn]['cute'],
-					"cool"	=> $deck_ii['unit_list'][$nn]['cool']
+					"smile"	=> $deck_ii['unit_list'][$nn]['smile'] - $deck_ii['unit_list'][$nn]['cen_smile'],
+					"cute"	=> $deck_ii['unit_list'][$nn]['cute'] - $deck_ii['unit_list'][$nn]['cen_cute'],
+					"cool"	=> $deck_ii['unit_list'][$nn]['cool'] - $deck_ii['unit_list'][$nn]['cen_cool']
 				];
 				$i['si_bonus'] = [
 					"hp"	=> 0,
