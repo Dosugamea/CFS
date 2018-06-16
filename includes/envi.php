@@ -204,4 +204,10 @@ class envi{
 
         $this->params = $params;
     }
+
+    public function initUser(){
+        global $mysql;
+        $user = $mysql->query("SELECT name, introduction, level, exp, award, background FROM users WHERE user_id = ?", [$this->uid])->fetch();
+        $this->user = $user;
+    }
 }
