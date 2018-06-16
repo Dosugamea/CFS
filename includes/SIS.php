@@ -1,5 +1,5 @@
 <?php
-//SIS.php �����ܱ�ʯ
+//SIS.php 学园偶像技能宝石
 
 function addSIS($skill_id, $amount = 1){
 	global $mysql, $uid;
