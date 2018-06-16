@@ -11,6 +11,7 @@ class envi{
     public $platform;
     public $sessionKey;
     public $path;
+    public $params;
 
     public function __construct(){
         $this->authorize = [];
@@ -153,5 +154,54 @@ class envi{
             }
         }
         fclose($XMCLOG);
+    }
+
+    public function initItem(){
+        if(!$this->uid){
+            throw500("FAILED TO INITLIZE ITEM: NO USER FOUND.");
+        }
+        $paramList = [
+            "enable_card_switch",
+            "card_switch",
+            "random_switch",
+            "extend_mods_key",
+            "allow_test_func",
+            "item1",
+            "item2",
+            "item3",
+            "item4",
+            "item5",
+            "item6",
+            "item7",
+            "item8",
+            "item9",
+            "item10",
+            "item11",
+            "item12",
+            "item13",
+            "item14",
+            "item15",
+            "aqours_flag",
+        ];
+
+        $params = $mysql->query("SELECT * FROM user_params WHERE user_id = ?", [$this->uid])->fetchAll();
+        //数据库不存在某样物品的时候设0
+        foreach($paramList as $i){
+            if(!isset($params[$i])){
+                $params[$i] = 0;
+            }
+        }
+        //额外的卡组权限设定表
+        $cardSwitch = $mysql->query("SELECT stat FROM user_card_switch WHERE user_id = ?", [$this->uid])->fetch();
+        if($cardSwitch && $cardSwitch['stat'] == "1"){
+            $params['enable_card_switch'] = 1;
+        }
+
+        //为了方便访问的别名
+        $params['social_point'] = &$params['item2'];
+        $params['coin']         = &$params['item3'];
+        $params['loveca']       = &$params['item4'];
+
+        $this->params = $params;
     }
 }
