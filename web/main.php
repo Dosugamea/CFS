@@ -1,22 +1,31 @@
 <?php 
 date_default_timezone_set("Asia/Tokyo");
 
+//后面感觉会经常用这个BASE PATH
+define("BASE_PATH", __DIR__."/../");
+//LOG记录模块
+require(BASE_PATH."includes/logger.php");
+$logger = new log;
+
 /* include所有includes目录下的文件 */
-$includes = opendir("../includes");
-$include_ = [];
-while($include = readdir($includes))
-	$include_[] = $include;
-$count = 0;
-foreach($include_ as $i){
-	if($i == '.' || $i == '..'){
-		unset($include_[$count]);
-	}
-	$count++;
-}
-$includes = $include_;
-foreach($includes as $include){
-	require("../includes/".$include);
-}
+require(BASE_PATH."includes/errorHandler.php");
+require(BASE_PATH."includes/errorUtil.php");
+require(BASE_PATH."includes/configManager.php");
+require(BASE_PATH."includes/envi.php");
+require(BASE_PATH."includes/AES.php");
+require(BASE_PATH."includes/db.php");
+require(BASE_PATH."includes/energy.php");
+require(BASE_PATH."includes/event.php");
+require(BASE_PATH."includes/exchange.php");
+require(BASE_PATH."includes/extend_avatar.php");
+require(BASE_PATH."includes/item.php");
+require(BASE_PATH."includes/live.php");
+require(BASE_PATH."includes/present.php");
+require(BASE_PATH."includes/RSA.php");
+require(BASE_PATH."includes/sendmail.php");
+require(BASE_PATH."includes/SIS.php");
+require(BASE_PATH."includes/unit.php");
+require(BASE_PATH."includes/util.php");
 
 /* 连接数据库 */
 $mysql->query('start transaction');
@@ -27,20 +36,24 @@ function rollback() {
 	$mysql->query('rollback');
 }
 
-//写入访问日志
-if(!file_exists("../PLSLOG.log")){
-	fopen("../PLSLOG.log", "w");
+/* 配置管理器 */
+$config = new configManager;
+
+/* 写入访问日志 */
+if(!file_exists("../PLSAccess.log")){
+	fopen("../PLSAccess.log", "w");
 }
-$LOGFILE = fopen("../PLSLOG.log","a");
+$LOGFILE = fopen("../PLSAccess.log","a");
 fwrite($LOGFILE,date("Y-m-d H:i:s"));
 fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
 fwrite($LOGFILE," ".$_SERVER["REMOTE_ADDR"]);
 if(isset($_SERVER['HTTP_USER_ID'])){
-	fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']."\n");
+	fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']."\r\n");
 }else{
-	fwrite($LOGFILE," Unknown user\n");
+	fwrite($LOGFILE," Unknown user\r\n");
 }
 fclose($LOGFILE);
+
 /* 验证访问合法性 */
 if(!isset($_SERVER['PATH_INFO'])) {
 	throw403('NO_PATH_INFO');
@@ -48,114 +61,31 @@ if(!isset($_SERVER['PATH_INFO'])) {
 if(!isset($_SERVER['HTTP_AUTHORIZE'])){
 	throw403('ILLEGAL_ACCESS');
 }
-//检验XMC
-foreach (explode('&', $_SERVER['HTTP_AUTHORIZE']) as $v) {
-	$v = explode('=', $v);
-	$authorize[$v[0]] = $v[1];
-}
-if ($_SERVER['PATH_INFO'] == '/login/login'){
-	$sessionKey = $mysql->query('SELECT sessionKey FROM tmp_authorize WHERE token=?', [$authorize['token']])->fetchColumn();
-	if (!$sessionKey) {
-		throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
-	}
-	$sessionKey = base64_decode($sessionKey);
-}elseif($_SERVER['PATH_INFO'] != '/login/authkey'){
-	$sessionKey = $mysql->query('SELECT sessionKey FROM users WHERE authorize_token=?', [$authorize['token']])->fetchColumn();
-	if (!$sessionKey) {
-		$sessionKey = $mysql->query('SELECT sessionKey FROM tmp_authorize WHERE token=?', [$authorize['token']])->fetchColumn();
-	}
-	if (!$sessionKey) {
-		throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
-	}
-	$sessionKey = base64_decode($sessionKey);
+
+/* 初始化环境 */
+$envi = new envi;
+$envi->checkAll();
+
+/* 检查是否维护 */
+if (((strtotime($configManager->maintenance['maintenance_start']) < time() && 
+	strtotime($configManager->maintenance['maintenance_start']) > time()) || 
+	$maintenance) && 
+	gettype($envi->uid) == "integer" &&
+	!in_array($envi->uid, $configManager->maintenance['bypass_maintenance'])) {
+	header('Maintenance: 1');
+	die();
 }
 
-require("../config/code.php");
-require("../config/modules_login.php");
-
-if(!file_exists("../XMCWrong.log")){
-	$XMCLOG = fopen("../XMCWrong.log","w");
-}else{
-	$XMCLOG = fopen("../XMCWrong.log","a");
-}
-
-if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/live/play' && $_SERVER['PATH_INFO'] != '/ranking/player' && $_SERVER['PATH_INFO'] != '/lbonus/execute' && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sessionKey))) {
-	fwrite($XMCLOG, date("Y-m-d H:i:s"));
-    fwrite($XMCLOG, " ".$_SERVER['HTTP_USER_ID']);
-    fwrite($XMCLOG, " ".$_SERVER['PATH_INFO']);
-    fwrite($XMCLOG, " ".$_SERVER['HTTP_X_MESSAGE_CODE']);
-    fwrite($XMCLOG, "\r\n");
-	throw400('X-MESSAGE-CODE-WRONG');
-}
-//特殊接口
-$sp_key = xor_(substr($base_key, 16), substr($application_key, 0, 16)).xor_(substr($base_key, 0, 16), substr($application_key, 16));
-if (($_SERVER['PATH_INFO'] == '/live/play' || $_SERVER['PATH_INFO'] == '/ranking/player' || $_SERVER['PATH_INFO'] == '/lbonus/execute') && (!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || $_SERVER['HTTP_X_MESSAGE_CODE'] != hash_hmac('sha1', $_POST['request_data'], $sp_key))) {
-    fwrite($XMCLOG, date("Y-m-d H:i:s"));
-    fwrite($XMCLOG, " ".$_SERVER['HTTP_USER_ID']);
-    fwrite($XMCLOG, " ".$_SERVER['PATH_INFO']);
-    fwrite($XMCLOG, " ".$_SERVER['HTTP_X_MESSAGE_CODE']);
-    fwrite($XMCLOG, "\r\n");
-}
-fclose($XMCLOG);
-
+//这个好像是注册用的？暂时不明
 if (isset($_SERVER['HTTP_USER_ID']) && $_SERVER['HTTP_USER_ID'] == -1) {
 	header('Maintenance: 1');
 	die();
 }
 
-if ($_SERVER['PATH_INFO'] != '/login/authkey' && $_SERVER['PATH_INFO'] != '/login/login' && $_SERVER['PATH_INFO'] != '/login/startUp' && $_SERVER['PATH_INFO'] != '/login/startWithoutInvite') {
-	if (isset($_SERVER['HTTP_AUTHORIZE'])) {
-		foreach (explode('&', $_SERVER['HTTP_AUTHORIZE']) as $v) {
-			$v = explode('=', $v);
-			$authorize[$v[0]] = $v[1];
-		}
-		$res = $mysql->query('SELECT username FROM users WHERE authorize_token=? AND user_id=?', [$authorize['token'], $_SERVER['HTTP_USER_ID']])->fetchColumn();
-		if (!$res) {
-			throw403('AUTHORIZE_TOKEN_NOT_FOUND '.$_SERVER['PATH_INFO']);
-		}
-		$mysql->query('UPDATE users SET nonce=? WHERE authorize_token=? AND user_id=? AND username=?', [$authorize['nonce'], $authorize['token'], $_SERVER['HTTP_USER_ID'], $res]);
-		$uid = (int)$_SERVER['HTTP_USER_ID'];
-		$banned = $mysql->query("select msg from banned_user where user='$uid' or user='{$res}'")->fetchColumn();
-		if ($banned) {
-			header('HTTP/1.1 423 USER BANNED');
-			$ret['response_data'] = [];
-			$ret['status_code'] = 423;
-			$ret = json_encode($ret);
-			header('Content-Type: application/json');
-			echo $ret;
-			die();
-		}
-	} else {
-		throw403('NOT_SET_PATH_INFO_OR_AUTHORIZE');
-	}
-}
-
-if (isset($uid)) {
-	$params = [];
-	foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAll() as $v) {
-		$params[$v['param']] = (int)$v['value'];
-	}
-	$user = $mysql->query('SELECT name, introduction, level, exp, award, background FROM users WHERE user_id='.$uid)->fetch();
-	$__params_bak = $params;
-	$__user_bak = $user;
-	//如果没有某些常用值，置初值，免得代码里判断
-	$param_list=['enable_card_switch', 'card_switch', 'random_switch', 'extend_mods_key', 'allow_test_func',
-	 'item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'item7', 'item8', 'item9', 'item10', 'item11', 'item12', 'item13', 'item14', 'item15', 
-	 'aqours_flag'];
-	foreach ($param_list as $name) {
-		if (!isset($params[$name])) {
-			$params[$name] = 0;
-		}
-	}
-	//读取开卡权限
-	$query1=$mysql->query('SELECT stat FROM user_card_switch WHERE user_id='.$uid);
-	if($query1->rowCount()!=0 && $query1->fetchColumn()==1)
-		$params['enable_card_switch']=1;
-
-	//访问别名
-	$params['social_point'] = &$params['item2'];
-	$params['coin'] = &$params['item3'];
-	$params['loveca'] = &$params['item4'];
+//有用户的时候读取道具信息
+if($envi->uid){
+	$envi->initItem();
+	$envi->initUser();
 }
 
 /* 维护及更新 */
@@ -169,11 +99,6 @@ if (!isset($_SERVER['HTTP_CLIENT_VERSION'])) {
 }
 
 if (isset($_SERVER['HTTP_BUNDLE_VERSION']) && preg_match('/^[0-9\.]+$/', $_SERVER['HTTP_BUNDLE_VERSION']) && version_compare($_SERVER['HTTP_BUNDLE_VERSION'], $bundle_ver, '<')) {
-	header('Maintenance: 1');
-	die();
-}
-
-if (isset($params) && isset($restrict_ver) && !$params['allow_test_func'] && $_SERVER['HTTP_BUNDLE_VERSION'] == $restrict_ver) {
 	header('Maintenance: 1');
 	die();
 }
@@ -210,11 +135,6 @@ if (isset($uid)) {
 		$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
 		header("Server-Version: ".implode(".",$version_array));
 	}
-}
-//维护
-if (((strtotime($maintenance_start) < time() && strtotime($maintenance_end) > time()) || $maintenance) && isset($uid) && !isset($bypass_maintenance[$uid])) {
-	header('Maintenance: 1');
-	die();
 }
 
 
@@ -254,7 +174,7 @@ if(isset($post['commandNum']) && isset($post['module'])){
 		header("X-Message-Sign: ".$XMS);
 		header('Content-Type: application/json');
 		print($ret);
-		die();
+		exit();
 	}else{
 		$log = true;
 	}
@@ -268,38 +188,17 @@ $ret['release_info'] = isset($release_info) ? $release_info : '[]';
 
 
 /* 写回对users和params的修改 */
-if (!$rolled_back && isset($__user_bak)) {
-	foreach($__user_bak as $k => $v) {
-		if ($user[$k] !== $v) {
-			$mysql->query('UPDATE users SET name=?, introduction=?, level=?, exp=?, award=?, background=? WHERE user_id=?', [$user['name'], $user['introduction'], $user['level'], $user['exp'], $user['award'], $user['background'], $uid]);
-			break;
-		}
-	}
-	foreach($params as $k => $v) {
-		if ($k == 'social_point' || $k == 'coin' || $k == 'loveca') { //访问别名
-			continue;
-		}
-		/*
-		if($k == 'enable_card_switch' ){//开卡权限不写入
-			continue;
-		}*/
-		if (!isset($__params_bak[$k])) {
-			$mysql->query('insert into user_params values(?, ?, ?)', [$uid, $k, $v]);
-		} else if ($__params_bak[$k] !== $v) {
-			$mysql->query('update user_params set value=? where user_id=? and param=?', [$v, $uid, $k]);
-		}
-	}
-}
+$env->saveAll();
 
 /* 处理用户请求 */
 if(!isset($ret['status_code'])){
 	$ret['status_code'] = 200;
 }
-/*print(json_encode($post));
-print(json_encode($ret));*/
+
 /*写入日志*/
-if($log)
+if($log){
 	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], date("Y-m-d H:i:s", time()), $post['module'], $post['action'], json_encode($post), json_encode($ret)]);
+}
 
 $ret = json_encode($ret);
 function retError($statusCode) {
