@@ -185,10 +185,12 @@ class envi{
         ];
 
         $params = $mysql->query("SELECT * FROM user_params WHERE user_id = ?", [$this->uid])->fetchAll();
+        $this->_paramsAppend = [];
         //数据库不存在某样物品的时候设0
         foreach($paramList as $i){
             if(!isset($params[$i])){
                 $params[$i] = 0;
+                $this->_paramsAppend[] = $i; //并把他添加到要用INSERT的列表里
             }
         }
         //额外的卡组权限设定表
@@ -209,5 +211,21 @@ class envi{
         global $mysql;
         $user = $mysql->query("SELECT name, introduction, level, exp, award, background FROM users WHERE user_id = ?", [$this->uid])->fetch();
         $this->user = $user;
+    }
+
+    public function saveAll(){
+        $mysql->query('UPDATE users SET name=?, introduction=?, level=?, exp=?, award=?, background=? WHERE user_id=?', [
+            $this->user['name'], $this->user['introduction'], $this->user['level'], $this->user['exp'], $this->user['award'], $this->user['background'], $this->uid
+        ]);
+        foreach($this->params as $k => $v){
+            if(in_array($k, ["social_point", "coin", "loveca"])){
+                continue;
+            }
+            if(in_array($k, $this->_paramsAppend)){
+                $mysql->query("INSERT INTO user_params VALUES(?, ?, ?)", [$this->uid, $k, $v]);
+            }else{
+                $mysql->query("UPDATE user_params SET value = ? WHERE user_id = ? AND param = ?", [$v, $this->uid, $k]);
+            }
+        }
     }
 }
