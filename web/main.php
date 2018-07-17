@@ -37,7 +37,7 @@ function rollback() {
 }
 
 /* 配置管理器 */
-$config = new configManager;
+$configManager = new configManager;
 
 /* 写入访问日志 */
 if(!file_exists("../PLSAccess.log")){
