@@ -21,17 +21,15 @@ function login_authkey($post) {
 	if($AES_token_client == Null){
 		throw403('INVALID_DUMMY_TOKEN');
 	}
-	/*$f = fopen("AES_CLIENT.log", "w");
-	fwrite($f, bin2hex($AES_token_client));
-	fclose($f);*/
+	
 	//解密auth_data
 	@$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
 	if($auth_data == Null){
-		throw403('INVALID_AUTH_DATA_A');
+		throw403('INVALID_AUTH_DATA');
 	}
 	$auth_data = json_decode(preg_replace('/[^[:print:]]/', '', $auth_data), true);//正则匹配不可显示的padding并删除
 	if(!isset($auth_data['1']) || !isset($auth_data['2']) || !isset($auth_data['3'])){
-		throw403('INVALID_AUTH_DATA_B');
+		throw403('INVALID_AUTH_DATA');
 	}
 	if(!isset($_SERVER['HTTP_OS_VERSION']) || !isset($_SERVER['HTTP_CLIENT_VERSION']) || !isset($_SERVER['HTTP_BUNDLE_VERSION'])){
 		throw403('INVALID_DEVICE');
