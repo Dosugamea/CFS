@@ -89,7 +89,8 @@ if($envi->uid){
 }
 
 /* 维护及更新 */
-require '../config/maintenance.php';
+$bundle_ver = $configManager->basic['bundle_ver'];
+$server_ver = $configManager->basic['server_ver'];
 //客户端版本
 if (!isset($_SERVER['HTTP_BUNDLE_VERSION'])) {
 	throw403('NO_BUNDLE_VERSION');
@@ -98,30 +99,26 @@ if (!isset($_SERVER['HTTP_CLIENT_VERSION'])) {
 	throw403('NO_CLIENT_VERSION');
 }
 
-if (isset($_SERVER['HTTP_BUNDLE_VERSION']) && preg_match('/^[0-9\.]+$/', $_SERVER['HTTP_BUNDLE_VERSION']) && version_compare($_SERVER['HTTP_BUNDLE_VERSION'], $bundle_ver, '<')) {
+if (version_compare($_SERVER['HTTP_BUNDLE_VERSION'], $bundle_ver, '<')) {
 	header('Maintenance: 1');
 	die();
 }
 
 //数据包版本
 if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
-	if (($_SERVER['HTTP_OS'] == 'Android' && $update_for_android == true) || ($_SERVER['HTTP_OS'] == 'iOS' && $update_for_ios == true)) {
-		if(floor((float)$_SERVER['HTTP_CLIENT_VERSION']) < floor((float)$server_ver)){
-			$version_array = explode(".", $_SERVER['HTTP_CLIENT_VERSION']);
-			$version_len = count($version_array);
-			$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
-			header("Server-Version: ".implode(".",$version_array));
-		}
-		else
-			header("Server-Version: ".$server_ver);
-	} else {
-		header('Maintenance: 1');
-		die();
+	if(floor((float)$_SERVER['HTTP_CLIENT_VERSION']) < floor((float)$server_ver)){
+		$version_array = explode(".", $_SERVER['HTTP_CLIENT_VERSION']);
+		$version_len = count($version_array);
+		$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
+		header("Server-Version: ".implode(".",$version_array));
+	}
+	else{
+		header("Server-Version: ".$server_ver);
 	}
 }
 
-//扩展下载
-if (isset($uid)) {
+//扩展下载 TODO
+/*if (isset($uid)) {
 	$res = $mysql->query('
 		SELECT extend_download.* FROM extend_download_queue
 		LEFT JOIN extend_download
@@ -135,7 +132,7 @@ if (isset($uid)) {
 		$version_array[$version_len - 1] = (string)((int)$version_array[$version_len - 1] + 1);
 		header("Server-Version: ".implode(".",$version_array));
 	}
-}
+}*/
 
 
 function runAction($module, $action, $post=[]) {
@@ -157,15 +154,25 @@ function runAction($module, $action, $post=[]) {
 	return call_user_func($module.'_'.$action, $post);
 }
 
+//处理POST数据
 if (isset($_POST['request_data'])) {
 	$post = json_decode($_POST['request_data'],true);
 } else {
-	$post = [];
+	print("INVALID_POST_DATA");
+	exit();
 }
+
+//处理调用URI
 $action = explode('/', $_SERVER['PATH_INFO']);
-if (!isset($action[2])) {
-	$action[2]='';
+if (!isset($action[1])) {
+	print("INVALID_URI");
+	exit();
 }
+if (!isset($action[2])) {
+	$action[2] = '';
+}
+
+//防止重放攻击
 if(isset($post['commandNum']) && isset($post['module'])){
 	$cached_history = $mysql->query("SELECT * FROM log WHERE command_num = ?",[$post['commandNum']])->fetch(PDO::FETCH_ASSOC);
 	if($cached_history){
@@ -194,7 +201,13 @@ if(!isset($ret['status_code'])){
 
 /*写入日志*/
 if($log){
-	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [$post['commandNum'], date("Y-m-d H:i:s", time()), $post['module'], $post['action'], json_encode($post), json_encode($ret)]);
+	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [
+		$post['commandNum'], 
+		date("Y-m-d H:i:s", time()), 
+		$post['module'], 
+		$post['action'], 
+		json_encode($post), 
+		json_encode($ret)]);
 }
 
 $ret = json_encode($ret);
@@ -210,4 +223,5 @@ $mysql->query('commit');
 $XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
 header("X-Message-Sign: ".$XMS);
 header('Content-Type: application/json');
-echo $ret;
+header("X-Powered-By: Project Custom Festival");
+print($ret);
