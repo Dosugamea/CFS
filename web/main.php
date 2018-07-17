@@ -37,7 +37,16 @@ function rollback() {
 }
 
 /* 配置管理器 */
-$configManager = new configManager;
+$config = new configManager;
+
+/* 验证访问合法性 */
+
+if(!isset($_SERVER['HTTP_AUTHORIZE'])){
+	throw403('ILLEGAL_ACCESS');
+}
+if(!isset($_SERVER['PATH_INFO'])) {
+	throw403('NO_PATH_INFO');
+}
 
 /* 写入访问日志 */
 if(!file_exists("../PLSAccess.log")){
@@ -54,24 +63,16 @@ if(isset($_SERVER['HTTP_USER_ID'])){
 }
 fclose($LOGFILE);
 
-/* 验证访问合法性 */
-if(!isset($_SERVER['PATH_INFO'])) {
-	throw403('NO_PATH_INFO');
-}
-if(!isset($_SERVER['HTTP_AUTHORIZE'])){
-	throw403('ILLEGAL_ACCESS');
-}
-
 /* 初始化环境 */
 $envi = new envi;
 $envi->checkAll();
 
 /* 检查是否维护 */
-if (((strtotime($configManager->maintenance['maintenance_start']) < time() && 
-	strtotime($configManager->maintenance['maintenance_start']) > time()) || 
-	$maintenance) && 
+if (((strtotime($config->maintenance['maintenance_start']) < time() && 
+	strtotime($config->maintenance['maintenance_start']) > time()) || 
+	$config->maintenance['maintenance']) && 
 	gettype($envi->uid) == "integer" &&
-	!in_array($envi->uid, $configManager->maintenance['bypass_maintenance'])) {
+	!in_array($envi->uid, $config->maintenance['bypass_maintenance'])) {
 	header('Maintenance: 1');
 	die();
 }
@@ -89,8 +90,8 @@ if($envi->uid){
 }
 
 /* 维护及更新 */
-$bundle_ver = $configManager->basic['bundle_ver'];
-$server_ver = $configManager->basic['server_ver'];
+$bundle_ver = $config->basic['bundle_ver'];
+$server_ver = $config->basic['server_ver'];
 //客户端版本
 if (!isset($_SERVER['HTTP_BUNDLE_VERSION'])) {
 	throw403('NO_BUNDLE_VERSION');
@@ -192,7 +193,7 @@ $ret['response_data'] = runAction($action[1], $action[2], $post);
 $ret['release_info'] = isset($release_info) ? $release_info : '[]';
 
 /* 写回对users和params的修改 */
-$env->saveAll();
+$envi->saveAll();
 
 /* 处理用户请求 */
 if(!isset($ret['status_code'])){

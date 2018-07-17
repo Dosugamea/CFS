@@ -59,6 +59,7 @@ try{
 }
 
 $mysql->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$mysql->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 $mysql->query('SET names utf8');
 $mysql->query('SET time_zone = "+9:00"');
 

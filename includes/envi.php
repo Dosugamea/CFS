@@ -214,7 +214,8 @@ class envi{
     }
 
     public function saveAll(){
-        $mysql->query('UPDATE users SET name=?, introduction=?, level=?, exp=?, award=?, background=? WHERE user_id=?', [
+        global $mysql;
+        $mysql->query("UPDATE users SET name=?, introduction=?, level=?, exp=?, award=?, background=? WHERE user_id=?", [
             $this->user['name'], $this->user['introduction'], $this->user['level'], $this->user['exp'], $this->user['award'], $this->user['background'], $this->uid
         ]);
         foreach($this->params as $k => $v){
