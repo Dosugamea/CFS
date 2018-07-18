@@ -195,7 +195,9 @@ $ret['response_data'] = runAction($action[1], $action[2], $post);
 $ret['release_info'] = isset($release_info) ? $release_info : '[]';
 
 /* 写回对users和params的修改 */
-$envi->saveAll();
+if($envi->uid){
+	$envi->saveAll();
+}
 
 /* 处理用户请求 */
 if(!isset($ret['status_code'])){

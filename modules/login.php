@@ -12,31 +12,31 @@ function login_startWithoutInvite() {
 
 //login/authkey 获取一个认证token
 function login_authkey($post) {
-	global $mysql;
-	sscanf($_SERVER['HTTP_AUTHORIZE'], 'consumerKey=lovelive_test&timeStamp=%d&version=1.1&nonce=%d', $timestamp, $nonce);
-	if($nonce != 1) {
+	global $mysql, $envi, $logger, $config;
+	if($envi->authorize['nonce'] != 1) {
 		throw403('HTTP_AUTHORIZE_INVALID_AUTHKEY');
 	}
 	@$AES_token_client = RSAdecrypt($post['dummy_token']);
-	if($AES_token_client == Null){
+	if($AES_token_client == null){
+		$logger->f("Dummy token decrypt failed.");
 		throw403('INVALID_DUMMY_TOKEN');
 	}
 	
 	//解密auth_data
 	@$auth_data = AESdecrypt(substr(base64_decode($post['auth_data']), 16), substr($AES_token_client, 0, 16), substr(base64_decode($post['auth_data']), 0, 16));
-	if($auth_data == Null){
+	if($auth_data == null){
+		$logger->f("Auth data decrypt failed.");
 		throw403('INVALID_AUTH_DATA');
 	}
 	$auth_data = json_decode(preg_replace('/[^[:print:]]/', '', $auth_data), true);//正则匹配不可显示的padding并删除
 	if(!isset($auth_data['1']) || !isset($auth_data['2']) || !isset($auth_data['3'])){
 		throw403('INVALID_AUTH_DATA');
 	}
-	if(!isset($_SERVER['HTTP_OS_VERSION']) || !isset($_SERVER['HTTP_CLIENT_VERSION']) || !isset($_SERVER['HTTP_BUNDLE_VERSION'])){
-		throw403('INVALID_DEVICE');
-	}
 	
 	//检查X-Message-Code
-	include("../config/modules_login.php");
+	$base_key			= $config->m_login['base_key'];
+	$application_key	= $config->m_login['application_key'];
+
 	for($i=0;$i < strlen($base_key);$i++){
 		$xor_pad[$i] = ($base_key[$i] ^ $application_key[$i % strlen($application_key)]);
 	}
@@ -45,6 +45,7 @@ function login_authkey($post) {
 		$sessionKey[$i] = ($xor_pad[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
 	}
 	$sessionKey = implode("", $sessionKey);
+
 	if(!isset($_SERVER['HTTP_X_MESSAGE_CODE']) || hash_hmac("sha1", $_POST['request_data'], $sessionKey) != $_SERVER['HTTP_X_MESSAGE_CODE']){
 		throw400("X-MESSAGE-CODE-WRONG");
 	}
@@ -55,31 +56,28 @@ function login_authkey($post) {
 	}else{
 		$uid = 0;
 	}
-	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip, client_version, bundle_version) VALUES(?,?,?,?,?,?,?,?)", [$uid, $enc[1], $enc[2], base64_decode($auth_data['3']), $_SERVER['HTTP_OS_VERSION'], $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_CLIENT_VERSION'], $_SERVER['HTTP_BUNDLE_VERSION']]);
-	/*var_dump($auth_data);
-	var_dump(base64_decode(json_decode($auth_data, true)["3"]));
-	die();*/
+	$mysql->query("INSERT INTO auth_log (user_id, login_key, login_passwd, device_data, hdr_device, ip, client_version, bundle_version) VALUES(?,?,?,?,?,?,?,?)", [
+		$uid, 
+		$enc[1], 
+		$enc[2], 
+		base64_decode($auth_data['3']), 
+		$envi->deviceModel, 
+		$_SERVER['REMOTE_ADDR'], 
+		$envi->clientVersion, 
+		$envi->bundleVersion, 
+	]);
 	
 	//生成随机AES key
-	$chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890#%*';
-	mt_srand((int)((double)microtime()*1000000*getmypid()));
-	$AES_token_server='';   
-	while(strlen($AES_token_server) < 32){
-		$AES_token_server.=substr($chars,(mt_rand()%strlen($chars)),1);  
-	}
+	$AES_token_server = random_bytes(32);
 	for($i=0;$i < strlen($AES_token_server);$i++){
 		$sessionKey[$i] = ($AES_token_server[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
 	}
-	/*$f = fopen("AES_SERVER.log", "w");
-	fwrite($f, bin2hex($AES_token_server));
-	fclose($f);*/
-	//$sessionKey = implode("",$sessionKey);
-	$ret['authorize_token'] = sha1(rand(10000000, 99999999));
+	
+	$ret['authorize_token'] = base64_encode(random_bytes(63));
 	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['review_version'] = "";
 	$ret['server_timestamp'] = time();
 	$mysql->query('insert into tmp_authorize(token, sessionKey) values (?,?)', [$ret['authorize_token'],base64_encode($sessionKey)]);
-	//header('version_up: 0');
 	header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());
 	return $ret;
 }
