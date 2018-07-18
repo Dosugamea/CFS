@@ -19,6 +19,13 @@ class envi{
             $i = explode('=', $i);
             $this->authorize[$i[0]] = $i[1];
         }
+
+        //真实IP判断
+        if(isCloudFlareIp($_SERVER["REMOTE_ADDR"]) || isAliIp($_SERVER["REMOTE_ADDR"])){
+            $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }else{
+            $this->ip = $_SERVER["REMOTE_ADDR"];
+        }
     }
 
     public function checkAll(){
@@ -58,6 +65,12 @@ class envi{
             $logger->f("INVALID nonce: Undefined");
             throw403("INVALID_NONCE");
         }
+
+        //往公用变量里面塞东西
+        $this->deviceModel      = $_SERVER['HTTP_OS_VERSION'];
+        $this->bundleVersion    = $_SERVER['HTTP_BUNDLE_VERSION'];
+        $this->clientVersion    = $_SERVER['HTTP_CLIENT_VERSION'];
+
 
         //检查访问的接口
         $tmp = explode("/", $_SERVER['PATH_INFO']);
