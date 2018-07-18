@@ -19,6 +19,7 @@ require(BASE_PATH."includes/event.php");
 require(BASE_PATH."includes/exchange.php");
 require(BASE_PATH."includes/extend_avatar.php");
 require(BASE_PATH."includes/item.php");
+require(BASE_PATH."includes/ipUtils.php");
 require(BASE_PATH."includes/live.php");
 require(BASE_PATH."includes/present.php");
 require(BASE_PATH."includes/RSA.php");
