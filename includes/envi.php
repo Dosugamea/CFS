@@ -98,7 +98,7 @@ class envi{
                         exit();
                     }
                 }else{
-                    $logger->f("Cannot find correspond user with token: ".$token." and uid: ".$_SERVER['HTTP_USER_ID']);
+                    $logger->f("Cannot find correspond user with token: ".$this->authorize['token']." and uid: ".$_SERVER['HTTP_USER_ID']);
                     throw403("INVALID_USER");
                 }
             }else{
@@ -108,7 +108,7 @@ class envi{
                     $this->uid          = 0;
                     $this->sessionKey   = base64_decode($user['sessionKey']);
                 }else{
-                    $logger->f("Cannot find correspond tmp_user with token: ".$token." and uid: ".$_SERVER['HTTP_USER_ID']);
+                    $logger->f("Cannot find correspond tmp_user with token: ".$this->authorize['token']);
                     throw403("INVALID_USER");
                 }
             }

@@ -73,34 +73,34 @@ function login_authkey($post) {
 		$sessionKey[$i] = ($AES_token_server[$i] ^ $AES_token_client[$i % strlen($AES_token_client)]);
 	}
 	
-	$ret['authorize_token'] = base64_encode(random_bytes(63));
+	$ret['authorize_token'] = str_replace("+", "", str_replace("/", "", base64_encode(random_bytes(63))));
 	$ret['dummy_token'] = base64_encode($AES_token_server);
 	$ret['review_version'] = "";
 	$ret['server_timestamp'] = time();
-	$mysql->query('insert into tmp_authorize(token, sessionKey) values (?,?)', [$ret['authorize_token'],base64_encode($sessionKey)]);
+	$mysql->query('INSERT INTO tmp_authorize(token, sessionKey) VALUES (?,?)', [$ret['authorize_token'], base64_encode($sessionKey)]);
 	header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());
 	return $ret;
 }
 
 //login/login 执行登录，返回一个UID
 function login_login($post) {
-	global $mysql;
-	$authorize = explode('&', $_SERVER['HTTP_AUTHORIZE']);
-	sscanf($authorize[1], 'timeStamp=%d', $timestamp);
-	sscanf($authorize[3], 'token=%s', $token);
-	sscanf($authorize[4], 'nonce=%d', $nonce);
-	if ($nonce != 2) {
+	global $mysql, $envi;
+	if ($envi->authorize['nonce'] != 2) {
 		throw403('HTTP_AUTHORIZE_INVALID_LOGIN');
 	}
-	if (!$mysql->query('select * from tmp_authorize where token=?', [$token])->fetch()) {
+
+	//检查token是否存在
+	if (!$mysql->query('select * from tmp_authorize where token=?', [$envi->authorize['token']])->fetch()) {
 		throw403('AUTHORIZE_TOKEN_NOT_FOUND_LOGIN');
 	}
-	$sessionKey = $mysql->query('select sessionKey from tmp_authorize where token=?', [$token])->fetchColumn();
+	$sessionKey = $mysql->query('select sessionKey from tmp_authorize where token=?', [$envi->authorize['token']])->fetchColumn();
 	$sessionKey = base64_decode($sessionKey);
-	$mysql->query('delete from tmp_authorize where token=?', [$token]);
+	$mysql->query('delete from tmp_authorize where token=?', [$envi->authorize['token']]);
+
+	//解密登陆凭据
 	$raw_login_key = base64_decode($post['login_key']);
-	$iv = substr($raw_login_key,0,16);
-	$login_key = AESdecrypt(substr($raw_login_key,16), substr($sessionKey,0,16), $iv);
+	$iv = substr($raw_login_key, 0, 16);
+	$login_key = AESdecrypt(substr($raw_login_key, 16), substr($sessionKey, 0, 16), $iv);
 	$post['login_key'] = preg_replace('/[^[:print:]]/', '', $login_key);//正则匹配去除padding
 	
 	$raw_login_passwd = base64_decode($post['login_passwd']);
@@ -114,29 +114,34 @@ function login_login($post) {
 	if ($login_result[0] === false) {
 		$login_result_v1 = login_v1($post);
 		if ($login_result_v1[0] !== false) {
-			$mysql->exec("UPDATE users SET password='{$login_result[2]}', username='{$login_result[1]}' WHERE username='{$login_result_v1[1]}'"); 
+			$mysql->query("UPDATE users SET password = ?, username = ? WHERE username = ?", [
+				$login_result[2],
+				$login_result[1],
+				$login_result_v1[1]
+			]); 
 			$id = $login_result_v1[0];
 		}
 	}
 	if($id === false) {
-		//if($enable_web_reg) {
-			$id = -1;
-		//}else{
-		//	$id = $mysql->query('select ifnull(max(user_id), 0) from users')->fetchColumn();
-		//	$id++;
-		//	$mysql->exec("INSERT INTO `users` (`user_id`, `username`, `password`) VALUES ($id, '$uname', '$pass')");
-		//	$mysql->exec("INSERT INTO `user_info` (`user_id`, `name`, `invite_code`) VALUES($id, 'New User', '$id')");
-		//	$mysql->exec("INSERT INTO `user_perm` VALUES($id, 1, 1, 1, 0, 0)");
-		//}
+		$id = -1;
 	}
-	$ret['authorize_token'] = sha1(rand(10000000, 99999999));
+	$ret['authorize_token'] = str_replace("+", "", str_replace("/", "", base64_encode(random_bytes(63))));
 	$ret['user_id'] = $id;
 	if ($id !== -1) {
 		$encoded_sessionKey = base64_encode($sessionKey);
-		$mysql->exec("UPDATE users SET nonce=2, authorize_token='{$ret['authorize_token']}', elapsed_time_from_login=CURRENT_TIMESTAMP, sessionKey = '{$encoded_sessionKey}' WHERE username='{$login_result[1]}'");
+		$mysql->query("UPDATE users SET nonce = 2, authorize_token = ?, elapsed_time_from_login = CURRENT_TIMESTAMP, sessionKey = ? WHERE username = ?", [
+			$ret['authorize_token'],
+			$encoded_sessionKey,
+			$login_result[1]
+		]);
 	} else {
-		$mysql->query('delete from tmp_authorize where username=?', [$login_result[1]]);
-		$mysql->query('insert into tmp_authorize (token, username, password, sessionKey) values (?, ?, ?, ?)', [$ret['authorize_token'], $login_result[1], $login_result[2], base64_encode($sessionKey)]);
+		$mysql->query('DELETE FROM tmp_authorize WHERE username=?', [$login_result[1]]);
+		$mysql->query('INSERT INTO tmp_authorize (token, username, password, sessionKey) values (?, ?, ?, ?)', [
+			$ret['authorize_token'], 
+			$login_result[1], 
+			$login_result[2], 
+			base64_encode($sessionKey)
+		]);
 	}
 	$ret['review_version'] = '';
 	$ret['server_timestamp'] = time();
