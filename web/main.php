@@ -50,22 +50,23 @@ if(!isset($_SERVER['PATH_INFO'])) {
 }
 
 /* 写入访问日志 */
+$envi = new envi;
+
 if(!file_exists("../PLSAccess.log")){
 	fopen("../PLSAccess.log", "w");
 }
 $LOGFILE = fopen("../PLSAccess.log","a");
-fwrite($LOGFILE,date("Y-m-d H:i:s"));
-fwrite($LOGFILE," ".$_SERVER['PATH_INFO']);
-fwrite($LOGFILE," ".$_SERVER["REMOTE_ADDR"]);
+fwrite($LOGFILE, date("Y-m-d H:i:s"));
+fwrite($LOGFILE, " ".$_SERVER['PATH_INFO']);
+fwrite($LOGFILE, " ".$envi->ip);
 if(isset($_SERVER['HTTP_USER_ID'])){
-	fwrite($LOGFILE," ".$_SERVER['HTTP_USER_ID']."\r\n");
+	fwrite($LOGFILE, " ".$_SERVER['HTTP_USER_ID']."\r\n");
 }else{
-	fwrite($LOGFILE," Unknown user\r\n");
+	fwrite($LOGFILE, " Unknown user\r\n");
 }
 fclose($LOGFILE);
 
 /* 初始化环境 */
-$envi = new envi;
 $envi->checkAll();
 
 /* 检查是否维护 */
