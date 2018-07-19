@@ -80,7 +80,7 @@ class envi{
         if(isset($this->authorize['token'])){
             if(isset($_SERVER['HTTP_USER_ID'])){
                 //token和uid都存在，用户应该存在
-                $user = $mysql->query("SELECT * FROM users WHERE uid = ? AND token = ?", [(int)$_SERVER['HTTP_USER_ID'], $this->authorize['token']])->fetch();
+                $user = $mysql->query("SELECT * FROM users WHERE user_id = ? AND authorize_token = ?", [(int)$_SERVER['HTTP_USER_ID'], $this->authorize['token']])->fetch();
                 if($user){
                     $this->uid          = $user['user_id'];
                     $this->sessionKey   = base64_decode($user['sessionKey']);
@@ -170,6 +170,7 @@ class envi{
     }
 
     public function initItem(){
+        global $mysql;
         if(!$this->uid){
             throw500("FAILED TO INITLIZE ITEM: NO USER FOUND.");
         }
