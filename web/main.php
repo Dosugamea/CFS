@@ -68,6 +68,7 @@ fclose($LOGFILE);
 
 /* 初始化环境 */
 $envi->checkAll();
+$uid = &$envi->uid;
 
 /* 检查是否维护 */
 if (((strtotime($config->maintenance['maintenance_start']) < time() && 
