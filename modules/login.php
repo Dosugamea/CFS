@@ -232,7 +232,7 @@ function login_unitSelect($post) {
 
 //login/topInfo 返回首页显示的一些信息
 function login_topInfo() {
-	global $uid, $mysql, $params;
+	global $uid, $mysql;
 	$present_count = $mysql->query('SELECT count(*) FROM incentive_list WHERE user_id='.$uid.' and opened_date=0')->fetchColumn();
 	$last_muse_free_gacha = date("Y-m-d", strtotime($mysql->query("SELECT free_gacha_muse FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn()));
 	$last_aqours_free_gacha = date("Y-m-d", strtotime($mysql->query("SELECT free_gacha_aqours FROM secretbox WHERE user_id = ?", [$uid])->fetchColumn()));
@@ -253,6 +253,7 @@ function login_topInfo() {
 	$ret['server_datetime'] = date('Y-m-d H:i:s');
 	$ret['server_timestamp'] = time();
 	$ret['friends_approval_wait_cnt'] = $friend_cnt;
+	$ret['is_today_birthday'] = false;//TODO
 	
 	return $ret;
 }
@@ -261,7 +262,12 @@ function login_topInfo() {
 function login_topInfoOnce() {
 	global $mysql, $uid;
 	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
-	return ["new_achievement_cnt"=>0, 'unaccomplished_achievement_cnt'=>0, 'handover_expire_status'=>0,'live_daily_reward_exist' => date("Y-m-d",strtotime($daily_reward)) != date("Y-m-d",time())];
+	return [
+		"new_achievement_cnt"				=> 0, 
+		'unaccomplished_achievement_cnt'	=> 0, 
+		'handover_expire_status'			=> 0,
+		'live_daily_reward_exist'			=> date("Y-m-d",strtotime($daily_reward)) != date("Y-m-d",time())
+	];
 }
 
 ?>
