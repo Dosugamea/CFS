@@ -14,7 +14,7 @@ function download_additional($post) {
 }
 
 function download_batch($post) {
-	global $uid, $mysql, $additional_for_android, $additional_for_ios;
+	global $uid, $mysql;
 	$ret = $mysql->query(
 		"SELECT package_id, url, size FROM packages
 		WHERE package_type = ? AND os = ?"
