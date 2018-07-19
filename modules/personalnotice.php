@@ -33,14 +33,13 @@ function personalnotice_get() {
 //已读notice
 function personalnotice_agree($post) {
 	global $uid, $mysql;
-	include("../config/modules_personalnotice.php");
 	
 	if(!isset($post['notice_id']) || !is_numeric($post['notice_id'])){
 		throw403("INVALID PARAMETERS");
 	}
 	
 	$global_flag = false;
-	foreach($global_notice as $i){
+	foreach($config->m_personalnotice['global_notice'] as $i){
 		if($post['notice_id'] === $i['notice_id']){
 			$mysql->query("INSERT INTO personalnotice_global (user_id, notice_id) VALUES (?, ?)", [$uid, $post['notice_id']]);
 			$global_flag = true;
