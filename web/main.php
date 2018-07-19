@@ -192,7 +192,7 @@ if(isset($post['commandNum']) && isset($post['module'])){
 	$log = false;
 }
 $ret['response_data'] = runAction($action[1], $action[2], $post);
-$ret['release_info'] = isset($release_info) ? $release_info : '[]';
+$ret['release_info'] = $config->basic['release_info'];
 
 /* 写回对users和params的修改 */
 if($envi->uid){
