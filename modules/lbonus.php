@@ -2,8 +2,7 @@
 //lbonus.php 登录奖励module
 //lbonus/execute 执行登录奖励
 function lbonus_execute() {
-	global $uid, $mysql, $perm;
-	require '../config/modules_lbonus.php';
+	global $uid, $mysql, $config;
 	$data = $mysql->query("SELECT day FROM login_bonus WHERE user_id = ".$uid." AND year = ".(int)date('Y')." AND month = ".(int)date('m'))->fetchAll(PDO::FETCH_NUM);
 	$login_query = [];
 	if(!empty($data)){
@@ -16,7 +15,7 @@ function lbonus_execute() {
 	$calendar_info['current_month']['year'] = (int)date('Y');
 	$calendar_info['current_month']['month'] = (int)date('m');
 	$calendar_info['current_month']['days'] = [];
-	foreach($login_bonus_list as $k => $v) {
+	foreach($config->m_lbonus['login_bonus_list'] as $k => $v) {
 		$item['day'] = $k + 1;
 		$item['day_of_the_week'] = (int)date('w', strtotime(date('Y-m-').(string)$item['day']));
 		if ($item['day'] ==1 || $v[0] == 'loveca'){
@@ -46,7 +45,7 @@ function lbonus_execute() {
 		$calendar_info['next_month']['month'] = 1;
 	}
 	$calendar_info['next_month']['days'] = [];
-	foreach($login_bonus_list as $k => $v) {
+	foreach($config->m_lbonus['login_bonus_list'] as $k => $v) {
 		$item['day'] = $k + 1;
 		$item['day_of_the_week'] = (int)date('w', strtotime($calendar_info['next_month']['year']."-".$calendar_info['next_month']['month']."-".(string)$item['day']));
 		if ($item['day'] ==1 || $v[0] == 'loveca'){
@@ -85,7 +84,7 @@ function lbonus_execute() {
 	$to_get_count = 0;
 	$delay_flag = false;
 	
-	foreach($total_login_bonus_list as $k => $v){
+	foreach($config->m_lbonus['total_login_bonus_list'] as $k => $v){
 		$current_info = $mysql->query("SELECT * FROM login_bonus_total WHERE user_id = ? AND `count` = ?", [$uid, $k])->fetch(PDO::FETCH_ASSOC);
 		if(!$current_info && $total_login_count >= $k){
 			add_present($v[0], $v[1], "累计登录".$k."天登录奖励！");
@@ -103,9 +102,9 @@ function lbonus_execute() {
 	$ret['total_login_info'] = [
 		"login_count" => $total_login_count,
 		"remaining_count" => $to_get_count - $total_login_count,
-		"reward" => [get_present_info($total_login_bonus_list[$to_get_count][0])]
+		"reward" => [get_present_info($config->m_lbonus['total_login_bonus_list'][$to_get_count][0])]
 	];
-	$ret['total_login_info']['reward'][0]['amount'] = $total_login_bonus_list[$to_get_count][1];
+	$ret['total_login_info']['reward'][0]['amount'] = $config->m_lbonus['total_login_bonus_list'][$to_get_count][1];
 	
 	$ret['server_timestamp'] = time();
 	
@@ -114,10 +113,13 @@ function lbonus_execute() {
 
 // nlbonus/execute 执行特殊登录奖励
 function nlbonus_execute () {
-	global $uid, $mysql, $param;
-	require '../config/modules_nlbonus.php';
+	global $uid, $mysql, $config;
 	$sheets = [];
-	foreach($nlbonus as $v) {
+	foreach($config->m_nlbonus['nlbonus'] as $v) {
+		$v['start']			= eval('$v[\'start\'] = '.$v['start'].";");
+		$v['end']			= eval('$v[\'end\'] = '.$v['end'].";");
+		$v['nlbonus_id']	= eval('$v[\'nlbonus_id\'] = '.$v['nlbonus_id'].";");
+
 		if (strtotime(date("Y-m-d H:i:s")) > strtotime($v['end']) || strtotime(date("Y-m-d H:i:s")) < strtotime($v['start'])) {
 			continue;
 		}
@@ -139,9 +141,10 @@ function nlbonus_execute () {
 		$ret['bg_asset'] = $v['bg_asset'];
 		$ret['items'] = [];
 		foreach($v['items'] as $k2 => $v2) {
-			$item['seq'] = $k2+1;
-			$item['amount'] = $v2[1];
-			$item = array_merge($item, get_present_info($v2[0], is_int($v2[0]), isset($v2[3])?$v2[3]:false));
+			$item['seq'] = $k2 + 1;
+			$item['reward'] = [];
+			$item['reward'][0]['amount'] = $v2[1];
+			$item['reward'][0] = array_merge($item['reward'][0], get_present_info($v2[0], is_int($v2[0]), isset($v2[3])?$v2[3]:false));
 			$ret['items'][] = $item;
 			if($days['last_seq'] == $k2) {
 				$ret['stamp_num'] = $k2;
