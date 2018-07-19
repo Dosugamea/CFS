@@ -457,6 +457,6 @@ class configManager{
 				"contents"		=> "本服Tos已于2017/11/9更新，请在下一步提示的Tos界面认真阅读。",
 			]
 		];
-		$this->initCommon($defaultConfig, "m_notice");
+		$this->initCommon($defaultConfig, "m_personalnotice");
 	}
 }
