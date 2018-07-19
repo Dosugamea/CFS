@@ -450,12 +450,12 @@ class configManager{
 	private function _init_m_personalnotice(){
 		$defaultConfig = [
 			//全服通用的个人通知
-			"global_notice"	=> [
+			"global_notice"	=> [[
 				"notice_id"		=> 1,
 				"type"			=> 1,	//1带勾选框，2不带
 				"title"			=> "Tos更新公告",
 				"contents"		=> "本服Tos已于2017/11/9更新，请在下一步提示的Tos界面认真阅读。",
-			]
+			]]
 		];
 		$this->initCommon($defaultConfig, "m_personalnotice");
 	}
