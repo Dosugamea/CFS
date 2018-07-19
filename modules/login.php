@@ -78,7 +78,7 @@ function login_authkey($post) {
 	$ret['review_version'] = "";
 	$ret['server_timestamp'] = time();
 	$mysql->query('INSERT INTO tmp_authorize(token, sessionKey) VALUES (?,?)', [$ret['authorize_token'], base64_encode($sessionKey)]);
-	header('authorize: consumerKey=lovelive_test&timeStamp='.time().'&version=1.1&token='.$ret['authorize_token'].'&nonce=1&user_id=&requestTimeStamp='.time());
+	$envi->authorize['token'] = $ret['authorize_token'];
 	return $ret;
 }
 
@@ -126,7 +126,7 @@ function login_login($post) {
 		$id = -1;
 	}
 	$ret['authorize_token'] = str_replace("+", "", str_replace("/", "", base64_encode(random_bytes(63))));
-	$ret['user_id'] = $id;
+	$ret['user_id'] = (int)$id;
 	if ($id !== -1) {
 		$encoded_sessionKey = base64_encode($sessionKey);
 		$mysql->query("UPDATE users SET nonce = 2, authorize_token = ?, elapsed_time_from_login = CURRENT_TIMESTAMP, sessionKey = ? WHERE username = ?", [
@@ -145,6 +145,7 @@ function login_login($post) {
 	}
 	$ret['review_version'] = '';
 	$ret['server_timestamp'] = time();
+	$envi->authorize['token'] = $ret['authorize_token'];
 	return $ret;
 }
 

@@ -224,7 +224,15 @@ function retError($statusCode) {
 
 $mysql->query('commit');
 //header('Server-Version: '.$server_ver);
-
+$authorize = [
+	"consumerKey"		=> "lovelive_test",
+	"timeStamp"			=> time(),
+	"version"			=> "1.1",
+	"token"				=> $envi->authorize['token'],
+	"nonce"				=> $envi->authorize['nonce'],
+	"requestTimeStamp"	=> $envi->authorize['timeStamp']
+];
+header("authorize: ".http_build_query($authorize));
 $XMS = RSAsign($ret.$_SERVER['HTTP_X_MESSAGE_CODE']);
 header("X-Message-Sign: ".$XMS);
 header('Content-Type: application/json');
