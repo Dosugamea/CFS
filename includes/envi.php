@@ -198,7 +198,11 @@ class envi{
             "aqours_flag",
         ];
 
-        $params = $mysql->query("SELECT * FROM user_params WHERE user_id = ?", [$this->uid])->fetchAll();
+        $params_ = $mysql->query("SELECT * FROM user_params WHERE user_id = ?", [$this->uid])->fetchAll();
+        $params = [];
+        foreach($params_ as $i){
+            $params[$i['param']] = $i['value'];
+        }
         $this->_paramsAppend = [];
         //数据库不存在某样物品的时候设0
         foreach($paramList as $i){
