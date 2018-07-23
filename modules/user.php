@@ -7,7 +7,7 @@ function user_userInfo() {
 	global $envi, $uid;
 	$user = &$envi->user;
 	$ret = ['user' => [
-		'user_id'					=> $uid,
+		'user_id'					=> (int)$uid,
 		'name'						=> $user['name'],
 		'level'						=> (int)$user['level'],
 		'exp'						=> (int)$user['exp'],
@@ -27,7 +27,9 @@ function user_userInfo() {
 		'update_date'				=> '2018-01-01 00:00:00',
 		'tutorial_state'			=> -1,
 		'lp_recovery_item'			=> [], //TODO
-	]];
+	],
+	"server_timestamp" => time()
+	];
 	$energy = getCurrentEnergy();
 	$ret['user'] = array_merge($ret['user'], $energy);
 	return $ret;
@@ -45,30 +47,30 @@ function user_changeName($post) {
 
 //user/showAllItem 返回单抽券和辅助券的数目
 function user_showAllItem() {
-	global $params;
+	global $envi;
 	$ret['items'] = [];
 	for($i = 1; $i <= 15; $i ++){
-		$ret['items'][] = ["item_id" => $i, "amount" => $params['item'.$i]];
+		$ret['items'][] = ["item_id" => $i, "amount" => $envi->params['item'.$i]];
 	}
 	return $ret;
 }
 
 function user_getNavi() {
-	global $uid, $params, $mysql;
-	if (!$params['card_switch']) {
+	global $uid, $envi, $mysql;
+	if (!$envi->params['card_switch']) {
 		$navi = 10;
 	} else {
-		$navi = isset($params['navi']) ? $params['navi'] : $mysql->query('SELECT center_unit FROM user_deck WHERE user_id=' . $uid)->fetchColumn();
+		$navi = isset($envi->params['navi']) ? $envi->params['navi'] : $mysql->query('SELECT center_unit FROM user_deck WHERE user_id = ?', [$uid])->fetchColumn();
 	}
 	return ['user' => [
-		'user_id' => $uid,
+		'user_id' => (int)$uid,
 		'unit_owning_user_id' => (int)$navi
 	]];
 }
 
 function user_changeNavi($post) {
-	global $params;
-	$params['navi'] = $post['unit_owning_user_id'];
+	global $envi;
+	$envi->params['navi'] = $post['unit_owning_user_id'];
 	return [];
 }
 
