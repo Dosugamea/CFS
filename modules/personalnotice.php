@@ -32,7 +32,7 @@ function personalnotice_get() {
 
 //已读notice
 function personalnotice_agree($post) {
-	global $uid, $mysql;
+	global $uid, $mysql, $config;
 	
 	if(!isset($post['notice_id']) || !is_numeric($post['notice_id'])){
 		throw403("INVALID PARAMETERS");
