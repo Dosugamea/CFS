@@ -2,9 +2,9 @@
 
 //notice/noticeMarquee 应该是主界面滚动显示的通知（比如继承码到期）
 function notice_noticeMarquee() {
-	include("../config/modules_notice.php");
+	global $config;
 	$notice = [];
-	foreach($noticeMarquee as $i){
+	foreach($config->m_notice['noticeMarquee'] as $i){
 		if(strtotime($i['start_date']) < time() && strtotime($i['end_date']) > time()){
 			$notice[] = $i;
 		}

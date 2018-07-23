@@ -4,6 +4,9 @@
 //payment/productList 获取商品列表
 function payment_productList() {
   return json_decode('{
+	  		"restriction_info":{
+				"restricted": false
+			},
 			"under_age_info": {
 				"birth_set": true,
 				"has_limit": false,
