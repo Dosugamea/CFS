@@ -19,7 +19,6 @@ function eventscenario_status() {
       "event_id" => $event_id,
       "event_scenario_btn_asset" => "assets/image/ui/eventscenario/{$event_id}_se_ba_t.png",
       "event_scenario_se_btn_asset" => "assets/image/ui/eventscenario/{$event_id}_se_ba_tse.png",
-      "open_date" => null,
       "chapter_list" => $chapters
     ];
   }
