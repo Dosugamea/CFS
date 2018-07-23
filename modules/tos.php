@@ -5,12 +5,14 @@
 function tos_tosCheck() {
 	global $mysql, $uid, $config;
 	$ret['tos_id'] = $config->tos['tos_id'];
-	$agreed_tos = $mysql->query('SELECT * FROM tos WHERE user_id='.$uid)->fetch();
+	$ret['tos_type'] = 3; //别问我我也不知道这啥
+	$agreed_tos = $mysql->query('SELECT * FROM tos WHERE user_id = ?', [$uid])->fetch();
 	if($agreed_tos == false || $agreed_tos['tos_id'] != $config->tos['tos_id']){
 		$ret['is_agreed'] = false;
 	}else{
 		$ret['is_agreed'] = true;
 	}
+	$ret['server_timestamp'] = time();
 	return $ret;
 }
 
