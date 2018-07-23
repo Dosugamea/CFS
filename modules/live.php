@@ -2,18 +2,19 @@
 //live/liveStatus 歌曲信息以及最高分
 function live_liveStatus() {
 	$getLiveList = function ($table) {
-		global $mysql, $params, $uid, $max_live_difficulty_id;
+		global $mysql, $envi, $uid, $config;
 		$live = getLiveDb();
-		$exist_live = $mysql->query('select notes_setting_asset from notes_setting')->fetchAll(PDO::FETCH_COLUMN);
+		$max_live_difficulty_id = $config->basic['max_live_difficulty_id'];
+		$exist_live = $mysql->query('SELECT notes_setting_asset FROM notes_setting')->fetchAll(PDO::FETCH_COLUMN);
 		
 		$exclude_setting = [];
 		$extra_limit = '';
 		switch ($table) {
 			case 'normal_live_m': break;
-			case 'special_live_m': $exclude_setting = $live->query('select live_setting_id from normal_live_m')->fetchAll(PDO::FETCH_COLUMN); break;
+			case 'special_live_m': $exclude_setting = $live->query('SELECT live_setting_id FROM normal_live_m')->fetchAll(PDO::FETCH_COLUMN); break;
 			case 'event_marathon_live_m': 
 				$table = 'marathon.' . $table;
-				$exclude_setting = $live->query('select live_setting_id from normal_live_m union select live_setting_id from special_live_m')->fetchAll(PDO::FETCH_COLUMN);
+				$exclude_setting = $live->query('SELECT live_setting_id FROM normal_live_m UNION SELECT live_setting_id FROM special_live_m')->fetchAll(PDO::FETCH_COLUMN);
 				$extra_limit = ' AND random_flag = 0';
 				break;
 			default: trigger_error('getLiveList:错误的表');
@@ -31,32 +32,33 @@ function live_liveStatus() {
 			$asset_to_id[$v['notes_setting_asset']] = (int)$v['live_difficulty_id'];
 		}
 		
-		$user_goals = $mysql->query('select live_goal_reward_id from live_goal where user_id='.$uid)->fetchAll(PDO::FETCH_COLUMN);
-		$goals = $live->query('select live_goal_reward_id, live_difficulty_id from live_goal_reward_m where live_goal_reward_id in ('.implode(',', $user_goals).') order by live_difficulty_id asc')->fetchAll();
+		$user_goals = $mysql->query('SELECT live_goal_reward_id FROM live_goal WHERE user_id='.$uid)->fetchAll(PDO::FETCH_COLUMN);
+		$goals = $live->query('SELECT live_goal_reward_id, live_difficulty_id FROM live_goal_reward_m WHERE live_goal_reward_id IN ('.implode(',', $user_goals).') ORDER BY live_difficulty_id ASC')->fetchAll();
 		
 		$live_detail_list = $mysql->query('
 			SELECT notes_setting_asset, clear_cnt, hi_combo_count, hi_score FROM live_ranking
-			WHERE user_id='.$uid.' AND card_switch='.$params['card_switch'].' AND random_switch='.$params['random_switch'].'
+			WHERE user_id='.$uid.' AND card_switch='.$envi->params['card_switch'].' AND random_switch='.$envi->params['random_switch'].'
 			AND notes_setting_asset in ("'.implode('","', array_map(function ($e) {
 				return $e['notes_setting_asset'];
 			}, $live_list)).'")
 		')->fetchAll(PDO::FETCH_ASSOC);
-		$generate_live_list = function ($v) use ($params, $goals, $asset_to_id) {
+		$generate_live_list = function ($v) use ($envi, $goals, $asset_to_id) {
 			$id = isset($v['notes_setting_asset']) ? $asset_to_id[$v['notes_setting_asset']] : $v;
 			$ret = [
-				'live_difficulty_id' => (int)$id,
-				'clear_cnt' => isset($v['clear_cnt']) ? (int)$v['clear_cnt'] : 0,
-				'hi_combo_count' => isset($v['hi_combo_count']) ? (int)$v['hi_combo_count'] : 0,
-				'hi_score' => isset($v['hi_score']) ? (int)$v['hi_score'] : 0,
-				'status' => isset($v['clear_cnt']) ? 2 : 1,
-				'achieved_goal_id_list' => array_values(array_map(function ($e) {
+				'live_difficulty_id'		=> (int)$id,
+				'clear_cnt'					=> isset($v['clear_cnt']) ? (int)$v['clear_cnt'] : 0,
+				'hi_combo_count'			=> isset($v['hi_combo_count']) ? (int)$v['hi_combo_count'] : 0,
+				'hi_score'					=> isset($v['hi_score']) ? (int)$v['hi_score'] : 0,
+				'status'					=> isset($v['clear_cnt']) ? 2 : 1,
+				'achieved_goal_id_list'		=> array_values(array_map(function ($e) {
 					return (int)$e['live_goal_reward_id'];
 				}, array_filter($goals, function ($e) use ($id) {
 					return $e['live_difficulty_id'] == $id;
 				})))
 			];
-			if ($params['random_switch'])
-				$ret['is_random'] = ($params['random_switch'] > 0);
+			if ($envi->params['random_switch']){
+				$ret['is_random'] = ($envi->params['random_switch'] > 0);
+			}
 			return $ret;
 		};
 		$live_detail_list = array_map($generate_live_list, $live_detail_list);
@@ -66,103 +68,48 @@ function live_liveStatus() {
 		return array_values(array_merge($live_detail_list, $live_without_rank));
 	};
 	return [
-		'normal_live_status_list' => $getLiveList('normal_live_m'),
-		'special_live_status_list' => $getLiveList('special_live_m'),
-		'marathon_live_status_list' => $getLiveList('event_marathon_live_m')
+		'normal_live_status_list'	=> $getLiveList('normal_live_m'),
+		'special_live_status_list'	=> $getLiveList('special_live_m'),
+		'marathon_live_status_list'	=> $getLiveList('event_marathon_live_m')
 	];
-}
-
-function live_eventList() {
-	header('Maintenance: 1');
-	die();
 }
 
 //live/schedule 获取活动曲列表
 function live_schedule() {
-	global $mysql, $max_live_difficulty_id, $params;
-	include("../config/event.php");
+	global $mysql, $envi, $config;
+	$max_live_difficulty_id = $config->basic['max_live_difficulty_id'];
 	$ret['event_list'] = [];
-	if(strtotime($marathon['start_date']) < time() && strtotime($marathon['end_date']) > time()){
-		$ret['event_list'][] = [
-			"event_id"                 => $marathon['event_id'],
-			"event_category_id"        => 1,
-			"name"                     => $marathon['name'],
-			"open_date"                => $marathon['start_date'],
-			"start_date"               => $marathon['start_date'],
-			"end_date"                 => $marathon['end_date'],
-			"close_date"               => $marathon['end_date'],
-			"banner_asset_name"        => $marathon['asset_path'],
-			"banner_se_asset_name"     => $marathon['asset_path_se'],
-			"result_banner_asset_name" => $marathon['result_path'],
-			"description"              => $marathon['description']
-		];
-	}
-	if(strtotime($battle['start_date']) < time() && strtotime($battle['end_date']) > time()){
-		$ret['event_list'][] = [
-			"event_id"                 => $battle['event_id'],
-			"event_category_id"        => 2,
-			"name"                     => $battle['name'],
-			"open_date"                => $battle['start_date'],
-			"start_date"               => $battle['start_date'],
-			"end_date"                 => $battle['end_date'],
-			"close_date"               => $battle['end_date'],
-			"banner_asset_name"        => $battle['asset_path'],
-			"banner_se_asset_name"     => $battle['asset_path_se'],
-			"result_banner_asset_name" => $battle['result_path'],
-			"description"              => $battle['description']
-		];
-	}
-	if(strtotime($festival['start_date']) < time() && strtotime($festival['end_date']) > time()){
-		$ret['event_list'][] = [
-			"event_id"                 => $festival['event_id'],
-			"event_category_id"        => 3,
-			"name"                     => $festival['name'],
-			"open_date"                => $festival['start_date'],
-			"start_date"               => $festival['start_date'],
-			"end_date"                 => $festival['end_date'],
-			"close_date"               => $festival['end_date'],
-			"banner_asset_name"        => $festival['asset_path'],
-			"banner_se_asset_name"     => $festival['asset_path_se'],
-			"result_banner_asset_name" => $festival['result_path'],
-			"description"              => $festival['description']
-		];
-	}
-	if(strtotime($challenge['start_date']) < time() && strtotime($challenge['end_date']) > time()){
-		$ret['event_list'][] = [
-			"event_id"                 => $challenge['event_id'],
-			"event_category_id"        => 4,
-			"name"                     => $challenge['name'],
-			"open_date"                => $challenge['start_date'],
-			"start_date"               => $challenge['start_date'],
-			"end_date"                 => $challenge['end_date'],
-			"close_date"               => $challenge['end_date'],
-			"banner_asset_name"        => $challenge['asset_path'],
-			"banner_se_asset_name"     => $challenge['asset_path_se'],
-			"result_banner_asset_name" => $challenge['result_path'],
-			"description"              => $challenge['description']
-		];
-	}
-	if(strtotime($duty['start_date']) < time() && strtotime($duty['end_date']) > time()){
-		$ret['event_list'][] = [
-			"event_id"                 => $duty['event_id'],
-			"event_category_id"        => 6,
-			"name"                     => $duty['name'],
-			"open_date"                => $duty['start_date'],
-			"start_date"               => $duty['start_date'],
-			"end_date"                 => $duty['end_date'],
-			"close_date"               => $duty['end_date'],
-			"banner_asset_name"        => $duty['asset_path'],
-			"banner_se_asset_name"     => $duty['asset_path_se'],
-			"result_banner_asset_name" => $duty['result_path'],
-			"description"              => $duty['description']
-		];
-	}
+
+	$genEventInfo = function ($event, $category) use (&$ret){
+		if(strtotime($event['start_date']) < time() && strtotime($event['end_date']) > time()){
+			$ret['event_list'][] = [
+				"event_id"					=> $event['event_id'],
+				"event_category_id"			=> $category,
+				"name"						=> $event['name'],
+				"open_date"					=> $event['start_date'],
+				"start_date"				=> $event['start_date'],
+				"end_date"					=> $event['end_date'],
+				"close_date"				=> $event['end_date'],
+				"banner_asset_name"			=> $event['asset_path'],
+				"banner_se_asset_name"		=> $event['asset_path_se'],
+				"result_banner_asset_name"	=> $event['result_path'],
+				"description"				=> $event['description'],
+				"member_category"			=> 1
+			];
+		}
+	};
+
+	$genEventInfo($config->event['marathon'], 1);
+	$genEventInfo($config->event['battle'], 2);
+	$genEventInfo($config->event['festival'], 3);
+	$genEventInfo($config->event['marathon'], 4);
+	$genEventInfo($config->event['duty'], 6);
 	
 	$ret['limited_bonus_list']=[];
 	
 	$live = getLiveDb();
-	$exist_live = $mysql->query('select notes_setting_asset from notes_setting')->fetchAll(PDO::FETCH_COLUMN);
-	$exist_setting = $live->query('select live_setting_id, stage_level from live_setting_m where notes_setting_asset in ("'.implode('","', $exist_live).'")');
+	$exist_live = $mysql->query('SELECT notes_setting_asset FROM notes_setting')->fetchAll(PDO::FETCH_COLUMN);
+	$exist_setting = $live->query('SELECT live_setting_id, stage_level FROM live_setting_m WHERE notes_setting_asset IN ("'.implode('","', $exist_live).'")');
 	$difficulty = [];
 	$setting_ids = [];
 	foreach($exist_setting as $v) {
@@ -175,21 +122,23 @@ function live_schedule() {
 			UNION SELECT live_difficulty_id, live_setting_id from marathon.event_marathon_live_m 
 		) WHERE live_difficulty_id <= $max_live_difficulty_id and live_setting_id in (".implode(',',$setting_ids).")"
 	)->fetchAll();
-	$ret['live_list'] = array_map(function ($v) use ($difficulty, $params) {
+	$ret['live_list'] = array_map(function ($v) use ($difficulty, $envi) {
 		return [
 			'live_difficulty_id' => (int)$v['live_difficulty_id'],
 			'start_date' => date('Y').'-01-01 00:00:00',
 			'end_date' => (date('Y')+1).'-12-31 23:59:59',
-			'is_random' => ($params['random_switch'] > 0)
+			'is_random' => ($envi->params['random_switch'] > 0)
 		];
 	}, $live_list);
+	$ret['random_live_list'] = []; //TODO
+	$ret['free_live_list'] = []; //??
 	return $ret;
 }
 
 //live/partyList 获取嘉宾列表
 function live_partyList() {
-	global $params, $mysql, $uid;
-	if(!$params['card_switch']) {
+	global $envi, $mysql, $uid;
+	if(!$envi->params['card_switch']) {
 		return json_decode('{"party_list":[{"user_info":{"user_id":0,"name":"らぶらいぶ","level":1},"center_unit_info":{"unit_id":49,"level":1,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"love":0,"is_love_max":false,"is_level_max":false,"is_rank_max":true},"setting_award_id":1,"friend_status":1,"available_social_point":0}]}');
 	}
 	$default_party = json_decode('{"party_list":[{"user_info":{"user_id":-1,"name":"Default(smile)","level":1},"center_unit_info":{"unit_id":49,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-2,"name":"Default(pure)","level":1},"center_unit_info":{"unit_id":40,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0},{"user_info":{"user_id":-3,"name":"Default(cool)","level":1},"center_unit_info":{"unit_id":31,"level":1,"love":0,"unit_skill_level":1,"max_hp":3,"smile":0,"cute":0,"cool":0,"is_love_max":false,"is_level_max":false,"is_rank_max":false},"setting_award_id":1,"friend_status":1,"available_social_point":0}]}',true);
@@ -250,8 +199,8 @@ function live_partyList() {
 
 //live/deckList 获取所有的可用卡组列表（4.0不调用，live_play里调用）
 function live_deckList($post) {
-global $uid, $mysql, $params;
-	if($params['card_switch'] == 0) {
+global $uid, $mysql, $envi;
+	if($envi->params['card_switch'] == 0) {
 		if (isset($post['do_not_use_multiply']) && $post['do_not_use_multiply']) { //4.0计分修正
 			$deck_ret = json_decode('[{"unit_deck_id": 1,"total_smile": 55000,"total_cute": 50000,"total_cool": 55000,"total_hp": 20,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]},{"unit_deck_id": 2,"total_smile": 55000,"total_cute": 60500,"total_cool": 60500,"total_hp": 30,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]},{"unit_deck_id": 3,"total_smile": 39940,"total_cute": 41072,"total_cool": 40940,"total_hp": 39,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]}]',true);
 		} else {
@@ -267,12 +216,12 @@ global $uid, $mysql, $params;
 			$deck_ret[]=getDeckAttribute($deck,$post);
 		}
 	}
-	if (isset($params['extend_mods_life'])) {
-		if ($params['extend_mods_life'] == 1) {
+	if (isset($envi->params['extend_mods_life'])) {
+		if ($envi->params['extend_mods_life'] == 1) {
 			foreach($deck_ret as &$v) {
 				$v['total_hp'] = 99999;
 			}
-		} else if ($params['extend_mods_life'] == 2) {
+		} else if ($envi->params['extend_mods_life'] == 2) {
 			foreach($deck_ret as &$v) {
 				$v['total_hp'] = 1;
 			}
@@ -283,19 +232,19 @@ global $uid, $mysql, $params;
 
 //live/play 获取游戏谱面
 function live_play($post) {
-	global $mysql, $uid, $params;
+	global $mysql, $uid, $envi;
 	$livedb = getLiveDb();
 	if(isset($post['festival'])) { //读取festival曲目列表
 		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
 		foreach($festival_lives as $v) {
 			$live_id_list[] = $v['live_difficulty_id'];
-			$random[] = $v['random_switch'] + $params['extend_mods_key'] * 10;
+			$random[] = $v['random_switch'] + $envi->params['extend_mods_key'] * 10;
 		}
 		$energy_list = [null, 4, 8, 12, 20, 20, 20];
 	} else {
 		$live_id_list[0] = $post['live_difficulty_id'];
-		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $params['random_switch']);
-		$random[0] += $params['extend_mods_key'] * 10;
+		$random[0] = (isset($post['random_switch']) ? $post['random_switch'] : $envi->params['random_switch']);
+		$random[0] += $envi->params['extend_mods_key'] * 10;
 		$energy_list = [null, 5, 10, 15, 25, 25, 25];
 	}
 	$post['do_not_use_multiply'] = false;
@@ -326,17 +275,17 @@ function live_play($post) {
 		}
 		$part1=[9,5,7];
 		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless','RandomLiveLimited'];
-		$p1=$params['extend_mods_key'];
+		$p1=$envi->params['extend_mods_key'];
 		$p2=$random[$k2]%10;
 		if($random[$k2]>0)
 			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2], $live_info['notes_list'],$part1[$p1]);
 
-		if (isset($params['extend_mods_vanish']) && $params['extend_mods_vanish']) {
+		if (isset($envi->params['extend_mods_vanish']) && $envi->params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
-				$set['vanish'] = $params['extend_mods_vanish'];
+				$set['vanish'] = $envi->params['extend_mods_vanish'];
 			}
 		}
-		if (isset($params['extend_mods_mirror']) && $params['extend_mods_mirror']) {
+		if (isset($envi->params['extend_mods_mirror']) && $envi->params['extend_mods_mirror']) {
 			foreach ($live_info['notes_list'] as &$set) {
 				if (isset($set['position']) && $set['position'] != 0) {
 					$set['position'] = 10 - $set['position'];
@@ -346,16 +295,16 @@ function live_play($post) {
 				}
 			}
 		}
-		if (isset($params['extend_mods_speed']) && $params['extend_mods_speed']) {
+		if (isset($envi->params['extend_mods_speed']) && $envi->params['extend_mods_speed']) {
 			foreach ($live_info['notes_list'] as &$set) {
-				$set['speed'] = 1/(1+$params['extend_mods_speed']/100);
+				$set['speed'] = 1/(1+$envi->params['extend_mods_speed']/100);
 			}
 		}
-		if (!isset($post['ScoreMatch']) && isset($params['extend_mods_hantei_count']) && $params['extend_mods_hantei_count']) {
+		if (!isset($post['ScoreMatch']) && isset($envi->params['extend_mods_hantei_count']) && $envi->params['extend_mods_hantei_count']) {
 			$live_info['guest_bonus'] = json_decode('{
 				"bonus_id": 8,
 				"guest_bonus_rarity": 1,
-				"bonus_param": '.$params['extend_mods_hantei_count'].',
+				"bonus_param": '.$envi->params['extend_mods_hantei_count'].',
 				"guest_bonus_asset": "assets\/flash\/ui\/event\/img\/ef_812_017.png",
 				"description": "PERFECT SUPPORT",
 				"user_info": {
@@ -379,7 +328,7 @@ function live_play($post) {
 		$map_count += 1;
 	}
 	//无卡模式计算分数线
-	if($params['card_switch'] == 0 && $post['unit_deck_id'] < 3) {
+	if($envi->params['card_switch'] == 0 && $post['unit_deck_id'] < 3) {
 		$total = calcScore(60500, $map['live_list']);
 		$map['rank_info'] = json_decode('[{"rank":5,"rank_min":0},{"rank":4,"rank_min":'.($total*0.7).'},{"rank":3,"rank_min":'.($total*0.8).'},{"rank":2,"rank_min":'.($total*0.9).'},{"rank":1,"rank_min":'.($total*0.975).'}]');
 	} else { //有卡模式读取分数线，所有曲目分数线直接相加
@@ -425,7 +374,7 @@ function live_play($post) {
 			break;
 		}
 	}
-	if($params['card_switch'] && $post['party_user_id'] > 0) {
+	if($envi->params['card_switch'] && $post['party_user_id'] > 0) {
 		$mysql->query("
 			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?,0)
 			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=IF (play_count+1 < 6, play_count+1, 5)
@@ -446,7 +395,7 @@ function live_play($post) {
 
 //live/reward 获取奖励
 function live_reward($post) {
-	global $uid, $mysql, $params;
+	global $uid, $mysql, $envi;
 	$live = getLiveDb();
 	//验证访问合法性，有人反映有问题，不验了
 	/*if (isset($post['ScoreMatch']) || isset($post['festival'])) {
@@ -494,15 +443,15 @@ function live_reward($post) {
 	
 	//验证是不是unranked
 	if(!isset($post['ScoreMatch'])) {
-		$unranked = isset($params['extend_mods_hantei_count']) && $params['extend_mods_hantei_count'] != 0;
+		$unranked = isset($envi->params['extend_mods_hantei_count']) && $envi->params['extend_mods_hantei_count'] != 0;
 	} else {
 		$unranked = false; //live/play已经限制了
 	}
-	if(isset($params['extend_mods_speed']))
-		if(abs($params['extend_mods_speed'])>8)
+	if(isset($envi->params['extend_mods_speed']))
+		if(abs($envi->params['extend_mods_speed'])>8)
 			$unranked = true;
 			
-	if (!$params['card_switch']) {
+	if (!$envi->params['card_switch']) {
 		$test_unranked = $mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
 		$unranked = ($test_unranked > 2);
 	}
@@ -510,7 +459,7 @@ function live_reward($post) {
 	
 	if(!isset($post['festival'])) { //如果是单首歌曲
 		$post['live_difficulty_id'] = (int)$post['live_difficulty_id'];
-		$random = $params['random_switch'] + $params['extend_mods_key'] * 10;
+		$random = $envi->params['random_switch'] + $envi->params['extend_mods_key'] * 10;
 		//读取live信息（消耗等）
 		if (!isset($post['ScoreMatch'])) {
 			$map_info = getLiveSettings($post['live_difficulty_id'], 'capital_type, capital_value, difficulty, c_rank_combo, b_rank_combo, a_rank_combo, s_rank_combo, c_rank_complete, b_rank_complete, a_rank_complete, s_rank_complete, notes_setting_asset');
@@ -538,7 +487,7 @@ function live_reward($post) {
 		//读取曲目当前模式下的最高分
 		$hiscore=$mysql->query('
 			SELECT clear_cnt,hi_score,hi_combo_count FROM live_ranking
-			WHERE card_switch='.$params['card_switch'].' AND user_id='.$uid.'
+			WHERE card_switch='.$envi->params['card_switch'].' AND user_id='.$uid.'
 			AND random_switch='.$random.' AND notes_setting_asset="'.$map_info['notes_setting_asset'].'"'
 		)->fetch();
 		if (!empty($hiscore) && $hiscore['hi_score'] >= $score) {
@@ -551,7 +500,7 @@ function live_reward($post) {
 		//获取最大combo数
 		$max_combo = $map_info['s_rank_combo'];
 		//如果卡片关闭，计算各评价的分数线
-		if ($params['card_switch']==0 && $test_unranked < 3) {
+		if ($envi->params['card_switch']==0 && $test_unranked < 3) {
 			$map = json_decode($note_list,true);
 			$total = calcScore(60500, $map);
 			$rank_info = json_decode('[{"rank":5,"rank_min":0},{"rank":4,"rank_min":'.($total*0.7).'},{"rank":3,"rank_min":'.($total*0.8).'},{"rank":2,"rank_min":'.($total*0.9).'},{"rank":1,"rank_min":'.($total*0.975).'}]',true);
@@ -582,16 +531,16 @@ function live_reward($post) {
 					$mysql->exec("UPDATE live_ranking SET clear_cnt=$clear_cnt, hi_combo_count=$hi_combo_count, hi_score={$ret['hi_score']},  ".
 					             "mx_perfect_cnt = {$post['perfect_cnt']}, mx_great_cnt = {$post['great_cnt']}, mx_good_cnt = {$post['good_cnt']}, ".
 					             "mx_bad_cnt = {$post['bad_cnt']}, mx_miss_cnt = {$post['miss_cnt']}, mx_max_combo = {$post['max_combo']} ".
-					             "WHERE card_switch={$params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
+					             "WHERE card_switch={$envi->params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
 				} else {
 					$mysql->exec("UPDATE live_ranking SET clear_cnt=$clear_cnt, hi_combo_count=$hi_combo_count, hi_score={$ret['hi_score']}  ".
-					             "WHERE card_switch={$params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
+					             "WHERE card_switch={$envi->params['card_switch']} AND random_switch=$random AND user_id=$uid AND notes_setting_asset='".$map_info['notes_setting_asset']."'");
 				}
 
 			} else { //否则插入一条新的
 				$hi_combo_count = $post['max_combo'];
 				if ($ret['hi_score'] != 0) {
-					$mysql->exec("INSERT INTO live_ranking VALUES ($uid, '{$map_info['notes_setting_asset']}', {$params['card_switch']},$random, {$ret['hi_score']}, $hi_combo_count, 1,".
+					$mysql->exec("INSERT INTO live_ranking VALUES ($uid, '{$map_info['notes_setting_asset']}', {$envi->params['card_switch']},$random, {$ret['hi_score']}, $hi_combo_count, 1,".
 					             "{$post['perfect_cnt']}, {$post['great_cnt']}, {$post['good_cnt']}, {$post['bad_cnt']}, {$post['miss_cnt']}, {$post['max_combo']} ,0)");
 				}
 				$clear_cnt = 1;
@@ -649,7 +598,7 @@ function live_reward($post) {
 		if(!$live_accomplish && !isset($post['ScoreMatch']) && $map_info['difficulty'] >= 4){
 			$mysql->query("INSERT INTO live_accomplish (user_id, notes_setting_asset) VALUES(".$uid.", '".$map_info['notes_setting_asset']."')");
 			$ret['special_reward_info'][] = ["item_id" => 4, "add_type" => 3001, "amount" => 1, "item_category_id" => 0, "reward_box_flag" => false];
-			$params['loveca'] += 1;
+			$envi->params['loveca'] += 1;
 		}
 	} else {//如果是FESTIVAL
 		//读取本次的曲目列表
@@ -678,7 +627,7 @@ function live_reward($post) {
 		/* 计算评价 */
 		
 		//如果卡片关闭，用合并的谱面计算各评价的分数线
-		if ($params['card_switch'] == 0 && $test_unranked < 3) {
+		if ($envi->params['card_switch'] == 0 && $test_unranked < 3) {
 			$total = calcScore(60500, $map);
 			$rank_info = json_decode('[{"rank":5,"rank_min":0},{"rank":4,"rank_min":'.($total*0.7).'},{"rank":3,"rank_min":'.($total*0.8).'},{"rank":2,"rank_min":'.($total*0.9).'},{"rank":1,"rank_min":'.($total*0.975).'}]',true);
 		} else { //有卡模式读取分数线，所有曲目分数线直接相加
@@ -882,7 +831,7 @@ function live_reward($post) {
 		$ret['reward_unit_list']['live_rank'] = [];
 		$ret['reward_unit_list']['live_combo'] = [];
 	}
-	if ($params['card_switch'] && !isset($post['no_card'])) { //post的nocard是为了CF活动准备。
+	if ($envi->params['card_switch'] && !isset($post['no_card'])) { //post的nocard是为了CF活动准备。
         $miss_rate=floor($post['miss_cnt']*10 / $map_info['s_rank_combo'])*10;
 		$scout($clear_card[$map_info['difficulty']],'live_clear',$miss_rate);
 		if ($ret['rank'] < 5) {
@@ -904,7 +853,7 @@ function live_reward($post) {
 	$deck_ii = [];//记录卡组完整信息
 
 	//如果卡片被禁用，返回定值
-	if($params['card_switch']==0) {
+	if($envi->params['card_switch']==0) {
 		$deck_ii = [
 			'unit_deck_id' => 0,
 			'total_smile'  => 60500,
@@ -1094,10 +1043,10 @@ function live_reward($post) {
 	if(!isset($post['no_card'])){
 		$user['level'] = $newlevel;
 		$user['exp'] = $newexp;
-		$params['coin'] = $newcoin;
+		$envi->params['coin'] = $newcoin;
 	}
-	$params['social_point'] = $newsocial;
-	$params['loveca'] = $newloveca;
+	$envi->params['social_point'] = $newsocial;
+	$envi->params['loveca'] = $newloveca;
 	$ret['after_user_info'] = runAction('user','userInfo');
 	$ret['after_user_info'] = $ret['after_user_info']['user'];
 	$ret['after_user_info']['energy_max'] = 100+(int)floor($newlevel/2);
