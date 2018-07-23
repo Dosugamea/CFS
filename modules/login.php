@@ -240,10 +240,10 @@ function login_topInfo() {
 	$friend_cnt = count($mysql->query("SELECT * FROM friend WHERE `read` = 0 AND `applicated` = ".$uid)->fetchAll(PDO::FETCH_ASSOC));
 	$ret = [];
 	$ret['free_muse_gacha_flag'] = $last_muse_free_gacha == date("Y-m-d", time());
-	$ret['free_muse_gacha_flag'] = $last_aqours_free_gacha == date("Y-m-d", time());
-	$ret['next_free_muse_gacha_timestamp'] = $last_muse_free_gacha == date("Y-m-d", time()) ? (strtotime($last_muse_free_gacha) + 86400) : strtotime(date("Y-m-d", time()));
+	$ret['free_aqours_gacha_flag'] = $last_aqours_free_gacha == date("Y-m-d", time());
+	/*$ret['next_free_muse_gacha_timestamp'] = $last_muse_free_gacha == date("Y-m-d", time()) ? (strtotime($last_muse_free_gacha) + 86400) : strtotime(date("Y-m-d", time()));
 	$ret['next_free_aqours_gacha_timestamp'] = $last_aqours_free_gacha == date("Y-m-d", time()) ? (strtotime($last_muse_free_gacha) + 86400) : strtotime(date("Y-m-d", time()));
-	$ret['next_free_gacha_timestamp'] = strtotime(date('Y-m-d',strtotime('+1 day')));
+	$ret['next_free_gacha_timestamp'] = strtotime(date('Y-m-d',strtotime('+1 day')));*/
 	$ret['friend_action_cnt'] = $mail_cnt;
 	$ret['friend_greet_cnt'] = $mail_cnt;
 	$ret['friend_variety_cnt'] = 0;
@@ -261,7 +261,7 @@ function login_topInfo() {
 //login/topInfoOnce 返回新成就数目
 function login_topInfoOnce() {
 	global $mysql, $uid;
-	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ".$uid)->fetchColumn();
+	$daily_reward = $mysql->query("SELECT daily_reward FROM users WHERE user_id = ?",[$uid])->fetchColumn();
 	return [
 		"new_achievement_cnt"				=> 0, 
 		'unaccomplished_achievement_cnt'	=> 0, 
