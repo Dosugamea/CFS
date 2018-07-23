@@ -1,14 +1,14 @@
 <?php
 //unit/unitAll 获取卡片列表
 function unit_unitAll() {
-	global $uid, $mysql, $params;
-	if ($params['card_switch'] == 0) {
+	global $uid, $mysql, $envi;
+	if ($envi->params['card_switch'] == 0) {
 		$ret = json_decode('[{"unit_owning_user_id":1,"unit_id":40,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":2,"unit_id":41,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":3,"unit_id":42,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":4,"unit_id":43,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":5,"unit_id":44,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":6,"unit_id":45,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":7,"unit_id":46,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":8,"unit_id":47,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":9,"unit_id":48,"rank":2,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":10,"unit_id":49,"rank":1,"exp":0,"love":0,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":60,"max_love":200,"max_rank":2,"level":1,"is_level_max":false,"is_love_max":false,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":14},{"unit_owning_user_id":11,"unit_id":641,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":12,"unit_id":642,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":13,"unit_id":643,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":14,"unit_id":644,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":15,"unit_id":645,"rank":2,"exp":79700,"love":1000,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":6,"max_level":100,"max_love":1000,"max_rank":2,"level":100,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":16,"unit_id":649,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":17,"unit_id":650,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":18,"unit_id":651,"rank":2,"exp":36800,"love":500,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":80,"max_love":500,"max_rank":2,"level":80,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":19,"unit_id":652,"rank":2,"exp":79700,"love":1000,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":6,"max_level":100,"max_love":1000,"max_rank":2,"level":100,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":21,"unit_id":1,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":22,"unit_id":4,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":23,"unit_id":7,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":24,"unit_id":10,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":25,"unit_id":13,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":26,"unit_id":16,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":27,"unit_id":19,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":28,"unit_id":22,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0},{"unit_owning_user_id":29,"unit_id":25,"rank":2,"exp":8000,"love":50,"unit_skill_level":1,"favorite_flag":false,"insert_date":"2014-10-2514:29:35","max_hp":4,"max_level":40,"max_love":50,"max_rank":2,"level":40,"is_level_max":true,"is_love_max":true,"is_rank_max":true,"is_skill_level_max":false,"is_removable_skill_capacity_max":false,"unit_removable_skill_capacity": 1,"unit_skill_exp": 0, "display_rank": 1,"next_exp":0}]', true);
-		if ($params['card_switch'] == 0) {
-			if (isset($params['extend_avatar'])) {
-			$ret[9]['unit_id'] = $params['extend_avatar'];
-			$ret[9]['rank'] = $params['extend_avatar_is_rankup'] + 1;
-			$ret[9]['is_rank_max'] = (bool)$params['extend_avatar_is_rankup'];
+		if ($envi->params['card_switch'] == 0) {
+			if (isset($envi->params['extend_avatar'])) {
+			$ret[9]['unit_id']		= $envi->params['extend_avatar'];
+			$ret[9]['rank']			= $envi->params['extend_avatar_is_rankup'] + 1;
+			$ret[9]['is_rank_max']	= (bool)$envi->params['extend_avatar_is_rankup'];
 			}
 		} else {
 			unset($ret[9]);
@@ -29,14 +29,17 @@ function unit_unitAll() {
 }
 
 function unit_supporterAll() {
-	global $uid, $mysql, $params;
-	if($params['card_switch'] == 0) {
+	global $uid, $mysql, $envi;
+	if($envi->params['card_switch'] == 0) {
 		return ['unit_support_list' => []];
 	}
 	$ret = [];
 	$support_list = $mysql->query("SELECT * FROM unit_support_list WHERE user_id=".$uid)->fetchAll();
 	foreach($support_list as $i){
-		$ret[] = ['unit_id' => (int)$i['unit_id'], 'amount' => (int)$i['amount']];
+		$ret[] = [
+			'unit_id'	=> (int)$i['unit_id'], 
+			'amount'	=> (int)$i['amount']
+		];
 	}
 	return ['unit_support_list' => $ret];
 }
@@ -45,8 +48,8 @@ function unit_removableSkillInfo() {
 	global $uid, $mysql;
 	$ret = ['owning_info' => [], 'equipment_info' => []];
 	$count = [];
-	$skill_info = $mysql->query('SELECT * FROM removable_skill WHERE user_id = '.$uid)->fetchAll();
-	$unit_info = $mysql->query("SELECT unit_owning_user_id, removable_skill FROM unit_list WHERE user_id = ".$uid." AND (removable_skill != '[]' OR removable_skill IS NOT NULL)")->fetchAll();
+	$skill_info = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ?", [$uid])->fetchAll();
+	$unit_info = $mysql->query("SELECT unit_owning_user_id, removable_skill FROM unit_list WHERE user_id = ? AND (removable_skill != '[]' OR removable_skill IS NOT NULL)", [$uid])->fetchAll();
 	foreach($unit_info as $i){
 		$detail = [];
 		$unit_skill_detail = json_decode($i['removable_skill']);
@@ -57,7 +60,10 @@ function unit_removableSkillInfo() {
 			else
 				$count[$j] += 1;
 		}
-		$ret['equipment_info'][$i['unit_owning_user_id']] = ["unit_owning_user_id" => (int)$i['unit_owning_user_id'], "detail" => $detail];
+		$ret['equipment_info'][$i['unit_owning_user_id']] = [
+			"unit_owning_user_id"	=> (int)$i['unit_owning_user_id'], 
+			"detail"				=> $detail
+		];
 	}
 	
 	foreach($skill_info as $i){
@@ -100,7 +106,7 @@ function unit_removableSkillEquipment($post) {
 }
 
 function unit_removableSkillSell($post) {
-	global $uid, $mysql, $params;
+	global $uid, $mysql, $envi;
 	$sell_prize = [null,7900,7900,7900,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,17000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,26000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000,35000];
 	$list = $post['selling_list'];
 	$ret = [];
@@ -110,7 +116,7 @@ function unit_removableSkillSell($post) {
 		$mysql->query("UPDATE removable_skill SET amount = amount - ".(int)$i['amount']." WHERE user_id = ".$uid." AND skill_id = ".(int)$i['unit_removable_skill_id']);
 		$get_coin += $sell_prize[$i['unit_removable_skill_id']] * $i['amount'];
 	}
-	$params['item3'] += $get_coin;
+	$envi->params['item3'] += $get_coin;
 	$ret['total'] = $get_coin;
 	$ret['reward_box_flag'] = false;
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
@@ -119,16 +125,16 @@ function unit_removableSkillSell($post) {
 
 //unit/deckInfo 获取队伍列表
 function unit_deckInfo() {
-	global $uid, $mysql, $params;
-	if ($params['card_switch'] == 0) {
+	global $uid, $mysql, $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return json_decode('[{"unit_owning_user_ids":[{"position":5,"unit_owning_user_id":1},{"position":1,"unit_owning_user_id":2},{"position":2,"unit_owning_user_id":3},{"position":3,"unit_owning_user_id":4},{"position":4,"unit_owning_user_id":5},{"position":6,"unit_owning_user_id":6},{"position":7,"unit_owning_user_id":7},{"position":8,"unit_owning_user_id":8},{"position":9,"unit_owning_user_id":9}],"unit_deck_id":1,"main_flag":true,"deck_name":"No card"}, {"unit_owning_user_ids":[{"position":5,"unit_owning_user_id":21},{"position":1,"unit_owning_user_id":28},{"position":2,"unit_owning_user_id":23},{"position":3,"unit_owning_user_id":22},{"position":4,"unit_owning_user_id":25},{"position":6,"unit_owning_user_id":27},{"position":7,"unit_owning_user_id":26},{"position":8,"unit_owning_user_id":29},{"position":9,"unit_owning_user_id":24}],"unit_deck_id":2,"main_flag":false,"deck_name":"No HP recovery"}, {"unit_owning_user_ids":[{"position":5,"unit_owning_user_id":11},{"position":1,"unit_owning_user_id":18},{"position":2,"unit_owning_user_id":13},{"position":3,"unit_owning_user_id":12},{"position":4,"unit_owning_user_id":15},{"position":6,"unit_owning_user_id":17},{"position":7,"unit_owning_user_id":16},{"position":8,"unit_owning_user_id":19},{"position":9,"unit_owning_user_id":14}],"unit_deck_id":3,"main_flag":false,"deck_name":"全国大会予選(Unranked)"}]');
 	}
-	$res = $mysql->query('SELECT json FROM user_deck WHERE user_id=' . $uid)->fetchColumn();
+	$res = $mysql->query('SELECT json FROM user_deck WHERE user_id = ?', [$uid])->fetchColumn();
 	$deck = json_decode($res, true);
 	if (!$deck) {
 		return array();
 	}
-	$res2 = $mysql->query('SELECT unit_owning_user_id FROM unit_list WHERE user_id=' . $uid);
+	$res2 = $mysql->query('SELECT unit_owning_user_id FROM unit_list WHERE user_id = ?', [$uid]);
 	while ($t = $res2->fetchColumn()) {
 		$exist_id[$t] = true;
 	}
@@ -146,8 +152,8 @@ function unit_deckInfo() {
 }
 //unit/deck 编辑队伍
 function unit_deck($post) {
-	global $uid, $mysql, $params;
-	if ($params['card_switch'] == 0) {
+	global $uid, $mysql, $envi;
+	if ($envi->params['card_switch'] == 0) {
 		trigger_error('unit_deck:关卡模式下禁止编辑队伍');
 	}
 	foreach ($post['unit_deck_list'] as &$v3) {
@@ -171,8 +177,8 @@ function unit_deck($post) {
 //unit/merge 练习
 function unit_merge($post) {
 	if($post['module'] != "unit" || $post['action'] != "merge") throw403("INVALID REQUEST");
-	global $params;
-	if ($params['card_switch'] == 0) {
+	global $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	$merge_base_id = $post['base_owning_unit_user_id'];
@@ -280,7 +286,7 @@ function unit_merge($post) {
 		$new_skill_exp = (int)$max_skill;
 	}
 	$mysql->exec('UPDATE unit_list SET exp='.$new_exp.', unit_skill_exp='.$new_skill_exp.' WHERE unit_owning_user_id='.$merge_base_id);
-	$params['coin'] -= $total_cost;
+	$envi->params['coin'] -= $total_cost;
 	if (isset($new_level_max)) {
 		$mysql->exec("UPDATE album SET rank_level_max_flag=1 WHERE user_id={$uid} and unit_id={$merge_base_id}");
 	}
@@ -294,8 +300,8 @@ function unit_merge($post) {
 
 //unit/rankUp 特别练习
 function unit_rankUp($post) {
-	global $params;
-	if ($params['card_switch'] == 0) {
+	global $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	$evolution_base_id = $post['base_owning_unit_user_id'];
@@ -316,7 +322,7 @@ function unit_rankUp($post) {
 		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
 		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
-		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$envi->params['coin'] -= $rank_up_cost['rank_up_cost'];
 	}else if($rank == 2){
 		$skill_capacity = (int)$unit->query('SELECT max_removable_skill_capacity FROM unit_m WHERE unit_id=' . $base_unit_id)->fetch()['max_removable_skill_capacity'];
 		$skill_count = (int)$mysql->query('SELECT removable_skill_count FROM unit_list WHERE unit_owning_user_id=' . $evolution_base_id)->fetchColumn();
@@ -326,7 +332,7 @@ function unit_rankUp($post) {
 			else
 				$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id=' . $evolution_merge_id);
-		$params['coin'] -= $rank_up_cost['rank_up_cost'];
+		$envi->params['coin'] -= $rank_up_cost['rank_up_cost'];
 	}
 	removeFromDeck((int)$evolution_merge_id);
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
@@ -338,8 +344,8 @@ function unit_rankUp($post) {
 }
 
 function unit_exchangePointRankUp($post) {
-	global $params,$uid, $mysql;
-	if ($params['card_switch'] == 0) {
+	global $envi, $uid, $mysql;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	$point_table = [null,null,[null,null,1,null,null,null],[null,null,20,1,null,null],[null,null,500,25,1,5],[null,null,100,5,null,1]];
@@ -356,39 +362,39 @@ function unit_exchangePointRankUp($post) {
 		throw403("INVALID DATA");
 	if($rank == 1){
 		$mysql->exec('UPDATE unit_list SET rank=2 WHERE unit_owning_user_id=' . $evolution_base_id);
-		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
+		$envi->params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
 		$mysql->exec("UPDATE album SET rank_max_flag=1 WHERE user_id={$uid} and unit_id=" . $ret['before']['unit_id']);
 		switch($evolution_use_point){
-			case 2: $params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 3: $params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 4: $params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 5: $params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 2: $envi->params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 3: $envi->params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 4: $envi->params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 5: $envi->params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
 		}
 	}else if($rank == 2){
 		$mysql->exec('UPDATE unit_list SET removable_skill_count=removable_skill_count+1 WHERE unit_owning_user_id=' . $evolution_base_id);
-		$params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
+		$envi->params['coin'] -= $rank_up_cost['exchange_point_rank_up_cost'];
 		switch($evolution_use_point){
-			case 2: $params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 3: $params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 4: $params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
-			case 5: $params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 2: $envi->params['seal1'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 3: $envi->params['seal2'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 4: $envi->params['seal4'] -= $point_table[$rarity][$evolution_use_point];break;
+			case 5: $envi->params['seal3'] -= $point_table[$rarity][$evolution_use_point];break;
 		}
 	}
 	$ret['after'] = GetUnitDetail(array($evolution_base_id))[0];
 	$ret['after_user_info'] = runAction('user', 'userInfo')['user'];
 	switch($evolution_use_point){
-		case 2: $ret['after_exchange_point'] = $params['seal1'];break;
-		case 3: $ret['after_exchange_point'] = $params['seal2'];break;
-		case 4: $ret['after_exchange_point'] = $params['seal4'];break;
-		case 5: $ret['after_exchange_point'] = $params['seal3'];break;
+		case 2: $ret['after_exchange_point'] = $envi->params['seal1'];break;
+		case 3: $ret['after_exchange_point'] = $envi->params['seal2'];break;
+		case 4: $ret['after_exchange_point'] = $envi->params['seal4'];break;
+		case 5: $ret['after_exchange_point'] = $envi->params['seal3'];break;
 	}
 	return $ret;
 }
 
 //unit/sale 转部
 function unit_sale($post) {
-	global $params;
-	if ($params['card_switch'] == 0) {
+	global $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	global $uid, $mysql;
@@ -412,7 +418,7 @@ function unit_sale($post) {
 	$ret['total'] = $total_money;
 	$ret['reward_box_flag'] = false;
 	if (count($ret['detail']) == count($post['unit_owning_user_id'])) {
-		$params['coin'] += $total_money;
+		$envi->params['coin'] += $total_money;
 		$mysql->exec('DELETE FROM unit_list WHERE unit_owning_user_id in(' . implode(', ', $post['unit_owning_user_id']) . ')');
 		foreach($post['unit_owning_user_id'] as $i)
 			removeFromDeck((int)$i);
@@ -427,8 +433,8 @@ function unit_sale($post) {
 }
 //unit/favorite 收藏
 function unit_favorite($post) {
-	global $params;
-	if ($params['card_switch'] == 0) {
+	global $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	global $mysql;
@@ -436,8 +442,8 @@ function unit_favorite($post) {
 	return array();
 }
 function unit_setDisplayRank($post) {
-	global $params;
-	if ($params['card_switch'] == 0) {
+	global $envi;
+	if ($envi->params['card_switch'] == 0) {
 		return array();
 	}
 	global $mysql;
