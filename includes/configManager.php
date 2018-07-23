@@ -435,14 +435,14 @@ class configManager{
 	private function _init_m_notice(){
 		//滚动通知
 		$defaultConfig = [
-			"noticeMarquee"	=> [
+			"noticeMarquee"	=> [[
 				"marquee_id"	=> 1,
 				"text"			=> "第二次PCF全服大会开办中！详情请看公告。",
 				"text_color"	=> 0,	//颜色，0为黑色，1为红色
 				"display_place"	=> 0,	//没用
 				"start_date"	=> "2017-12-09 00:00:00",
 				"end_date"		=> "2017-12-31 00:00:00",
-			]
+			]]
 		];
 		$this->initCommon($defaultConfig, "m_notice");
 	}
