@@ -3,15 +3,12 @@
 
 //subscenario/subscenarioStatus 获取支线故事列表
 function subscenario_subscenarioStatus() {
-  global $max_unit_id, $release_info;
-  $release_info_ids = array_map(function ($e) {
-    return $e['id'];
-  }, $release_info);
+  global $config;
   $ss = getSubscenarioDb();
   if (!$ss) {
     return ["subscenario_status_list" => []];
   }
-  $unit_list = $ss->query('SELECT subscenario_id FROM subscenario_m where (_encryption_release_id is null or _encryption_release_id in ('.implode(',', $release_info_ids).')) and unit_id<'.$max_unit_id)->fetchAll(PDO::FETCH_COLUMN);
+  $unit_list = $ss->query('SELECT subscenario_id FROM subscenario_m WHERE _encryption_release_id IS null AND unit_id < ?', [$config->basic['max_unit_id']])->fetchAll();
   $ret = [];
   foreach ($unit_list as $v) {
     $ret[] = [
@@ -19,7 +16,7 @@ function subscenario_subscenarioStatus() {
       'status' => 2
     ];
   }
-  return ['subscenario_status_list'=>$ret];
+  return ['subscenario_status_list' => $ret];
 }
 
 ?>

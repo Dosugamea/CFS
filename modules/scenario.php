@@ -11,7 +11,7 @@ function scenario_scenarioStatus() {
   $list = [];
   foreach ($slist as $i) {
     $list[] = [
-      'scenario_id' => $i,
+      'scenario_id' => (int)$i,
       'status' => 2
     ];
   }
