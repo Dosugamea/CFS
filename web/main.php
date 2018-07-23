@@ -140,8 +140,8 @@ if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 
 
 function runAction($module, $action, $post=[]) {
-	global $params;
-	if (isset($params) && $params['allow_test_func'] && file_exists('../modules.dev/'.$module.'.php')) {
+	global $envi;
+	if (isset($envi->params) && $envi->params['allow_test_func'] && file_exists('../modules.dev/'.$module.'.php')) {
 		require_once '../modules.dev/'.$module.'.php';
 	} else {
 		if (!file_exists('../modules/'.$module.'.php')) {
