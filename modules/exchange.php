@@ -1,14 +1,12 @@
 <?php
 function exchange_owningPoint() {
-	require('../config/modules_exchange.php');
 	$ret['exchange_point_list'] = addExchangePoint(false);
 	return $ret;
 }
 
 function exchange_itemInfo() {
-	require('../config/modules_exchange.php');
-	global $uid, $mysql, $params;
-	if (!$params['card_switch']) {
+	global $uid, $mysql, $envi;
+	if (!$envi->params['card_switch']) {
 		return ['exchange_item_info' => [], 'exchange_point_list' => []];
 	}
 	$history = [];
@@ -51,9 +49,8 @@ function exchange_itemInfo() {
 }
 
 function exchange_usePoint($post) {
-	require('../config/modules_exchange.php');
-	global $uid, $mysql, $params;
-	if (!$params['card_switch']) {
+	global $uid, $mysql, $envi;
+	if (!$envi->params['card_switch']) {
 		return retError(4204);
 	}
 	$exchangeInfo = false;
@@ -93,11 +90,11 @@ function exchange_usePoint($post) {
 
 	$new_seal = -1;
 	$cost_list = [2=>'seal1', 3=>'seal2', 4=>'seal4', 5=>'seal3'];
-	$new_seal = (int)$params[$cost_list[$exchangeInfo['rarity']]] - $exchangeInfo['cost_value'] * $amount;
+	$new_seal = (int)$envi->params[$cost_list[$exchangeInfo['rarity']]] - $exchangeInfo['cost_value'] * $amount;
 	if ($new_seal < 0) {
 		return retError(4202);
 	}
-	$params[$cost_list[$exchangeInfo['rarity']]] = $new_seal;
+	$envi->params[$cost_list[$exchangeInfo['rarity']]] = $new_seal;
 	$mysql->query('insert into exchange_log values(?,?,1) on duplicate key update got_item_count=got_item_count+1',[$uid, $exchangeInfo['exchange_item_id']]);
 	$ret['before_user_info'] = runAction('user', 'userInfo')['user'];
 	if (is_numeric($exchangeInfo['item'][0])) {
@@ -113,12 +110,12 @@ function exchange_usePoint($post) {
 	}else{
 		$cnt = $exchangeInfo['item'][1]*$amount;
 		switch($exchangeInfo['item'][0]) {
-			case 'ticket':   $params['item1'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>1,'item_category_id'=>1];break;
-			case 'social':   $params['social_point'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3002,'item_id'=>2,'item_category_id'=>2];break;
-			case 'coin':     $params['coin'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3000,'item_id'=>3,'item_category_id'=>3];break;
-			case 'loveca':   $params['loveca'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3001,'item_id'=>4,'item_category_id'=>4];break;
-			case 's_ticket': $params['item5'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>5,'item_category_id'=>5];break;
-			case 'item':     $params['item'.$exchangeInfo['item'][2]] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>$exchangeInfo['item'][2],'item_category_id'=>$exchangeInfo['item'][2]];break;
+			case 'ticket':   $envi->params['item1'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>1,'item_category_id'=>1];break;
+			case 'social':   $envi->params['social_point'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3002,'item_id'=>2,'item_category_id'=>2];break;
+			case 'coin':     $envi->params['coin'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3000,'item_id'=>3,'item_category_id'=>3];break;
+			case 'loveca':   $envi->params['loveca'] += $cnt; $ret['exchange_reward'] = ['add_type'=>3001,'item_id'=>4,'item_category_id'=>4];break;
+			case 's_ticket': $envi->params['item5'] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>5,'item_category_id'=>5];break;
+			case 'item':     $envi->params['item'.$exchangeInfo['item'][2]] += $cnt; $ret['exchange_reward'] = ['add_type'=>1000,'item_id'=>$exchangeInfo['item'][2],'item_category_id'=>$exchangeInfo['item'][2]];break;
 			default: trigger_error('exchange: 无法识别的物品种类：'.$exchangeInfo['item'][0]);break;
 		}
 		$ret['exchange_reward'] = array_merge($ret['exchange_reward'], ['reward_box_flag'=>false, 'amount'=>$exchangeInfo['item'][1]*$amount]);

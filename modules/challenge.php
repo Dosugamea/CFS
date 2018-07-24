@@ -3,12 +3,10 @@
 
 //获得当前CF活动信息
 function challenge_challengeInfo(){
-	include("../config/event.php");
-	include("../config/modules_challenge.php");
-    global $params, $mysql, $uid;
-	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $challenge['event_id']])->fetchColumn();
+    global $envi, $mysql, $uid, $config;
+	$event_point = (int)$mysql->query("SELECT event_point FROM event_point WHERE user_id = ? AND event_id = ?", [$uid, $config->event['challenge']['event_id']])->fetchColumn();
 	if(!$event_point){
-		$mysql->query("INSERT IGNORE INTO event_point VALUES(?,?,?,?)",[$uid, $challenge['event_id'], 0, 0]);
+		$mysql->query("INSERT IGNORE INTO event_point VALUES(?,?,?,?)",[$uid, $config->event['challenge']['event_id'], 0, 0]);
 		$event_point = 0;
 	}
 	$mysql->query("INSERT IGNORE INTO tmp_challenge_live (user_id) VALUES (?)", [$uid]);
@@ -28,7 +26,7 @@ function challenge_challengeInfo(){
                 "should_finalize": false
             }
         }', true);
-	$ret['base_info']['event_id'] = $challenge['event_id'];
+	$ret['base_info']['event_id'] = $config->event['challenge']['event_id'];
 	$ret['base_info']['event_point'] = $event_point;
 	$ret['base_info']['total_event_point'] = $event_point;
 	$challenge_status = $mysql->query("SELECT live_difficulty_id FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetchColumn();
@@ -232,7 +230,7 @@ function challenge_init($post) {
 
 //开始live
 function challenge_proceed($post) {
-	global $mysql, $uid, $params;
+	global $mysql, $uid, $envi;
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
 	$ret = runAction('live','play',['live_difficulty_id' => $info['live_difficulty_id'],'unit_deck_id' => $post['unit_deck_id'],'random_switch' => $info['random'], 'ScoreMatch' => true]);
 	$mysql->query("UPDATE tmp_challenge_live SET is_start = 1, use_item = ? WHERE user_id = ?", [json_encode($post['event_challenge_item_ids']), $uid]);
@@ -246,25 +244,25 @@ function challenge_proceed($post) {
 	foreach($post['event_challenge_item_ids'] as $i){
 		switch($i){
 			case 1:
-				$params['item3'] -= 15000;
+				$envi->params['item3'] -= 15000;
 				break;
 			case 2:
-				$params['item3'] -= 5000;
+				$envi->params['item3'] -= 5000;
 				break;
 			case 3:
-				$params['item3'] -= 12500;
+				$envi->params['item3'] -= 12500;
 				$bonus[] = ["bonus_type" => 2020, "bonus_param" => "1.1"];
 				break;
 			case 4:
-				$params['item3'] -= 12500;
+				$envi->params['item3'] -= 12500;
 				$bonus[] = ["bonus_type" => 2010, "bonus_param" => "1.1"];
 				break;
 			case 5:
-				$params['item3'] -= 25000;
+				$envi->params['item3'] -= 25000;
 				$bonus[] = ["bonus_type" => 2030, "bonus_param" => "5"];
 				break;
 			case 6:
-				$params['item3'] -= 50000;
+				$envi->params['item3'] -= 50000;
 				break;
 			default:
 				trigger_error("您使用了未知的物品：".$i);
@@ -552,7 +550,7 @@ function challenge_checkpoint($post) {
 
 //完成live，获取奖励
 function challenge_finalize($post) {
-	global $mysql, $uid, $user, $params;
+	global $mysql, $uid, $user, $envi;
 	include("../config/event.php");
 	$ret = [];
 	$info = $mysql->query("SELECT * FROM tmp_challenge_live WHERE user_id = ?",[$uid])->fetch(PDO::FETCH_ASSOC);
@@ -577,7 +575,7 @@ function challenge_finalize($post) {
 	}
 	$user['level'] = $newlevel;
 	$user['exp'] = $newexp;
-	$params['coin'] = $newcoin;
+	$envi->params['coin'] = $newcoin;
 	
 	$ret['reward_item_list'] = []; //TODO
 	

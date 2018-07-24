@@ -2,9 +2,9 @@
 //festival.php FESTIVAL活动相关功能
 //festival/festivalInfo 返回festival相关信息
 function festival_festivalInfo() {
-	include("../config/event.php");
+	global $config;
 	return json_decode('{"base_info": {
-		"event_id": '.$festival['event_id'].',
+		"event_id": '.$config->event['festival']['event_id'].',
 		"asset_bgm_id": 4,
 		"event_point": 0,
 		"total_event_point": 0,
