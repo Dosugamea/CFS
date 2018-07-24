@@ -207,13 +207,13 @@ global $uid, $mysql, $envi;
 			$deck_ret = json_decode('[{"unit_deck_id": 1,"total_smile": 60500,"total_cute": 55000,"total_cool": 60500,"total_hp": 20,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]},{"unit_deck_id": 2,"total_smile": 55000,"total_cute": 60500,"total_cool": 60500,"total_hp": 30,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]},{"unit_deck_id": 3,"total_smile": 39940,"total_cute": 41072,"total_cool": 40940,"total_hp": 39,"unit_list":[{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0},{"smile":0, "cute":0, "cool":0}]}]',true);
 		}
 	} else {
-		$deck_list = json_decode($mysql->query('SELECT json FROM user_deck WHERE user_id='.$uid)->fetchColumn(),true);
+		$deck_list = json_decode($mysql->query('SELECT json FROM user_deck WHERE user_id = ?', [$uid])->fetchColumn(), true);
 		$deck_ret = [];
 		foreach($deck_list as $deck) {//分别处理每一个小组
 			if(count($deck['unit_deck_detail']) < 9)
 				continue;
 
-			$deck_ret[]=getDeckAttribute($deck,$post);
+			$deck_ret[] = getDeckAttribute($deck,$post);
 		}
 	}
 	if (isset($envi->params['extend_mods_life'])) {
@@ -235,7 +235,7 @@ function live_play($post) {
 	global $mysql, $uid, $envi;
 	$livedb = getLiveDb();
 	if(isset($post['festival'])) { //读取festival曲目列表
-		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id='.$uid)->fetchColumn(), true);
+		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id = ', [$uid])->fetchColumn(), true);
 		foreach($festival_lives as $v) {
 			$live_id_list[] = $v['live_difficulty_id'];
 			$random[] = $v['random_switch'] + $envi->params['extend_mods_key'] * 10;
@@ -255,8 +255,8 @@ function live_play($post) {
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
 			$post['do_not_use_multiply'] = true; //4.0计分修正
 		}
-		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch(PDO::FETCH_ASSOC);
-		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset="'.$live_settings['notes_setting_asset'].'"')->fetch(PDO::FETCH_ASSOC);
+		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch();
+		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset = ?', [$live_settings['notes_setting_asset']])->fetch();
 		$live_info['live_difficulty_id'] = (int)$v2;
 		$live_info['ac_flag'] = $extra_flag ? $extra_flag['ac_flag'] : 0;
 		$live_info['swing_flag'] = $extra_flag ? $extra_flag['swing_flag']: 0;
@@ -377,7 +377,7 @@ function live_play($post) {
 	if($envi->params['card_switch'] && $post['party_user_id'] > 0) {
 		$mysql->query("
 			INSERT INTO `tmp_live_playing` VALUES (?,?,?,1,?,0)
-			ON DUPLICATE KEY UPDATE unit_deck_id=?, party_user_id=?, factor = ?, play_count=IF (play_count+1 < 6, play_count+1, 5)
+			ON DUPLICATE KEY UPDATE unit_deck_id = ?, party_user_id = ?, factor = ?, play_count=IF (play_count+1 < 6, play_count+1, 5)
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 		$mysql->query("UPDATE `tmp_live_playing` SET `factor` = ?, `reward_flag` = 0, `play_count` = IF (play_count-1 > 0, play_count-1, 0) WHERE user_id = ?", [$lp_factor, $post['party_user_id']]);
 	} else {
