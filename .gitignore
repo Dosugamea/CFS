@@ -2,7 +2,6 @@
 !.gitignore
 !README.md
 !config
-config/*
 !modules
 !includes
 !admin
@@ -14,4 +13,5 @@ config/*
 !*.php
 !*.sql
 *.DS_Store
+*.json
 web/git.php
