@@ -81,12 +81,6 @@ if (((strtotime($config->maintenance['maintenance_start']) < time() &&
 	die();
 }
 
-//这个好像是注册用的？暂时不明
-if (isset($_SERVER['HTTP_USER_ID']) && $_SERVER['HTTP_USER_ID'] == -1) {
-	header('Maintenance: 1');
-	die();
-}
-
 //有用户的时候读取道具信息
 if($envi->uid){
 	$envi->initItem();

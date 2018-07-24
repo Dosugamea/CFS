@@ -79,6 +79,11 @@ class envi{
         //检查用户是否存在
         if(isset($this->authorize['token'])){
             if(isset($_SERVER['HTTP_USER_ID'])){
+                //注册/登录用
+                if($_SERVER['HTTP_USER_ID'] == -1){
+                    header('Maintenance: 1');
+                	exit();
+                }
                 //token和uid都存在，用户应该存在
                 $user = $mysql->query("SELECT * FROM users WHERE user_id = ? AND authorize_token = ?", [(int)$_SERVER['HTTP_USER_ID'], $this->authorize['token']])->fetch();
                 if($user){
