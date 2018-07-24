@@ -1,4 +1,6 @@
 <?php
+include("../../includes/configManager.php");
+$config = new configManager;
 include("../../includes/db.php");
 $live = getLiveDb();
 $all = $live->query("SELECT notes_setting_asset FROM live_setting_m")->fetchAll(PDO::FETCH_ASSOC);
