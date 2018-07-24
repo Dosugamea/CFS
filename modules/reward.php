@@ -140,8 +140,8 @@ function reward_rewardHistory($post) {
 
 //reward/open //开一个礼物
 function reward_open($post) {
-	global $params, $mysql, $uid;
-	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE incentive_id='.$post['incentive_id'].' and opened_date=0')->fetch(PDO::FETCH_ASSOC);
+	global $envi, $mysql, $uid;
+	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE incentive_id = ? and opened_date=0', [$post['incentive_id']])->fetch();
 	if (empty($res)) {
 		return [];
 	}
@@ -158,7 +158,7 @@ function reward_open($post) {
 	}
 	if(!$res['is_card']) {
 		if($res['incentive_item_id'] < 1000){
-			$params['item'.$res['incentive_item_id']] += $res['amount'];
+			$envi->params['item'.$res['incentive_item_id']] += $res['amount'];
 			$res['item_category_id'] = $res['incentive_item_id'];
 			switch($res['incentive_item_id']){
 				case 2:
@@ -176,20 +176,20 @@ function reward_open($post) {
 				case 3006://贴纸
 					switch($res['item_id']){
 						case 2:
-							$params['seal1'] += $res['amount'];break;
+							$envi->params['seal1'] += $res['amount'];break;
 						case 3:
-							$params['seal2'] += $res['amount'];break;
+							$envi->params['seal2'] += $res['amount'];break;
 						case 4:
-							$params['seal4'] += $res['amount'];break;
+							$envi->params['seal4'] += $res['amount'];break;
 						case 5:
-							$params['seal3'] += $res['amount'];break;
+							$envi->params['seal3'] += $res['amount'];break;
 						default:
 							trigger_error("没有这样的技能宝石：".$res['item_id']);
 					}break;
 				case 5100://称号
 					$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $res['item_id']]);break;
 				case 5500://技能宝石
-					$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $res['item_id']])->fetch(PDO::FETCH_ASSOC);
+					$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $res['item_id']])->fetch();
 					if($skill_check)
 						$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$res['amount'], $uid, $res['item_id']]);
 					else
@@ -232,9 +232,9 @@ function reward_open($post) {
 
 //reward/openAll //开所有礼物
 function reward_openAll($post) {
-	global $uid, $mysql, $params;
+	global $uid, $mysql, $envi;
 	$filter = getfilter($post['category'], $post['filter']);
-	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE user_id='.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
+	$res = $mysql->query('SELECT incentive_id,incentive_item_id,item_id,is_card,amount FROM incentive_list WHERE user_id = '.$uid.' AND opened_date=0'.$filter)->fetchAll(PDO::FETCH_ASSOC);
 	$ret['reward_num'] = count($res);
 	$ret['opened_num'] = 0;
 	$ret['total_num'] = $ret['reward_num'];
@@ -252,7 +252,7 @@ function reward_openAll($post) {
 		}
 		if(!$r['is_card']) {
 			if($r['incentive_item_id'] < 1000){
-				$params['item'.$r['incentive_item_id']] += $r['amount'];
+				$envi->params['item'.$r['incentive_item_id']] += $r['amount'];
 				$r['item_category_id'] = $r['incentive_item_id'];
 				switch($r['incentive_item_id']){
 					case 2:
@@ -270,20 +270,20 @@ function reward_openAll($post) {
 					case 3006://贴纸
 						switch($r['item_id']){
 							case 2:
-								$params['seal1'] += $r['amount'];break;
+								$envi->params['seal1'] += $r['amount'];break;
 							case 3:
-								$params['seal2'] += $r['amount'];break;
+								$envi->params['seal2'] += $r['amount'];break;
 							case 4:
-								$params['seal4'] += $r['amount'];break;
+								$envi->params['seal4'] += $r['amount'];break;
 							case 5:
-								$params['seal3'] += $r['amount'];break;
+								$envi->params['seal3'] += $r['amount'];break;
 							default:
 								trigger_error("没有这样的技能宝石：".$r['item_id']);
 						}break;
 					case 5100://称号
 						$mysql->query("INSERT IGNORE INTO award (user_id, award_id) VALUES(?, ?)", [$uid, $r['item_id']]);break;
 					case 5500://技能宝石
-						$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $r['item_id']])->fetch(PDO::FETCH_ASSOC);
+						$skill_check = $mysql->query("SELECT * FROM removable_skill WHERE user_id = ? AND skill_id = ?", [$uid, $r['item_id']])->fetch();
 						if($skill_check)
 							$mysql->query("UPDATE removable_skill SET amount = amount + ? WHERE user_id = ? AND skill_id = ?", [$r['amount'], $uid, $r['item_id']]);
 						else
