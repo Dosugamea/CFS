@@ -42,9 +42,6 @@ a:hover{text-decoration:none;}
 <BODY>
 
 <?php 
-require "../config/database.php";
-require "../config/maintenance.php";
-require "../version.php";
 ?>
  <ul id="tab">
       <li class="on">
@@ -64,7 +61,7 @@ require "../version.php";
   </li>
     </ul>
 <?php
-	$announcement=$mysql->query('select * from webview where tab != 0 order by time desc limit 3')->fetchAll();
+	$announcement=$mysql->query('SELECT * from webview where tab != 0 order by time desc limit 3')->fetchAll();
 ?>
 <div id="main">
   <div id="container">
