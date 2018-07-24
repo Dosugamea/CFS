@@ -1,7 +1,8 @@
 /*
 !.gitignore
 !README.md
-!config.sample
+!config
+config/*
 !modules
 !includes
 !admin
