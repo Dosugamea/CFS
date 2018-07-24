@@ -1,6 +1,4 @@
-<?php require('../config/reg.php'); ?>
-
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
 <head>
 <meta charset='utf-8' />
@@ -76,7 +74,7 @@
 						</a>
 					</td>
 					<td>
-						<?=($allow_reg?'<a href="/webview.php/login/reg"><div class="main-icon" style="font-size:3vw;">注册 </div></a>':'已关闭注册')?>
+						<?=($config->reg['allow_reg']?'<a href="/webview.php/login/reg"><div class="main-icon" style="font-size:3vw;">注册 </div></a>':'已关闭注册')?>
 					</td>
 				</tr>
 			</table>
@@ -84,12 +82,6 @@
           <div class="clearfix"></div>
         </div>
       </li><br>
-
-	
-
-
-
-
   </ul>
   </div>
 </div>
