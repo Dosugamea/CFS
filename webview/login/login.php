@@ -17,16 +17,15 @@
 </style>
 
 <?php
-require '../config/reg.php';
 
-if($enable_ssl && $_SERVER['HTTPS']!='on') {
-  header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
-  die();
+if($config->reg['enable_ssl'] && $_SERVER['HTTPS']!='on') {
+  header('Location: https://'.$config->reg['ssl_domain'].$_SERVER['REQUEST_URI']);
+  exit();
 }
 
 $authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
 $token = substr($authorize, 0, strpos($authorize, '&'));
-$username = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
+$username = $mysql->query('SELECT username, password FROM tmp_authorize WHERE token=?', [$token])->fetch();
 if (!$username) {
   echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
   die();
@@ -49,14 +48,14 @@ if(isset($_POST['submit'])) {
     if($success === false) {
       echo '<h3><font color="red">错误：您输入的ID或密码有误 <br> Error: You Input The Wrong UserID or Password</font></h3>';
     } else {
-      $mysql->query('update users set login_password=? where login_password=? AND user_id=?', [$pass_v2, $pass_v1, $_POST['id']]);
+      $mysql->query('UPDATE users SET login_password=? WHERE login_password=? AND user_id=?', [$pass_v2, $pass_v1, $_POST['id']]);
     }
   }
   if ($success !== false) {
-    $result = $mysql->prepare('
+    $result = $mysql->query('
       UPDATE users SET username = ?, password = ?, download_site = ?
-      WHERE login_password=? AND user_id=?'
-    )->execute([$username['username'], $username['password'], (int)$_POST['site'], $pass_v2, $_POST['id']]);
+      WHERE login_password=? AND user_id=?',
+      [$username['username'], $username['password'], (int)$_POST['site'], $pass_v2, $_POST['id']]);
     if ($result) {
       $mysql->query('delete from tmp_authorize where token=?', [$token]);
       echo '<h3>登录成功！关闭本窗口即可进入游戏。<br> Login Success! Plz Close This Window</h3>';

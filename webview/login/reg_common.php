@@ -1,15 +1,14 @@
 <?php
-require_once dirname(__FILE__).'/../../config/reg.php';
 require_once dirname(__FILE__).'/../../includes/present.php';
 
-if(!$allow_reg) {
+if(!$config->reg['allow_reg']) {
 	echo '<h1>注册已关闭！</h1>';
 	die();
 }
 
-if($enable_ssl && $_SERVER['HTTPS'] != 'on') {
+if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
 	header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
-	die();
+	exit();
 }
 
 $unit = getUnitDb();
@@ -19,8 +18,6 @@ if (!$tmp_authorize) {
 	echo '<h1>出现了错误，请关闭此页面重新进入</h1>';
 	die();
 }
-
-require_once dirname(__FILE__).'/../../config/maintenance.php';
 
 $id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
 $id[] = 0;
@@ -54,8 +51,8 @@ if(isset($_POST['submit'])) {
 				VALUES (?, ?, ?, ?, ?, "", ?)
 			')->execute([$_POST['id'], $tmp_authorize['username'], $tmp_authorize['password'], $password, $_POST['name'], $_POST['site']]);
 			$param = $mysql->prepare('INSERT INTO user_params VALUES('.$_POST['id'].', ?, ?)');
-			$param->execute(['enable_card_switch', $disable_card_by_default ? 0 : 1]);
-			$param->execute(['card_switch', $disable_card_by_default ? 0 : 1]);
+			$param->execute(['enable_card_switch', $config->reg['disable_card_by_default'] ? 0 : 1]);
+			$param->execute(['card_switch', $config->reg['disable_card_by_default'] ? 0 : 1]);
 			$param->execute(['random_switch', 0]);
 			$param->execute(['allow_test_func', 0]);
 			$param->execute(['item1', 0]);
@@ -70,8 +67,8 @@ if(isset($_POST['submit'])) {
 			$mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$_POST['id'].",3,1,0)");
 			
 			$uid = $_POST['id'];
-			if($all_card_by_default) {
-				$card_list=$unit->query('select unit_id from unit_m where unit_id <= ? and unit_number > 0', [$max_unit_id])->fetchAll();
+			if($config->reg['all_card_by_default']) {
+				$card_list=$unit->query('SELECT unit_id from unit_m where unit_id <= ? and unit_number > 0', [$config->basic['max_unit_id']])->fetchAll();
 				//$query='INSERT INTO `unit_list` (`user_id`, `unit_id`) VALUES ';
 				foreach($card_list as $v){
 					addUnit($v[0]);
@@ -84,7 +81,7 @@ if(isset($_POST['submit'])) {
 			}
 			
 			$position=1;
-			foreach($default_deck_web as $k=>$v) {
+			foreach($config->reg['default_deck_web'] as $k=>$v) {
 				$tmp['position'] = $position;
 				$tmp['unit_owning_user_id'] = addUnit($v)[0]['unit_owning_user_id'];
 				if($position == 5)
