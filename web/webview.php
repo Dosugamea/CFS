@@ -55,7 +55,10 @@ function commit () {
 set_error_handler("error");
 register_shutdown_function('commit');
 
+require('../includes/configManager.php');
+$config = new configManager;
 require('../includes/db.php');
+
 $mysql->query('start transaction');
 
 session_start();
