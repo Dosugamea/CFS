@@ -21,10 +21,9 @@
 </style>
 
 <?php
-require '../config/reg.php';
 
-if($enable_ssl && $_SERVER['HTTPS']!='on') {
-  header('Location: https://'.$ssl_domain.$_SERVER['REQUEST_URI']);
+if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
+  header('Location: https://'.$config->reg['ssl_domain'].$_SERVER['REQUEST_URI']);
   die();
 }
 
@@ -82,7 +81,7 @@ function verify2() {
 <div id="outer">
   <div id="inner">
     <div id="header">
-      <h2>登录</h2>
+      <h2>修改密码</h2>
       <div id="back"></div>
     </div>
 
@@ -91,7 +90,7 @@ function verify2() {
 <ul id="list">
 	 <li class="entry"">
         <div class="entry-container">
-          <h2 class="text">用户密码登录</h2>
+          <h2 class="text">修改密码</h2>
           <div class="summary" >
 
 	        <form method="post" action="changePassword" autocomplete="off">
@@ -100,7 +99,7 @@ function verify2() {
 	          <span id="info2" style="color:red"></span><br />
 	          再次输入密码：<input type="password" id="pass2 numkeyboard1" style="height:27px" onKeyUp="verify2();" onchange="verify2();"  class="numkeyboard"  pattern="[0-9]*" readonly="readonly"/><br /><br />
 	         </p>
-	          <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm" disabled="disabled" />
+	          <input type="submit" name="submit" id="submit" style="height:30px;width:120px" value="确认/Confirm"/>
 	          </form>
 	          <key></key>
     		</div>

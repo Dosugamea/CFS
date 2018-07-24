@@ -8,9 +8,7 @@ foreach ($mysql->query('SELECT * FROM user_params WHERE user_id='.$uid)->fetchAl
 }
 $unit = getUnitDb();
 
-require '../config/maintenance.php';
-
-$max_album_id=$unit->query('SELECT max(unit_number) FROM unit_m WHERE unit_id<='.$max_unit_id)->fetchColumn();
+$max_album_id=$unit->query('SELECT max(unit_number) FROM unit_m WHERE unit_id <= ?', [$config->basic['max_unit_id']])->fetchColumn();
 
 if(isset($_GET['submit']) && $_GET['submit']=='提交') {
   if(is_numeric($_GET['avatar']) && $_GET['avatar']>0 && $_GET['avatar']<=$max_album_id) {

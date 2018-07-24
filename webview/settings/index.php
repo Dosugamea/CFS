@@ -45,7 +45,7 @@ a{color: #000000;}
           <?php
         $uid=$_SESSION['server']['HTTP_USER_ID'];
         global $mysql;
-        $download_site = $mysql->query("SELECT download_site FROM users WHERE user_id = ".$uid)->fetch()[0];
+        $download_site = $mysql->query("SELECT download_site FROM users WHERE user_id = ?", [$uid])->fetchColumn();
         ?>
 
 <body>
