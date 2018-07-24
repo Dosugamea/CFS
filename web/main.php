@@ -11,6 +11,10 @@ $logger = new log;
 require(BASE_PATH."includes/errorHandler.php");
 require(BASE_PATH."includes/errorUtil.php");
 require(BASE_PATH."includes/configManager.php");
+
+/* 配置管理器 */
+$config = new configManager;
+
 require(BASE_PATH."includes/envi.php");
 require(BASE_PATH."includes/AES.php");
 require(BASE_PATH."includes/db.php");
@@ -36,9 +40,6 @@ function rollback() {
 	$rolled_back = true;
 	$mysql->query('rollback');
 }
-
-/* 配置管理器 */
-$config = new configManager;
 
 /* 验证访问合法性 */
 

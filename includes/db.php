@@ -1,5 +1,4 @@
 <?php
-require dirname(__FILE__).'/../config/database.php';
 class myPDO extends PDO {
 	public function __construct() {
 		$this->lastQuery = '';
@@ -47,8 +46,9 @@ class myPDO extends PDO {
 	}
 };
 
+global $config;
 try{
-	$mysql = new myPDO("mysql:host=$mysql_server;dbname=$mysql_db", $mysql_user, $mysql_pass);
+	$mysql = new myPDO("mysql:host=".$config->database['mysql_server'].";dbname=".$config->database['mysql_db'], $config->database['mysql_user'], $config->database['mysql_pass']);
 }catch(PDOException $e){
 	if (strpos($_SERVER['PHP_SELF'], 'main.php') !== false) {
 		header("Maintenance: 1");
@@ -65,6 +65,16 @@ $mysql->query('SET time_zone = "+9:00"');
 
 $unitdb = false;
 $livedb = false;
+
+$unit_db		= $config->database['unit_db'];
+$live_db		= $config->database['live_db'];
+$marathon_db	= $config->database['marathon_db'];
+$battle_db		= $config->database['battle_db'];
+$festival_db	= $config->database['festival_db'];
+$scenario_db	= $config->database['scenario_db'];
+$subscenario_db	= $config->database['subscenario_db'];
+$secretbox_db	= $config->database['secretbox_db'];
+$event_db		= $config->database['event_db'];
 
 function makedb($to, $from, $throws = true) {
 	global $$to, $$from;
