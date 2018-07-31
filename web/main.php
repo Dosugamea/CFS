@@ -3,6 +3,8 @@ date_default_timezone_set("Asia/Tokyo");
 
 //后面感觉会经常用这个BASE PATH
 define("BASE_PATH", __DIR__."/../");
+//定义控制器
+define("CONTROLLER", "main");
 //LOG记录模块
 require(BASE_PATH."includes/logger.php");
 $logger = new log;
@@ -25,6 +27,7 @@ require(BASE_PATH."includes/extend_avatar.php");
 require(BASE_PATH."includes/item.php");
 require(BASE_PATH."includes/ipUtils.php");
 require(BASE_PATH."includes/live.php");
+require(BASE_PATH."includes/passwordUtil.php");
 require(BASE_PATH."includes/present.php");
 require(BASE_PATH."includes/RSA.php");
 require(BASE_PATH."includes/sendmail.php");
