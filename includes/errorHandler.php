@@ -76,11 +76,25 @@ function error($errno=null, $errstr=null, $errfile=null, $errline=null) {
 			$mysql->query('rollback');
 			$mysql->query('INSERT INTO error_report VALUES (null,?,?,?, 0)', [$authorize['token'], $uid, $error]);
 		}
-		header("Maintenance: 1");
+
+		if(CONTROLLER == "main"){
+			header("Maintenance: 1");
+		}else{
+			require(__DIR__."/../webview/maintenance/bomb.php");
+		}
 		die();
 	}
 }
-
-register_shutdown_function("error");
+function commit () {
+	global $mysql;
+	if($mysql) {
+		$mysql->query('commit');
+	}
+}
+if(CONTROLLER == "main"){
+	register_shutdown_function("error");
+}else{
+	register_shutdown_function("commit");
+}
 set_error_handler("error");
 set_exception_handler("error");
