@@ -18,7 +18,6 @@ if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
 }
 
 $mysql->query('START TRANSACTION');
-
 session_start();
 //第一次访问把所有内容全存进session
 if (isset($_SERVER['HTTP_AUTHORIZE'])) {
@@ -34,10 +33,13 @@ if (isset($_SERVER['HTTP_AUTHORIZE'])) {
 	exit();
 }
 
+
 //处理authorize
+
 $authorize = [];
+
 $authorize_ = explode("&", $authorize_);
-foreach($i as $authorize_){
+foreach($authorize_ as $i){
 	$j = explode("=", $i);
 	$authorize[$j[0]] = $j[1];
 }

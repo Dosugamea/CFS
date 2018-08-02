@@ -1,5 +1,5 @@
 <?
- 	$user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+ 	$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
  	if(strpos($agent, 'iphone') || strpos($agent, 'ipad') )
  		$device_type = 'ios';
  	else
@@ -33,8 +33,18 @@
 		</form>
 	</div>
 </div>
-<div class="mdui-card" <?if($device_type == 'other') print('style="display:none;"'); ?>>
-  	<div class="mdui-card-actions" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>'">
-    	<span>我们识别到你的设备为iOS，点击此处从外部浏览器登陆</span>
-  	</div>
+
+<div class="mdui-container framecard" <?if($device_type == 'other') print('style="display:none;"'); ?>>
+	<div class="br"></div>
+	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$username['username']?>'" >
+	  	<div class="mdui-card-media">
+	    	<img src="/assets/img/apple_out.jpg"/>
+	    	<div class="mdui-card-media-covered">
+	      		<div class="mdui-card-primary">
+	        		<div class="mdui-card-primary-title">我们识别到你的设备为iOS</div>
+	        		<div class="mdui-card-primary-subtitle">由于本软件机能受限，暂不支持iOS设备软件内登陆，点击此处调用系统浏览器进行操作</div>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>
 </div>
