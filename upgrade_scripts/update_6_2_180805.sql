@@ -1,0 +1,2 @@
+ALTER TABLE `error_report`
+	CHANGE COLUMN `token` `token` VARCHAR(160) NOT NULL AFTER `ID`;

@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `effort_box` (
 -- 导出  表 lovelive.error_report 结构
 CREATE TABLE IF NOT EXISTS `error_report` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `token` varchar(40) NOT NULL,
+  `token` varchar(160) NOT NULL,
   `user_id` int(11) NOT NULL DEFAULT '0',
   `text` text NOT NULL,
   `dele` tinyint(1) NOT NULL DEFAULT '0',
