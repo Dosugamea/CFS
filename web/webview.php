@@ -1,5 +1,6 @@
 <?php
 define("CONTROLLER", "webview");
+define("BASE_PATH", __DIR__."/../");
 date_default_timezone_set("Asia/Tokyo");
 header("X-Powered-By: Project Custom Festival");
 header("Y-Powered-By: LLS/0.3");
@@ -62,12 +63,19 @@ if(!file_exists($pagePath)) {
 	exit();
 }
 
-//module break
-if($module != 'maintenance'){
-	require_once("../webview/module/".$module.".php");
+$result = [];
+function runWebview($module, $action){
+	global $result;
+	require_once(BASE_PATH."webview/modules/".$module.".php");
+	$funcName = $module.'_'.$action;
+	if(function_exists($funcName)){
+		$result = call_user_func($funcName);
+	}
 }
 
+runWebview($module, $action);
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -79,14 +87,14 @@ if($module != 'maintenance'){
 	<meta name="apple-mobile-web-app-title" content="LLSupport">
 	<meta content="telephone=no" name="format-detection"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>PCF_WEBVIEW_<?=$module.'/'.$action?></title>
+    <title>PCF_WEBVIEW</title>
     <!-- CSS -->
 	<link href="/assets/css/mdui.min.css?v=<?=time()?>" rel="stylesheet" />
 	<link href="/assets/css/doc.css?v=<?=time()?>" rel="stylesheet" />
 	<link href="/assets/css/main.css?v=<?=time()?>" rel="stylesheet"/>
 </head>
 <body class="mdui-loaded mdui-locked mdui-theme-primary-pink mdui-theme-accent-pink" style="overflow-y: auto !important;">
-	<?php require_once '../webview/page/'.$module.'/'.$action.'.php'; ?>
+	<?php require_once("../webview/page/".$module."/".$action.".php"); ?>
 	<!-- Script -->
 	<script src="/assets/js/smooth-scroll.js?v=<?=time()?>"></script>
 	<script src="/assets/js/holder.js?v=<?=time()?>"></script>
