@@ -65,7 +65,11 @@ function error($errno=null, $errstr=null, $errfile=null, $errline=null) {
 		if (isset($unitdb) && $unitdb) {
 			$error .= "unit.db:\n".$unitdb->errorInfo()."\n";
 		}
-		$error .= '错误模块：'.$_SERVER['PATH_INFO']."\n提交信息：".$_POST['request_data'];
+		$error .= '错误模块：'.$_SERVER['PATH_INFO'];
+		if(CONTROLLER == "main"){
+			$error .= "\n提交信息：".$_POST['request_data'];
+		}
+
 		if (!isset($authorize)) {
 			$authorize['token'] = 0;
 		}
@@ -80,9 +84,9 @@ function error($errno=null, $errstr=null, $errfile=null, $errline=null) {
 		if(CONTROLLER == "main"){
 			header("Maintenance: 1");
 		}else{
-			require(__DIR__."/../webview/maintenance/bomb.php");
+			print("<script>window.location.href='/webview.php/maintenance/bomb';</script>");
 		}
-		die();
+		exit();
 	}
 }
 function commit () {

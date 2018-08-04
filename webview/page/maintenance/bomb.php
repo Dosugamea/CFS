@@ -1,26 +1,3 @@
-<?php
-global $mysql;
-if(!isset($_SESSION['server']['HTTP_USER_ID'])) {
-  $_SESSION['server']['HTTP_USER_ID']=0;
-}
-
-if (isset($_SESSION['server']['HTTP_AUTHORIZE'])) {
-  $authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
-  $token = substr($authorize, 0, strpos($authorize, '&'));
-} else {
-  $token=0;
-}
-
-$error = $mysql->query('SELECT text,dele,ID FROM error_report WHERE user_id = ? order by ID desc limit 1', [$_SESSION['server']['HTTP_USER_ID']])->fetch();
-if ($error) {
-  if($error['dele']==1) {
-    $mysql->exec("DELETE FROM error_report WHERE ID={$error['ID']}");
-  }
-  $error = $error['text'];
-} else {
-  $error = '未知的错误（我们已经记录）';
-}
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,7 +53,7 @@ if ($error) {
     </div>
     <div id="right">
         <p>错误信息已被记录，我们会尽早修复。</p>
-        <textarea><?=$error?></textarea>
+        <textarea><?=$result['text']?></textarea>
     </div>
 </div>
 </body>
