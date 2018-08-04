@@ -30,11 +30,6 @@
 <!--<style>body{font-size:2em;}table{font-size:1em;}</style>-->
 
 <!--<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
-<?php  require "../config/database.php";
-require "../config/maintenance.php";
-require "../version.php";
-require "../info.php"
-?>
 <ul id="tab">
       <li class="off">
     <a href="/webview.php/announce/index">
@@ -58,7 +53,7 @@ require "../info.php"
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">版本信息</h2>
-          <div class="summary">Custom Festival! Server <span style="color: red;">*<?=$pls_version?>* </span><?=$pls_version_date?> <br />
+          <div class="summary">Custom Festival! Server Branch: <?=$result['branch']?> Commit: <?=$result['commit']?> Date: <?=$result['date']?> <br />
             客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
           <div class="clearfix"></div>
         </div>
