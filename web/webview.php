@@ -24,10 +24,10 @@ session_start();
 if (isset($_SERVER['HTTP_AUTHORIZE'])) {
 	$_SESSION['server'] = $_SERVER;
 	$authorize_ = $_SERVER['HTTP_AUTHORIZE'];
-	$uid = $_SERVER['HTTP_USER_ID'];
+	$uid = isset($_SERVER['HTTP_USER_ID']) ? $_SERVER['HTTP_USER_ID'] : false;
 }else if(isset($_SESSION['server'])){
 	$authorize_ = $_SESSION['server']['HTTP_AUTHORIZE'];
-	$uid = $_SESSION['server']['HTTP_USER_ID'];
+	$uid = isset($_SESSION['server']['HTTP_USER_ID']) ? $_SESSION['server']['HTTP_USER_ID'] : false;
 }else{
 	header('HTTP/1.1 403 Forbidden');
 	print("<h1>出现了一些问题，请尝试关闭页面重新打开</h1>");
