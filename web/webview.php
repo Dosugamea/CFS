@@ -46,13 +46,63 @@ foreach($authorize_ as $i){
 }
 
 //default page
-if(!isset($_SERVER['PATH_INFO']) || $_SERVER['PATH_INFO']=='') {
-	$module = 'announce';
-	$action = 'index';
-} else {
-	$path = explode('/', $_SERVER['PATH_INFO']);
+$path = explode('/', $_SERVER['PATH_INFO']);
+if(count($path) == 3){
 	$module = $path[1];
 	$action = $path[2];
+}else if(count($path) == 2){
+	$module = $path[1];
+	$action = NULL;
+}else{
+	header('HTTP/1.1 403 Forbidden');
+	print("<h1>URI无效</h1>");
+}
+
+function runWebview($module, $action){
+	global $result;
+	require_once(BASE_PATH."webview/modules/".$module.".php");
+	$funcName = $module.'_'.$action;
+	if(function_exists($funcName)){
+		$result = call_user_func($funcName);
+	}
+}
+function goDie(){
+	global $result;
+	header("Content-Type: application/json");
+	print(json_encode($result));
+	exit();
+}
+
+//处理XHR请求，不渲染页面
+if($module == "api"){
+	require_once(BASE_PATH."webview/modules/api.php");
+	$post = json_decode(file_get_contents("php://input"));
+	if($post == NULL){
+		$result = [
+			"status" => -1,
+			"errmsg" => "提交数据解析失败"
+		];
+		goDie();
+	}else{
+		if(!isset($post['module']) || !isset($post['action'])){
+			$result = [
+				"status" => -2,
+				"errmsg" => "无module或action"
+			];
+			goDie();
+		}
+		$apiFuncName = $post['module'].'_'.$post['action'];
+		if(!function_exists($funcName)){
+			$result = [
+				"status" => -3,
+				"errmsg" => "找不到对应的函数"
+			];
+			goDie();
+		}
+
+		$result = call_user_func($apiFuncName, $post['payload']);
+		goDie();
+	}
 }
 
 //file exist
@@ -64,15 +114,6 @@ if(!file_exists($pagePath)) {
 }
 
 $result = [];
-function runWebview($module, $action){
-	global $result;
-	require_once(BASE_PATH."webview/modules/".$module.".php");
-	$funcName = $module.'_'.$action;
-	if(function_exists($funcName)){
-		$result = call_user_func($funcName);
-	}
-}
-
 runWebview($module, $action);
 ?>
 
