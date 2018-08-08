@@ -66,7 +66,7 @@
 	 			 <div class="mdui-textfield-error">密码不能为空</div>
 			</div>
 			<div class="br"></div>
-	  		<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" value="登入" />
+	  		<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入" />
 		</form>
 	</div>
 </div>
