@@ -52,7 +52,7 @@
 		<div class="mdui-toolbar-spacer"></div>
 	</div>
 </header>
-<div class="mdui-container" <?if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
+<div class="mdui-container" <?if($result['device_type'] == 'ios') print('style="display:none;"'); ?>
 	<div class="doc-container">
 		<form autocomplete="off">
 			<div class="mdui-textfield mdui-textfield-floating-label">
