@@ -1,41 +1,42 @@
-<script type="text/javascript" src="/assets/js/jsbn.js"></script>
-<script type="text/javascript" src="/assets/js/prng4.js"></script>
-<script type="text/javascript" src="/assets/js/rng.js"></script>
-<script type="text/javascript" src="/assets/js/rsa.js"></script>
-<script src="/assets/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/jsencrypt.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript">
+	// Hex to Base64
+	function hexToBase64(str) {
+	    return btoa(String.fromCharCode.apply(null,
+	      str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
+	    );
+	}
 	function login(){
-		var timestamp = Date.parse(new Date());
 		var username = $("#usr").val();
-		var passwd = $("passwd").val();
-		var rsa = new RSAKey();
+		var passwd = $("#passwd").val();
+		var rsa = new JSEncrypt();
 		//请写入RSA2048 PUBKEY
-		var pubKey = "<?=$result['pub_key']?>";
-		var exponent = "10001";
-		rsa.setPublic(pubKey,exponent);
-		var rsaEn = rsa.encrypt(passwd);
-		$("passwd").val(rsaEn);
-		$$.ajax({
-			type:"post",
-			url:"//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
-			dataType:"json",
-			data:{
-				"module":"login";
-				"action":"doLogin";
-				"timeStamp":timestamp,
-				"payload":{
-					"userId":username,
-					"password":passwd
+		var pubKey = `<?=$result['pub_key']?>`;
+		rsa.setKey(pubKey);
+		passwd = rsa.encrypt(passwd);
+		$.ajax({
+			method: "POST",
+			url: "//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
+			dataType: "json",
+			data: JSON.stringify({
+				"module": "login",
+				"action": "doLogin",
+				"timeStamp": Date.parse(new Date()) / 1000,
+				"payload": {
+					"userId": username,
+					"password": passwd
 				}
-			},
-			success:function(json){
-				if(json.status != 0){
+			}),
+			contentType: "application/json",
+			success:function(data){
+				if(data.status != 0){
 					mdui.snackbar({
- 					 	message: "登入失败！<br>错误信息："+json.errmsg;
+ 					 	message: "登入失败！<br>错误信息：" + data.errmsg
 					});
 				}else{
 					mdui.snackbar({
- 					 	message: "登入成功！";
+ 					 	message: "登入成功！"
 					});
 				}
 			}
@@ -52,27 +53,25 @@
 		<div class="mdui-toolbar-spacer"></div>
 	</div>
 </header>
-<div class="mdui-container" <?if($result['device_type'] == 'ios') print('style="display:none;"'); ?>
+<div class="mdui-container"<?php if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
 	<div class="doc-container">
-		<form autocomplete="off">
-			<div class="mdui-textfield mdui-textfield-floating-label">
-	  			<label class="mdui-textfield-label">用户名</label>
-	  			<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
-	 			 <div class="mdui-textfield-error">用户名不能为空</div>
-			</div>
-			<div class="mdui-textfield mdui-textfield-floating-label">
-	  			<label class="mdui-textfield-label">密码</label>
-	  			<input class="mdui-textfield-input" type="password" id="passwd" maxlength="64" required/>
-	 			 <div class="mdui-textfield-error">密码不能为空</div>
-			</div>
-			<div class="br"></div>
-	  		<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入" />
-		</form>
+		<div class="mdui-textfield mdui-textfield-floating-label">
+	  		<label class="mdui-textfield-label">用户名</label>
+	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
+	 		 <div class="mdui-textfield-error">用户名不能为空</div>
+		</div>
+		<div class="mdui-textfield mdui-textfield-floating-label">
+	  		<label class="mdui-textfield-label">密码</label>
+	  		<input class="mdui-textfield-input" type="password" id="passwd" maxlength="64" required/>
+	 		 <div class="mdui-textfield-error">密码不能为空</div>
+		</div>
+		<div class="br"></div>
+	  	<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入" id="loginButton" onclick='login()'/>
 	</div>
 </div>
-<div class="mdui-container framecard" <?if($result['device_type'] == 'other') print('style="display:none;"'); ?>>
+<div class="mdui-container framecard" <?php if($result['device_type'] == 'other') print('style="display:none;"'); ?>>
 	<div class="br"></div>
-	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$result['username']?>'" >
+	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Fusername%3D<?=$result['username']?>'" >
 	  	<div class="mdui-card-media">
 	    	<img src="/assets/img/apple_out.jpg"/>
 	    	<div class="mdui-card-media-covered">
