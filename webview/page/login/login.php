@@ -2,7 +2,7 @@
 <script type="text/javascript" src="/assets/js/prng4.js"></script>
 <script type="text/javascript" src="/assets/js/rng.js"></script>
 <script type="text/javascript" src="/assets/js/rsa.js"></script>
-<script src="/assets/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript">
 	function login(){
 		var timestamp = Date.parse(new Date());
@@ -20,8 +20,8 @@
 			url:"//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
 			dataType:"json",
 			data:{
-				"module":"login";
-				"action":"doLogin";
+				"module":"login",
+				"action":"doLogin",
 				"timeStamp":timestamp,
 				"payload":{
 					"userId":username,
@@ -31,11 +31,11 @@
 			success:function(json){
 				if(json.status != 0){
 					mdui.snackbar({
- 					 	message: "登入失败！<br>错误信息："+json.errmsg;
+ 					 	message: "登入失败！<br>错误信息："+json.errmsg
 					});
 				}else{
 					mdui.snackbar({
- 					 	message: "登入成功！";
+ 					 	message: "登入成功！"
 					});
 				}
 			}
