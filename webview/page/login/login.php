@@ -4,11 +4,17 @@
 <script type="text/javascript" src="/assets/js/rsa.js"></script>
 <script src="/assets/jquery.min.js"></script>
 <script type="text/javascript">
-	//加密没想好用哪个zz
 	function login(){
 		var timestamp = Date.parse(new Date());
 		var username = $("#usr").val();
 		var passwd = $("passwd").val();
+		var rsa = new RSAKey();
+		//请写入RSA2048 PUBKEY
+		var pubKey = "";
+		var exponent = "10001";
+		rsa.setPublic(pubKey,exponent);
+		var rsaEn = rsa.encrypt(passwd);
+		$("passwd").val(rsaEn);
 		$$.ajax({
 			type:"post",
 			url:"//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
