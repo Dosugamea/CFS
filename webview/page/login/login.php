@@ -9,23 +9,22 @@
 </header>
 <div class="mdui-container" <?if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
 	<div class="doc-container">
-		<form method="post" action="/webview.php/login/login" autocomplete="off">
+		<form autocomplete="off">
 			<div class="mdui-textfield mdui-textfield-floating-label">
 	  			<label class="mdui-textfield-label">用户名</label>
-	  			<input class="mdui-textfield-input" type="text" name="id" maxlength="9" required/>
+	  			<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
 	 			 <div class="mdui-textfield-error">用户名不能为空</div>
 			</div>
 			<div class="mdui-textfield mdui-textfield-floating-label">
 	  			<label class="mdui-textfield-label">密码</label>
-	  			<input class="mdui-textfield-input" type="text" name="password" maxlength="64" required/>
+	  			<input class="mdui-textfield-input" type="text" id="passwd" maxlength="64" required/>
 	 			 <div class="mdui-textfield-error">密码不能为空</div>
 			</div>
 			<div class="br"></div>
-	  		<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入" />
+	  		<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" value="登入" />
 		</form>
 	</div>
 </div>
-
 <div class="mdui-container framecard" <?if($result['device_type'] == 'other') print('style="display:none;"'); ?>>
 	<div class="br"></div>
 	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$result['username']?>'" >
@@ -40,3 +39,37 @@
 	  	</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	//加密没想好用哪个zz
+	function login(){
+		var timestamp = Date.parse(new Date());
+		var username = $("#usr").val();
+		var passwd = $("passwd").val();
+		$$.ajax({
+			type:"post",
+			url:"",
+			dataType:"json",
+			data:{
+				"module":"login";
+				"action":"doLogin";
+				"timeStamp":timestamp,
+				"payload":{
+					"userId":username,
+					"password":passwd
+				}
+			},
+			success:function(json){
+				if(json.status != 0){
+					mdui.snackbar({
+ 					 	message: "登入失败！<br>错误信息："+json.errmsg;
+					});
+				}else{
+					mdui.snackbar({
+ 					 	message: "登入成功！";
+					});
+				}
+			}
+		});
+	}
+</script>
