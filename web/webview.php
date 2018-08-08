@@ -76,7 +76,7 @@ function goDie(){
 //处理XHR请求，不渲染页面
 if($module == "api"){
 	require_once(BASE_PATH."webview/modules/api.php");
-	$post = json_decode(file_get_contents("php://input"));
+	$post = json_decode(file_get_contents("php://input"), true);
 	if($post == NULL){
 		$result = [
 			"status" => -1,
@@ -92,7 +92,7 @@ if($module == "api"){
 			goDie();
 		}
 		$apiFuncName = $post['module'].'_'.$post['action'];
-		if(!function_exists($funcName)){
+		if(!function_exists($apiFuncName)){
 			$result = [
 				"status" => -3,
 				"errmsg" => "找不到对应的函数"
