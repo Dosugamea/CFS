@@ -1,3 +1,42 @@
+<script type="text/javascript" src="/assets/js/jsbn.js"></script>
+<script type="text/javascript" src="/assets/js/prng4.js"></script>
+<script type="text/javascript" src="/assets/js/rng.js"></script>
+<script type="text/javascript" src="/assets/js/rsa.js"></script>
+<script src="/assets/jquery.min.js"></script>
+<script type="text/javascript">
+	//加密没想好用哪个zz
+	function login(){
+		var timestamp = Date.parse(new Date());
+		var username = $("#usr").val();
+		var passwd = $("passwd").val();
+		$$.ajax({
+			type:"post",
+			url:"//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
+			dataType:"json",
+			data:{
+				"module":"login";
+				"action":"doLogin";
+				"timeStamp":timestamp,
+				"payload":{
+					"userId":username,
+					"password":passwd
+				}
+			},
+			success:function(json){
+				if(json.status != 0){
+					mdui.snackbar({
+ 					 	message: "登入失败！<br>错误信息："+json.errmsg;
+					});
+				}else{
+					mdui.snackbar({
+ 					 	message: "登入成功！";
+					});
+				}
+			}
+		});
+	}
+</script>
+
 <header class="mdui-appbar mdui-appbar-fixed">
 	<div class="mdui-toolbar mdui-color-theme">
 		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" >
@@ -39,37 +78,3 @@
 	  	</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-	//加密没想好用哪个zz
-	function login(){
-		var timestamp = Date.parse(new Date());
-		var username = $("#usr").val();
-		var passwd = $("passwd").val();
-		$$.ajax({
-			type:"post",
-			url:"",
-			dataType:"json",
-			data:{
-				"module":"login";
-				"action":"doLogin";
-				"timeStamp":timestamp,
-				"payload":{
-					"userId":username,
-					"password":passwd
-				}
-			},
-			success:function(json){
-				if(json.status != 0){
-					mdui.snackbar({
- 					 	message: "登入失败！<br>错误信息："+json.errmsg;
-					});
-				}else{
-					mdui.snackbar({
- 					 	message: "登入成功！";
-					});
-				}
-			}
-		});
-	}
-</script>
