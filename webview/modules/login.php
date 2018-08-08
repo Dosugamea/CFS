@@ -1,7 +1,7 @@
 <?php
 
 function login_login(){
-    global $mysql, $authorize;
+    global $mysql, $authorize, $config;
     $token = $authorize['token'];
     $username = $mysql->query('SELECT username, password FROM tmp_authorize WHERE token = ?', [$token])->fetch();
     $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
@@ -18,6 +18,7 @@ function login_login(){
     return [
         "device_type"   => $device_type,
         "username"      => $username['username'],
+        "pub_key"       => $config->basic['pub_key']
     ];
 }
 
@@ -29,7 +30,7 @@ function login_reg(){
     if(isset($_POST['submit'])) {
         if (!is_numeric($_POST['id'])) {
             print '<h3><font color="red">错误：ID必须是数字 Error: the ID must be a number</font></h3>';
-        }elseif($_POST['id']>999999999){
+        }elseif($_POST['id'] > 999999999){
             print '<h3><font color="red">错误：你输入的数太大了！Number is too large</font></h3>';
         }elseif(!is_numeric($_POST['site'])){
             print '<h3><font color="red">错误：提交数据异常</font></h3>';

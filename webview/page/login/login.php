@@ -10,7 +10,7 @@
 		var passwd = $("passwd").val();
 		var rsa = new RSAKey();
 		//请写入RSA2048 PUBKEY
-		var pubKey = "";
+		var pubKey = "<?=$result['pub_key']?>";
 		var exponent = "10001";
 		rsa.setPublic(pubKey,exponent);
 		var rsaEn = rsa.encrypt(passwd);
@@ -62,7 +62,7 @@
 			</div>
 			<div class="mdui-textfield mdui-textfield-floating-label">
 	  			<label class="mdui-textfield-label">密码</label>
-	  			<input class="mdui-textfield-input" type="text" id="passwd" maxlength="64" required/>
+	  			<input class="mdui-textfield-input" type="password" id="passwd" maxlength="64" required/>
 	 			 <div class="mdui-textfield-error">密码不能为空</div>
 			</div>
 			<div class="br"></div>
