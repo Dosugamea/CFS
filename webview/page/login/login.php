@@ -1,7 +1,4 @@
-<script type="text/javascript" src="/assets/js/jsencrypt.js"></script>
-<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript">
-	// Hex to Base64
 	function hexToBase64(str) {
 	    return btoa(String.fromCharCode.apply(null,
 	      str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
@@ -11,7 +8,6 @@
 		var username = $("#usr").val();
 		var passwd = $("#passwd").val();
 		var rsa = new JSEncrypt();
-		//请写入RSA2048 PUBKEY
 		var pubKey = `<?=$result['pub_key']?>`;
 		rsa.setKey(pubKey);
 		passwd = rsa.encrypt(passwd);
@@ -58,15 +54,15 @@
 		<div class="mdui-textfield mdui-textfield-floating-label">
 	  		<label class="mdui-textfield-label">用户名</label>
 	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
-	 		 <div class="mdui-textfield-error">用户名不能为空</div>
+	 		<div class="mdui-textfield-error">用户名不能为空</div>
 		</div>
 		<div class="mdui-textfield mdui-textfield-floating-label">
 	  		<label class="mdui-textfield-label">密码</label>
 	  		<input class="mdui-textfield-input" type="password" id="passwd" maxlength="64" required/>
-	 		 <div class="mdui-textfield-error">密码不能为空</div>
+	 		<div class="mdui-textfield-error">密码不能为空</div>
 		</div>
 		<div class="br"></div>
-	  	<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入" id="loginButton" onclick='login()'/>
+	  	<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入"  onclick='login()'/>
 	</div>
 </div>
 <div class="mdui-container framecard" <?php if($result['device_type'] == 'other') print('style="display:none;"'); ?>>

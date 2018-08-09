@@ -130,21 +130,21 @@ runWebview($module, $action);
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <title>PCF_WEBVIEW</title>
     <!-- CSS -->
-	<link href="/assets/css/mdui.min.css?v=<?=time()?>" rel="stylesheet" />
+	<link href="/assets/css/mdui.min.css" rel="stylesheet" />
 	<link href="/assets/css/doc.css?v=<?=time()?>" rel="stylesheet" />
 	<link href="/assets/css/main.css?v=<?=time()?>" rel="stylesheet"/>
+	<!-- Script -->
+	<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/js/jsencrypt.js"></script>
+	<script type="text/javascript" src="/assets/js/smooth-scroll.js"></script>
+	<script type="text/javascript" src="/assets/js/holder.js"></script>
+	<script type="text/javascript" src="/assets/js/highlight.js"></script>
+	<script type="text/javascript" src="/assets/js/mdui.js" ></script>
+	<script>var $$ = mdui.JQ;</script>
+	<script type="text/javascript" src="/assets/js/main.js?v=<?=time()?>"></script>
 </head>
 <body class="mdui-loaded mdui-locked mdui-theme-primary-pink mdui-theme-accent-pink" style="overflow-y: auto !important;">
 	<?php require_once("../webview/page/".$module."/".$action.".php"); ?>
-	<!-- Script -->
-	<script src="/assets/js/smooth-scroll.js?v=<?=time()?>"></script>
-	<script src="/assets/js/holder.js?v=<?=time()?>"></script>
-	<script src="/assets/js/highlight.js?v=<?=time()?>"></script>
-	<script type="text/javascript" src="/assets/js/mdui.js?v=<?=time()?>" ></script>
-	<script>var $$ = mdui.JQ;</script>
-	<script src="/assets/js/main.js?v=<?=time()?>"></script>
-	<script type="text/javascript">
-	</script>
 </body>
 </html>
 
