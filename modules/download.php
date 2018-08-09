@@ -4,7 +4,7 @@
 //download/additional 下载附加内容
 function download_additional($post) {
 	global $uid, $mysql, $additional_for_android, $additional_for_ios;
-	include '../config/modules_download.php';
+	include '../config/m_download.php';
 	$ret = $mysql->query(
 		"SELECT update_id as download_additional_id, url, size FROM packages
 		WHERE package_id = ? AND package_type = ? AND os = ?"
