@@ -3,6 +3,14 @@ function login_doLogin($post){
     global $mysql, $authorize, $config;
     require_once(BASE_PATH."includes/RSA.php");
     
+    if(!isset($post['userId']) || !isset($post['password'])){
+        $result = [
+            "status" => -4,
+            "errmsg" => "参数错误"
+        ];
+        return $result;
+    }
+
     //解密密码
     @$post['password'] = RSAdecrypt($post['password']);
     if($post['password'] === NULL){
