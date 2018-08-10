@@ -18,7 +18,7 @@
 	function doReg(){
 		var valid = false;
 		var username = $("#usr").val();
-		var nickname = $("$nick").val();
+		var nickname = $("#nick").val();
 		var passwd = $("#pass1").val();
 		var passwd2 = $("#pass2").val();
 		var inviter = $("#inv").val();
@@ -81,7 +81,7 @@
 			dataType: "json",
 			data: JSON.stringify({
 				"module": "login",
-				"action": "doLogin",
+				"action": "reg",
 				"timeStamp": Date.parse(new Date()) / 1000,
 				"payload": {
 					"userId": username,
@@ -110,11 +110,11 @@
 		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" >
 			<i class="mdui-icon material-icons" onclick="location.href='/webview.php/login/welcome'">arrow_back</i>
 		</span>
-		<a class="mdui-typo-title" style="text-transform:capitalize;"><?=$action?></a>
+		<a class="mdui-typo-title" style="text-transform:capitalize;">注册</a>
 		<div class="mdui-toolbar-spacer"></div>
 	</div>
 </header>
-<div class="mdui-container" <?if($device_type == 'ios') print('style="display:none;"'); ?>>
+<div class="mdui-container" <?php if($device_type == 'ios') print('style="display:none;"'); ?>>
 	<div class="doc-container">
 		<div class="mdui-textfield mdui-textfield-floating-label" id="usrDiv">
 	  		<label class="mdui-textfield-label">用户ID</label>
@@ -130,26 +130,26 @@
 		</div>
 		<div class="mdui-textfield mdui-textfield-floating-label">
 	  		<label class="mdui-textfield-label">密码</label>
-	  		<input class="mdui-textfield-input" type="text" id="pass1" maxlength="64" required/>
+	  		<input class="mdui-textfield-input" type="password" id="pass1" maxlength="64" required/>
 	 		<div class="mdui-textfield-error">密码不能为空</div>
 	 		<div class="mdui-textfield-helper">密码最大64位任意字符</div>
 		</div>
 		<div class="mdui-textfield mdui-textfield-floating-label" id="pass2Div">
 	  		<label class="mdui-textfield-label">密码确认</label>
-	  		<input class="mdui-textfield-input" type="text" id="pass2" maxlength="64" required/>
+	  		<input class="mdui-textfield-input" type="password" id="pass2" maxlength="64" required/>
 	  		<div class="mdui-textfield-error" id="pass2Val" >请再次输入密码</div>
 		</div>
 		<div class="mdui-textfield mdui-textfield-floating-label">
 	  		<label class="mdui-textfield-label">邀请人用户名</label>
 	  		<input class="mdui-textfield-input" type="text" id="inv" maxlength="9"/>
-	  		<div class="mdui-textfield-helper">输入邀请人的用户ID（如有）</div>
+	  		<div class="mdui-textfield-helper">输入邀请人的用户ID（选填）</div>
 		</div>
 	  	<div class="br"></div>
 	  	<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="注册" onclick="doReg()"/>
 	</div>
 </div>
 
-<div class="mdui-container framecard"  <?if($device_type == 'other') print('style="display:none;"'); ?>>
+<div class="mdui-container framecard" <?php if($device_type == 'other') print('style="display:none;"'); ?>>
 	<div class="br"></div>
 	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$tmp_authorize['username']?>'">
 	  	<div class="mdui-card-media">
