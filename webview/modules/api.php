@@ -54,7 +54,9 @@ function login_reg($post){
     global $mysql, $authorize, $config;
     require_once(BASE_PATH."includes/present.php");
     require_once(BASE_PATH."includes/unit.php");
+    require_once(BASE_PATH."includes/RSA.php");
     $unit = getUnitDb();
+    $token = $authorize['token'];
 
     if(!isset($post['userId']) || !isset($post['nickname']) || !isset($post['inviter']) || !isset($post['password'])){
         $result = [
@@ -95,11 +97,12 @@ function login_reg($post){
             ];
             return $result;
         }else{
-            $password = genpassv2($post['password'], $post['userId']);    
+            $password = genpassv2($post['password'], $post['userId']);
+            $username = $mysql->query('SELECT username, `password` FROM tmp_authorize WHERE token = ?', [$token])->fetch();
             $mysql->query('
                 INSERT INTO `users` (`user_id`, `username`, `password`,`login_password`, `name`, `introduction`)
-                VALUES (?, ?, ?, ?, ?, "", ?)
-            ', [$post['userId'], $tmp_authorize['username'], $tmp_authorize['password'], $password, $post['name'], $post['site']]);
+                VALUES (?, ?, ?, ?, ?, "")
+            ', [$post['userId'], $username['username'], $username['password'], $password, $post['nickname']]);
             $param = $mysql->prepare("INSERT INTO user_params VALUES(".$post['userId'].", ?, ?)");
             $param->execute(['enable_card_switch', $config->reg['disable_card_by_default'] ? 0 : 1]);
             $param->execute(['card_switch', $config->reg['disable_card_by_default'] ? 0 : 1]);
@@ -112,18 +115,18 @@ function login_reg($post){
             $param->execute(['item5', 0]);
     
             //送三个初期宝石
-            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$post['id'].",1,1,0)");
-            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$post['id'].",2,1,0)");
-            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(".$post['id'].",3,1,0)");
+            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(?,1,1,0)", [$post['userId']]);
+            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(?,2,1,0)", [$post['userId']]);
+            $mysql->query("INSERT INTO removable_skill (user_id, skill_id, amount, equipped) VALUES(?,3,1,0)", [$post['userId']]);
         
-            $uid = $post['id'];
+            $uid = $post['userId'];
             if($config->reg['all_card_by_default']) {
                 $card_list=$unit->query('SELECT unit_id from unit_m where unit_id <= ? and unit_number > 0', [$config->basic['max_unit_id']])->fetchAll();
                 foreach($card_list as $v){
                     addUnit($v[0]);
                 }
                 //防止劝退
-                $mysql->query("UPDATE unit_list SET favorite_flag = 1 WHERE user_id = ?", [$post['id']]);
+                $mysql->query("UPDATE unit_list SET favorite_flag = 1 WHERE user_id = ?", [$post['userId']]);
             }
         
             $position = 1;
@@ -142,10 +145,10 @@ function login_reg($post){
             $tmp2['deck_name'] = '';
             $unit_deck_list[] = $tmp2;
             $json = json_encode($unit_deck_list);
-            $mysql->query("INSERT INTO user_deck (`user_id`, `json`, `center_unit`) VALUES (?,?,?)", [$post['id'], $json, $center]);
+            $mysql->query("INSERT INTO user_deck (`user_id`, `json`, `center_unit`) VALUES (?,?,?)", [$post['userId'], $json, $center]);
         
             $mysql->query('delete from tmp_authorize where token = ?', [$token]);
-            $invite = (int)$post['invite'];
+            $invite = (int)$post['inviter'];
             if($invite > 0){
                 $res = $mysql->query("SELECT user_id FROM users WHERE user_id = ?",[$invite])->fetch();
                 if($res){
