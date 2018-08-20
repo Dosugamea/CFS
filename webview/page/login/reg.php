@@ -23,37 +23,25 @@
 		var passwd2 = $("#pass2").val();
 		var inviter = $("#inv").val();
 		if(!isNaN(username) && parseInt(username)>0 && parseInt(username)<=999999999){
-			valid=true;
+			valid = true;
 			$("#usrVal").innerHTML = '用户ID不能为空';
-			$("#usrDiv").deleteClass("mdui-textfield-invalid");
+			$("#usrDiv").removeClass("mdui-textfield-invalid");
 		}else{
-			valid=false;
+			valid = false;
 			$("#usrVal").innerHTML = '请输入一个正整数';
 			$("#usrDiv").addClass("mdui-textfield-invalid");
 		}
 		if (valid) {
-			$("#usrDiv").deleteClass("mdui-textfield-invalid");
-			for(var i in exit_id){
-				if(parseInt(username) == exit_id[i]){
-					valid = false;
-					$("#usrVal").innerHTML = '用户名已存在';
-					$("#usrDiv").addClass("mdui-textfield-invalid");
-				}else{
-					valid = true;
-					$("#usrVal").innerHTML = '用户ID不能为空';
-					$("#usrDiv").deleteClass("mdui-textfield-invalid");
-				}
-			}
-		}
-		if (valid) {
-			if (passwd != passwd2 && passwd != '') {
+			$("#usrVal").innerHTML = '用户ID不能为空';
+			$("#usrDiv").removeClass("mdui-textfield-invalid");
+			if (passwd != passwd2 && passwd2 != '') {
 				valid = false;
 				$("#pass2Val").innerHTML = '密码不一致';
 				$("#pass2Div").addClass("mdui-textfield-invalid");
-			}else{
-				valid = true;
+			}else if(passwd == ''){
+				valid = false;
 				$("#pass2Val").innerHTML = '请再次输入密码';
-				$("#pass2Div").deleteClass("mdui-textfield-invalid");
+				$("#pass2Div").removeClass("mdui-textfield-invalid");
 			}
 		}
 		if (valid) {
@@ -61,14 +49,9 @@
 		}
 	}
 
-	function hexToBase64(str) {
-	    return btoa(String.fromCharCode.apply(null,
-	      str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
-	    );
-	}
 	function reg(){
 		var username = $("#usr").val();
-		var nickname = $("$nick").val();
+		var nickname = $("#nick").val();
 		var passwd = $("#pass1").val();
 		var inviter = $("#inv").val();
 		var rsa = new JSEncrypt();
