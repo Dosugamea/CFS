@@ -76,6 +76,7 @@ function goDie(){
 //处理XHR请求，不渲染页面
 if($module == "api"){
 	require_once(BASE_PATH."webview/modules/api.php");
+	define("CONTROLLER_MODULE", "api");
 	$post = json_decode(file_get_contents("php://input"), true);
 	if($post == NULL){
 		$result = [

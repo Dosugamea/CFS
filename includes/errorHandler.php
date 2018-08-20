@@ -83,8 +83,18 @@ function error($errno=null, $errstr=null, $errfile=null, $errline=null) {
 
 		if(CONTROLLER == "main"){
 			header("Maintenance: 1");
-		}else{
-			print("<script>window.location.href='/webview.php/maintenance/bomb';</script>");
+		}else if(CONTROLLER == "webview"){
+			if(defined("CONTROLLER_MODULE") && CONTROLLER_MODULE == "api"){
+				//header("HTTP/1.1 500 Internal Server Error");
+				header("Content-Type: application/json");
+				print(json_encode([
+					"status" => -1000, 
+					"errmsg" => "服务器错误"
+				]));
+			}else{
+				print("asjdhiad");
+				print("<script>window.location.href='/webview.php/maintenance/bomb';</script>");
+			}
 		}
 		exit();
 	}
