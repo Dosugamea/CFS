@@ -469,3 +469,33 @@ function generateRandomLiveLimited($note,$key) {
 	}
 	return $note;
 }
+
+//获取全部live列表（用于对战）
+function getAllLiveList($exclude_list){
+	global $mysql, $config;
+	$live = getLiveDb();
+	$ret = [];
+	for($i = 1; $i <= 6; $i++){
+		$notes_setting_assets = $live->query("SELECT a.live_difficulty_id, live_setting_m.live_track_id, live_setting_m.notes_setting_asset 
+		FROM (
+			SELECT live_setting_id, live_difficulty_id
+			FROM normal_live_m 
+			UNION SELECT live_setting_id, live_difficulty_id
+			FROM special_live_m
+			UNION SELECT live_setting_id, live_difficulty_id
+			FROM marathon.event_marathon_live_m
+		) a
+		LEFT JOIN live_setting_m
+		ON a.live_setting_id = live_setting_m.live_setting_id
+		WHERE difficulty = ? AND live_setting_m.live_setting_id < ? AND live_setting_m.live_setting_id NOT IN (".implode(",", $exclude_list).")",[
+			$i,
+			$config->basic['max_live_difficulty_id']
+		])->fetchAll();
+		foreach($notes_setting_assets as &$j){
+			$j['live_difficulty_id'] = (int)$j['live_difficulty_id'];
+			$j['live_track_id'] = (int)$j['live_track_id'];
+		}
+		$ret[$i] = $notes_setting_assets;
+	}
+	return $ret;
+}

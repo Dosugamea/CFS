@@ -27,15 +27,32 @@ function banner_bannerList() {
 		}
 	};
 
+	//四种活动
 	$genEventDetail($config->event['marathon']);
 	$genEventDetail($config->event['battle']);
 	$genEventDetail($config->event['festival']);
 	$genEventDetail($config->event['challenge']);
 	
+	//协力在开卡才出现
 	if($envi->params['card_switch'] == 1){
 		$genEventDetail($config->event['duty']);
 	}
 	
+	//约战
+	if(($config->m_duel['muse']['is_open'] || $config->m_duel['aqours']['is_open']) && 
+	(strtotime($config->m_duel['start_date']) < time() && strtotime($config->m_duel['end_date']) > time())){
+		$ret['member_category_list'][0]['banner_list'][] = [
+			//banner type：0=EVENT 1=SECRETBOX 2=WEBVIEW 3=ONLINE 4=AREA 5=STORY 6=SNS 7=DUEL
+			"banner_type"            => 7,
+			"target_id"              => $config->m_duel['muse']['is_open'] ? 1 : 2,
+			"asset_path"             => "",
+			"asset_path_se"          => "",
+			"master_is_active_event" => true
+		];
+	}
+	
+
+	//水团页面跟缪一样
 	$ret['member_category_list'][1]['banner_list'] = $ret['member_category_list'][0]['banner_list'];
 	return $ret;
 }
