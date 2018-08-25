@@ -190,7 +190,7 @@ function duty_matching($post) {
         $selected_live_setting = $live->query('SELECT live_setting_id 
             FROM live_setting_m 
             WHERE notes_setting_asset = ?',[$map])->fetchColumn();
-		foreach(["normal_live_m", "special_live_m"] as $i){
+		foreach(["normal_live_m", "special_live_m", "marathon.event_marathon_live_m"] as $i){
 			$selected_live = $live->query('SELECT live_difficulty_id 
 				FROM '.$i.' 
 				WHERE live_setting_id = ?',[$selected_live_setting])->fetchColumn();
