@@ -9,7 +9,7 @@ class myPDO extends PDO {
 		$this->lastQuery = $sql;
 		$ret = parent::exec($sql);
 		if($ret === false) {
-			trigger_error('Query failed');
+			trigger_error("Query failed\n".implode("\n", parent::errorInfo()));
 		} else {
 			return $ret;
 		}
@@ -22,7 +22,7 @@ class myPDO extends PDO {
 		} else {
 			$ret = parent::prepare($sql);
 			if (!$ret) {
-				trigger_error('Prepared query failed');
+				trigger_error("Prepared query failed\n".implode("\n", parent::errorInfo()));
 			}
 			$result = $ret->execute($parameters);
 		}
@@ -31,7 +31,7 @@ class myPDO extends PDO {
 			trigger_error("Prepared query failed \nParameters: ".count($parameters)."\nSQL:".$sql."\nStack:".$e->getTraceAsString());
 		} elseif($ret === false) {
 			$e = new Exception;
-			trigger_error('Query failed'."\nStack:".$e->getTraceAsString());
+			trigger_error('Query failed'."\nStack:".$e->getTraceAsString()."\nError Info: \n".implode("\n", parent::errorInfo()));
 		} else {
 			return $ret;
 		}
@@ -68,6 +68,7 @@ $mysql->query('SET time_zone = "+9:00"');
 $redis = new Redis();
 $redis->connect($config->database['redis_server']);
 $redis->auth($config->database['redis_password']);
+$redis->select($config->database['redis_number']);
 
 $unitdb = false;
 $livedb = false;
