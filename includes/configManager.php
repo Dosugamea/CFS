@@ -110,6 +110,7 @@ class configManager{
 			//redis相关
 			"redis_server"		=> "127.0.0.1",
 			"redis_password"	=> "",
+			"redis_number"		=> 1,				//redis数据库号
 
 			//默认数据库目录，建议不要更改
 			"unit_db"			=> "db/unit.db_",
