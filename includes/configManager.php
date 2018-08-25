@@ -20,6 +20,7 @@ class configManager{
 			"m_challenge",
 			"m_download",
 			"m_duty",
+			"m_duel",
 			"m_exchange",
 			"m_festival",
 			"m_lbonus",
@@ -273,6 +274,25 @@ class configManager{
 
 		];
 		$this->initCommon($defaultConfig, "m_download");
+	}
+
+	private function _init_m_duel(){
+		$defaultConfig = [
+			"start_date"		=> "2000-01-01 00:00:00",
+			"end_date"			=> "2000-01-01 00:00:00",
+			"duel_id"			=> 0,
+			"term_id"			=> 0,
+			"gps_is_open"		=> false,
+			"muse"				=> [
+				"is_open"	=> true,
+				"bgm_id"	=> 301,
+			],
+			"aqours"	=> [
+				"is_open"	=> false,
+				"bgm_id"	=> 8,
+			],
+		];
+		$this->initCommon($defaultConfig, "m_duel");
 	}
 
 	private function _init_m_duty(){
