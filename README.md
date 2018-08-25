@@ -15,7 +15,7 @@ The project, developed by the enthusiasts of personal behavior, does not contain
 
 * PHP 7.0 or higher (we always use latest stable version to develop)
 * Maria DB 10.6 or higher / Mysql 5.7 or higher, both must including with InnoDB and MyISAM
-* Curl, OpenSSL, PDO_mysql and PDO_sqlite3 module 
+* Curl, OpenSSL, PDO_mysql, PDO_sqlite3 and Redis module 
 * Enable exec function for git pull
 
 # Installation

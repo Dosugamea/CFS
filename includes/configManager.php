@@ -107,6 +107,10 @@ class configManager{
 			"mysql_pass"		=> "",				//MySQL密码
 			"mysql_db"			=> "lovelive",		//数据库名
 
+			//redis相关
+			"redis_server"		=> "127.0.0.1",
+			"redis_password"	=> "",
+
 			//默认数据库目录，建议不要更改
 			"unit_db"			=> "db/unit.db_",
 			"live_db"			=> "db/live.db_",
