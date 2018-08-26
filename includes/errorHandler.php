@@ -92,7 +92,6 @@ function error($errno=null, $errstr=null, $errfile=null, $errline=null) {
 					"errmsg" => "服务器错误"
 				]));
 			}else{
-				print("asjdhiad");
 				print("<script>window.location.href='/webview.php/maintenance/bomb';</script>");
 			}
 		}
