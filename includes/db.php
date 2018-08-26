@@ -70,6 +70,9 @@ $redis->connect($config->database['redis_server']);
 $redis->auth($config->database['redis_password']);
 $redis->select($config->database['redis_number']);
 
+//Redis锁
+$redLock = new RedLock([[$config->database['redis_server'], 6379, 1, $config->database['redis_password']]]);
+
 $unitdb = false;
 $livedb = false;
 
