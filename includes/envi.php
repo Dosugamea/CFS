@@ -87,7 +87,7 @@ class envi{
                 //token和uid都存在，用户应该存在
                 $user = $mysql->query("SELECT * FROM users WHERE user_id = ? AND authorize_token = ?", [(int)$_SERVER['HTTP_USER_ID'], $this->authorize['token']])->fetch();
                 if($user){
-                    $this->uid          = $user['user_id'];
+                    $this->uid          = (int)$user['user_id'];
                     $this->sessionKey   = base64_decode($user['sessionKey']);
                     $mysql->query("UPDATE users SET nonce = ? WHERE authorize_token = ?", [$this->authorize['nonce'], $this->authorize['token']]);
 
