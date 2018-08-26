@@ -379,7 +379,7 @@ function duty_startWait($post) {
 			$mysql->query("UPDATE tmp_duty_room SET ended_flag_".$i." = 1");
 			continue;
 		}
-        $user_info=runAction('profile','profileInfo',['user_id'=>$user_id]);
+        $user_info = runAction('profile','profileInfo',['user_id'=>$user_id]);
         $user_event = getUserEventStatus($user_id, $duty['event_id']);
 		
         $user_info['event_status']['total_event_point'] = $user_event['event_point'];
