@@ -4,13 +4,13 @@ function addUnit($unit_id, $cnt = 1, $detail = false) {
 	$unit = getUnitDb();
 	$support_list = getSupportUnitList();
 	if(in_array($unit_id,$support_list)){
-		$amount = $mysql->query("SELECT amount FROM unit_support_list WHERE user_id=".$uid." AND unit_id=".$unit_id)->fetch();
+		$amount = (int)$mysql->query("SELECT amount FROM unit_support_list WHERE user_id=".$uid." AND unit_id=".$unit_id)->fetchColumn();
 		//var_dump($amount[0] + $cnt);
 		//die();
 		if($amount == false)
 			$mysql->query('INSERT INTO unit_support_list (user_id, unit_id, amount) VALUES (?,?,?)', [$uid, $unit_id, $cnt]);
 		else
-			$mysql->query('UPDATE unit_support_list SET amount = '.($amount[0] + $cnt).' WHERE user_id = '.$uid.' AND unit_id = '.$unit_id);
+			$mysql->query('UPDATE unit_support_list SET amount = '.($amount + $cnt).' WHERE user_id = '.$uid.' AND unit_id = '.$unit_id);
 		$mysql->query('insert ignore into album (user_id, unit_id, rank_max_flag, love_max_flag, rank_level_max_flag) values (?, ?, 1, 1, 1)', [$uid, $unit_id]);
 		$ret = [GetUnitDetail($unit_id, false, false, true)];
 	}else{
