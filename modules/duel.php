@@ -228,7 +228,6 @@ function duel_startWait($post){
     }
     //参数预处理
     $post['room_id']    = (int)$post['room_id'];
-    $post['chat_id']    = (int)$post['chat_id'];
 
     //MySQL获取房间信息
     $room_id = $post['room_id'];
