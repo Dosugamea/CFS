@@ -310,18 +310,19 @@ function duel_startWait($post){
 
     //时间到，抽选歌曲
     if($start_flag){
-        if(!$redis->exists("Duel:room:{$room_id}:selectedLive")){
+        $logger->d($redis->exists("Duel:room:{$room_id}:chosenLive"));
+        if(!$redis->exists("Duel:room:{$room_id}:chosenLive")){
             //redis里面没有的话进行抽选
-            $lock = $redLock->lock("Duel:room:{$room_id}:selectedLive");
+            $lock = $redLock->lock("Duel:room:{$room_id}:chosenLive");
             if($lock){
                 $pick = array_rand($usersInfo, 1);
-                $selectedLive = $pick[0]['room_user_status']['selected_live_difficulty_id'];
+                $selectedLive = $usersInfo[$pick]['room_user_status']['selected_live_difficulty_id'];
             }else{
-                pl_assert("Duel:room:{$room_id}:selectedLive 上锁失败！");
+                pl_assert("Duel:room:{$room_id}:chosenLive 上锁失败！");
             }
             $redLock->unlock($lock);
         }else{
-            $selectedLive = (int)$redis->get("Duel:room:{$room_id}:selectedLive");
+            $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
         }
     }else{
         $selectedLive = 0;
