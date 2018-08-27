@@ -238,14 +238,12 @@ function duel_startWait($post){
     $lock = $redLock->lock("Duel:room:{$room_id}:userInfoCache");
     if($lock){
         $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
-        $logger->d(json_encode($usersInfo));
         $redis->del("Duel:room:{$room_id}:userInfoCache");
         foreach($usersInfo as &$i){
             $i = json_decode($i, true);
             if($i['user_info']['user_id'] == $uid){
                 $i['chat_id'] = $post['chat_id'];
             }
-            $logger->d(json_encode($i));
             $redis->rpush("Duel:room:{$room_id}:userInfoCache", json_encode($i));
         }
     }else{
@@ -274,7 +272,7 @@ function duel_startWait($post){
         $start_flag = true;
     }
     
-    if(!isset($remain_time) && time() - $last_join_time >= $DEFAULT_COUNTDOWN){
+    if(!isset($remain_time) && time() - $last_join_time < $DEFAULT_COUNTDOWN){
         //还在倒计时的情况
         if(count($users) >= 2){
             //有两个用户，等超时再开车
@@ -289,9 +287,15 @@ function duel_startWait($post){
         //倒计时到了的情况
         if(count($users) >= 2){
             //有两个用户直接开车
-            $redis->set("Duel:room:{$room_id}:startTime", time());
-            $redis->del("Duel:room:notFull");
-            $remain_time = 0;
+            if($redis->exists("Duel:room:{$room_id}:startTime")){
+                $start_time = (int)$redis->get("Duel:room:{$room_id}:startTime");
+            }else{
+                $start_time = time() + 5;
+                $redis->set("Duel:room:{$room_id}:startTime", $start_time);
+                $redis->del("Duel:room:notFull");
+            }
+
+            $remain_time = $start_time - time();
             $capacity = count($users);
             $start_flag = true;
         }else if(count($users) == 1){
