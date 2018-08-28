@@ -250,36 +250,41 @@ function live_play($post) {
 	$post['do_not_use_multiply'] = false;
 	$map_count = 0;
 	$energy_use = 0;
+
 	foreach($live_id_list as $k2 => $v2) {
 		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
+		//4.0计分修正
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
-			$post['do_not_use_multiply'] = true; //4.0计分修正
+			$post['do_not_use_multiply'] = true;
 		}
 		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetch();
 		$live_map = $mysql->query('SELECT notes_list FROM notes_setting WHERE notes_setting_asset = ?', [$live_settings['notes_setting_asset']])->fetch();
-		$live_info['live_difficulty_id'] = (int)$v2;
-		$live_info['ac_flag'] = $extra_flag ? $extra_flag['ac_flag'] : 0;
-		$live_info['swing_flag'] = $extra_flag ? $extra_flag['swing_flag']: 0;
-		$live_info['notes_speed'] = floatval($live_settings['notes_speed']);
-		$live_info['notes_list'] = json_decode($live_map['notes_list'],true);
-		$live_info['dangerous'] = false;
-		$live_info['is_random'] = $random[$k2] %10 > 0;
-		$live_info['use_quad_point'] = $random[$k2] == 2;
-		$live_info['guest_bonus'] = [];
-		$live_info['sub_guest_bonus'] = [];
+		$live_info['live_difficulty_id']	= (int)$v2;
+		$live_info['ac_flag']				= $extra_flag ? $extra_flag['ac_flag'] : 0;
+		$live_info['swing_flag']			= $extra_flag ? $extra_flag['swing_flag']: 0;
+		$live_info['notes_speed']			= floatval($live_settings['notes_speed']);
+		$live_info['notes_list']			= json_decode($live_map['notes_list'],true);
+		$live_info['dangerous']				= false;
+		$live_info['is_random']				= $random[$k2] %10 > 0;
+		$live_info['use_quad_point']		= $random[$k2] == 2;
+		$live_info['guest_bonus']			= [];
+		$live_info['sub_guest_bonus']		= [];
 		$live_cost = $livedb->query("SELECT capital_value FROM special_live_m WHERE live_difficulty_id = ?", [$v2])->fetchColumn();
 		if($live_cost){
 			$energy_use += $live_cost;
 		}else{
 			$energy_use += $energy_list[(int)$live_settings['difficulty']];
 		}
-		$part1=[9,5,7];
-		$part2=['Live','RandomLive','RandomLiveOld','RandomLiveLimitless','RandomLiveLimited'];
-		$p1=$envi->params['extend_mods_key'];
-		$p2=$random[$k2]%10;
-		if($random[$k2]>0)
-			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2], $live_info['notes_list'],$part1[$p1]);
 
+		//处理mod
+		$part1 = [9,5,7];
+		$part2 = ['Live','RandomLive','RandomLiveOld','RandomLiveLimitless','RandomLiveLimited'];
+		$p1 = $envi->params['extend_mods_key'];
+		$p2 = $random[$k2] % 10;
+		if($random[$k2] > 0){
+			$live_info['notes_list'] = call_user_func('generate'.$part2[$p2], $live_info['notes_list'],$part1[$p1]);
+		}
+		
 		if (isset($envi->params['extend_mods_vanish']) && $envi->params['extend_mods_vanish']) {
 			foreach ($live_info['notes_list'] as &$set) {
 				$set['vanish'] = $envi->params['extend_mods_vanish'];
@@ -297,7 +302,7 @@ function live_play($post) {
 		}
 		if (isset($envi->params['extend_mods_speed']) && $envi->params['extend_mods_speed']) {
 			foreach ($live_info['notes_list'] as &$set) {
-				$set['speed'] = 1/(1+$envi->params['extend_mods_speed']/100);
+				$set['speed'] = 1 / (1 + $envi->params['extend_mods_speed'] / 100);
 			}
 		}
 		if (!isset($post['ScoreMatch']) && isset($envi->params['extend_mods_hantei_count']) && $envi->params['extend_mods_hantei_count']) {
@@ -327,11 +332,13 @@ function live_play($post) {
 		$map['live_list'][$map_count]['live_info'] = $live_info;
 		$map_count += 1;
 	}
+
 	//无卡模式计算分数线
 	if($envi->params['card_switch'] == 0 && $post['unit_deck_id'] < 3) {
 		$total = calcScore(60500, $map['live_list']);
 		$map['rank_info'] = json_decode('[{"rank":5,"rank_min":0},{"rank":4,"rank_min":'.($total*0.7).'},{"rank":3,"rank_min":'.($total*0.8).'},{"rank":2,"rank_min":'.($total*0.9).'},{"rank":1,"rank_min":'.($total*0.975).'}]');
-	} else { //有卡模式读取分数线，所有曲目分数线直接相加
+	} else { 
+		//有卡模式读取分数线，所有曲目分数线直接相加
 		foreach($live_id_list as $v2) {
 			$rankinfo = getRankInfo($v2);
 			if (!isset($rank)) {
@@ -359,6 +366,7 @@ function live_play($post) {
 		$lp_factor = 1;
 	else
 		$lp_factor = 0.5;
+	
 	$current_energy = getCurrentEnergy();
 	$map = array_merge($map, $current_energy);
 	if (!isset($post['party_user_id'])) {
