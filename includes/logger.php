@@ -10,6 +10,12 @@ class log{
     }
 
     private function write($message){
+        if($message === true){
+            $message = "(bool)true";
+        }
+        if($message === false){
+            $message = "(bool)false";
+        }
         $message .= "\r\n";
         fwrite($this->logFile, "[".date("Y-m-d H:i:s")."]".$message);
     }
