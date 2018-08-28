@@ -130,7 +130,7 @@ function duel_matching($post){
             break;
         }
     }
-    if(!$found){
+    if(!$found && $post['live_difficulty_id'] != 0){
         //ERROR_CODE_LIVE_NOT_FOUND
         return retError(3400);
     }
