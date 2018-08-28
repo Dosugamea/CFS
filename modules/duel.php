@@ -221,6 +221,7 @@ function duel_matching($post){
 
 function duel_startWait($post){
     global $redis, $redLock, $uid, $mysql, $logger;
+    //TODO:随机铺面支持
     //需要的参数
     if(!isset($post['room_id']) || !isset($post['chat_id']) ||
     !is_numeric($post['room_id'])){
@@ -322,6 +323,7 @@ function duel_startWait($post){
             if($lock){
                 $pick = array_rand($usersInfo, 1);
                 $selectedLive = $usersInfo[$pick]['room_user_status']['selected_live_difficulty_id'];
+                $redis->set("Duel:room:{$room_id}:chosenLive", $selectedLive);
             }else{
                 pl_assert("Duel:room:{$room_id}:chosenLive 上锁失败！");
             }
