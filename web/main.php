@@ -138,7 +138,7 @@ if (version_compare($_SERVER['HTTP_CLIENT_VERSION'], $server_ver, '<')) {
 }*/
 
 
-function runAction($module, $action, $post=[]) {
+function runAction($module, $action, $post=[], ...$args) {
 	global $envi;
 	if (isset($envi->params) && $envi->params['allow_test_func'] && file_exists('../modules.dev/'.$module.'.php')) {
 		require_once '../modules.dev/'.$module.'.php';
@@ -151,15 +151,12 @@ function runAction($module, $action, $post=[]) {
 	if (!function_exists($module.'_'.$action)) {
 		return [];
 	}
-	if (empty($post)) {
-		return call_user_func($module.'_'.$action);
-	}
-	return call_user_func($module.'_'.$action, $post);
+	return call_user_func($module.'_'.$action, $post, $args);
 }
 
 //处理POST数据
 if (isset($_POST['request_data'])) {
-	$post = json_decode($_POST['request_data'],true);
+	$post = json_decode($_POST['request_data'], true);
 } else {
 	print("INVALID_POST_DATA");
 	exit();
