@@ -231,11 +231,14 @@ global $uid, $mysql, $envi;
 }
 
 //live/play 获取游戏谱面
-function live_play($post) {
+function live_play($post, $args = []) {
 	global $mysql, $uid, $envi;
 	$livedb = getLiveDb();
-	if(isset($post['festival'])) { //读取festival曲目列表
-		$festival_lives = json_decode($mysql->query('SELECT lives FROM tmp_festival_playing WHERE user_id = ', [$uid])->fetchColumn(), true);
+	
+	//读取festival曲目列表
+	//TODO:使用args传递Fes/SM参数
+	if(isset($post['festival'])) {
+		$festival_lives = json_decode($mysql->query("SELECT lives FROM tmp_festival_playing WHERE user_id = ?", [$uid])->fetchColumn(), true);
 		foreach($festival_lives as $v) {
 			$live_id_list[] = $v['live_difficulty_id'];
 			$random[] = $v['random_switch'] + $envi->params['extend_mods_key'] * 10;
@@ -355,6 +358,12 @@ function live_play($post) {
 		$map['is_marathon_event'] = true;
 		$map['marathon_event_id'] = 52;
 	}
+
+	//不消耗体力的live(约战之类))
+	if(isset($args['free'])){
+		$energy_use = 0;
+	}
+
 	if(isset($post['lp_factor']))
 		$energy_result = energyDecrease($energy_use * $post['lp_factor']);
 	else
@@ -395,9 +404,8 @@ function live_play($post) {
 		", [$uid, $post['unit_deck_id'], $post['party_user_id'], $lp_factor, $post['unit_deck_id'], $post['party_user_id'], $lp_factor]);
 	}
 	$mysql->query("UPDATE `tmp_live_playing` SET `reward_flag` = 0 WHERE user_id = ?", [$uid]);
-	if(date("m-d") == '04-01'){
-		$map['live_se_id'] = 99;
-	}
+	$map['available_live_resume'] = false;
+	$map['no_skill'] = false;
 	return $map;
 }
 
@@ -460,7 +468,7 @@ function live_reward($post) {
 			$unranked = true;
 			
 	if (!$envi->params['card_switch']) {
-		$test_unranked = $mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id='.$uid)->fetchColumn();
+		$test_unranked = $mysql->query('SELECT unit_deck_id FROM tmp_live_playing WHERE user_id = ?',[$uid])->fetchColumn();
 		$unranked = ($test_unranked > 2);
 	}
 	/* 此处单首歌曲和FESTIVAL各使用一套代码来完成相同的功能 */

@@ -347,3 +347,63 @@ function duel_startWait($post){
     ];
     return $ret;
 }
+
+//live开始！
+function duel_liveStart($post){
+    global $redis, $redLock, $uid, $mysql, $logger;
+    //需要的参数
+    if(!isset($post['room_id']) || !isset($post['deck_id']) ||
+    !is_numeric($post['room_id']) || !is_numeric($post['deck_id'])){
+        throw403("INVALID_ARGUMENTS");
+    }
+    //参数预处理
+    $post['room_id']    = (int)$post['room_id'];
+    $post['deck_id']    = (int)$post['deck_id'];
+    $room_id            = $post['room_id'];
+    
+    //读取房间信息
+    $room = $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id = ?", [$post['room_id']])->fetch();
+    $users = json_decode($room['users']);
+    if(!in_array($uid, $users)){
+        throw403("DUEL_USER_NOT_IN_ROOM");
+    }
+
+    //读取live信息
+    $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
+    if(!$selectedLive){
+        throw403("DUEL_ROOM_NOT_START");
+    }
+    $post['live_difficulty_id'] = $selectedLive;
+
+    //防重放
+    $startedUser = $redis->lrange("Duel:room:{$room_id}:startedUser", 0, 3);
+    foreach($startedUser as $i){
+        if((int)$i == $uid){
+            throw403("DUEL_USER_ALREADY_STARTED");
+        }
+    }
+    $redis->rpush("Duel:room:{$room_id}:startedUser", $uid);
+
+    //获得房间用户
+    $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
+    foreach($usersInfo as &$i){
+        $i = json_decode($i, true);
+    }
+    
+    //开始live
+    $post['unit_deck_id']   = $post['deck_id'];
+    $ret = runAction("live", "play", $post, ["free" => true]);
+    $ret['matching_user_info']  = $usersInfo;
+    $ret['duel_user_info']      = genDuelUserInfoFake();
+    $energy = getCurrentEnergy();
+    $ret["energy_full_time"]    = $energy['energy_full_time'];
+    $ret["over_max_energy"]     = $energy['over_max_energy'];
+    $ret['server_timestamp']    = time();
+
+    return $ret;
+}
+
+//live结束！
+function duel_liveEnd($post){
+    global $uid, $redis, $redLock;
+}
