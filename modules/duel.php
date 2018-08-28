@@ -234,6 +234,11 @@ function duel_startWait($post){
     $room_info = $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id = ?", [$room_id])->fetch();
     $users = json_decode($room_info['users']);
 
+    //检查用户是否在房间里
+    if(!in_array($uid, $users)){
+        throw403("USER_NOT_IN_ROOM");
+    }
+
     //处理用户信息
     $lock = $redLock->lock("Duel:room:{$room_id}:userInfoCache");
     if($lock){
