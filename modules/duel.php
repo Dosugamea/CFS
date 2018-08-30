@@ -375,6 +375,11 @@ function duel_liveStart($post){
         throw403("DUEL_USER_NOT_IN_ROOM");
     }
 
+    //检查用户是否在房间里
+    if(!in_array($uid, $users)){
+        throw403("USER_NOT_IN_ROOM");
+    }
+
     //读取live信息
     $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
     if(!$selectedLive){
@@ -412,5 +417,132 @@ function duel_liveStart($post){
 
 //live结束！
 function duel_liveEnd($post){
+    global $uid, $redis, $redLock, $mysql;
+    //需要的参数
+    if(!isset($post['room_id']) || !is_numeric($post['room_id'])){
+        throw403("INVALID_ARGUMENTS");
+    }
+    //参数预处理
+    $post['room_id']    = (int)$post['room_id'];
+    $room_id            = $post['room_id'];
+    
+    //MySQL获取房间信息
+    $room_info = $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id = ?", [$room_id])->fetch();
+    $users = json_decode($room_info['users']);
+
+    //检查用户是否在房间里
+    if(!in_array($uid, $users)){
+        throw403("USER_NOT_IN_ROOM");
+    }
+
+    //写入结果缓存
+    $lock = $redLock->lock("Duel:room:{$room_id}:userResultCache");
+    if($lock){
+        $redis->hset("Duel:room:{$room_id}:userResultCache", $uid, json_encode($post));
+        $redis->set("Duel:room:{$room_id}:lastClear", time());
+    }else{
+        pl_assert("Duel:room:{$room_id}:userResultCache 上锁失败！");
+    }
+
+    //清空聊天表情
+    $lock = $redLock->lock("Duel:room:{$room_id}:userInfoCache");
+    if($lock){
+        $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
+        $redis->del("Duel:room:{$room_id}:userInfoCache");
+        foreach($usersInfo as &$i){
+            $i = json_decode($i, true);
+            if($i['user_info']['user_id'] == $uid){
+                $i['chat_id'] = "0";
+            }
+            $redis->rpush("Duel:room:{$room_id}:userInfoCache", json_encode($i));
+        }
+    }else{
+        pl_assert("Duel:room:{$room_id}:userInfoCache 上锁失败！");
+    }
+    
+    return [];
+}
+
+function duel_endWait($post){
     global $uid, $redis, $redLock;
+    //需要的参数
+    if(!isset($post['room_id']) || !isset($post['deck_id']) ||
+    !is_numeric($post['room_id']) || !is_numeric($post['deck_id'])){
+        throw403("INVALID_ARGUMENTS");
+    }
+    //参数预处理
+    $post['room_id']    = (int)$post['room_id'];
+    $post['deck_id']    = (int)$post['deck_id'];
+    $room_id            = $post['room_id'];
+    
+    //读取房间信息
+    $room = $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id = ?", [$post['room_id']])->fetch();
+    $users = json_decode($room['users']);
+    if(!in_array($uid, $users)){
+        throw403("DUEL_USER_NOT_IN_ROOM");
+    }
+
+    //检查用户是否在房间里
+    if(!in_array($uid, $users)){
+        throw403("USER_NOT_IN_ROOM");
+    }
+
+    //读取live信息
+    $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
+    if(!$selectedLive){
+        throw403("DUEL_ROOM_NOT_START");
+    }
+    
+    //检查是否结算过
+    $resultCache = $redis->hget("Duel:room:{$room_id}:userResultCache", $uid);
+    if(!$resultCache){
+        throw403("DUEL_STATUS_ERROR");
+    }
+
+    //检查了一大堆终于可以开始处理数据了= =！
+    //2018-08-28 22:30然后突然忘了要怎么写
+    //2018-08-28 22:48好的想起来了（。
+    $lastClear = (int)$redis->get("Duel:room:{$room_id}:lastClear");
+    if(!$lastClear){
+        $logger->f("【协力】无法获取房间{$room_id}结算信息");
+        throw500("ERROR_DUEL_ROOM_DATA_UNDEFINED");
+    }
+    //2018-08-28 22:56 诶我又双叒叕忘了要写啥
+
+    //获得房间用户
+    $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
+    foreach($usersInfo as &$i){
+        $i = json_decode($i, true);
+    }
+
+    //已结算用户计算
+    $userResultCache = $redis->hgetall("Duel:room:{$room_id}:userResultCache");
+    $DEFAULT_COUNTDOWN = 30;
+    if(count($userResultCache) == count($users) || time() - $lastClear > $DEFAULT_COUNTDOWN){
+        //所有用户全部结算完或者超时的情况，结算
+        $endFlag = true;
+    }else{
+        $endFlag = false;
+    }
+
+    $waitTime = $DEFAULT_COUNTDOWN - time() + $lastClear;
+    if($waitTime < 0){
+        $waitTime = 0;
+    }
+
+    $result = [
+        "room_id"           => $room_id,
+        "capacity"          => count($users),
+        "end_flag"          => $endFlag,
+        "player_num"        => count($users),
+        "end_wait_timt"     => $waitTime,
+        "matching_user"     => $userInfo,
+        "polling_interval"  => 2,
+        "server_timestamp"  => time()
+    ];
+    return $result;
+}
+
+function duel_end($post){
+    
 }
