@@ -203,13 +203,17 @@ if(!isset($ret['status_code'])){
 
 /*写入日志*/
 if($log){
-	$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [
+	if(error_get_last() !== NULL){
+		$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [
 		$post['commandNum'], 
 		date("Y-m-d H:i:s", time()), 
 		$post['module'], 
 		$post['action'], 
 		json_encode($post), 
 		json_encode($ret)]);
+	}else{
+		$logger->i("Error occured, response will not cache.");
+	}
 }
 
 $ret = json_encode($ret);
