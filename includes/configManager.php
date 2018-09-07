@@ -156,6 +156,7 @@ class configManager{
 			"maintenance_start"			=> "2000-01-01 00:00:00",	//维护开始时间
 			"maintenance_end"			=> "2000-01-01 00:00:01",	//维护结束时间
 			"maintenance_info"			=> "现在正在进行维护<br>\n给您带来的不便，敬请谅解",
+			"maintenance_endpoint"		=> [] //数组中的endpoint触发维护flag
 		];
 		$this->initCommon($defaultConfig, "maintenance");
 	}

@@ -84,6 +84,10 @@ if (((strtotime($config->maintenance['maintenance_start']) < time() &&
 	header('Maintenance: 1');
 	die();
 }
+if(in_array($_SERVER['PATH_INFO'], $config->maintenance['maintenance_endpoint'])){
+	header('Maintenance: 1');
+	die();
+}
 
 //有用户的时候读取道具信息
 if($envi->uid){
