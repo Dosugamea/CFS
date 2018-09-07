@@ -19,7 +19,9 @@ function throw500($err) {
 
 
 function pl_assert($condition, $err = '') {
+    global $logger;
     if (!$condition) {
+        $logger->f($err);
         trigger_error("Assert failure:\n$err");
     }
 }
