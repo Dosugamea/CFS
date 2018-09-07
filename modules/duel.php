@@ -543,6 +543,123 @@ function duel_endWait($post){
     return $result;
 }
 
-function duel_end($post){
+function duel_endRoom($post){
+    global $uid, $redis, $redLock;
+    //需要的参数
+    if(!isset($post['room_id']) || !isset($post['deck_id']) ||
+    !is_numeric($post['room_id']) || !is_numeric($post['deck_id'])){
+        throw403("INVALID_ARGUMENTS");
+    }
+    //参数预处理
+    $post['room_id']    = (int)$post['room_id'];
+    $post['deck_id']    = (int)$post['deck_id'];
+    $room_id            = $post['room_id'];
     
+    //读取房间信息
+    $room = $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id = ?", [$post['room_id']])->fetch();
+    $users = json_decode($room['users']);
+    if(!in_array($uid, $users)){
+        throw403("DUEL_USER_NOT_IN_ROOM");
+    }
+
+    //检查用户是否在房间里
+    if(!in_array($uid, $users)){
+        throw403("USER_NOT_IN_ROOM");
+    }
+
+    //读取live信息
+    $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
+    if(!$selectedLive){
+        throw403("DUEL_ROOM_NOT_START");
+    }
+    
+    //检查是否结算过
+    $resultCache = $redis->hget("Duel:room:{$room_id}:userResultCache", $uid);
+    $userStatus = $redis->hget("Duel:room:{$room_id}:userEndRoomFlag", $uid);
+    if(!$resultCache || $userStatus){
+        throw403("DUEL_STATUS_ERROR");
+    }
+    
+    //获得房间用户
+    $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
+    foreach($usersInfo as &$i){
+        $i = json_decode($i, true);
+    }
+    
+    //直接调live模块
+    //TODO:过滤参数防止搞事情（好像要搞事情就在前面搞了）
+    $post = array_merge($post, $resultCache);
+    $ret = runAction("live", "reward", $post);
+    $resultCacheAll = $redis->hgetall("Duel:room:{$room_id}:userResultCache");
+    $uidCache = [];
+    $scoreCache = [];
+    //TODO:Key element cannot be a reference &$k
+    foreach($resultCacheAll as $k => &$v){
+        $k = (int)$k;
+        $v = json_decode($v);
+        $uidCache[] = (int)$k;
+        $scoreCache[] = $v['score_smile'] + $v['score_cute'] + $v['score_cool'];
+    }
+    array_multisort($scoreCache, SORT_DESC, $uidCache);
+    foreach($scoreCache as $k => $v){
+        if($uidCache[$k] == $uid){
+            $rank = $k + 1;
+        }
+    }
+    //填充未结算的用户
+    foreach($usersInfo as $i){
+        if(!in_array($i['user_info']['user_id'], $uidCache)){
+            $scoreCache[] = 0;
+            $uidCache[] = $i['user_info']['user_id'];
+        }
+    }
+    /* $scoreCache = [12345, 12344, 12343, 12000];
+     * $uidCache   = [3,     4,     8,     7    ];
+     * 分数按从高到低排列，uid跟随分数
+     */
+    if(!isset($rank)){
+        $logger->e("[Duel]Failed to calculate rank.");
+        $rank = 4;
+    }
+    
+    //计算房间结果
+    $live_info = getLiveSettings((int)$redis->get("Duel:room:{$room_id}:chosenLive"), 's_rank_combo');
+    foreach($usersInfo as &$i){
+        $curUid = $i['user_info']['user_id'];
+        $curRank = array_search($curUid, $uidCache);
+        if($scoreCache[$curRank] == 0){
+            $result = [
+                "rank"          => $curRank + 1,
+                "score"         => 0,
+                "status"        => 30,
+                "time_up"       => true,
+                "max_combo"     => 0,
+                "is_full_combo" => false
+            ];
+        }else{
+            $result = [
+                "rank"          => $curRank + 1,
+                "score"         => $scoreCache[$curRank],
+                "status"        => 50,
+                /*  MATCHED = 1,
+                 *  START_WAIT = 2,
+                 *  PLAYED = 3,
+                 *  PLAY_END = 4,
+                 *  REWARD = 5,
+                 *  GAMEOVER = 6
+                 * 这里应该是30（未结算）、50（已结算）或者10（NPC）
+                 */
+                //TODO:数据库加入各个玩家状态
+                "time_up"       => false,
+                "max_combo"     => $resultCacheAll[(string)$uid]['max_combo'],
+                "is_full_combo" => $live_info['s_rank_combo'] == $resultCacheAll[(string)$uid]['max_combo'] ? true : false
+            ];
+        }
+        $i['result'] = $result;
+    }
+
+    //追加duty特定参数
+    $ret['room_id']         = $room_id;
+    $ret['rank']            = $rank;
+    $ret['matching_user']   = $usersInfo;
 }
