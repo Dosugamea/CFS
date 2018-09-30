@@ -225,6 +225,8 @@ CREATE TABLE `live_precise_log` (
 	`max_combo` SMALLINT(6) NOT NULL,
 	`deck_info` MEDIUMTEXT NOT NULL,
 	`trigger_log` MEDIUMTEXT NULL DEFAULT NULL,
+	`tap_adjust` SMALLINT(6) NOT NULL DEFAULT '0',
+	`live_setting` MEDIUMTEXT NULL DEFAULT NULL,
 	`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE INDEX `Index 1` (`user_id`, `live_difficulty_id`, `skill`)
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARSET=utf8;
