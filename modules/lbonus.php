@@ -106,6 +106,7 @@ function lbonus_execute() {
 	];
 	$ret['total_login_info']['reward'][0]['amount'] = $config->m_lbonus['total_login_bonus_list'][$to_get_count][1];
 	
+	$ret['license_lbonus_list'] = []; //月卡
 	$ret['server_timestamp'] = time();
 	
 	return $ret;
