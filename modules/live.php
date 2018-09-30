@@ -496,7 +496,8 @@ function live_reward($post) {
 			"live_difficulty_id"=>(int)$post['live_difficulty_id'],
 			"is_random"=>($random % 10 > 0),
 			"ac_flag" => $extra_flag ? (int)$extra_flag['ac_flag'] : 0,
-			"swing_flag" => $extra_flag ? (int)$extra_flag['swing_flag'] : 0];
+			"swing_flag" => $extra_flag ? (int)$extra_flag['swing_flag'] : 0
+		];
 		
 		/* 更新最高分、计算评价 */
 		
@@ -1159,9 +1160,22 @@ function live_reward($post) {
 		}
 		if($write_flag){
 			$mysql->query("INSERT INTO live_precise_log 
-				(user_id, live_difficulty_id, skill, perfect_cnt, great_cnt, good_cnt, precise_list, max_combo, deck_info, timestamp)
-				VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())",
-				[$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on'], $post['perfect_cnt'], $post['great_cnt'], $post['good_cnt'], json_encode($post['precise_score_log']['precise_list']), $post['max_combo'], json_encode($log_deck_info)]);
+				(user_id, live_difficulty_id, skill, perfect_cnt, great_cnt, good_cnt, precise_list, max_combo, deck_info, `timestamp`, `trigger_log`, `tap_adjust`, `live_setting`)
+				VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP(),?,?,?)",
+				[
+					$uid,
+					$post['live_difficulty_id'],
+					(int)$post['precise_score_log']['is_skill_on'],
+					$post['perfect_cnt'],
+					$post['great_cnt'],
+					$post['good_cnt'],
+					json_encode($post['precise_score_log']['precise_list']),
+					$post['max_combo'],
+					json_encode($log_deck_info),
+					json_encode($post['precise_score_log']['trigger_log']),
+					$post['precise_score_log']['tap_adjust'],
+					json_encode($post['precise_score_log']['live_setting'])
+				]);
 		}
 	}
 	return $ret;
@@ -1180,7 +1194,9 @@ function live_gameover() {
 
 //live/preciseScore 精确度分数
 function live_preciseScore($post){
-	global $uid, $mysql;
+	global $uid, $mysql, $logger;
+	$livedb = getLiveDb();
+	$post['live_difficulty_id'] = (int)$post['live_difficulty_id'];
 	$log = $mysql->query("SELECT * FROM live_precise_log 
 		WHERE user_id = ? AND live_difficulty_id = ?", 
 		[$uid, $post['live_difficulty_id']])->fetchAll(PDO::FETCH_ASSOC);
@@ -1189,9 +1205,19 @@ function live_preciseScore($post){
 	}
 	
 	$result = [
-		"on"	=> ["has_record" => false],
-		"off"	=> ["has_record" => false]
+		"on"	=> ["has_record" => false, "can_replay" => false],
+		"off"	=> ["has_record" => false, "can_replay" => false]
 	];
+
+	//读取live信息
+	$live_settings = getLiveSettings($post['live_difficulty_id'], 'notes_setting_asset');
+	$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$post['live_difficulty_id']])->fetch();
+	$live_map = $mysql->query("SELECT notes_list FROM notes_setting WHERE notes_setting_asset = ?", [$live_settings['notes_setting_asset']])->fetch();
+	$live_info['live_difficulty_id']	= $post['live_difficulty_id'];
+	$live_info['ac_flag']				= $extra_flag ? (int)$extra_flag['ac_flag'] : 0;
+	$live_info['swing_flag']			= $extra_flag ? (int)$extra_flag['swing_flag']: 0;
+	$live_info['is_random']				= false;
+	$live_info['notes_list']			= json_decode($live_map['notes_list'], true);
 	
 	foreach($log as $i){
 		if($i['skill'] == "0"){
@@ -1200,13 +1226,25 @@ function live_preciseScore($post){
 			$switch = "on";
 		}
 		
-		$result[$switch]['has_record'] = true;
-		$result[$switch]['random_seed'] = time();
-		$result[$switch]['max_combo'] = (int)$i['max_combo'];
-		$result[$switch]['update_date'] = $i['timestamp'];
-		$result[$switch]['precise_list'] = json_decode($i['precise_list'], true);
-		$result[$switch]['deck_info'] = json_decode($i['deck_info'], true);
+		$result[$switch]['has_record']			= true;
+		$result[$switch]['random_seed']			= time();
+		$result[$switch]['max_combo']			= (int)$i['max_combo'];
+		$result[$switch]['update_date']			= $i['timestamp'];
+		$result[$switch]['precise_list']		= json_decode($i['precise_list'], true);
+		$result[$switch]['deck_info']			= json_decode($i['deck_info'], true);
+		$result[$switch]['tap_adjust']			= $i['tap_adjust'];
+		if($i['trigger_log'] != NULL){
+			$result[$switch]['live_setting']		= json_decode($i['live_setting'], true);
+		}
+		$result[$switch]['can_replay']			= $i['trigger_log'] != NULL;
+		if($result[$switch]['can_replay']){
+			$result[$switch]['trigger_log']		= $i['trigger_log'] != NULL ? json_decode($i['trigger_log'], true) : [];
+			
+		}
 	}
+	$result['live_info']		= $live_info;
+	$result['rank_info']		= getRankInfo($post['live_difficulty_id']);
+	$result['server_timestamp']	= time();
 	return $result;
 }
 

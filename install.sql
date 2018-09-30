@@ -222,8 +222,9 @@ CREATE TABLE `live_precise_log` (
 	`great_cnt` SMALLINT(6) NOT NULL,
 	`good_cnt` SMALLINT(6) NOT NULL,
 	`precise_list` MEDIUMTEXT NOT NULL,
-	`max_combo` MEDIUMTEXT NOT NULL,
+	`max_combo` SMALLINT(6) NOT NULL,
 	`deck_info` MEDIUMTEXT NOT NULL,
+	`trigger_log` MEDIUMTEXT NULL DEFAULT NULL,
 	`timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE INDEX `Index 1` (`user_id`, `live_difficulty_id`, `skill`)
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARSET=utf8;
