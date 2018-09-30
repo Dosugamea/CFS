@@ -80,8 +80,10 @@
  					 	message: "注册失败！<br>错误信息：" + data.errmsg
 					});
 				}else{
+					var mainContainer = document.getElementById("mainContainer");
+					mainContainer.style.display = "none"
 					mdui.snackbar({
- 					 	message: "注册成功！"
+ 					 	message: "注册成功！关闭该页面即可进入游戏。"
 					});
 				}
 			}
@@ -98,7 +100,7 @@
 	</div>
 </header>
 <div class="mdui-container" <?php if($device_type == 'ios') print('style="display:none;"'); ?>>
-	<div class="doc-container">
+	<div class="doc-container" id="mainContainer">
 		<div class="mdui-textfield mdui-textfield-floating-label" id="usrDiv">
 	  		<label class="mdui-textfield-label">用户ID</label>
 	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
