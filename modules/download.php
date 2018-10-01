@@ -29,10 +29,18 @@ function download_event($post) {
 }
 
 function download_getUrl($post) {
-	global $getUrl_address;
-	return ['url_list' => array_map(function ($e) use ($getUrl_address) {
-		return $getUrl_address . $e;
-	}, $post['path_list'])];
+	global $config, $envi;
+	$ret = ["url_list" => []];
+
+	//iOS强制HTTPS防止boom
+	if($envi->platform == 1){
+		$config->basic['mdl_address'] = str_replace("http", "https", $config->basic['mdl_address']);
+	}
+	
+	foreach($post['path_list'] as $i){
+		$ret['url_list'][] = $config->basic['mdl_address'].$i;
+	}
+	return $ret;
 }
 
 //download/update 下载更新
