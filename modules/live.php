@@ -255,7 +255,7 @@ function live_play($post, $args = []) {
 	$energy_use = 0;
 
 	foreach($live_id_list as $k2 => $v2) {
-		$live_settings = getLiveSettings($v2, 'notes_speed, difficulty, notes_setting_asset, member_category');
+		$live_settings = getLiveSettings($v2, 'difficulty, notes_setting_asset, member_category');
 		//4.0计分修正
 		if (isset($live_settings['member_category']) && $live_settings['member_category'] == 1) {
 			$post['do_not_use_multiply'] = true;
@@ -265,7 +265,7 @@ function live_play($post, $args = []) {
 		$live_info['live_difficulty_id']	= (int)$v2;
 		$live_info['ac_flag']				= $extra_flag ? $extra_flag['ac_flag'] : 0;
 		$live_info['swing_flag']			= $extra_flag ? $extra_flag['swing_flag']: 0;
-		$live_info['notes_speed']			= floatval($live_settings['notes_speed']);
+		//$live_info['notes_speed']			= floatval($live_settings['notes_speed']);
 		$live_info['notes_list']			= json_decode($live_map['notes_list'],true);
 		$live_info['dangerous']				= false;
 		$live_info['is_random']				= $random[$k2] %10 > 0;
