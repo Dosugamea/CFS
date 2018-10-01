@@ -22,7 +22,7 @@
 		var passwd = $("#pass1").val();
 		var passwd2 = $("#pass2").val();
 		var inviter = $("#inv").val();
-		if(!isNaN(username) && parseInt(username)>0 && parseInt(username)<=999999999){
+		if(!isNaN(username) && parseInt(username) > 0 && parseInt(username) <= 999999999){
 			valid = true;
 			$("#usrVal").innerHTML = '用户ID不能为空';
 			$("#usrDiv").removeClass("mdui-textfield-invalid");
@@ -60,7 +60,7 @@
 		passwd = rsa.encrypt(passwd);
 		$.ajax({
 			method: "POST",
-			url: "//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
+			url: "/webview.php/api",
 			dataType: "json",
 			data: JSON.stringify({
 				"module": "login",

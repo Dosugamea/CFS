@@ -13,7 +13,7 @@
 		passwd = rsa.encrypt(passwd);
 		$.ajax({
 			method: "POST",
-			url: "//<?=$_SERVER['SERVER_NAME']?>/webview.php/api",
+			url: "/webview.php/api",
 			dataType: "json",
 			data: JSON.stringify({
 				"module": "login",
