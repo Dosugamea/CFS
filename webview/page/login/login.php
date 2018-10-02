@@ -12,6 +12,22 @@
        }
        return(false);
 	}
+	function loginCheck(){
+		var valid = false;
+		var username = $("#usr").val();
+		if(!isNaN(username) && parseInt(username) > 0 && parseInt(username) <= 999999999){
+			valid = true;
+			$("#usrVal").innerHTML = '用户ID不能为空';
+			$("#usrDiv").removeClass("mdui-textfield-invalid");
+		}else{
+			valid = false;
+			$("#usrVal").innerHTML = '请输入一个正整数';
+			$("#usrDiv").addClass("mdui-textfield-invalid");
+		}
+		if (valid) {
+			login();
+		}
+	}
 	function login(){
 		var username = $("#usr").val();
 		var passwd = $("#passwd").val();
@@ -69,7 +85,7 @@
 <div class="mdui-container" id="mainContainer" <?php if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
 	<div class="doc-container" >
 		<div class="mdui-textfield mdui-textfield-floating-label">
-	  		<label class="mdui-textfield-label">用户名</label>
+	  		<label class="mdui-textfield-label">用户ID</label>
 	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
 	 		 <div class="mdui-textfield-error">用户名不能为空</div>
 		</div>
