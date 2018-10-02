@@ -51,7 +51,7 @@ function login_doLogin($post){
 }
 
 function login_reg($post){
-    global $mysql, $authorize, $config;
+    global $mysql, $authorize, $config, $logger, $uid;
     require_once(BASE_PATH."includes/present.php");
     require_once(BASE_PATH."includes/unit.php");
     require_once(BASE_PATH."includes/RSA.php");
@@ -89,14 +89,16 @@ function login_reg($post){
         ];
         return $result;
     }else{
-        $check_uid = $mysql->prepare('SELECT user_id FROM users WHERE user_id = ?', [$post['userId']]);
-        if ($check_uid->rowCount()) {
+        $check_uid = $mysql->query('SELECT user_id FROM users WHERE user_id = ?', [$post['userId']])->fetch();
+        $logger->d(json_encode($check_uid));
+        if ($check_uid) {
             $result = [
                 "status" => 4,
                 "errmsg" => "此ID已被注册，请更换"
             ];
             return $result;
         }else{
+            $uid = $post['userId'];
             $password = genpassv2($post['password'], $post['userId']);
             $username = $mysql->query('SELECT username, `password` FROM tmp_authorize WHERE token = ?', [$token])->fetch();
             $mysql->query('
