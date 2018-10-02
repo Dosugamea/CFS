@@ -26,3 +26,19 @@ function login_login(){
 function login_reg(){
     return login_login();
 }
+
+function login_logout(){
+    global $mysql, $authorize, $config;
+    $token = $authorize['token'];
+
+    if(!isset($_GET['confirm'])) {
+        $status = "CONFIRM_PAGE";
+    }else{
+        $status = "SUCCESS_PAGE";
+        $mysql->query("UPDATE users SET `username` = '', `password` = '', `authorize_token` = '' WHERE `authorize_token` = ?", [$token]);
+    }
+
+    return [
+        "status"    => $status
+    ];
+}
