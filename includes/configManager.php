@@ -94,7 +94,9 @@ class configManager{
 			"bundle_ver"				=> "1.0",	//最低客户端版本
 			"max_live_difficulty_id"	=> 9999,	//？？？
 			"max_unit_id"				=> 9999,	//最大社员数（暂时没用上）
-			"mdl_address"				=> "http://dl-plserver.lovelivesupport.com/external/",	//mdl的前缀域名
+			"mdl_address"				=> "DEPRECATED",	//已废弃
+			"mdl_ios_address"			=> "https://mdl-proxy.customfe.su/", //建议使用HTTPS
+			"mdl_android_address"		=> "http://mdl.customfe.su/",
 			"admin_pw"					=> ""		//后台管理密码
 		];
 		$this->initCommon($defaultConfig, "basic");

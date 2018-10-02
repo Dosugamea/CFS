@@ -31,14 +31,15 @@ function download_event($post) {
 function download_getUrl($post) {
 	global $config, $envi;
 	$ret = ["url_list" => []];
-
-	//iOS强制HTTPS防止boom
+	
 	if($envi->platform == 1){
-		$config->basic['mdl_address'] = str_replace("http", "https", $config->basic['mdl_address']);
+		$prefix = $config->basic['mdl_ios_address'];
+	}else{
+		$prefix = $config->basic['mdl_android_address'];
 	}
 	
 	foreach($post['path_list'] as $i){
-		$ret['url_list'][] = $config->basic['mdl_address'].$i;
+		$ret['url_list'][] = $prefix.$i;
 	}
 	return $ret;
 }
