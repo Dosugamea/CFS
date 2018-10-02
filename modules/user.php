@@ -19,6 +19,7 @@ function user_userInfo() {
 		'paid_sns_coin'				=> 0,
 		'social_point'				=> $envi->params['item2'],
 		'unit_max'					=> 9000,
+		'waiting_unit_max'			=> 9000, //休息室
 		'friend_max'				=> 999,
 		'invite_code'				=> (string)$uid,
 		'unlock_random_live_muse'	=> 0,
