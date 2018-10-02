@@ -10,7 +10,7 @@ require(BASE_PATH."includes/logger.php");
 $logger = new log;
 
 /* include所有includes目录下的文件 */
-//require(BASE_PATH."includes/errorHandler.php");
+require(BASE_PATH."includes/errorHandler.php");
 require(BASE_PATH."includes/errorUtil.php");
 require(BASE_PATH."includes/configManager.php");
 
@@ -207,7 +207,7 @@ if(!isset($ret['status_code'])){
 
 /*写入日志*/
 if($log){
-	if(error_get_last() !== NULL){
+	if(error_get_last() == NULL){
 		$mysql->query("INSERT INTO log VALUES(?, ?, ?, ?, ?, ?)", [
 		$post['commandNum'], 
 		date("Y-m-d H:i:s", time()), 
