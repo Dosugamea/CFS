@@ -12,11 +12,14 @@ header('Copyright: PCF@2018');
 
 require(__DIR__.'/../includes/includeCommon.php');
 require(__DIR__.'/../includes/passwordUtil.php');
+require(__DIR__.'/../includes/logger.php');
 //HTTPS强制跳转
 if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
 	header('Location: https://'.$config->reg['ssl_domain'].$_SERVER['REQUEST_URI']);
 	exit();
 }
+
+$logger = new log;
 
 $mysql->query('START TRANSACTION');
 session_start();
@@ -25,6 +28,10 @@ if (isset($_SERVER['HTTP_AUTHORIZE'])) {
 	$_SESSION['server'] = $_SERVER;
 	$authorize_ = $_SERVER['HTTP_AUTHORIZE'];
 	$uid = isset($_SERVER['HTTP_USER_ID']) ? $_SERVER['HTTP_USER_ID'] : false;
+}else if(isset($_GET['external'])){
+	//从外置浏览器打开
+	$authorize_ = "token=".$_GET['token'];
+	$_SESSION['server']['HTTP_AUTHORIZE'] = $authorize_;
 }else if(isset($_SESSION['server'])){
 	$authorize_ = $_SESSION['server']['HTTP_AUTHORIZE'];
 	$uid = isset($_SESSION['server']['HTTP_USER_ID']) ? $_SESSION['server']['HTTP_USER_ID'] : false;
