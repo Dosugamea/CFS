@@ -48,25 +48,27 @@ function energyDecrease($amount){
 		return false;
 }
 
-function energyRecover($level=0){
-	global $uid, $mysql, $params;
-	$energy = $mysql->query("SELECT energy_full_time, over_max_energy, level FROM users WHERE user_id = ".$uid)->fetch(PDO::FETCH_ASSOC);
-	if($level>0)
-		$energy['level']=$level;
-	$energy_max = 100 + floor($energy['level']/2);
+function energyRecover($level = 0){
+	global $uid, $mysql, $params, $logger;
+	$energy = $mysql->query("SELECT energy_full_time, over_max_energy, level FROM users WHERE user_id = ?", [$uid])->fetch();
+	if($level > 0){
+		$energy['level'] = $level;
+	}
+	$energy_max = 100 + floor($energy['level'] / 2);
 	if($energy['over_max_energy'] != 0 || strtotime($energy['energy_full_time']) <= time())
 		if($energy['over_max_energy'] >= $energy_max)
 			if($level==0)
 				return true;
 			else
-				$energy_now=(int)$energy['over_max_energy'];
+				$energy_now = (int)$energy['over_max_energy'];
 	if(!isset($energy_now))
-		$energy_now = $energy_max - floor((strtotime($energy['energy_full_time']) - strtotime("now"))/360);
+		$energy_now = $energy_max - floor((strtotime($energy['energy_full_time']) - strtotime("now")) / 360);
 	if($energy_now == 0)
-		$mysql->query("UPDATE users SET energy_full_time = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
+		$mysql->query("UPDATE users SET energy_full_time = ? WHERE user_id = ?", [date("Y-m-d H:i:s",time()), $uid]);
 	else
-		$mysql->query("UPDATE users SET over_max_energy = ".($energy_now + $energy_max).", energy_full_time = '".date("Y-m-d H:i:s",time())."' WHERE user_id = ".$uid);
-	if($level==0)
+		$mysql->query("UPDATE users SET over_max_energy = ?, energy_full_time = ? WHERE user_id = ?",[($energy_now + $energy_max), date("Y-m-d H:i:s",time()), $uid]);
+	$logger->d("New energy: ".($energy_now + $energy_max));
+	if($level == 0)
 		$params['item4'] -= 1;
 	return true;
 }
