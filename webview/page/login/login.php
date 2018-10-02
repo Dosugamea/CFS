@@ -1,8 +1,16 @@
 <script type="text/javascript">
-	function hexToBase64(str) {
-	    return btoa(String.fromCharCode.apply(null,
-	      str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
-	    );
+	function jumpToExternal(){
+		var host = window.location.host;
+		location.href="native://browser?url=http%3A%2F%2F" + host + "%2fwebview.php%2flogin%2flogin%3fexternal%3dtrue%26token%3d<?=$result['token']?>";
+	}
+	function getQueryVariable(variable){
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
 	}
 	function login(){
 		var username = $("#usr").val();
@@ -40,19 +48,26 @@
 			}
 		});
 	}
+	$(function(){
+		if(getQueryVariable("external")){
+			document.getElementById("iosCover").style.display = "none";
+			document.getElementById("arrorBack").style.display = "none";
+			document.getElementById("mainContainer").style.display = "inline";
+		}
+	});
 </script>
 
 <header class="mdui-appbar mdui-appbar-fixed">
 	<div class="mdui-toolbar mdui-color-theme">
-		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" >
+		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" id="arrorBack">
 			<i class="mdui-icon material-icons" onclick="location.href='/webview.php/login/welcome'">arrow_back</i>
 		</span>
 		<a class="mdui-typo-title" style="text-transform:capitalize;">登录</a>
 		<div class="mdui-toolbar-spacer"></div>
 	</div>
 </header>
-<div class="mdui-container"<?php if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
-	<div class="doc-container" id="mainContainer">
+<div class="mdui-container" id="mainContainer" <?php if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
+	<div class="doc-container" >
 		<div class="mdui-textfield mdui-textfield-floating-label">
 	  		<label class="mdui-textfield-label">用户名</label>
 	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
@@ -67,9 +82,9 @@
 	  	<input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" type="submit" value="登入"  onclick='login()'/>
 	</div>
 </div>
-<div class="mdui-container framecard" <?php if($result['device_type'] == 'other') print('style="display:none;"'); ?>>
+<div class="mdui-container framecard" id="iosCover" <?php if($result['device_type'] == 'other') print('style="display:none;"'); else print('style="display:inline"')?>>
 	<div class="br"></div>
-	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Flogin_ios.php%3Fusername%3D<?=$result['username']?>'" >
+	<div class="mdui-card" onclick="jumpToExternal();" >
 	  	<div class="mdui-card-media">
 	    	<img src="/assets/img/apple_out.jpg"/>
 	    	<div class="mdui-card-media-covered">

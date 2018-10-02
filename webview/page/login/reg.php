@@ -1,20 +1,17 @@
-<?php
-	$authorize = substr($_SESSION['server']['HTTP_AUTHORIZE'], strpos($_SESSION['server']['HTTP_AUTHORIZE'], 'token=') + 6);
-	$token = substr($authorize, 0, strpos($authorize, '&'));
-	$tmp_authorize = $mysql->query('select username, password from tmp_authorize where token=?', [$token])->fetch();
-
-	$id = $mysql->query('SELECT user_id FROM users')->fetchAll(PDO::FETCH_COLUMN);
-	$id[] = 0;
-	print("<script>var exist_id=new Array(".implode(', ', $id).");</script>");
-
- 	$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
- 	if(strpos($agent, 'iphone') || strpos($agent, 'ipad') )
- 		$device_type = 'ios';
- 	else
- 		$device_type = 'other';
- 	
-?>
 <script type="text/javascript">
+	function jumpToExternal(){
+		var host = window.location.host;
+		location.href="native://browser?url=http%3A%2F%2F" + host + "%2fwebview.php%2flogin%2freg%3fexternal%3dtrue%26token%3d<?=$result['token']?>";
+	}
+	function getQueryVariable(variable){
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+	}
 	function doReg(){
 		var valid = false;
 		var username = $("#usr").val();
@@ -89,18 +86,25 @@
 			}
 		});
 	}
+	$(function(){
+		if(getQueryVariable("external")){
+			document.getElementById("iosCover").style.display = "none";
+			document.getElementById("arrorBack").style.display = "none";
+			document.getElementById("mainContainer").style.display = "inline";
+		}
+	});
 </script>
 <header class="mdui-appbar mdui-appbar-fixed">
 	<div class="mdui-toolbar mdui-color-theme">
-		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" >
+		<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" id="arrorBack">
 			<i class="mdui-icon material-icons" onclick="location.href='/webview.php/login/welcome'">arrow_back</i>
 		</span>
 		<a class="mdui-typo-title" style="text-transform:capitalize;">注册</a>
 		<div class="mdui-toolbar-spacer"></div>
 	</div>
 </header>
-<div class="mdui-container" <?php if($device_type == 'ios') print('style="display:none;"'); ?>>
-	<div class="doc-container" id="mainContainer">
+<div class="mdui-container" id="mainContainer" <?php if($result['device_type'] == 'ios') print('style="display:none;"'); ?>>
+	<div class="doc-container">
 		<div class="mdui-textfield mdui-textfield-floating-label" id="usrDiv">
 	  		<label class="mdui-textfield-label">用户ID</label>
 	  		<input class="mdui-textfield-input" type="text" id="usr" maxlength="9" required/>
@@ -134,9 +138,9 @@
 	</div>
 </div>
 
-<div class="mdui-container framecard" <?php if($device_type == 'other') print('style="display:none;"'); ?>>
+<div class="mdui-container framecard" id="iosCover" <?php if($result['device_type'] == 'other') print('style="display:none;"'); ?>>
 	<div class="br"></div>
-	<div class="mdui-card" onclick="location.href='native://browser?url=http%3A%2F%2F<?=$_SERVER['SERVER_NAME']?>%2Fwebview%2Flogin%2Freg_ios.php%3Ftoken%3D<?=$token?>%26username%3D<?=$tmp_authorize['username']?>'">
+	<div class="mdui-card" onclick="jumpToExternal();">
 	  	<div class="mdui-card-media">
 	    	<img src="/assets/img/apple_out.jpg"/>
 	    	<div class="mdui-card-media-covered">

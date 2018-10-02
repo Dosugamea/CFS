@@ -18,7 +18,8 @@ function login_login(){
     return [
         "device_type"   => $device_type,
         "username"      => $username['username'],
-        "pub_key"       => $config->basic['pub_key']
+        "pub_key"       => $config->basic['pub_key'],
+        "token"         => $token
     ];
 }
 
