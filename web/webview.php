@@ -16,9 +16,7 @@ require(__DIR__.'/../includes/logger.php');
 $logger = new log;
 
 //HTTPS强制跳转
-$logger->d(json_encode($_SERVER));
-exit();
-if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
+if($config->reg['enable_ssl'] && $_SERVER['SERVER_PORT'] == "80") {
 	header('Location: https://'.$config->reg['ssl_domain'].$_SERVER['REQUEST_URI']);
 	exit();
 }
