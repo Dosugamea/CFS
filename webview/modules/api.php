@@ -66,6 +66,14 @@ function login_reg($post){
         return $result;
     }
 
+    if(!$config->reg['allow_reg']) {
+        $result = [
+            "status" => 5,
+            "errmsg" => "注册已关闭!"
+        ];
+        return $result;
+    }
+
     //解密密码
     @$post['password'] = RSAdecrypt($post['password']);
     if($post['password'] === NULL){
