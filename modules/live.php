@@ -1074,9 +1074,21 @@ function live_reward($post) {
 		$post['precise_score_log'] = [];
 	}
 	$mysql->query("INSERT INTO live_log 
-	(user_id, live_difficulty_id, score, perfect_cnt, great_cnt, good_cnt, bad_cnt, miss_cnt, max_combo, precise_score_log, timeStamp)
-	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())", 
-	[$uid, $post['live_difficulty_id'], $score_still, $post['perfect_cnt'], $post['great_cnt'], $post['good_cnt'], $post['bad_cnt'], $post['miss_cnt'], $post['max_combo'], json_encode($post['precise_score_log'])]);
+	(user_id, live_difficulty_id, score, perfect_cnt, great_cnt, good_cnt, bad_cnt, miss_cnt, max_combo, precise_score_log, `timeStamp`, `card_switch`)
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), ?)", 
+	[
+		$uid, 
+		$post['live_difficulty_id'],
+		$score_still, 
+		$post['perfect_cnt'], 
+		$post['great_cnt'], 
+		$post['good_cnt'], 
+		$post['bad_cnt'], 
+		$post['miss_cnt'], 
+		$post['max_combo'], 
+		json_encode($post['precise_score_log']),
+		$envi->params['card_switch']
+	]);
 	
 	//记录precise log
 	if($post['precise_score_log'] != []){
@@ -1145,7 +1157,7 @@ function live_reward($post) {
 		];
 		$old_log = $mysql->query("SELECT * FROM live_precise_log 
 			WHERE user_id = ? AND live_difficulty_id = ? AND skill = ?", 
-			[$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on']])->fetch(PDO::FETCH_ASSOC);
+			[$uid, $post['live_difficulty_id'], (int)$post['precise_score_log']['is_skill_on']])->fetch();
 		$write_flag = true;
 		if($old_log){
 			if((int)$old_log['perfect_cnt'] < $post['perfect_cnt'] || 
@@ -1193,12 +1205,12 @@ function live_gameover() {
 
 //live/preciseScore 精确度分数
 function live_preciseScore($post){
-	global $uid, $mysql, $logger;
+	global $uid, $mysql, $logger, $envi;
 	$livedb = getLiveDb();
 	$post['live_difficulty_id'] = (int)$post['live_difficulty_id'];
 	$log = $mysql->query("SELECT * FROM live_precise_log 
 		WHERE user_id = ? AND live_difficulty_id = ?", 
-		[$uid, $post['live_difficulty_id']])->fetchAll(PDO::FETCH_ASSOC);
+		[$uid, $post['live_difficulty_id']])->fetchAll();
 	if(!$log){
 		return retError(3421);
 	}

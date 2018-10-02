@@ -200,6 +200,7 @@ CREATE TABLE IF NOT EXISTS `live_goal` (
 CREATE TABLE `live_log` (
 	`live_log_id` INT(11) NOT NULL AUTO_INCREMENT,
 	`user_id` INT(11) NOT NULL,
+	`card_switch` TINYINT NOT NULL,
 	`live_difficulty_id` INT(11) NOT NULL,
 	`score` INT(11) NOT NULL,
 	`perfect_cnt` INT(11) NOT NULL,
