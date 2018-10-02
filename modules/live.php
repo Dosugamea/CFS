@@ -411,7 +411,7 @@ function live_play($post, $args = []) {
 
 //live/reward 获取奖励
 function live_reward($post) {
-	global $uid, $mysql, $envi;
+	global $uid, $mysql, $envi, $logger;
 	$live = getLiveDb();
 	//验证访问合法性，有人反映有问题，不验了
 	/*if (isset($post['ScoreMatch']) || isset($post['festival'])) {
@@ -1056,10 +1056,9 @@ function live_reward($post) {
 		$ret['daily_reward_info'] = [];
 	
 	//写入奖励并返回新的用户信息
-	global $user;
 	if(!isset($post['no_card'])){
-		$user['level'] = $newlevel;
-		$user['exp'] = $newexp;
+		$envi->user['level'] = $newlevel;
+		$envi->user['exp'] = $newexp;
 		$envi->params['coin'] = $newcoin;
 	}
 	$envi->params['social_point'] = $newsocial;
