@@ -1,5 +1,3 @@
-<?php 
-require('../config/maintenance.php'); ?>
 <head>
 	<meta charset="utf-8">
 	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">
@@ -31,7 +29,7 @@ require('../config/maintenance.php'); ?>
 请升级您的客户端版本。<br />
 <br />
 
-服务器版本：<?=$bundle_ver ?><br />
+服务器版本：<?=$config->basic['bundle_ver'] ?><br />
 <br />
 客户端版本：<?=$_SESSION['server']['HTTP_BUNDLE_VERSION'] ?>（过低）<br />
 <br />
