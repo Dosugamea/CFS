@@ -59,6 +59,7 @@ a{color: #000000;}
 <div id="body">
 <div id="container">
 <ul id="list">
+      <!--
       <li class="entry">
         <div class="entry-container">
           <h2 class="text">数据包下载节点设置</h2>
@@ -77,6 +78,7 @@ a{color: #000000;}
           <div class="clearfix"></div>
         </div>
       </li>
+      -->
       <li class="entry">
         <div class="entry-container">
           <h2 class="text">自定义组曲</h2>
