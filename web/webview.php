@@ -13,13 +13,14 @@ header('Copyright: PCF@2018');
 require(__DIR__.'/../includes/includeCommon.php');
 require(__DIR__.'/../includes/passwordUtil.php');
 require(__DIR__.'/../includes/logger.php');
+$logger = new log;
+
 //HTTPS强制跳转
+$logger->d($_SERVER);
 if($config->reg['enable_ssl'] && $_SERVER['HTTPS'] != 'on') {
 	header('Location: https://'.$config->reg['ssl_domain'].$_SERVER['REQUEST_URI']);
 	exit();
 }
-
-$logger = new log;
 
 $mysql->query('START TRANSACTION');
 session_start();
