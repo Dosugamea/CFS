@@ -38,10 +38,10 @@ function user_userInfo() {
 
 //user/changeName 改名
 function user_changeName($post) {
-	global $user;
+	global $envi;
 	$ret['before_name'] = '';
 	$ret['after_name'] = $post['name'];
-	$user['name'] = $post['name'];
+	$envi->user['name'] = $post['name'];
 	return $ret;
 }
 
