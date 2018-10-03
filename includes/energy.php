@@ -49,7 +49,7 @@ function energyDecrease($amount){
 }
 
 function energyRecover($level = 0){
-	global $uid, $mysql, $params, $logger;
+	global $uid, $mysql, $envi, $logger;
 	$energy = $mysql->query("SELECT energy_full_time, over_max_energy, level FROM users WHERE user_id = ?", [$uid])->fetch();
 	if($level > 0){
 		$energy['level'] = $level;
@@ -69,6 +69,6 @@ function energyRecover($level = 0){
 		$mysql->query("UPDATE users SET over_max_energy = ?, energy_full_time = ? WHERE user_id = ?",[($energy_now + $energy_max), date("Y-m-d H:i:s",time()), $uid]);
 	$logger->d("New energy: ".($energy_now + $energy_max));
 	if($level == 0)
-		$params['item4'] -= 1;
+		$envi->params['item4'] -= 1;
 	return true;
 }
