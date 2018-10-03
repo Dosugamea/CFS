@@ -1,4 +1,3 @@
-<?php require('../config/maintenance.php'); ?>
 <head>
 	<meta charset="utf-8">
 	<meta name="GENERATOR" content="MSHTML 11.00.10011.0">
@@ -26,7 +25,7 @@
 
 <div id="body">
 <p>
-<?=$maintenance_info?><br><br>
+<?=$config->maintenance['maintenance_info']?><br><br>
 如果您觉得无聊 可以点击下方按钮
 <div id="noah"></div>
 -----------------------------------------------滑稽分割线--------------------------------------------------
