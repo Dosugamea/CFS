@@ -200,6 +200,10 @@ class envi{
             "item13",
             "item14",
             "item15",
+            "seal1",
+            "seal2",
+            "seal3",
+            "seal4",
             "aqours_flag",
         ];
 
