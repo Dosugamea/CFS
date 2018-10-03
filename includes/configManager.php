@@ -97,6 +97,7 @@ class configManager{
 			"mdl_address"				=> "DEPRECATED",	//已废弃
 			"mdl_ios_address"			=> "https://mdl-proxy.customfe.su/", //建议使用HTTPS
 			"mdl_android_address"		=> "http://mdl.customfe.su/",
+			"proxy_ip"					=> "UNDEFINED",
 			"admin_pw"					=> ""		//后台管理密码
 		];
 		$this->initCommon($defaultConfig, "basic");

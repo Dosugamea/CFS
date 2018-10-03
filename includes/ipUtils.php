@@ -90,3 +90,8 @@ function isAliIp($ip){
     $table = [];//todo
     return ipInListCheck($table, $ip);
 }
+
+function isInExtraIp($ip){
+	global $config;
+    return $ip == $config->basic['proxy_ip'];
+}

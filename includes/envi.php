@@ -21,7 +21,7 @@ class envi{
         }
 
         //真实IP判断
-        if(isCloudFlareIp($_SERVER["REMOTE_ADDR"]) || isAliIp($_SERVER["REMOTE_ADDR"])){
+        if(isCloudFlareIp($_SERVER["REMOTE_ADDR"]) || isAliIp($_SERVER["REMOTE_ADDR"]) || isInExtraIp($_SERVER["REMOTE_ADDR"])){
             $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }else{
             $this->ip = $_SERVER["REMOTE_ADDR"];
