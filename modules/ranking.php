@@ -2,7 +2,7 @@
 //ranking.php 排名相关module
 //ranking/live 曲目排名
 function ranking_live($post) {
-	global $mysql, $params;
+	global $mysql, $envi;
 	if(!is_numeric($post['live_difficulty_id'])){
 		throw403("INJECTION_DECTECTED");
 	}
@@ -16,22 +16,26 @@ function ranking_live($post) {
 		SELECT live_ranking.user_id,hi_score,name,level,center_unit,award FROM live_ranking
 		LEFT JOIN users ON users.user_id=live_ranking.user_id
 		LEFT JOIN user_deck ON user_deck.user_id=live_ranking.user_id
-		WHERE notes_setting_asset="'.$notes_setting['notes_setting_asset'].'" 
-		AND card_switch='.$params['card_switch'].' 
-		AND random_switch='.($params['random_switch']+$params['extend_mods_key']*10).'
+		WHERE notes_setting_asset = ?
+		AND card_switch = ? 
+		AND random_switch = ?
 		ORDER BY hi_score DESC LIMIT 0,10
-	) a,(SELECT @id:=0) id');
+	) a,(SELECT @id:=0) id', [
+		$notes_setting['notes_setting_asset'],
+		$envi->params['card_switch'],
+		$envi->params['random_switch'] + $envi->params['extend_mods_key']*10
+	]);
 	$notes=$mysql->query("SELECT notes_list FROM notes_setting WHERE notes_setting_asset='".$notes_setting['notes_setting_asset']."'")->fetch(PDO::FETCH_ASSOC)['notes_list'];
 	$score_max=calcScore(60500,json_decode($notes,true));
 	while ($item = $rank->fetch()) {
 		$ret2['rank'] = (int)$item['rank'];
 		$ret2['score'] = (int)$item['hi_score'];
-		if($params['card_switch']==0 && $ret2['score']>$score_max){
+		if($envi->params['card_switch']==0 && $ret2['score']>$score_max){
 			$mysql->query("UPDATE live_ranking SET cheat = 1
 			WHERE user_id=".$item['user_id']."
 			AND notes_setting_asset='".$notes_setting['notes_setting_asset']."'
-			AND card_switch=".$params['card_switch']." 
-			AND random_switch=".($params['random_switch']+$params['extend_mods_key']*10));
+			AND card_switch=".$envi->params['card_switch']." 
+			AND random_switch=".($envi->params['random_switch']+$envi->params['extend_mods_key']*10));
 			if(!file_exists("../IllegalScore.log")){
 				$LOGFILE = fopen("../IllegalScore.log","w");
 			}else{
@@ -68,7 +72,7 @@ function ranking_live($post) {
 
 //ranking/player 玩家排名
 function ranking_player($post) {
-	global $mysql, $params;
+	global $mysql, $envi;
 	if(!is_numeric($post['page'])){
 		throw403("INJECTION_DECTECTED");
 	}
@@ -77,15 +81,17 @@ function ranking_player($post) {
 	$count = 20;
 	$ret['total_cnt'] = $mysql->query('SELECT count(DISTINCT user_id) FROM live_ranking WHERE card_switch=0')->fetchColumn();
 	if (isset($post['id'])) {
-		$begin = $mysql->query('
+		$begin = $mysql->query("
 			SELECT rank-1 FROM (
 				SELECT @id:=@id+1 as rank,a.* from (
 					SELECT sum(hi_score) as score, user_id FROM live_ranking
-					WHERE card_switch='.$params['card_switch'].'
+					WHERE card_switch = ?
 					GROUP BY user_id ORDER BY score DESC
 				)a, (SELECT @id:=0)rank
-			) b WHERE user_id='.$post['id']
-		)->fetchColumn();
+			) b WHERE user_id = ?", [
+			$envi->params['card_switch'],
+			$post['id']
+		])->fetchColumn();
 		$ret['page'] = 0;
 		if ($begin === false) {
 			return $ret;
@@ -98,7 +104,7 @@ function ranking_player($post) {
 		SELECT @id:=@id+1 as rank,a.* from (
 			SELECT b.*,name,level,center_unit,award FROM (
 				SELECT sum(hi_score) as score, user_id FROM live_ranking
-				WHERE card_switch='.$params['card_switch'].'
+				WHERE card_switch='.$envi->params['card_switch'].'
 				GROUP BY user_id ORDER BY score DESC
 			) b
 			LEFT JOIN users ON users.user_id=b.user_id
