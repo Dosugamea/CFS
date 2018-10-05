@@ -1,7 +1,7 @@
 <?php
 session_start();
-require(__DIR__."../../includes/configManager.php");
-require(__DIR__."../../db.php");
+require(__DIR__."/../../includes/configManager.php");
+require(__DIR__."/../../db.php");
 $config = new configManager();
 if(isset($_POST['pw']) && $_POST['pw'] == $config->basic['admin_pw']){
 	$_SESSION['admin'] = true;
