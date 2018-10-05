@@ -2,6 +2,7 @@
 session_start();
 require(__DIR__."/../../includes/configManager.php");
 $config = new configManager();
+require(__DIR__."/RedLock.php");
 require(__DIR__."/../../includes/db.php");
 if(isset($_POST['pw']) && $_POST['pw'] == $config->basic['admin_pw']){
 	$_SESSION['admin'] = true;
