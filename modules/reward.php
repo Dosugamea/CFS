@@ -226,7 +226,7 @@ function reward_open($post) {
 	include_once("../modules/unit.php");
 	$ret['unit_support_list'] = unit_supporterAll()['unit_support_list'];
 	//$ret['opened_num']++;
-	$mysql->exec('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id = ?', [$res['incentive_id']]);
+	$mysql->query('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id = ?', [$res['incentive_id']]);
 	return $ret;
 }
 
@@ -320,7 +320,7 @@ function reward_openAll($post) {
 			}
 		}
 		$ret['opened_num']++;
-		$mysql->exec('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id='.$r['incentive_id']);
+		$mysql->query('UPDATE incentive_list SET opened_date=CURRENT_TIMESTAMP WHERE incentive_id='.$r['incentive_id']);
 	}
 	include_once("../modules/unit.php");
 	$ret['unit_support_list'] = unit_supporterAll()['unit_support_list'];
