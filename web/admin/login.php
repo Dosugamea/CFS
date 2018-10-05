@@ -1,7 +1,9 @@
 <?php
 session_start();
-include_once("../../config/database.php");
-if(isset($_POST['pw']) && $_POST['pw'] == $admin_pw){
+require(__DIR__."../../includes/configManager.php");
+require(__DIR__."../../db.php");
+$config = new configManager();
+if(isset($_POST['pw']) && $_POST['pw'] == $config->basic['admin_pw']){
 	$_SESSION['admin'] = true;
 	header("HTTP/1.1 302 Found");
 	header("Location: /admin/index.php");
