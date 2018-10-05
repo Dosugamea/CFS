@@ -1,8 +1,8 @@
 <?php
 session_start();
 require(__DIR__."/../../includes/configManager.php");
-require(__DIR__."/../../includes/db.php");
 $config = new configManager();
+require(__DIR__."/../../includes/db.php");
 if(isset($_POST['pw']) && $_POST['pw'] == $config->basic['admin_pw']){
 	$_SESSION['admin'] = true;
 	header("HTTP/1.1 302 Found");
