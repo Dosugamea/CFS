@@ -238,6 +238,10 @@ class envi{
         global $mysql;
         $user = $mysql->query("SELECT name, introduction, level, exp, award, background FROM users WHERE user_id = ?", [$this->uid])->fetch();
         $this->user = $user;
+        $this->user['level']            = (int)$this->user['level'];
+        $this->user['exp']              = (int)$this->user['exp'];
+        $this->user['award']            = (int)$this->user['award'];
+        $this->user['background']       = (int)$this->user['background'];
     }
 
     public function saveAll(){
