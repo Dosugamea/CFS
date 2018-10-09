@@ -7,29 +7,29 @@ function user_userInfo() {
 	global $envi, $uid;
 	$user = &$envi->user;
 	$ret = ['user' => [
-		'user_id'					=> (int)$uid,
-		'name'						=> $user['name'],
-		'level'						=> (int)$user['level'],
-		'exp'						=> (int)$user['exp'],
-		'previous_exp'				=> $exp[$user['level'] - 1],
-		'next_exp'					=> $exp[$user['level']],
-		'game_coin'					=> $envi->params['item3'],
-		'sns_coin'					=> $envi->params['item4'],
-		'free_sns_coin'				=> $envi->params['item4'],
-		'paid_sns_coin'				=> 0,
-		'social_point'				=> $envi->params['item2'],
-		'unit_max'					=> 9000,
-		'waiting_unit_max'			=> 9000, //休息室
-		'friend_max'				=> 999,
-		'invite_code'				=> (string)$uid,
-		'unlock_random_live_muse'	=> 0,
-		'unlock_random_live_aqours'	=> 0,
-		'insert_date'				=> '2018-01-01 00:00:00',
-		'update_date'				=> '2018-01-01 00:00:00',
-		'tutorial_state'			=> -1,
-		'lp_recovery_item'			=> [], //TODO
-	],
-	"server_timestamp" => time()
+			'user_id'					=> (int)$uid,
+			'name'						=> $user['name'],
+			'level'						=> (int)$user['level'],
+			'exp'						=> (int)$user['exp'],
+			'previous_exp'				=> $exp[$user['level'] - 1],
+			'next_exp'					=> $exp[$user['level']],
+			'game_coin'					=> $envi->params['item3'],
+			'sns_coin'					=> $envi->params['item4'],
+			'free_sns_coin'				=> $envi->params['item4'],
+			'paid_sns_coin'				=> 0,
+			'social_point'				=> $envi->params['item2'],
+			'unit_max'					=> 9000,
+			'waiting_unit_max'			=> 9000, //休息室
+			'friend_max'				=> 999,
+			'invite_code'				=> (string)$uid,
+			'unlock_random_live_muse'	=> 0,
+			'unlock_random_live_aqours'	=> 0,
+			'insert_date'				=> '2018-01-01 00:00:00',
+			'update_date'				=> '2018-01-01 00:00:00',
+			'tutorial_state'			=> -1,
+			'lp_recovery_item'			=> [], //TODO
+		],
+		"server_timestamp" => time()
 	];
 	$energy = getCurrentEnergy();
 	$ret['user'] = array_merge($ret['user'], $energy);
