@@ -45,8 +45,8 @@ function banner_bannerList() {
 			//banner type：0=EVENT 1=SECRETBOX 2=WEBVIEW 3=ONLINE 4=AREA 5=STORY 6=SNS 7=DUEL
 			"banner_type"            => 7,
 			"target_id"              => $config->m_duel['muse']['is_open'] ? 1 : 2,
-			"asset_path"             => "",
-			"asset_path_se"          => "",
+			"asset_path"             => "assets/image/duel/banner/banner_01.png",
+			"asset_path_se"          => "assets/image/duel/banner/banner_01se.png",
 			"master_is_active_event" => true
 		];
 	}
