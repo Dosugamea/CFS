@@ -12,10 +12,12 @@ function getCurrentEnergy($level=0){
 		$ret['energy_full_need_time'] = 0;
 		$ret['energy_full_time'] = $energy['energy_full_time'];
 		$ret['over_max_energy'] = (int)$energy['over_max_energy'];
+		$ret['current_energy']			= $ret['over_max_energy'];
 	}else{
 		$ret['energy_full_need_time'] = (strtotime($energy['energy_full_time']) - strtotime("now")) < 0 ? 0 : (strtotime($energy['energy_full_time']) - strtotime("now"));
 		$ret['energy_full_time'] = $energy['energy_full_time'];
 		$ret['over_max_energy'] = 0;
+		$ret['current_energy']			= $ret['energy_full_need_time'] == 0 ? $energy_max : floor((strtotime($energy['energy_full_time']) - time()) / 360);
 	}
 	return $ret;
 }
