@@ -196,7 +196,7 @@ function duel_matching($post){
                 ],
                 "center_unit_info"  => GetUnitDetail($mysql->query('SELECT center_unit FROM user_deck WHERE user_id = ?', [$uid])->fetchColumn()),
                 "setting_award_id"  => (int)$envi->user['award'],
-                "chat_id"           => "0",
+                "chat_id"           => "0-0",
                 "room_user_status"  => [
                     "selected_live_difficulty_id"   => $post['live_difficulty_id']
                 ]
@@ -248,7 +248,12 @@ function duel_startWait($post){
         foreach($usersInfo as &$i){
             $i = json_decode($i, true);
             if($i['user_info']['user_id'] == $uid){
-                $i['chat_id'] = $post['chat_id'];
+                if($post['chat_id'] == 0){
+                    //客户端提交bug非得叫服务器背锅
+                    $i['chat_id'] = "0-0";
+                }else{
+                    $i['chat_id'] = $post['chat_id'];
+                }
             }
             $redis->rpush("Duel:room:{$room_id}:userInfoCache", json_encode($i));
         }
@@ -452,7 +457,7 @@ function duel_liveEnd($post){
         foreach($usersInfo as &$i){
             $i = json_decode($i, true);
             if($i['user_info']['user_id'] == $uid){
-                $i['chat_id'] = "0";
+                $i['chat_id'] = "0-0";
             }
             $redis->rpush("Duel:room:{$room_id}:userInfoCache", json_encode($i));
         }
@@ -464,15 +469,14 @@ function duel_liveEnd($post){
 }
 
 function duel_endWait($post){
-    global $uid, $redis, $redLock;
+    global $uid, $redis, $redLock, $mysql;
     //需要的参数
-    if(!isset($post['room_id']) || !isset($post['deck_id']) ||
-    !is_numeric($post['room_id']) || !is_numeric($post['deck_id'])){
+    if(!isset($post['room_id']) || !isset($post['chat_id']) ||
+    !is_numeric($post['room_id'])){
         throw403("INVALID_ARGUMENTS");
     }
     //参数预处理
     $post['room_id']    = (int)$post['room_id'];
-    $post['deck_id']    = (int)$post['deck_id'];
     $room_id            = $post['room_id'];
     
     //读取房间信息
@@ -509,11 +513,27 @@ function duel_endWait($post){
     }
     //2018-08-28 22:56 诶我又双叒叕忘了要写啥
 
-    //获得房间用户
-    $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
-    foreach($usersInfo as &$i){
-        $i = json_decode($i, true);
+    //处理用户信息和聊天信息
+    $lock = $redLock->lock("Duel:room:{$room_id}:userInfoCache");
+    if($lock){
+        $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
+        $redis->del("Duel:room:{$room_id}:userInfoCache");
+        foreach($usersInfo as &$i){
+            $i = json_decode($i, true);
+            if($i['user_info']['user_id'] == $uid){
+                if($post['chat_id'] == 0){
+                    //客户端提交bug非得叫服务器背锅
+                    $i['chat_id'] = "0-0";
+                }else{
+                    $i['chat_id'] = $post['chat_id'];
+                }
+            }
+            $redis->rpush("Duel:room:{$room_id}:userInfoCache", json_encode($i));
+        }
+    }else{
+        pl_assert("Duel:room:{$room_id}:userInfoCache 上锁失败！");
     }
+    $redLock->unlock($lock);
 
     //已结算用户计算
     $userResultCache = $redis->hgetall("Duel:room:{$room_id}:userResultCache");
@@ -535,8 +555,8 @@ function duel_endWait($post){
         "capacity"          => count($users),
         "end_flag"          => $endFlag,
         "player_num"        => count($users),
-        "end_wait_timt"     => $waitTime,
-        "matching_user"     => $userInfo,
+        "end_wait_time"     => $waitTime,
+        "matching_user"     => $usersInfo,
         "polling_interval"  => 2,
         "server_timestamp"  => time()
     ];
@@ -544,15 +564,14 @@ function duel_endWait($post){
 }
 
 function duel_endRoom($post){
-    global $uid, $redis, $redLock;
+    global $uid, $redis, $redLock, $mysql, $logger;
     //需要的参数
-    if(!isset($post['room_id']) || !isset($post['deck_id']) ||
-    !is_numeric($post['room_id']) || !is_numeric($post['deck_id'])){
+    if(!isset($post['room_id']) ||
+    !is_numeric($post['room_id'])){
         throw403("INVALID_ARGUMENTS");
     }
     //参数预处理
     $post['room_id']    = (int)$post['room_id'];
-    $post['deck_id']    = (int)$post['deck_id'];
     $room_id            = $post['room_id'];
     
     //读取房间信息
@@ -579,27 +598,37 @@ function duel_endRoom($post){
     if(!$resultCache || $userStatus){
         throw403("DUEL_STATUS_ERROR");
     }
+    $resultCache = json_decode($resultCache, true);
     
     //获得房间用户
     $usersInfo = $redis->lrange("Duel:room:{$room_id}:userInfoCache", 0, 3);
     foreach($usersInfo as &$i){
         $i = json_decode($i, true);
     }
+    unset($i);
     
     //直接调live模块
     //TODO:过滤参数防止搞事情（好像要搞事情就在前面搞了）
     $post = array_merge($post, $resultCache);
+    $post['live_difficulty_id'] = $selectedLive;
     $ret = runAction("live", "reward", $post);
+    if(isset($ret['errorCode'])){
+        $logger->e("Duel/endRoom: Error on live/reward, returning error");
+        return $ret;
+    }
     $resultCacheAll = $redis->hgetall("Duel:room:{$room_id}:userResultCache");
     $uidCache = [];
     $scoreCache = [];
     //TODO:Key element cannot be a reference &$k
     foreach($resultCacheAll as $k => &$v){
         $k = (int)$k;
-        $v = json_decode($v);
+        $v = json_decode($v, true);
         $uidCache[] = (int)$k;
         $scoreCache[] = $v['score_smile'] + $v['score_cute'] + $v['score_cool'];
     }
+    //防止数据被覆盖
+    unset($k);
+    unset($v);
     array_multisort($scoreCache, SORT_DESC, $uidCache);
     foreach($scoreCache as $k => $v){
         if($uidCache[$k] == $uid){
@@ -621,7 +650,7 @@ function duel_endRoom($post){
         $logger->e("[Duel]Failed to calculate rank.");
         $rank = 4;
     }
-    
+    $logger->d("Users Info before add result: ".json_encode($usersInfo));
     //计算房间结果
     $live_info = getLiveSettings((int)$redis->get("Duel:room:{$room_id}:chosenLive"), 's_rank_combo');
     foreach($usersInfo as &$i){
@@ -662,4 +691,5 @@ function duel_endRoom($post){
     $ret['room_id']         = $room_id;
     $ret['rank']            = $rank;
     $ret['matching_user']   = $usersInfo;
+    return $ret;
 }
