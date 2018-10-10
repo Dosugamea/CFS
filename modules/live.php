@@ -492,8 +492,8 @@ function live_reward($post) {
 		$extra_flag = $livedb->query("SELECT ac_flag, swing_flag FROM special_live_m WHERE live_difficulty_id = ?", [$post['live_difficulty_id']])->fetch(PDO::FETCH_ASSOC);
 		
 		$ret = [];
-		$ret['live_info'] = [];
-		$ret['live_info'][] = [
+		$ret['live_list'] = [];
+		$ret['live_list'][] = [
 			"live_difficulty_id"=>(int)$post['live_difficulty_id'],
 			"is_random"=>($random % 10 > 0),
 			"ac_flag" => $extra_flag ? (int)$extra_flag['ac_flag'] : 0,
@@ -1069,6 +1069,10 @@ function live_reward($post) {
 	$ret['after_user_info']['energy_max'] = 100+(int)floor($newlevel/2);
 	$ret['base_reward_info']['player_exp_lp_max']['after'] = getCurrentEnergy($newlevel)['energy_max'];
 	$ret['can_send_friend_request'] = false;
+
+	//无关紧要的东西
+	$ret['unite_reward_info'] = [];
+	$ret['server_timestamp'] = time();
 	
 	//记录live日志
 	if(!isset($post['precise_score_log'])){

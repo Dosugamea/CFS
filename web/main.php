@@ -222,7 +222,7 @@ if($log){
 
 $ret = json_encode($ret);
 function retError($statusCode) {
-	global $ret;
+	global $ret, $logger;
 	$ret['status_code'] = 600;
 	return ['error_code' => $statusCode];
 }
