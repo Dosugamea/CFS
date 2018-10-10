@@ -449,9 +449,10 @@ function live_reward($post) {
 	//防止重放攻击
 	$rewarded = $mysql->query('SELECT reward_flag FROM tmp_live_playing WHERE user_id = ?', [$uid])->fetchColumn();
 	if($rewarded != '0'){
-		$ret = retError(3411); //ERROR_CODE_LIVE_PLAY_DATA_NOT_FOUND
-		return $ret;
+		$logger->e("User {$uid}: ERROR_CODE_LIVE_PLAY_DATA_NOT_FOUND");
+		return retError(3411);//ERROR_CODE_LIVE_PLAY_DATA_NOT_FOUND
 	}
+	
 	$mysql->query("UPDATE tmp_live_playing SET reward_flag = 1 WHERE user_id = ?", [$uid]);
 	
 	//客户端提交的分数
