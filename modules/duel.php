@@ -136,6 +136,8 @@ function duel_matching($post){
     }
 
     //检查是否有未满员的房间
+    //上锁（嘿嘿嘿
+    $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id <= 1 FOR UPDATE");
     $lock = $redLock->lock("Duel:room:notFull");
     if($lock){
         //没有非空房间
