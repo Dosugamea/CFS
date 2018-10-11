@@ -489,6 +489,12 @@ CREATE TABLE IF NOT EXISTS `tmp_challenge_reward` (
   UNIQUE KEY `Index 1` (`user_id`,`rarity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `tmp_duel_room` (
+  `room_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `users` LONGTEXT NULL DEFAULT NULL COLLATE 'utf8mb4_bin',
+  PRIMARY KEY (`room_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 数据导出被取消选择。
 -- 导出  表 lovelive.tmp_duty_result 结构
 CREATE TABLE IF NOT EXISTS `tmp_duty_result` (
