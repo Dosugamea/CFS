@@ -263,7 +263,7 @@ function duel_startWait($post){
     $redLock->unlock($lock);
 
     //处理开车相关信息
-    $DEFAULT_COUNTDOWN = 30;
+    $DEFAULT_COUNTDOWN = 60;
     $lock = $redLock->lock("Duel:room:{$room_id}:lastJoinTime");
     if(!$lock){
         pl_assert("Duel:room:{$room_id}:lastJoinTime 上锁失败！");
@@ -650,7 +650,7 @@ function duel_endRoom($post){
         $logger->e("[Duel]Failed to calculate rank.");
         $rank = 4;
     }
-    $logger->d("Users Info before add result: ".json_encode($usersInfo));
+    
     //计算房间结果
     $live_info = getLiveSettings((int)$redis->get("Duel:room:{$room_id}:chosenLive"), 's_rank_combo');
     foreach($usersInfo as &$i){
@@ -685,6 +685,42 @@ function duel_endRoom($post){
             ];
         }
         $i['result'] = $result;
+    }
+
+    //官方客户端bug：房间人数不满4人的时候崩
+    while(count($usersInfo) < 4){
+        $usersInfo[] = [
+            "result"            => [
+                "rank"          => 4,
+                "score"         => 0,
+                "status"        => 10,
+                "time_up"       => false,
+                "max_combo"     => 0,
+                "is_full_combo" => false
+            ],
+            "npc_info"          => [
+                "name"      => "填充用NPC",
+                "level"     => 1,
+                "npc_id"    => 1
+            ],
+            "center_unit_info"  => [
+                "cool" => 0,
+				"cute" => 0,
+				"love" => 0,
+				"rank" => 0,
+				"level" => 1,
+				"smile" => 0,
+				"unit_id" => 28,
+				"is_love_max" => false,
+				"is_rank_max" => false,
+				"display_rank" => 1,
+				"is_level_max" => false,
+				"unit_skill_exp" => 0,
+				"removable_skill_ids" => [],
+				"unit_removable_skill_capacity" => 0
+            ],
+            "setting_award_id"  => 1
+        ];
     }
 
     //追加duty特定参数
