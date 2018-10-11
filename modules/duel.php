@@ -680,7 +680,7 @@ function duel_endRoom($post){
                  */
                 //TODO:数据库加入各个玩家状态
                 "time_up"       => false,
-                "max_combo"     => $resultCacheAll[(string)$uid]['max_combo'],
+                "max_combo"     => $resultCacheAll[(string)$curUid]['max_combo'],
                 "is_full_combo" => $live_info['s_rank_combo'] == $resultCacheAll[(string)$uid]['max_combo'] ? true : false
             ];
         }
