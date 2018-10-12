@@ -323,21 +323,33 @@ function duel_startWait($post){
 
     //时间到，抽选歌曲
     if($start_flag){
-        $logger->d($redis->exists("Duel:room:{$room_id}:chosenLive"));
-        if(!$redis->exists("Duel:room:{$room_id}:chosenLive")){
-            //redis里面没有的话进行抽选
-            $lock = $redLock->lock("Duel:room:{$room_id}:chosenLive");
-            if($lock){
-                $pick = array_rand($usersInfo, 1);
-                $selectedLive = $usersInfo[$pick]['room_user_status']['selected_live_difficulty_id'];
+        $lock = $redLock->lock("Duel:room:{$room_id}:chosenLive");
+        if($lock){
+            if(!$redis->exists("Duel:room:{$room_id}:chosenLive")){
+                //redis里面没有的话进行抽选
+                foreach($usersInfo as $i){
+                    $selectedLives = [];
+                    if($i['room_user_status']['selected_live_difficulty_id'] != 0){
+                        $selectedLives[] = $i['room_user_status']['selected_live_difficulty_id'];
+                    }
+                }
+                //全部人都选的随机的情况下，随机抽
+                if($selectedLives == []){
+                    $allLiveList = getAllLiveList([]);
+                    $rand = array_rand($allLiveList[(int)$room_info['difficulty']]);
+                    $selectedLive = $allLiveList[(int)$room_info['difficulty']][$rand]['live_difficulty_id'];
+                }else{
+                    $selectedLive = array_rand($selectedLives);
+                }
+                
                 $redis->set("Duel:room:{$room_id}:chosenLive", $selectedLive);
             }else{
-                pl_assert("Duel:room:{$room_id}:chosenLive 上锁失败！");
+                $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
             }
-            $redLock->unlock($lock);
         }else{
-            $selectedLive = (int)$redis->get("Duel:room:{$room_id}:chosenLive");
+            pl_assert("Duel:room:{$room_id}:chosenLive 上锁失败！");
         }
+        $redLock->unlock($lock);
     }else{
         $selectedLive = 0;
     }
