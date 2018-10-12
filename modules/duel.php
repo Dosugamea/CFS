@@ -270,7 +270,7 @@ function duel_startWait($post){
     //处理开车相关信息
     $DEFAULT_COUNTDOWN = 60;
     $cardSwitch = $envi->params['card_switch'];
-    $difficulty = $post['difficulty'];
+    $difficulty = (int)$room_info['difficulty'];
     $lock = $redLock->lock("Duel:room:{$room_id}:lastJoinTime");
     if(!$lock){
         pl_assert("Duel:room:{$room_id}:lastJoinTime 上锁失败！");
