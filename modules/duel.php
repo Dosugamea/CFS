@@ -224,7 +224,7 @@ function duel_matching($post){
 }
 
 function duel_startWait($post){
-    global $redis, $redLock, $uid, $mysql, $logger;
+    global $redis, $redLock, $uid, $mysql, $logger, $envi;
     //TODO:随机铺面支持
     //需要的参数
     if(!isset($post['room_id']) || !isset($post['chat_id']) ||
