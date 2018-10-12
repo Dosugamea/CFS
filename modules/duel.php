@@ -344,7 +344,7 @@ function duel_startWait($post){
                     $rand = array_rand($allLiveList[(int)$room_info['difficulty']]);
                     $selectedLive = $allLiveList[(int)$room_info['difficulty']][$rand]['live_difficulty_id'];
                 }else{
-                    $selectedLive = array_rand($selectedLives);
+                    $selectedLive = $selectedLives[array_rand($selectedLives)];
                 }
                 
                 $redis->set("Duel:room:{$room_id}:chosenLive", $selectedLive);
