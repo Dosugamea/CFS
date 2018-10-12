@@ -111,7 +111,7 @@ function duel_gpsMatch(){
 
 //普通匹配
 function duel_matching($post){
-    global $redis, $redLock, $uid, $mysql, $envi;
+    global $redis, $redLock, $uid, $mysql, $envi, $logger;
     //需要的参数
     if(!isset($post['difficulty']) || !isset($post['live_difficulty_id']) ||
     !is_numeric($post['difficulty']) || !is_numeric($post['live_difficulty_id'])){
@@ -138,19 +138,21 @@ function duel_matching($post){
     //检查是否有未满员的房间
     //上锁（嘿嘿嘿
     $mysql->query("SELECT * FROM tmp_duel_room WHERE room_id <= 1 FOR UPDATE");
-    $lock = $redLock->lock("Duel:room:notFull");
+    $cardSwitch = $envi->params['card_switch'];
+    $difficulty = $post['difficulty'];
+    $lock = $redLock->lock("Duel:room:notFull:{$cardSwitch}:{$difficulty}");
     if($lock){
         //没有非空房间
-        if(!$redis->exists("Duel:room:notFull")){
+        if(!$redis->exists("Duel:room:notFull:{$cardSwitch}:{$difficulty}")){
             $re_enter = false;
-            $mysql->query("INSERT INTO tmp_duel_room (users) VALUES(?)", [json_encode([$uid])]);
+            $mysql->query("INSERT INTO tmp_duel_room (users, difficulty, card_switch) VALUES(?, ?, ?)", [json_encode([$uid]), $difficulty, $cardSwitch]);
             $room_id = $mysql->lastInsertId();
-            $redis->set("Duel:room:notFull", $room_id);
+            $redis->set("Duel:room:notFull:{$cardSwitch}:{$difficulty}", $room_id);
             $redis->set("Duel:room:{$room_id}:createTime", time());
             $redis->set("Duel:room:{$room_id}:lastJoinTime", time());
         }else{
             //有非空房间时
-            $room_id = (int)$redis->get("Duel:room:notFull");
+            $room_id = (int)$redis->get("Duel:room:notFull:{$cardSwitch}:{$difficulty}");
             //先检查自己是否在里面
             $room_users = $mysql->query("SELECT users FROM tmp_duel_room WHERE room_id = ?", [$room_id])->fetchColumn();
             $room_users = json_decode($room_users);
@@ -166,11 +168,11 @@ function duel_matching($post){
             $redis->set("Duel:room:{$room_id}:lastJoinTime", time());
 
             if(count($room_users) == 4){
-                $redis->del("Duel:room:notFull"); //TODO:BOT
+                $redis->del("Duel:room:notFull:{$cardSwitch}:{$difficulty}"); //TODO:BOT
             }
         }
     }else{
-        pl_assert("Duel:room:notFull 上锁失败！");
+        pl_assert("Duel:room:notFull:{$cardSwitch}:{$difficulty} 上锁失败！");
     }
     $redLock->unlock($lock);
 
@@ -263,9 +265,12 @@ function duel_startWait($post){
         pl_assert("Duel:room:{$room_id}:userInfoCache 上锁失败！");
     }
     $redLock->unlock($lock);
+    unset($i);
 
     //处理开车相关信息
     $DEFAULT_COUNTDOWN = 60;
+    $cardSwitch = $envi->params['card_switch'];
+    $difficulty = $post['difficulty'];
     $lock = $redLock->lock("Duel:room:{$room_id}:lastJoinTime");
     if(!$lock){
         pl_assert("Duel:room:{$room_id}:lastJoinTime 上锁失败！");
@@ -278,7 +283,7 @@ function duel_startWait($post){
         }else{
             $start_time = time() + 5;
             $redis->set("Duel:room:{$room_id}:startTime", $start_time);
-            $redis->del("Duel:room:notFull");
+            $redis->del("Duel:room:notFull:{$cardSwitch}:{$difficulty}");
         }
         $remain_time = $start_time - time();
         $capacity = 4;
@@ -305,7 +310,7 @@ function duel_startWait($post){
             }else{
                 $start_time = time() + 5;
                 $redis->set("Duel:room:{$room_id}:startTime", $start_time);
-                $redis->del("Duel:room:notFull");
+                $redis->del("Duel:room:notFull:{$cardSwitch}:{$difficulty}");
             }
 
             $remain_time = $start_time - time();
