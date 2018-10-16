@@ -12,13 +12,15 @@ function announce_info(){
         }
         return $result;
     };
-    $head = @file_get_contents(BASE_PATH.".git/HEAD");
-    if($head == NULL){
-        $result['branch'] = "Unknown";
-    }else{
+
+    if(is_file(BASE_PATH.".git/HEAD")){
+        $head = file_get_contents(BASE_PATH.".git/HEAD");
         $tmp = explode("/", $head);
         $result['branch'] = end($tmp);
+    }else{
+        $result['branch'] = "Unknown";
     }
+
     $result['commit']   = $phraseCommand("cd .. && git rev-parse --short HEAD");
     $result['date']     = $phraseCommand("cd .. && git log -1 --pretty=format:\"%ai\"");
     $result['bundle']   = isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : 'Unknown';
