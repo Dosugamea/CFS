@@ -29,3 +29,25 @@ function announce_info(){
 
     return $result;
 }
+
+function announce_index(){
+    global $mysql;
+    $announcement = $mysql->query("SELECT * FROM webview WHERE tab != 0 ORDER BY time DESC LIMIT 3")->fetchAll();
+    $buttonInit = "";
+    foreach($announcement as &$v) {
+        $v['time'] = explode(' ', $v['time'])[0];
+        if($v['detail_id'] != 0){
+            $buttonInit .= "Button.initialize(document.getElementById('an_";
+            $buttonInit .= $v['ID'];
+            $buttonInit .= "'), function(){window.location.href='/webview.php/announce/detail/?detail_id=";
+            $buttonInit .= $v['detail_id'];
+            $buttonInit .= "';});\n";
+        }
+    }
+    return [
+        "announce" => $announcement,
+        "button_initlize" => $buttonInit
+    ];
+}
+
+}

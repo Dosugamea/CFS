@@ -1,13 +1,4 @@
-<? 
-	header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-?>
-
-<!DOCTYPE html>
-<HTML><HEAD>
-<META content="IE=11.0000" http-equiv="X-UA-Compatible">
-<META charset="utf-8"> 
-<TITLE></TITLE> 
-
+<body class="mdui-loaded mdui-locked mdui-theme-primary-pink mdui-theme-accent-pink" style="overflow-y: auto !important;">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=880, target-densitydpi=device-dpi, user-scalable=no">
 
@@ -16,7 +7,6 @@
 <script src="/resources/things/perfect-scrollbar.min.js"></script>
 <script src="/resources/things/button.js"></script>
 <script src="/resources/things/list.js"></script>
-
 <style>
 .Welcome-Icon{width: 89%;margin-right: 5%;margin-left: 5%;}
 .Welcome-Icon tr td{width: 33%;}
@@ -38,9 +28,6 @@ a:focus{text-decoration:none;}
 a:hover{text-decoration:none;}
 </style>
 
-</head>
-<BODY>
-
 <?php 
 ?>
  <ul id="tab">
@@ -60,9 +47,6 @@ a:hover{text-decoration:none;}
     </a>
   </li>
     </ul>
-<?php
-	$announcement=$mysql->query('SELECT * from webview where tab != 0 order by time desc limit 3')->fetchAll();
-?>
 <div id="main">
   <div id="container">
   <ul id="list">
@@ -93,21 +77,19 @@ a:hover{text-decoration:none;}
     </td>
   </tr>
 </table>
-<?php foreach($announcement as $v) {
-  $time=explode(' ', $v['time'])[0];
-?>
+<?php foreach($result['announce'] as $v) {?>
   <li class="entry" >
         <div class="entry-container" id="an_<?=$v['ID']?>">
           <h2 class="text"><?=$v['title']?></h2>
           <div class="summary"> <?=$v['content']?></div>
-          <div class="start-date"><?=$time?></div>
+          <div class="start-date"><?=$v['time']?></div>
           <div class="clearfix"></div>
         </div>
       </li>
 <?php } ?>
 </ul>
 
-    <div id="load-next" data-loading-msg="（読み込み中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
+    <div id="load-next" data-loading-msg="（读取中…）" data-no-more-msg="（これ以上お知らせはありません）" style="display: none !important;">
       次の10件を表示
     </div>
   </div>
@@ -118,15 +100,7 @@ a:hover{text-decoration:none;}
   const USER_ID = 0;
   const AUTHORIZE_DATA = '';
   updateButtons();
-    <?
-    foreach ($announcement as $d){
-      if($d['detail_id'] != 0){
-        print("Button.initialize(document.getElementById('an_{$d['ID']}'), function() {
-    window.location.href='/webview.php/announce/detail/?detail_id={$d['detail_id']}';
-  });");
-      }
-    }
-    ?>
+  <?=$result['button_initlize']?>
   Button.initialize(document.getElementById('load-next'), loadNext);
   Ps.initialize(document.getElementById('container'), {suppressScrollX: true});
 </script>
