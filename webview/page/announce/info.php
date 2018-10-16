@@ -53,8 +53,12 @@
       <li class="entry" >
         <div class="entry-container">
           <h2 class="text">版本信息</h2>
-          <div class="summary">Custom Festival! Server Branch: <?=$result['branch']?> Commit: <?=$result['commit']?> Date: <?=$result['date']?> <br />
-            客户端版本：<?=(isset($_SESSION['server']["HTTP_BUNDLE_VERSION"]) ? $_SESSION['server']["HTTP_BUNDLE_VERSION"] : '客户端未提交')."(".$_SESSION['server']["HTTP_CLIENT_VERSION"].") 服务器版本：".$bundle_ver."(".$server_ver; ?>)</div>
+          <div class="summary">Custom Festival! Server 
+            <br />Branch: <?=$result['branch']?> Commit: <?=$result['commit']?> 
+            <br />Date: <?=$result['date']?>
+            <br />客户端版本：<?=$result['bundle']?>
+            服务器数据包版本：<?=$result['server']?>
+          </div>
           <div class="clearfix"></div>
         </div>
       </li>
@@ -69,17 +73,27 @@
         <div class="entry-container" id="href">
           <h2 class="text">软件许可</h2>
           <div class="summary" style="width:760px !important;">
-            <?=$pls_license?><hr>
-            <div id="license-url">开源许可</div>
-            <div id="license-eng-url">引擎项目地址</div>
+              1.本软件基于 KLab Inc 的开源引擎 Playground OSS 进行开发 并遵循 Apache 2.0 开源协议 <br>
+              2.本软件不提供 原KLab Inc 开发的并且经过 编译 加密 过的代码, 其余附属更改代码由 HoshizoraCodeAcademy 开发 并且持有著作权<br>
+              3.本软件的 内部资源来源 KLab Inc 并且未改作 未解密 KLab Inc 享有完整版权 <br>
+              4.本软件不具备任何 盈利行为 和 商业性质, 属于个人开发学习练习用途, 并且 HoshizoraCoadAcademy 具有最终解释权<br>
+              <hr>
+            <tr>
+              <td>
+                <div id="license-url">开源许可</div>
+              </td>
+              <td>
+                <div id="license-eng-url">引擎项目地址</div>
+                </td>
+            </tr>
           </div>
           <div class="clearfix"></div>
         </div>
       </li>
       <li class="entry" >
-        <div class="entry-container">
+        <div class="entry-container" id="tos">
           <h2 class="text">使用协议</h2>
-          <div class="summary" style="width:760px !important;"><?=$pls_agreement?></div>
+          <div class="summary" style="width:760px !important;">点击查看</div>
           <div class="clearfix"></div>
         </div>
       </li>
@@ -87,9 +101,9 @@
         <div class="entry-container">
           <h2 class="text">支持信息</h2>
           <div class="summary" >
-            开发:<?=$pls_dev?><br>
-            维护:<?=$pls_maintenance?><br><br>
-            交流群: <?=$pls_qq_group?>
+            开发: 双草酸酯 NOAH<br>
+            维护: 双草酸酯 NOAH<br><br>
+            交流群: 641147818
             <table>
               <tr><td><div id="mail"></div></td><td><div id="noah"></div></td></tr>
             </table>
@@ -119,15 +133,18 @@
     window.location.href='/webview.php/help/index';
   });
   Button.initialize(document.getElementById('mail'), function() {
-    window.location.href='native://browser?url=mailto:<?=$pls_support_mail?>';
+    window.location.href='native://browser?url=mailto:<?=$result['support']?>';
   });
   Button.initialize(document.getElementById('noah'), function() {
     window.location.href='native://browser?url=https://www.lovelivesupport.com';
   });
+  Button.initialize(document.getElementById('tos'), function() {
+    window.location.href='/webview.php/tos/read';
+  });
   Button.initialize(document.getElementById('license-url'), function() {
-    window.location.href='native://browser?url=<?=$pls_license_url?>';
+    window.location.href='native://browser?url=http://www.apache.org/licenses/LICENSE-2.0';
   });
   Button.initialize(document.getElementById('license-eng-url'), function() {
-    window.location.href='native://browser?url=<?=$pls_license_eng_url?>';
+    window.location.href='native://browser?url=https://github.com/KLab/PlaygroundOSS';
   });
 </script>

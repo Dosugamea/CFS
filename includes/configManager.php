@@ -98,6 +98,7 @@ class configManager{
 			"mdl_ios_address"			=> "https://mdl-proxy.customfe.su/", //建议使用HTTPS
 			"mdl_android_address"		=> "http://mdl.customfe.su/",
 			"proxy_ip"					=> "UNDEFINED",
+			"support_mail"				=> "@",
 			"admin_pw"					=> ""		//后台管理密码
 		];
 		$this->initCommon($defaultConfig, "basic");
