@@ -54,7 +54,7 @@ foreach($authorize_ as $i){
 
 //default page
 $path = explode('/', $_SERVER['PATH_INFO']);
-if(count($path) == 3){
+if(count($path) >= 3){
 	$module = $path[1];
 	$action = $path[2];
 }else if(count($path) == 2){
