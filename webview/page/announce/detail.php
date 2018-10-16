@@ -1,5 +1,5 @@
 <?
-  $k = $mysql -> query("SELECT * FROM webview WHERE tab = 0 AND ID =".$_GET['detail_id']." LIMIT 1")->fetch();
+  
 ?>
 <html>
   <head>
@@ -20,10 +20,10 @@
       <div id="inner">
         <div id="header">
           <div id="back"></div>
-          <h2><?=$k['title']?></h2>
+          <h2><?=$result['title']?></h2>
         </div>
         <div id="body">
-          <?=$k['content']?>
+          <?=$result['content']?>
         </div>
       </div>
     </div>

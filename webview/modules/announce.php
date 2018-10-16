@@ -50,4 +50,17 @@ function announce_index(){
     ];
 }
 
+function announce_detail(){
+    global $mysql;
+    $res = $mysql -> query("SELECT * FROM webview WHERE tab = 0 AND ID = ? LIMIT 1", [$_GET['detail_id']])->fetch();
+    if(!$res){
+        return [
+            "title"     => "",
+            "content"   => "找不到公告"
+        ];
+    }
+    return [
+        "title"     => $res['title'],
+        "content"   => $res['content']
+    ];
 }
