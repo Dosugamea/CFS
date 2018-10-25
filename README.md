@@ -9,7 +9,7 @@ We only supported the latest JP client
 
 # Agreement
 
-The project, developed by the enthusiasts of personal behavior, does not contain any commercial use. The code is closed source code, which must comply with the code confidentiality agreement. If the user uses any of the items in the other project and leaks the source code, we will close your access and request to stop using it.
+The project, developed by the enthusiasts of personal behavior, does not contain any commercial use. **To use this project, you must agree ALL of the GNU AFFERO GENERAL PUBLIC LICENSE, whatever which country you are.**
 
 # Requirements
 
