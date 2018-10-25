@@ -2,6 +2,7 @@
 
 	
 Try our public server at `prod.customfe.su`
+交流群641147818
 
 **REQUIRE LLSIF Japanese latest Client, with public key modified** (We will never provide or tell the method how to make one).
 
