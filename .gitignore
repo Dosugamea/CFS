@@ -10,6 +10,7 @@
 !webview
 !upgrade_scripts
 !custom
+!LICENSE
 !*.php
 !*.sql
 *.DS_Store
